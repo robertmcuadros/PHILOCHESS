@@ -1,0 +1,67 @@
+RONDA 1
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "1.1"]
+[White "Zoidberg 0.1"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1665"]
+[BlackElo "800"]
+[Time "07:50:01"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:06:51"]
+[PlyCount "60"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nf3 a4 4. Bb5 c6 5. Be2 Qa5+ 6. Bd2 Qb6
+7. Na3 Qc7 8. O-O c5 9. Nb5 Qb6 10. dxc5 Qxc5 11. Be3 Qc6
+12. Ne5 Qxe4 13. Nc7+ Kd8 14. Qd5 Qxd5 15. Nxd5 e6 16. Nb6 f6
+17. Nf7+ Ke8 18. Nxh8 Ra7 19. Nxc8 Ra8 20. Nb6 Ra5 21. Nc4 Rd5
+22. Nb6 Ra5 23. Rad1 e5 24. Bc4 Nh6 25. Nd5 a3 26. Bxh6 gxh6
+27. Nxf6+ Kd8 28. Nf7+ Kc8 29. bxa3 Bxa3 30. Nxh6 Bf8 1-0
+
+
+RESUMEN
+
+PHILOCHESS comenzó la partida con 1...a6, 2...a5 y 3...a4, invirtiendo tres tiempos consecutivos en un peón lateral sin desarrollar piezas, disputar el centro ni contribuir a la seguridad del rey. A continuación, utilizó prematuramente la dama y tuvo que moverla repetidas veces: ...Qa5+, ...Qb6, ...Qc7, ...Qb6, ...Qxc5, ...Qc6 y ...Qxe4.
+
+Después de 12.Ne5, las blancas habían completado su desarrollo, enrocado y coordinado sus piezas, mientras que las negras solo habían movilizado la dama y dos peones. Ninguna pieza negra había sido desarrollada y el rey continuaba en el centro.
+
+La jugada 8...c5 abandonó el control de la casilla b5 que ejercía el peón desde c6. Esto permitió 9.Nb5, atacando a la dama y preparando la entrada del caballo en c7. Cuando PHILOCHESS jugó 12...Qxe4, la dama ya no disponía de una retirada satisfactoria que mantuviera protegida la casilla c7. Por ello, 13.Nc7+ no debe interpretarse únicamente como la consecuencia de un error táctico puntual, sino como el resultado de la posición estratégicamente deteriorada creada durante las jugadas anteriores.
+
+Tras 13.Nc7+ Kd8, PHILOCHESS perdió el derecho a enrocar. La falta general de desarrollo había impedido realizar esta operación fundamental de la apertura, que habría contribuido tanto al desarrollo como a la seguridad del rey.
+
+La secuencia 16...f6 17.Nf7+ Ke8 18.Nxh8 produjo un segundo ataque doble de caballo y la pérdida de la torre de h8. Sin embargo, tampoco se trató de un accidente táctico aislado. Las piezas negras permanecían sin desarrollar, las torres no estaban conectadas ni activas, el rey seguía expuesto y las piezas blancas ocupaban casillas avanzadas con gran libertad de acción. Evitar específicamente Nf7+ habría dejado sin resolver otros problemas graves de la posición.
+
+Posteriormente, el alfil de c8, que todavía no había sido desarrollado, fue capturado. PHILOCHESS quedó con una desventaja material decisiva y sin compensación suficiente, por lo que la partida fue adjudicada a favor de Zoidberg.
+
+
+CONCLUSIONES
+
+1. La causa principal de la derrota fue la falta general de desarrollo. Los ataques dobles en c7 y f7 fueron consecuencias tácticas de una posición estratégicamente defectuosa.
+
+2. Los movimientos repetidos del peón de la columna a y de la dama consumieron demasiados tiempos y permitieron que las blancas completaran su desarrollo con ventaja decisiva.
+
+3. PHILOCHESS no logró enrocar. Esto mantuvo al rey en el centro, impidió activar y conectar las torres y agravó la falta de coordinación de todo el ejército negro.
+
+4. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas.
+
+5. Tampoco se observa una pérdida material producida simplemente por dejar una pieza colgada. La pérdida de material surgió de ataques dobles y penetraciones de caballo posibilitados por la superioridad de desarrollo de las blancas.
+
+6. La quiescence search básica no puede corregir por sí sola este tipo de problema. PHILOCHESS necesita una evaluación posicional capaz de distinguir entre jugadas materialmente neutras y jugadas que desarrollan piezas, controlan el centro, mejoran la coordinación y aumentan la seguridad del rey.
+
+7. Las mejoras prioritarias deben incluir:
+   - evaluación básica del desarrollo;
+   - tablas pieza-casilla;
+   - valoración de movilidad;
+   - control del centro;
+   - seguridad del rey;
+   - incentivo al enroque cuando sea apropiado;
+   - penalización de movimientos repetidos e injustificados de la dama o de peones laterales;
+   - pruebas de regresión en las posiciones anteriores a 8...c5, 12...Qxe4 y 16...f6.
+
+Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, pero su evaluación todavía carece de los conocimientos posicionales necesarios para conducir la apertura. La derrota fue provocada principalmente por una acumulación de decisiones estratégicas deficientes, no por un único error táctico.

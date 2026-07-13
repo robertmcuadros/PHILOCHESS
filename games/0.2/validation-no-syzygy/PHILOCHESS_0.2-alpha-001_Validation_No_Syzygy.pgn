@@ -1,0 +1,20 @@
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "1.1"]
+[White "Zoidberg 0.1"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1665"]
+[BlackElo "800"]
+[Time "07:50:01"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:06:51"]
+[PlyCount "60"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nf3 a4 4. Bb5 c6 5. Be2 Qa5+ 6. Bd2 Qb6 7. Na3 Qc7 8. O-O c5 9. Nb5 Qb6 10. dxc5 Qxc5 11. Be3 Qc6 12. Ne5 Qxe4 13. Nc7+ Kd8 14. Qd5 Qxd5 15. Nxd5 e6 16. Nb6 f6 17. Nf7+ Ke8 18. Nxh8 Ra7 19. Nxc8 Ra8 20. Nb6 Ra5 21. Nc4 Rd5 22. Nb6 Ra5 23. Rad1 e5 24. Bc4 Nh6 25. Nd5 a3 26. Bxh6 gxh6 27. Nxf6+ Kd8 28. Nf7+ Kc8 29. bxa3 Bxa3 30. Nxh6 Bf8 1-0
+
+

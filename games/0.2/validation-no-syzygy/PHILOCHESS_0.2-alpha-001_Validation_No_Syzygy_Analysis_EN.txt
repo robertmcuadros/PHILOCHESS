@@ -1,0 +1,67 @@
+Round 1
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "1.1"]
+[White "Zoidberg 0.1"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1665"]
+[BlackElo "800"]
+[Time "07:50:01"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:06:51"]
+[PlyCount "60"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nf3 a4 4. Bb5 c6 5. Be2 Qa5+ 6. Bd2 Qb6
+7. Na3 Qc7 8. O-O c5 9. Nb5 Qb6 10. dxc5 Qxc5 11. Be3 Qc6
+12. Ne5 Qxe4 13. Nc7+ Kd8 14. Qd5 Qxd5 15. Nxd5 e6 16. Nb6 f6
+17. Nf7+ Ke8 18. Nxh8 Ra7 19. Nxc8 Ra8 20. Nb6 Ra5 21. Nc4 Rd5
+22. Nb6 Ra5 23. Rad1 e5 24. Bc4 Nh6 25. Nd5 a3 26. Bxh6 gxh6
+27. Nxf6+ Kd8 28. Nf7+ Kc8 29. bxa3 Bxa3 30. Nxh6 Bf8 1-0
+
+
+SUMMARY
+
+PHILOCHESS began the game with 1...a6, 2...a5, and 3...a4, spending three consecutive tempi on a flank pawn without developing pieces, contesting the center, or contributing to king safety. It then brought the queen out prematurely and had to move it repeatedly: ...Qa5+, ...Qb6, ...Qc7, ...Qb6, ...Qxc5, ...Qc6, and ...Qxe4.
+
+After 12.Ne5, White had completed development, castled, and coordinated the pieces, while Black had moved only the queen and two pawns. None of Black's pieces had been developed, and the king remained in the center.
+
+The move 8...c5 abandoned the control of b5 previously provided by the pawn on c6. This allowed 9.Nb5, attacking the queen and preparing the knight's entry into c7. When PHILOCHESS played 12...Qxe4, the queen no longer had a satisfactory retreat that also kept c7 protected. Therefore, 13.Nc7+ should not be viewed merely as the consequence of an isolated tactical mistake, but as the result of the strategically deteriorated position created during the preceding moves.
+
+After 13.Nc7+ Kd8, PHILOCHESS lost the right to castle. The general lack of development had prevented this fundamental opening operation, which would have contributed both to development and king safety.
+
+The sequence 16...f6 17.Nf7+ Ke8 18.Nxh8 produced a second knight fork and the loss of the h8-rook. However, this was not an isolated tactical accident either. Black's pieces remained undeveloped, the rooks were neither connected nor active, the king was still exposed, and White's pieces occupied advanced squares with great freedom of action. Preventing Nf7+ specifically would not have solved the other serious problems in the position.
+
+Later, the bishop on c8, which had not yet been developed, was captured. PHILOCHESS reached a decisive material deficit without sufficient compensation, and the game was adjudicated in Zoidberg's favor.
+
+
+CONCLUSIONS
+
+1. The main cause of the defeat was the general lack of development. The knight forks on c7 and f7 were tactical consequences of a strategically defective position.
+
+2. The repeated moves of the a-pawn and the queen consumed too many tempi and allowed White to complete development with a decisive advantage.
+
+3. PHILOCHESS failed to castle. This kept the king in the center, prevented the rooks from becoming connected and active, and worsened the lack of coordination throughout Black's army.
+
+4. The game shows no failures in move legality, UCI communication, move execution, or recapture handling.
+
+5. The material losses were not caused simply by leaving pieces en prise. They resulted from knight forks and penetrations made possible by White's superior development.
+
+6. Basic quiescence search cannot solve this type of problem by itself. PHILOCHESS needs a positional evaluation capable of distinguishing between materially neutral moves and moves that develop pieces, control the center, improve coordination, and increase king safety.
+
+7. Priority improvements should include:
+   - basic development evaluation;
+   - piece-square tables;
+   - mobility evaluation;
+   - central control;
+   - king safety;
+   - encouragement of castling when appropriate;
+   - penalties for repeated and unjustified queen moves or flank-pawn moves;
+   - regression tests for the positions before 8...c5, 12...Qxe4, and 16...f6.
+
+General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine, but its evaluation still lacks the positional knowledge required to conduct the opening. The defeat was caused mainly by an accumulation of poor strategic decisions rather than by a single tactical mistake.
