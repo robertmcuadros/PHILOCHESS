@@ -11,7 +11,9 @@
  * This file is not the complete PHILOCHESS source code and may differ
  * from the current private implementation.
  *
- * Copyright (c) 2026 Robert M. Cuadros. All rights reserved.
+ * Copyright (c) 2026 Robert M. Cuadros.
+ * Licensed under the PHILOCHESS Educational Code Sample License.
+ * See ../../LICENSES/PHILOCHESS-CODE-SAMPLES-LICENSE.txt.
  */
 
 #include <array>
