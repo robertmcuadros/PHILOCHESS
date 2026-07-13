@@ -103,3 +103,71 @@ CONCLUSIONES
    - pruebas de regresión en las posiciones anteriores a 8...c5, 12...Qxe4 y 16...f6.
 
 Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, pero su evaluación todavía carece de los conocimientos posicionales necesarios para conducir la apertura. La derrota fue provocada principalmente por una acumulación de decisiones estratégicas deficientes, no por un único error táctico.
+
+RONDA 2
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "2"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Needle 0.531"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1490"]
+[Time "08:29:07"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:11:27"]
+[PlyCount "51"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 d5 2. Rb1 d4 3. Na4 b5 4. Nc5 e5 5. b4 c6 6. Ra1 Bxc5
+7. bxc5 Na6 8. Rb1 Nxc5 9. Ra1 Nf6 10. Rb1 Qa5 11. Ra1 Nce4
+12. Bb2 Be6 13. a3 Ng4 14. Nh3 O-O-O 15. Rb1 Ne3 16. Qc1 Nc4
+17. Ba1 Nexd2 18. Rb4 c5 19. c3 cxb4 20. axb4 Qa2 21. e4 d3
+22. Bxd3 Rxd3 23. Bb2 Nxb2 24. Ng5 Nb3 25. Qc2 Qa1+ 26. Ke2 0-1
+
+
+RESUMEN
+
+PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero después de 1...d5 jugó 2.Rb1 y permitió que el avance 2...d4 atacara al caballo. Este tuvo que desplazarse a a4 y posteriormente a c5, donde fue cambiado por el alfil negro. Mientras tanto, las negras establecieron un centro amplio.
+
+La anomalía principal de la apertura fue el movimiento reiterado de la torre de a1. La torre se movió siete veces durante las primeras quince jugadas sin conseguir movilidad ni actividad: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1 y Rb1. Estos movimientos consumieron tiempos que debieron emplearse en desarrollar las demás piezas, disputar el centro y preparar el enroque.
+
+La primera pérdida de material se produjo después de 8...Nxc5, cuando el caballo negro capturó el peón de c5. El problema es que las piezas blancas todavía no estaban desarrolladas y no podían sostener ese peón ni generar contrajuego.
+
+Tras 15...Ne3!, Needle atacaba a la dama blanca. PHILOCHESS no aceptó la entrega y respondió con 16.Qc1. Esta secuencia demuestra que Needle ya podía operar tácticamente dentro de la posición blanca gracias a su superioridad de desarrollo, control central y actividad.
+
+Después de 18.Rb4, las negras jugaron 18...c5 y atacaron la torre. PHILOCHESS no podía retirarla porque ello habría dejado libre la diagonal a5-e1 y permitido una secuencia de mate en dos movimientos. Por esta razón, 19.c3 fue una defensa necesaria para bloquear la diagonal, aunque después de 19...cxb4 las blancas perdieron la torre.
+
+La continuación 21...d3 creó nuevas amenazas contra el rey blanco. PHILOCHESS tuvo que responder con 22.Bxd3 y, después de 22...Rxd3, perdió el alfil. Posteriormente, el otro alfil blanco fue capturado mediante 23...Nxb2. Con una torre y ambos alfiles perdidos, el rey todavía en el centro y las piezas restantes sin coordinación suficiente, la posición blanca se derrumbó rápidamente y la partida fue adjudicada a favor de Needle.
+
+
+CONCLUSIONES
+
+1. La causa principal de la derrota fue la gestión deficiente de los tiempos de apertura. PHILOCHESS movió repetidamente una torre mientras las demás piezas permanecían sin desarrollar.
+
+2. Los siete movimientos de torre realizados durante las primeras quince jugadas no produjeron movilidad ni actividad. Mientras tanto, Needle desarrolló sus piezas, ocupó el centro y preparó el ataque contra el rey blanco.
+
+3. La captura 8...Nxc5 fue la primera pérdida material. El peón de c5 no pudo ser sostenido porque las piezas blancas todavía no habían sido desarrolladas.
+
+4. La secuencia iniciada por 15...Ne3! mostró que las negras ya podían realizar operaciones tácticas dentro de la posición blanca debido a su superioridad de desarrollo y coordinación.
+
+5. La pérdida de la torre después de 18...c5 no fue consecuencia de haber dejado simplemente una pieza atacada. PHILOCHESS jugó 19.c3 porque retirar la torre habría permitido una secuencia de mate en dos movimientos.
+
+6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas. PHILOCHESS identificó una amenaza inmediata contra su rey, pero solo pudo evitarla mediante una concesión material decisiva.
+
+7. Las mejoras prioritarias deben incluir:
+   - evaluación básica del desarrollo;
+   - penalización de movimientos repetidos de una misma pieza durante la apertura;
+   - penalización específica de movimientos prematuros de las torres cuando todavía existen piezas sin desarrollar;
+   - tablas pieza-casilla;
+   - valoración del control central y del espacio;
+   - evaluación de movilidad y actividad;
+   - distinción entre mover una pieza y crear amenazas;
+   - seguridad del rey e incentivo al enroque cuando sea apropiado;
+   - pruebas de regresión en las posiciones anteriores a 2.Rb1, 8...Nxc5, 15...Ne3 y 18...c5.
+
+Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, e incluso reconoció la amenaza de mate existente después de 18...c5. Sin embargo, su evaluación todavía no distingue adecuadamente entre movimientos útiles y movimientos que solo consumen tiempos. La derrota fue provocada principalmente por los movimientos repetidos de la torre, la falta de desarrollo, la pérdida del control central y la permanencia del rey en el centro.
