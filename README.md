@@ -29,6 +29,8 @@ constitute the complete engine source code.
 - [`code-samples/`](code-samples/) — Selected educational code examples from completed phases
 - [`assets/`](assets/) — PHILOCHESS visual resources
 
+The published C++ samples are self-contained and can be compiled independently with a C++17-compatible compiler.
+
 ## Current status
 
 PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Development has now entered the PHILOCHESS 0.2 phase. Its first alpha introduced basic quiescence search and refined MVV-LVA capture ordering, passed its internal validation, and has now been tested in a controlled external validation tournament without Syzygy tablebases; analysis of the tournament games is currently in progress. Development in 0.2 will continue with iterative deepening, principal variation reporting, improved move ordering, basic time management, and the first positional evaluation layers.
