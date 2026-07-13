@@ -103,3 +103,71 @@ CONCLUSIONS
    - regression tests for the positions before 8...c5, 12...Qxe4, and 16...f6.
 
 General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine, but its evaluation still lacks the positional knowledge required to conduct the opening. The defeat was caused mainly by an accumulation of poor strategic decisions rather than by a single tactical mistake.
+
+Round 2
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "2"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Needle 0.531"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1490"]
+[Time "08:29:07"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:11:27"]
+[PlyCount "51"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 d5 2. Rb1 d4 3. Na4 b5 4. Nc5 e5 5. b4 c6 6. Ra1 Bxc5
+7. bxc5 Na6 8. Rb1 Nxc5 9. Ra1 Nf6 10. Rb1 Qa5 11. Ra1 Nce4
+12. Bb2 Be6 13. a3 Ng4 14. Nh3 O-O-O 15. Rb1 Ne3 16. Qc1 Nc4
+17. Ba1 Nexd2 18. Rb4 c5 19. c3 cxb4 20. axb4 Qa2 21. e4 d3
+22. Bxd3 Rxd3 23. Bb2 Nxb2 24. Ng5 Nb3 25. Qc2 Qa1+ 26. Ke2 0-1
+
+
+SUMMARY
+
+PHILOCHESS began the game by developing the knight with 1.Nc3, but after 1...d5 it played 2.Rb1 and allowed 2...d4 to attack the knight. The knight had to move to a4 and later to c5, where it was exchanged for Black's bishop. Meanwhile, Black established a broad center.
+
+The main opening anomaly was the repeated movement of the a1-rook. The rook moved seven times during the first fifteen moves without gaining mobility or activity: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1, and Rb1. These moves consumed tempi that should have been used to develop the remaining pieces, contest the center, and prepare castling.
+
+The first material loss occurred after 8...Nxc5, when the black knight captured the pawn on c5. The problem was that White's pieces were still undeveloped and could neither support the pawn nor generate counterplay.
+
+After 15...Ne3!, Needle attacked the white queen. PHILOCHESS declined the sacrifice and replied with 16.Qc1. This sequence shows that Needle was already able to operate tactically inside White's position because of its superior development, central control, and activity.
+
+After 18.Rb4, Black played 18...c5 and attacked the rook. PHILOCHESS could not move it because doing so would have cleared the a5-e1 diagonal and allowed a mating sequence in two moves. Therefore, 19.c3 was a necessary defensive move to block the diagonal, although White lost the rook after 19...cxb4.
+
+The continuation 21...d3 created further threats against the white king. PHILOCHESS had to respond with 22.Bxd3, and after 22...Rxd3 it lost the bishop. Later, the other white bishop was captured by 23...Nxb2. With a rook and both bishops lost, the king still in the center, and the remaining pieces lacking sufficient coordination, White's position collapsed rapidly and the game was adjudicated in Needle's favor.
+
+
+CONCLUSIONS
+
+1. The main cause of the defeat was the poor management of opening tempi. PHILOCHESS repeatedly moved one rook while the remaining pieces stayed undeveloped.
+
+2. The rook moved seven times during the first fifteen moves without gaining any mobility or activity. Meanwhile, Needle developed its pieces, occupied the center, and prepared an attack against the white king.
+
+3. The capture 8...Nxc5 was the first material loss. The c5-pawn could not be supported because White's pieces had not yet been developed.
+
+4. The sequence beginning with 15...Ne3! showed that Black was already able to conduct tactical operations inside White's position because of its superior development and coordination.
+
+5. The loss of the rook after 18...c5 was not simply the result of leaving an attacked piece undefended. PHILOCHESS played 19.c3 because moving the rook would have allowed a mating sequence in two moves.
+
+6. The game shows no failures in move legality, UCI communication, move execution, or recapture handling. PHILOCHESS identified an immediate threat against its king but could only prevent it by making a decisive material concession.
+
+7. Priority improvements should include:
+   - basic development evaluation;
+   - penalties for repeatedly moving the same piece during the opening;
+   - specific penalties for premature rook moves while other pieces remain undeveloped;
+   - piece-square tables;
+   - evaluation of central control and space;
+   - mobility and activity evaluation;
+   - distinguishing between moving a piece and creating threats;
+   - king safety and encouragement of castling when appropriate;
+   - regression tests for the positions before 2.Rb1, 8...Nxc5, 15...Ne3, and 18...c5.
+
+General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine and even recognized the mating threat present after 18...c5. However, its evaluation still does not adequately distinguish between useful moves and moves that merely consume tempi. The defeat was caused mainly by the repeated rook moves, the lack of development, the loss of central control, and the king remaining in the center.
