@@ -39,7 +39,7 @@ PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Devel
 |---|---|
 | 0.1-alpha-001–002 | Minimal UCI interface and first provisional bestmove |
 | 0.1-alpha-003–005 | Board representation, square conversion and simple move application |
-| 0.1-alpha-006–007 | Basic pawn and knight move generation, move structure and UCI move parsing |
+| 0.1-alpha-006–007 | Basic pawn and knight move generation, internal move representation and UCI parsing |
 | 0.1-alpha-008–011 | Bishop, rook, queen and king move generation |
 | 0.1-alpha-012 | Pseudo-legal move generation complete |
 | 0.1-alpha-013–021 | Legal move validation, game status, FEN loading, special moves, perft and divide |
