@@ -1,3 +1,41 @@
+===============================================================================
+PHILOCHESS 0.2-alpha-001 VALIDATION: NO SYZYGY
+GAME ANALYSES
+===============================================================================
+
+This document forms part of the technical and chess documentation of the
+development of PHILOCHESS 0.2.
+
+Author of the analyses and copyright holder of the analytical content:
+Robert M. Cuadros
+
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+The original analyses, summaries, conclusions, diagnoses and editorial
+organization contained in this document are licensed under the Creative
+Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+(CC BY-NC-ND 4.0).
+
+This document may be shared only in unmodified form, with appropriate
+attribution and for non-commercial purposes. This authorship and licensing
+notice must be retained in every shared copy.
+
+Preferred attribution:
+“PHILOCHESS 0.2-alpha-001 Validation: No Syzygy Analysis —
+Robert M. Cuadros”
+
+The games and PGN data are included as documentary records of the tournament.
+The stated license applies specifically to the original analytical content
+and its editorial presentation.
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+===============================================================================
+
 Round 1
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
