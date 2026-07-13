@@ -24,10 +24,10 @@ constitute the complete engine source code.
 
 ## Repository contents
 
-- `docs/` — Development logs and technical documentation
-- `games/` — External tests, validation tournaments and game analyses
-- `code-samples/` — Selected educational code examples from completed phases
-- `assets/` — PHILOCHESS visual resources
+- [`docs/`](docs/) — Development logs and technical documentation
+- [`games/`](games/) — External tests, validation tournaments and game analyses
+- [`code-samples/`](code-samples/) — Selected educational code examples from completed phases
+- [`assets/`](assets/) — PHILOCHESS visual resources
 
 ## Current status
 
