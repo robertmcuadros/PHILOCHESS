@@ -3,8 +3,8 @@ PHILOCHESS 0.2-alpha-001 VALIDATION: NO SYZYGY
 GAME ANALYSES
 ===============================================================================
 
-This document forms part of the technical and chess documentation of the
-development of PHILOCHESS 0.2.
+This collection of game analyses forms part of the project documentation for 
+the development of PHILOCHESS 0.2.
 
 Author of the analyses and copyright holder of the analytical content:
 Robert M. Cuadros
