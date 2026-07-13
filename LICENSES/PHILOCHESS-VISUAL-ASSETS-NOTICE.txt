@@ -1,0 +1,73 @@
+PHILOCHESS VISUAL ASSETS NOTICE
+Version 1.0 — July 13, 2026
+
+Copyright (c) 2026 Robert M. Cuadros.
+All rights reserved.
+
+1. SCOPE
+
+This Notice applies to the PHILOCHESS name, logo, emblem, graphical identity,
+color scheme, designs and other visual or branding materials contained in the
+"assets/" directory or displayed elsewhere in the PHILOCHESS repository
+(collectively, the "Visual Assets").
+
+2. OWNERSHIP
+
+The Visual Assets are the exclusive property of Robert M. Cuadros and are
+protected by applicable copyright, trademark and other intellectual-property
+laws.
+
+3. NO LICENSE GRANTED
+
+No license or permission to copy, reproduce, modify, adapt, redistribute,
+publish, display, incorporate, sublicense or otherwise reuse the Visual Assets
+is granted by this repository.
+
+The licenses applicable to the PHILOCHESS documentation, code samples,
+executable releases or any other repository content do not apply to the
+Visual Assets and do not grant any right to use them.
+
+4. PROHIBITED USES
+
+Without prior written permission from the rights holder, the Visual Assets
+may not be used:
+
+a. as the name, logo, icon, emblem or visual identity of another chess engine,
+   software project, organization, product or service;
+
+b. in modified, recolored, redrawn, animated or derivative form;
+
+c. in websites, repositories, publications, promotional materials,
+   merchandise, applications, videos or social-media content;
+
+d. in any manner that suggests endorsement, sponsorship, partnership,
+   affiliation or official association with PHILOCHESS or its rights holder; or
+
+e. for commercial, advertising, promotional or fundraising purposes.
+
+5. LIMITED REPOSITORY DISPLAY
+
+The presence of the Visual Assets in this repository permits only their
+ordinary viewing through GitHub's standard repository functionality.
+
+No broader right of reproduction, redistribution or reuse is granted.
+
+6. PHILOCHESS NAME AND IDENTITY
+
+No permission is granted to register, claim, imitate or use the PHILOCHESS
+name, logo or confusingly similar names, symbols or designs as a trademark,
+service mark, trade name, domain name, repository name, product name or other
+identifier.
+
+7. REQUESTS FOR PERMISSION
+
+Any use not expressly permitted by this Notice requires prior written
+authorization from the rights holder.
+
+8. RESERVED RIGHTS
+
+No rights are granted except those expressly stated in this Notice. All other
+rights are reserved.
+
+Nothing in this Notice is intended to restrict any exception, limitation or
+right that cannot lawfully be excluded under applicable law.
