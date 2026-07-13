@@ -41,7 +41,7 @@ RONDA 1
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
 [Site "Lima, PER"]
 [Date "2026.07.12"]
-[Round "1.1"]
+[Round "1"]
 [White "Zoidberg 0.1"]
 [Black "PHILOCHESS 0.2 alpha 001"]
 [Result "1-0"]
