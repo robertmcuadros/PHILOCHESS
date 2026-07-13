@@ -1,0 +1,718 @@
+Date: July 12, 2026
+
+PHILOCHESS 0.2-alpha-001 — Basic quiescence search
+
+Implemented the first basic quiescence search in PHILOCHESS.
+
+Technical milestone:
+PHILOCHESS can now continue searching tactically unstable positions after the normal alpha-beta depth reaches zero.
+
+Instead of immediately applying the static material evaluation at depth zero, the engine now examines forcing tactical continuations until it reaches a position considered sufficiently quiet for static evaluation.
+
+This is the first version of the PHILOCHESS 0.2 development cycle.
+It builds directly on PHILOCHESS 0.1-alpha-032, the validated final version of PHILOCHESS 0.1.
+
+Alpha-001 preserves:
+- legal move generation;
+- FEN loading;
+- castling;
+- en passant;
+- pawn promotion;
+- check, checkmate, and stalemate detection;
+- perft and divide;
+- known reference perft validation;
+- material evaluation;
+- basic alpha-beta search;
+- basic UCI time-control parsing;
+- tactical regression testing;
+- basic move ordering.
+
+New functionality:
+- Added basic quiescence search.
+- Alpha-beta now enters quiescence when the normal search depth reaches zero.
+- Added stand pat evaluation when the side to move is not in check.
+- Added stand pat alpha updates.
+- Added stand pat beta cutoffs.
+- Added recursive quiescence search using the negamax framework.
+- Added captures to the quiescence move set.
+- Added promotions to the quiescence move set, including non-capturing promotions.
+- Deliberately excluded non-capturing checking moves from this first quiescence version.
+- Added complete legal check-evasion search when the side to move is in check.
+- Disabled stand pat when the side to move is in check.
+- Added terminal checkmate and stalemate handling inside quiescence.
+- Added periodic time-limit checks inside quiescence.
+- Added an emergency quiescence safety limit of 64 plies.
+- Added a counter for quiescence ply-limit hits.
+- Added separate counters for:
+  - main-search nodes;
+  - quiescence nodes;
+  - alpha-beta cutoffs;
+  - quiescence beta cutoffs;
+  - quiescence nodes entered while in check;
+  - selective search depth;
+  - quiescence ply-limit hits.
+- Updated search information output to report the new quiescence statistics.
+
+Move ordering refinement:
+The MVV-LVA-style capture ordering introduced in PHILOCHESS 0.1-alpha-031 was reviewed and refined.
+
+The original material values could treat the king as a zero-value attacker because the king has a material evaluation value of 0.
+Alpha-001 now uses separate piece-ordering ranks for MVV-LVA:
+
+Pawn   = 1
+Knight = 2
+Bishop = 3
+Rook   = 4
+Queen  = 5
+King   = 6
+
+This keeps material evaluation values separate from move-ordering ranks.
+
+The refined ordering now ensures that:
+- the most valuable victim receives priority;
+- when two moves capture the same victim, the less valuable attacker receives priority;
+- the king is no longer treated as the cheapest possible attacker;
+- promotions receive their own high-priority category;
+- capture-promotions receive both promotion and capture bonuses.
+
+New internal diagnostic commands:
+- qprobe
+- qcompare [depth]
+- qtest
+
+qprobe:
+Runs quiescence directly from the current position and reports:
+- qscore;
+- qnodes;
+- quiescence beta cutoffs;
+- quiescence check nodes;
+- selective depth;
+- ply-limit hits.
+
+qcompare [depth]:
+Runs the same search twice:
+- with MVV-LVA ordering inside quiescence;
+- without move ordering inside quiescence.
+
+This allows direct comparison of the resulting move, evaluation, nodes, qnodes, and quiescence cutoffs.
+
+qtest:
+Runs four controlled internal tests for:
+- horizon recapture avoidance;
+- capture-sequence resolution;
+- non-capturing promotion inclusion;
+- check evasion without stand pat.
+
+UCI identification was updated to:
+id name PHILOCHESS 0.2-alpha-001
+
+Important note:
+Alpha-001 does not change the static evaluation function.
+PHILOCHESS still uses material-only evaluation.
+
+The purpose of this version is to improve tactical stability at the horizon of the normal search.
+It does not yet add positional understanding through piece-square tables, mobility, pawn structure, king safety, development, activity, coordination, or initiative.
+
+Compilation test:
+The program compiled successfully in Visual Studio.
+
+The compilation output reported:
+1 successful build, 0 errors, 0 updated, 0 skipped.
+
+The executable was generated in:
+D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
+
+Basic UCI test performed:
+uci
+isready
+
+Result:
+The uci command returned:
+id name PHILOCHESS 0.2-alpha-001
+id author Robert M. Cuadros
+uciok
+
+The isready command returned:
+readyok
+
+This confirms that the version identity was updated correctly and that the established UCI communication remained functional.
+
+Test 1 — Basic quiescence test suite
+
+Command performed:
+qtest
+
+Result:
+PHILOCHESS ran four internal quiescence tests.
+
+Horizon recapture avoidance:
+PASS - Horizon recapture avoidance: bestmove d1e2, score 400
+
+The tested FEN was:
+3rk3/8/8/8/8/8/8/3QK3 w - - 0 1
+
+At normal depth 1, PHILOCHESS avoided the apparent capture:
+Qxd8+
+
+The new quiescence search sees that the black king can recapture on d8.
+PHILOCHESS therefore avoids the false tactical gain caused by the horizon effect.
+
+Capture chain:
+PASS - Capture chain: qscore 500, qnodes 4
+
+The tested FEN was:
+4k3/8/8/3q4/3r4/3R4/3Q4/4K3 w - - 0 1
+
+PHILOCHESS followed the available capture sequence until reaching a stable tactical result.
+
+The returned qscore of 500 is correct.
+White can win the black rook and obtain a rook advantage.
+Black is not forced to make a losing queen recapture and can use stand pat to preserve the better defensive result.
+
+Non-capturing promotion:
+PASS - Quiet promotion included: qscore 900, qnodes 9
+
+The tested FEN was:
+4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+
+PHILOCHESS included the non-capturing promotion in quiescence and correctly reached a queen-value evaluation of 900 cp.
+
+Check evasion without stand pat:
+PASS - Check evasion without stand pat: checknodes 1, qnodes 5
+
+The tested FEN was:
+4r1k1/8/8/8/8/8/8/4K3 w - - 0 1
+
+The white king was in check.
+PHILOCHESS correctly disabled stand pat and searched all legal evasions.
+
+Final result:
+Quiescence tests: 4/4 passed
+
+This confirms that the first basic quiescence implementation handles the four intended controlled cases correctly.
+
+Test 2 — Refined MVV-LVA move ordering
+
+FEN tested:
+7k/2q5/5r2/3NP3/1b3p2/8/8/K7 w - - 0 1
+
+Commands performed:
+position fen 7k/2q5/5r2/3NP3/1b3p2/8/8/K7 w - - 0 1
+orderedmoves
+
+Result:
+The first five moves were:
+
+d5c7  score 100498
+e5f6  score 100399
+d5f6  score 100398
+d5b4  score 100298
+d5f4  score 100098
+
+Total: 13
+
+Interpretation:
+- d5c7 was searched first because the knight captures the queen.
+- e5f6 was searched before d5f6 because both moves capture the same rook, but the pawn is the less valuable attacker.
+- d5b4 followed because the knight captures a bishop.
+- d5f4 followed because the knight captures a pawn.
+- All quiet moves appeared after the captures with score 0.
+
+This confirms that:
+- the most valuable victim receives priority;
+- the least valuable attacker correctly breaks ties;
+- captures are searched before quiet moves;
+- the refined MVV-LVA ordering behaves deterministically.
+
+Test 3 — Quiescence ordering comparison
+
+The same tactical position remained loaded.
+
+Command performed:
+qcompare 4
+
+Result with MVV-LVA/orderMoves:
+bestmove d5c7
+score -610
+nodes 809
+qnodes 672
+qcutoffs 537
+
+Result without quiescence move ordering:
+bestmove d5c7
+score -610
+nodes 827
+qnodes 690
+qcutoffs 555
+
+Final comparison:
+Result: ordering reduced quiescence nodes by 18.
+
+Both searches returned:
+- the same best move;
+- the same evaluation.
+
+Main-search nodes were identical:
+809 - 672 = 137
+827 - 690 = 137
+
+Therefore, the entire difference came from quiescence.
+
+MVV-LVA reduced the quiescence node count from 690 to 672, a reduction of approximately 2.6 percent in this position.
+
+This is a modest but real efficiency improvement.
+The ordering changed the amount of work performed without changing the chess result.
+
+Test 4 — Direct quiescence probe
+
+Command performed:
+qprobe
+
+Result:
+qscore -510
+qnodes 6
+qcutoffs 4
+checknodes 0
+seldepth 1
+ply-limit-hits 0
+
+The position initially had a material evaluation of -1410 cp for White.
+The tactical capture Nxc7 wins the black queen, valued at 900 cp:
+
+-1410 + 900 = -510
+
+The returned qscore is therefore correct.
+
+The remaining statistics show:
+- only six quiescence nodes were needed;
+- four branches produced quiescence cutoffs;
+- no quiescence node began with the side to move in check;
+- the tactical continuation reached one selective ply;
+- the emergency ply limit was not reached.
+
+Test 5 — Tactical regression test
+
+Command performed:
+tactictest 4
+
+The test reconstructs three positions from the first practical GUI game against Pulse Chess 1.6.1.
+
+Case 1 — Before 10...Qc6?
+
+Side to move:
+black
+
+Material evaluation:
++100 cp for White
+
+Search result:
+info depth 4 seldepth 14 nodes 10207 time 1973 nps 5173 score cp -100 pv b6e6
+
+Main nodes:
+1023
+
+Quiescence nodes:
+9184
+
+Alpha-beta cutoffs:
+906
+
+Quiescence beta cutoffs:
+6861
+
+Quiescence check nodes:
+887
+
+Ply-limit hits:
+0
+
+Regression bestmove:
+b6e6
+
+Known bad move:
+b6c6
+
+Status:
+IMPROVED - known bad move avoided
+
+PHILOCHESS chose 10...Qe6 and avoided the original tactical error 10...Qc6?.
+
+Case 2 — After 11.Bb5
+
+Side to move:
+black
+
+Material evaluation:
++100 cp for White
+
+Search result:
+info depth 4 seldepth 15 nodes 4007 time 734 nps 5459 score cp -670 pv c6b5
+
+Main nodes:
+294
+
+Quiescence nodes:
+3713
+
+Alpha-beta cutoffs:
+231
+
+Quiescence beta cutoffs:
+2910
+
+Quiescence check nodes:
+301
+
+Ply-limit hits:
+0
+
+Regression bestmove:
+c6b5
+
+The diagnostic text was corrected during alpha-001 development.
+
+The move 11...Qxb5 is no longer classified as a separate known bad move.
+It is correctly described as a legal defensive attempt in a position where the queen is already tactically lost because 12.Nc7+ follows with a fork.
+
+Case 3 — After 11...Qxb5
+
+Side to move:
+white
+
+Material evaluation:
+-230 cp for White
+
+Search result:
+info depth 4 seldepth 12 nodes 7851 time 1567 nps 5010 score cp 670 pv d5c7
+
+Main nodes:
+1318
+
+Quiescence nodes:
+6533
+
+Alpha-beta cutoffs:
+1237
+
+Quiescence beta cutoffs:
+5056
+
+Quiescence check nodes:
+331
+
+Ply-limit hits:
+0
+
+Regression bestmove:
+d5c7
+
+Expected tactical move:
+d5c7
+
+Status:
+EXPECTED TACTICAL MOVE FOUND
+
+PHILOCHESS correctly found 12.Nc7+, the tactical move that gives check and attacks the black queen.
+
+The score of +670 cp is consistent with the material sequence:
+White begins 230 cp behind and then wins the black queen, valued at 900 cp.
+
+-230 + 900 = +670
+
+Regression conclusion:
+- PHILOCHESS avoids the original error 10...Qc6?.
+- 11...Qxb5 is correctly treated as a defensive attempt, not as the original tactical mistake.
+- PHILOCHESS finds the expected tactical refutation 12.Nc7+.
+- No tactical regression case reached the emergency quiescence ply limit.
+
+Test 6 — Known reference perft validation
+
+Command performed:
+perftknown 4
+
+Result:
+PHILOCHESS passed all registered known reference values up to depth 4.
+
+Initial position:
+depth 1: 20 / 20 OK
+depth 2: 400 / 400 OK
+depth 3: 8902 / 8902 OK
+depth 4: 197281 / 197281 OK
+
+Kiwipete:
+depth 1: 48 / 48 OK
+depth 2: 2039 / 2039 OK
+depth 3: 97862 / 97862 OK
+depth 4: 4085603 / 4085603 OK
+
+Endgame en passant/captures:
+depth 1: 14 / 14 OK
+depth 2: 191 / 191 OK
+depth 3: 2812 / 2812 OK
+depth 4: 43238 / 43238 OK
+
+Promotions and castling pressure:
+depth 1: 6 / 6 OK
+depth 2: 264 / 264 OK
+depth 3: 9467 / 9467 OK
+depth 4: 422333 / 422333 OK
+
+Promotion bug trap:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Middle game development:
+depth 1: 46 / 46 OK
+depth 2: 2079 / 2079 OK
+depth 3: 89890 / 89890 OK
+depth 4: 3894594 / 3894594 OK
+
+Validation summary:
+perftknown 4: 24/24 passed
+
+This confirms that the quiescence implementation and MVV-LVA refinement did not break:
+- legal move generation;
+- move application;
+- castling;
+- en passant;
+- promotion handling;
+- check detection;
+- king safety filtering.
+
+Test 7 — Normal search from the starting position
+
+Commands performed:
+position startpos
+go depth 1
+go depth 2
+go depth 3
+go depth 4
+
+Results:
+
+Depth 1:
+nodes 20
+main nodes 0
+quiescence nodes 20
+seldepth 1
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Depth 2:
+nodes 63
+main nodes 20
+quiescence nodes 43
+seldepth 4
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Depth 3:
+nodes 527
+main nodes 59
+quiescence nodes 468
+seldepth 4
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Depth 4:
+nodes 1625
+main nodes 524
+quiescence nodes 1101
+seldepth 8
+score 0 cp
+bestmove b1c3
+quiescence check nodes 13
+ply-limit hits 0
+
+The normal search remained stable from depth 1 to depth 4.
+
+The selective depth exceeded the nominal search depth because quiescence extended tactical continuations beyond the normal depth boundary.
+
+The best move remained b1c3 because the current material-only evaluation gives equal scores to many initial moves.
+PHILOCHESS does not yet have positional evaluation capable of preferring development or central control for genuine positional reasons.
+
+Test 8 — Fixed movetime tests
+
+Commands performed:
+position startpos
+go movetime 100
+go movetime 500
+
+Result for go movetime 100:
+depth 4
+seldepth 8
+nodes 805
+main nodes 176
+quiescence nodes 629
+time 100 ms
+score 0 cp
+bestmove b1c3
+stopped by limit
+ply-limit hits 0
+
+PHILOCHESS reached the requested 100 ms limit, stopped the search, and returned a legal bestmove.
+
+Result for go movetime 500:
+depth 4
+seldepth 8
+nodes 1625
+main nodes 524
+quiescence nodes 1101
+time 238 ms
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+The engine completed its maximum depth of 4 before reaching the 500 ms limit.
+Therefore, it returned normally without reporting stopped by limit.
+
+This is not a time-control error.
+The current engine is limited to SEARCH_MAX_DEPTH = 4 and does not yet use iterative deepening to continue searching deeper while time remains available.
+
+Test 9 — UCI clock-control test with White to move
+
+Commands performed:
+position startpos
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+
+PHILOCHESS calculated:
+timelimit 2500
+
+The calculation was:
+60000 / 30 + 1000 / 2 = 2500 ms
+
+Result:
+depth 4
+seldepth 8
+nodes 1625
+main nodes 524
+quiescence nodes 1101
+time 219 ms
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+This confirms that PHILOCHESS correctly used the White clock and White increment because White was the side to move.
+
+The search completed depth 4 before reaching the calculated 2500 ms budget.
+
+Test 10 — UCI clock-control test with Black to move
+
+Commands performed:
+position startpos moves e2e4
+go wtime 90000 btime 60000 winc 2000 binc 1000 movestogo 30
+
+PHILOCHESS calculated:
+timelimit 2500
+
+Because Black was the side to move, the correct calculation was:
+60000 / 30 + 1000 / 2 = 2500 ms
+
+If the engine had incorrectly used the White clock and increment, it would have calculated 4000 ms.
+
+Result:
+depth 4
+seldepth 12
+nodes 3065
+main nodes 557
+quiescence nodes 2508
+time 471 ms
+score 0 cp
+bestmove a7a6
+quiescence check nodes 139
+ply-limit hits 0
+
+This confirms that PHILOCHESS correctly selected btime and binc when Black was the side to move.
+
+The move a7a6 should not yet be interpreted as a positional choice.
+The material-only evaluation gives equal scores to many legal moves.
+
+Program exit test:
+The command performed was:
+quit
+
+Result:
+The program exited successfully with code:
+0 (0x0)
+
+This confirms a clean program termination without a crash or unhandled exception.
+
+Current limitations:
+- The static evaluation remains material-only.
+- Quiescence currently searches captures and promotions only when the side to move is not in check.
+- Non-capturing checking moves are deliberately excluded.
+- No static exchange evaluation is implemented.
+- No SEE pruning is implemented.
+- No delta pruning is implemented.
+- No transposition table is implemented.
+- No hash move ordering is implemented.
+- No principal variation move ordering is implemented.
+- No killer move heuristic is implemented.
+- No history heuristic is implemented.
+- No iterative deepening is implemented.
+- Maximum normal search depth remains 4.
+- The principal variation output still reports only the selected root move.
+- Time management remains basic.
+- stop is recognized, but search is still synchronous and cannot yet be interrupted asynchronously.
+- go infinite is parsed, but true infinite analysis is not implemented.
+- Quiescence nodes can significantly outnumber normal search nodes in tactical positions.
+- The 64-ply limit is an emergency safety mechanism, not a replacement for future selective pruning.
+- The tactical regression suite is still small and should be expanded with additional controlled positions and future errors found in PHILOCHESS games.
+- The engine does not yet evaluate piece placement, mobility, king safety, pawn structure, development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The current Debug build is not optimized for speed.
+- External Myracle tournament validation of alpha-001 remains pending.
+
+Conclusion:
+The internal development and console validation of PHILOCHESS 0.2-alpha-001 have been completed.
+
+PHILOCHESS now includes its first basic quiescence search.
+
+PHILOCHESS passed:
+- successful Visual Studio compilation with 0 errors;
+- correct UCI identification as PHILOCHESS 0.2-alpha-001;
+- immediate uciok output;
+- immediate readyok output;
+- qtest with 4/4 successful tests;
+- horizon recapture avoidance;
+- capture-sequence resolution;
+- non-capturing promotion inclusion;
+- legal check-evasion search without stand pat;
+- refined MVV-LVA capture ordering;
+- correct most-valuable-victim priority;
+- correct least-valuable-attacker tie breaking;
+- orderedmoves validation with 13 legal moves;
+- qcompare 4 with the same move and score in both searches;
+- reduction of 18 quiescence nodes through move ordering;
+- qprobe with qscore -510 and 0 ply-limit hits;
+- tactical regression test at depth 4;
+- correct avoidance of 10...Qc6?;
+- correct classification of 11...Qxb5 as a legal defensive attempt;
+- correct discovery of 12.Nc7+;
+- perftknown 4 with 24/24 successful validations;
+- stable go depth 1;
+- stable go depth 2;
+- stable go depth 3;
+- stable go depth 4;
+- go movetime 100 with correct time-limit stop;
+- go movetime 500 with normal depth-4 completion;
+- correct White clock and increment selection;
+- correct Black clock and increment selection;
+- 0 quiescence ply-limit hits in all executed tests;
+- successful program exit with code 0.
+
+This is the first major search milestone of PHILOCHESS 0.2.
+
+PHILOCHESS no longer stops its analysis immediately at tactically unstable depth boundaries.
+The engine can now continue through captures, promotions, and forced check evasions before applying its static material evaluation.
+
+External validation will continue through controlled Myracle tournaments:
+- first under the same conditions as the PHILOCHESS 0.1 Validation Tournament without Syzygy tablebases;
+- later in a practical environment with Syzygy tablebases enabled where applicable.
+
+The next internal development step should focus on further quiescence correctness, additional tactical regression positions, and broader measurement of quiescence growth before introducing the next major search component.

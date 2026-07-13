@@ -1,0 +1,718 @@
+Fecha: 12 de julio de 2026
+
+PHILOCHESS 0.2-alpha-001 — Búsqueda de quietud básica
+
+Se implementó la primera búsqueda de quietud básica de PHILOCHESS.
+
+Hito técnico:
+PHILOCHESS ya puede continuar buscando en posiciones tácticamente inestables después de que la búsqueda alpha-beta normal alcanza profundidad cero.
+
+En lugar de aplicar inmediatamente la evaluación material estática al llegar a profundidad cero, el motor ahora examina continuaciones tácticas forzadas hasta alcanzar una posición considerada suficientemente tranquila para ser evaluada estáticamente.
+
+Esta es la primera versión del ciclo de desarrollo de PHILOCHESS 0.2.
+Se apoya directamente en PHILOCHESS 0.1-alpha-032, la versión final validada de PHILOCHESS 0.1.
+
+Alpha-001 conserva:
+- generación de jugadas legales;
+- lectura de FEN;
+- enroque;
+- captura al paso;
+- promoción de peón;
+- detección de jaque, jaque mate y ahogado;
+- perft y divide;
+- validación perft con posiciones conocidas;
+- evaluación material;
+- búsqueda alpha-beta básica;
+- lectura básica de controles de tiempo UCI;
+- prueba de regresión táctica;
+- ordenamiento básico de jugadas.
+
+Nueva funcionalidad:
+- Se añadió búsqueda de quietud básica.
+- Alpha-beta ahora entra en búsqueda de quietud cuando la profundidad normal llega a cero.
+- Se añadió evaluación stand pat cuando el bando que mueve no está en jaque.
+- Se añadió actualización de alpha mediante stand pat.
+- Se añadieron cortes beta mediante stand pat.
+- Se añadió búsqueda recursiva de quietud mediante el esquema negamax.
+- Se añadieron capturas al conjunto de jugadas de quietud.
+- Se añadieron promociones al conjunto de jugadas de quietud, incluyendo promociones sin captura.
+- Se excluyeron deliberadamente los jaques sin captura de esta primera versión de búsqueda de quietud.
+- Se añadió búsqueda completa de evasiones legales cuando el bando que mueve está en jaque.
+- Se desactivó stand pat cuando el bando que mueve está en jaque.
+- Se añadió manejo de jaque mate y ahogado dentro de la búsqueda de quietud.
+- Se añadieron comprobaciones periódicas del límite de tiempo dentro de la búsqueda de quietud.
+- Se añadió un límite de seguridad de 64 plies para la búsqueda de quietud.
+- Se añadió un contador de impactos del límite de plies.
+- Se añadieron contadores separados para:
+  - nodos de búsqueda principal;
+  - nodos de quietud;
+  - cortes alpha-beta;
+  - cortes beta de quietud;
+  - nodos de quietud iniciados con el bando que mueve en jaque;
+  - profundidad selectiva;
+  - impactos del límite de plies.
+- Se actualizó la salida de información de búsqueda para mostrar las nuevas estadísticas de quietud.
+
+Refinamiento del ordenamiento de jugadas:
+Se revisó y refinó el ordenamiento de capturas de estilo MVV-LVA introducido en PHILOCHESS 0.1-alpha-031.
+
+Los valores materiales originales podían tratar al rey como un atacante de valor cero, porque el rey tiene valor 0 dentro de la evaluación material.
+Alpha-001 utiliza ahora rangos independientes para el ordenamiento MVV-LVA:
+
+Peón    = 1
+Caballo = 2
+Alfil   = 3
+Torre   = 4
+Dama    = 5
+Rey     = 6
+
+Esto mantiene separados los valores de evaluación material y los rangos usados para ordenar jugadas.
+
+El ordenamiento refinado asegura que:
+- la víctima más valiosa reciba prioridad;
+- cuando dos jugadas capturan la misma víctima, se priorice el atacante menos valioso;
+- el rey ya no sea tratado como el atacante más barato;
+- las promociones reciban una categoría propia de alta prioridad;
+- las promociones por captura reciban tanto la bonificación de promoción como la de captura.
+
+Nuevos comandos internos de diagnóstico:
+- qprobe
+- qcompare [depth]
+- qtest
+
+qprobe:
+Ejecuta directamente la búsqueda de quietud desde la posición actual e informa:
+- qscore;
+- qnodes;
+- cortes beta de quietud;
+- nodos de quietud en jaque;
+- profundidad selectiva;
+- impactos del límite de plies.
+
+qcompare [depth]:
+Ejecuta la misma búsqueda dos veces:
+- con ordenamiento MVV-LVA dentro de la búsqueda de quietud;
+- sin ordenamiento de jugadas dentro de la búsqueda de quietud.
+
+Esto permite comparar directamente la jugada obtenida, evaluación, nodos, qnodes y cortes de quietud.
+
+qtest:
+Ejecuta cuatro pruebas internas controladas para:
+- evitar una recaptura situada más allá del horizonte;
+- resolver una secuencia de capturas;
+- incluir una promoción sin captura;
+- buscar evasiones de jaque sin utilizar stand pat.
+
+Se actualizó la identificación UCI a:
+id name PHILOCHESS 0.2-alpha-001
+
+Nota importante:
+Alpha-001 no cambia la función de evaluación estática.
+PHILOCHESS todavía utiliza evaluación solamente material.
+
+El objetivo de esta versión es mejorar la estabilidad táctica en el horizonte de la búsqueda normal.
+Todavía no añade comprensión posicional mediante tablas de casillas, movilidad, estructura de peones, seguridad del rey, desarrollo, actividad, coordinación o iniciativa.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+El ejecutable fue generado en:
+D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
+
+Prueba básica UCI realizada:
+uci
+isready
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.2-alpha-001
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Esto confirma que la identidad de versión fue actualizada correctamente y que la comunicación UCI ya establecida se mantuvo funcional.
+
+Prueba 1 — Batería básica de búsqueda de quietud
+
+Comando realizado:
+qtest
+
+Resultado:
+PHILOCHESS ejecutó cuatro pruebas internas de búsqueda de quietud.
+
+Evitación de recaptura situada después del horizonte:
+PASS - Horizon recapture avoidance: bestmove d1e2, score 400
+
+FEN probada:
+3rk3/8/8/8/8/8/8/3QK3 w - - 0 1
+
+A profundidad normal 1, PHILOCHESS evitó la captura aparente:
+Dxd8+
+
+La nueva búsqueda de quietud alcanza a ver que el rey negro puede recapturar en d8.
+PHILOCHESS evita así la falsa ganancia táctica producida por el efecto horizonte.
+
+Secuencia de capturas:
+PASS - Capture chain: qscore 500, qnodes 4
+
+FEN probada:
+4k3/8/8/3q4/3r4/3R4/3Q4/4K3 w - - 0 1
+
+PHILOCHESS siguió la secuencia de capturas disponible hasta alcanzar un resultado táctico estable.
+
+El qscore 500 es correcto.
+Las blancas pueden ganar la torre negra y obtener una ventaja de torre.
+Las negras no están obligadas a realizar una recaptura perdedora con la dama y pueden utilizar stand pat para conservar la mejor defensa disponible.
+
+Promoción sin captura:
+PASS - Quiet promotion included: qscore 900, qnodes 9
+
+FEN probada:
+4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+
+PHILOCHESS incluyó la promoción sin captura dentro de la búsqueda de quietud y alcanzó correctamente una evaluación de 900 cp, equivalente al valor de una dama.
+
+Evasión de jaque sin stand pat:
+PASS - Check evasion without stand pat: checknodes 1, qnodes 5
+
+FEN probada:
+4r1k1/8/8/8/8/8/8/4K3 w - - 0 1
+
+El rey blanco estaba en jaque.
+PHILOCHESS desactivó correctamente stand pat y buscó todas las evasiones legales.
+
+Resultado final:
+Quiescence tests: 4/4 passed
+
+Esto confirma que la primera búsqueda de quietud básica maneja correctamente los cuatro casos controlados previstos.
+
+Prueba 2 — Ordenamiento MVV-LVA refinado
+
+FEN probada:
+7k/2q5/5r2/3NP3/1b3p2/8/8/K7 w - - 0 1
+
+Comandos realizados:
+position fen 7k/2q5/5r2/3NP3/1b3p2/8/8/K7 w - - 0 1
+orderedmoves
+
+Resultado:
+Las cinco primeras jugadas fueron:
+
+d5c7  score 100498
+e5f6  score 100399
+d5f6  score 100398
+d5b4  score 100298
+d5f4  score 100098
+
+Total: 13
+
+Interpretación:
+- d5c7 apareció primero porque el caballo captura la dama.
+- e5f6 apareció antes que d5f6 porque ambas jugadas capturan la misma torre, pero el peón es el atacante menos valioso.
+- d5b4 apareció después porque el caballo captura un alfil.
+- d5f4 apareció después porque el caballo captura un peón.
+- Todas las jugadas tranquilas aparecieron después de las capturas con score 0.
+
+Esto confirma que:
+- la víctima más valiosa recibe prioridad;
+- el atacante menos valioso resuelve correctamente los empates;
+- las capturas se buscan antes que las jugadas tranquilas;
+- el ordenamiento MVV-LVA refinado se comporta de manera determinista.
+
+Prueba 3 — Comparación del ordenamiento dentro de la búsqueda de quietud
+
+Se mantuvo cargada la misma posición táctica.
+
+Comando realizado:
+qcompare 4
+
+Resultado con MVV-LVA/orderMoves:
+bestmove d5c7
+score -610
+nodes 809
+qnodes 672
+qcutoffs 537
+
+Resultado sin ordenamiento dentro de quietud:
+bestmove d5c7
+score -610
+nodes 827
+qnodes 690
+qcutoffs 555
+
+Comparación final:
+Result: ordering reduced quiescence nodes by 18.
+
+Ambas búsquedas devolvieron:
+- la misma mejor jugada;
+- la misma evaluación.
+
+Los nodos de búsqueda principal fueron idénticos:
+809 - 672 = 137
+827 - 690 = 137
+
+Por lo tanto, toda la diferencia procedió de la búsqueda de quietud.
+
+MVV-LVA redujo los nodos de quietud de 690 a 672, una reducción aproximada de 2,6 por ciento en esta posición.
+
+Esta es una mejora de eficiencia modesta, pero real.
+El ordenamiento redujo el trabajo sin alterar el resultado ajedrecístico.
+
+Prueba 4 — Exploración directa de quietud
+
+Comando realizado:
+qprobe
+
+Resultado:
+qscore -510
+qnodes 6
+qcutoffs 4
+checknodes 0
+seldepth 1
+ply-limit-hits 0
+
+La posición inicial tenía una evaluación material de -1410 cp para las blancas.
+La captura táctica Cxc7 gana la dama negra, valorada en 900 cp:
+
+-1410 + 900 = -510
+
+Por tanto, el qscore devuelto es correcto.
+
+Las demás estadísticas muestran:
+- solo fueron necesarios seis nodos de quietud;
+- cuatro ramas produjeron cortes de quietud;
+- ningún nodo de quietud comenzó con el bando que mueve en jaque;
+- la continuación táctica alcanzó un ply selectivo;
+- no se alcanzó el límite de seguridad.
+
+Prueba 5 — Prueba de regresión táctica
+
+Comando realizado:
+tactictest 4
+
+La prueba reconstruye tres posiciones de la primera partida práctica de GUI contra Pulse Chess 1.6.1.
+
+Caso 1 — Antes de 10...Dc6?
+
+Bando que mueve:
+negras
+
+Evaluación material:
++100 cp para las blancas
+
+Resultado de búsqueda:
+info depth 4 seldepth 14 nodes 10207 time 1973 nps 5173 score cp -100 pv b6e6
+
+Nodos principales:
+1023
+
+Nodos de quietud:
+9184
+
+Cortes alpha-beta:
+906
+
+Cortes beta de quietud:
+6861
+
+Nodos de quietud en jaque:
+887
+
+Impactos del límite de plies:
+0
+
+Mejor jugada de regresión:
+b6e6
+
+Jugada mala conocida:
+b6c6
+
+Estado:
+IMPROVED - known bad move avoided
+
+PHILOCHESS eligió 10...De6 y evitó el error táctico original 10...Dc6?.
+
+Caso 2 — Después de 11.Ab5
+
+Bando que mueve:
+negras
+
+Evaluación material:
++100 cp para las blancas
+
+Resultado de búsqueda:
+info depth 4 seldepth 15 nodes 4007 time 734 nps 5459 score cp -670 pv c6b5
+
+Nodos principales:
+294
+
+Nodos de quietud:
+3713
+
+Cortes alpha-beta:
+231
+
+Cortes beta de quietud:
+2910
+
+Nodos de quietud en jaque:
+301
+
+Impactos del límite de plies:
+0
+
+Mejor jugada de regresión:
+c6b5
+
+El texto de diagnóstico fue corregido durante el desarrollo de alpha-001.
+
+La jugada 11...Dxb5 ya no se clasifica como una segunda jugada mala conocida.
+Se describe correctamente como un intento defensivo legal en una posición en la que la dama ya está tácticamente perdida, porque sigue 12.Cc7+ con un tenedor.
+
+Caso 3 — Después de 11...Dxb5
+
+Bando que mueve:
+blancas
+
+Evaluación material:
+-230 cp para las blancas
+
+Resultado de búsqueda:
+info depth 4 seldepth 12 nodes 7851 time 1567 nps 5010 score cp 670 pv d5c7
+
+Nodos principales:
+1318
+
+Nodos de quietud:
+6533
+
+Cortes alpha-beta:
+1237
+
+Cortes beta de quietud:
+5056
+
+Nodos de quietud en jaque:
+331
+
+Impactos del límite de plies:
+0
+
+Mejor jugada de regresión:
+d5c7
+
+Jugada táctica esperada:
+d5c7
+
+Estado:
+EXPECTED TACTICAL MOVE FOUND
+
+PHILOCHESS encontró correctamente 12.Cc7+, la jugada táctica que da jaque y ataca la dama negra.
+
+La evaluación de +670 cp es coherente con la secuencia material:
+Las blancas comienzan con 230 cp de desventaja y luego ganan la dama negra, valorada en 900 cp.
+
+-230 + 900 = +670
+
+Conclusión de la regresión:
+- PHILOCHESS evita el error original 10...Dc6?.
+- 11...Dxb5 se trata correctamente como intento defensivo y no como el error táctico original.
+- PHILOCHESS encuentra la refutación esperada 12.Cc7+.
+- Ningún caso de regresión alcanzó el límite de seguridad de la búsqueda de quietud.
+
+Prueba 6 — Validación perft con posiciones conocidas
+
+Comando realizado:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todos los valores conocidos registrados hasta profundidad 4.
+
+Initial position:
+depth 1: 20 / 20 OK
+depth 2: 400 / 400 OK
+depth 3: 8902 / 8902 OK
+depth 4: 197281 / 197281 OK
+
+Kiwipete:
+depth 1: 48 / 48 OK
+depth 2: 2039 / 2039 OK
+depth 3: 97862 / 97862 OK
+depth 4: 4085603 / 4085603 OK
+
+Endgame en passant/captures:
+depth 1: 14 / 14 OK
+depth 2: 191 / 191 OK
+depth 3: 2812 / 2812 OK
+depth 4: 43238 / 43238 OK
+
+Promotions and castling pressure:
+depth 1: 6 / 6 OK
+depth 2: 264 / 264 OK
+depth 3: 9467 / 9467 OK
+depth 4: 422333 / 422333 OK
+
+Promotion bug trap:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Middle game development:
+depth 1: 46 / 46 OK
+depth 2: 2079 / 2079 OK
+depth 3: 89890 / 89890 OK
+depth 4: 3894594 / 3894594 OK
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que la búsqueda de quietud y el refinamiento MVV-LVA no rompieron:
+- generación de jugadas legales;
+- aplicación de jugadas;
+- enroque;
+- captura al paso;
+- manejo de promociones;
+- detección de jaque;
+- filtrado de seguridad del rey.
+
+Prueba 7 — Búsqueda normal desde la posición inicial
+
+Comandos realizados:
+position startpos
+go depth 1
+go depth 2
+go depth 3
+go depth 4
+
+Resultados:
+
+Profundidad 1:
+nodes 20
+main nodes 0
+quiescence nodes 20
+seldepth 1
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Profundidad 2:
+nodes 63
+main nodes 20
+quiescence nodes 43
+seldepth 4
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Profundidad 3:
+nodes 527
+main nodes 59
+quiescence nodes 468
+seldepth 4
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Profundidad 4:
+nodes 1625
+main nodes 524
+quiescence nodes 1101
+seldepth 8
+score 0 cp
+bestmove b1c3
+quiescence check nodes 13
+ply-limit hits 0
+
+La búsqueda normal se mantuvo estable desde profundidad 1 hasta profundidad 4.
+
+La profundidad selectiva superó la profundidad nominal porque la búsqueda de quietud prolongó las continuaciones tácticas más allá del límite de profundidad normal.
+
+La mejor jugada permaneció como b1c3 porque la evaluación actual, basada solamente en material, asigna evaluaciones iguales a muchas jugadas iniciales.
+PHILOCHESS todavía no tiene evaluación posicional para preferir desarrollo o control central por razones propiamente posicionales.
+
+Prueba 8 — Pruebas de movetime fijo
+
+Comandos realizados:
+position startpos
+go movetime 100
+go movetime 500
+
+Resultado de go movetime 100:
+depth 4
+seldepth 8
+nodes 805
+main nodes 176
+quiescence nodes 629
+time 100 ms
+score 0 cp
+bestmove b1c3
+stopped by limit
+ply-limit hits 0
+
+PHILOCHESS alcanzó el límite solicitado de 100 ms, detuvo la búsqueda y devolvió una jugada legal.
+
+Resultado de go movetime 500:
+depth 4
+seldepth 8
+nodes 1625
+main nodes 524
+quiescence nodes 1101
+time 238 ms
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+El motor completó su profundidad máxima de 4 antes de alcanzar el límite de 500 ms.
+Por ello, terminó normalmente sin informar stopped by limit.
+
+Esto no constituye un error de control de tiempo.
+El motor actual está limitado por SEARCH_MAX_DEPTH = 4 y todavía no utiliza iterative deepening para continuar profundizando mientras queda tiempo disponible.
+
+Prueba 9 — Control UCI con relojes y blancas al turno
+
+Comandos realizados:
+position startpos
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+
+PHILOCHESS calculó:
+timelimit 2500
+
+El cálculo fue:
+60000 / 30 + 1000 / 2 = 2500 ms
+
+Resultado:
+depth 4
+seldepth 8
+nodes 1625
+main nodes 524
+quiescence nodes 1101
+time 219 ms
+score 0 cp
+bestmove b1c3
+ply-limit hits 0
+
+Esto confirma que PHILOCHESS utilizó correctamente el reloj y el incremento de las blancas porque las blancas eran el bando que movía.
+
+La búsqueda completó profundidad 4 antes de alcanzar el presupuesto calculado de 2500 ms.
+
+Prueba 10 — Control UCI con relojes y negras al turno
+
+Comandos realizados:
+position startpos moves e2e4
+go wtime 90000 btime 60000 winc 2000 binc 1000 movestogo 30
+
+PHILOCHESS calculó:
+timelimit 2500
+
+Como las negras eran el bando que movía, el cálculo correcto fue:
+60000 / 30 + 1000 / 2 = 2500 ms
+
+Si el motor hubiera utilizado incorrectamente el reloj y el incremento de las blancas, habría calculado 4000 ms.
+
+Resultado:
+depth 4
+seldepth 12
+nodes 3065
+main nodes 557
+quiescence nodes 2508
+time 471 ms
+score 0 cp
+bestmove a7a6
+quiescence check nodes 139
+ply-limit hits 0
+
+Esto confirma que PHILOCHESS seleccionó correctamente btime y binc cuando las negras eran el bando que movía.
+
+La jugada a7a6 todavía no debe interpretarse como una elección posicional.
+La evaluación solamente material asigna el mismo valor a muchas jugadas legales.
+
+Prueba de cierre del programa:
+El comando realizado fue:
+quit
+
+Resultado:
+El programa cerró correctamente con código:
+0 (0x0)
+
+Esto confirma un cierre limpio, sin bloqueo, excepción ni fallo inesperado.
+
+Limitaciones actuales:
+- La evaluación estática todavía es solamente material.
+- Cuando el bando que mueve no está en jaque, la búsqueda de quietud actualmente busca únicamente capturas y promociones.
+- Los jaques sin captura están excluidos deliberadamente.
+- Todavía no hay evaluación estática de intercambios.
+- Todavía no hay SEE pruning.
+- Todavía no hay delta pruning.
+- Todavía no hay tabla de transposición.
+- Todavía no hay ordenamiento por hash move.
+- Todavía no hay ordenamiento por jugada de variante principal.
+- Todavía no hay heurística killer move.
+- Todavía no hay history heuristic.
+- Todavía no hay iterative deepening.
+- La profundidad máxima de búsqueda normal continúa siendo 4.
+- La salida de variante principal todavía muestra solamente la jugada raíz elegida.
+- El control de tiempo continúa siendo básico.
+- stop es reconocido, pero la búsqueda todavía es sincrónica y no puede interrumpirse de forma asíncrona.
+- go infinite es leído, pero todavía no existe un verdadero modo de análisis infinito.
+- Los nodos de quietud pueden superar ampliamente a los nodos de búsqueda normal en posiciones tácticas.
+- El límite de 64 plies es una protección de emergencia y no reemplaza futuras técnicas de poda selectiva.
+- La batería de regresión táctica todavía es pequeña y deberá ampliarse con nuevas posiciones controladas y con errores futuros encontrados en partidas de PHILOCHESS.
+- El motor todavía no evalúa ubicación de piezas, movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- Todavía no hay adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente.
+- La compilación actual en modo Debug no está optimizada para velocidad.
+- Todavía queda pendiente la validación externa de alpha-001 mediante torneos en Myracle.
+
+Conclusión:
+El desarrollo interno y la validación por consola de PHILOCHESS 0.2-alpha-001 quedan completados.
+
+PHILOCHESS incorpora ahora su primera búsqueda de quietud básica.
+
+PHILOCHESS pasó:
+- compilación correcta en Visual Studio con 0 errores;
+- identificación UCI correcta como PHILOCHESS 0.2-alpha-001;
+- salida inmediata uciok;
+- salida inmediata readyok;
+- qtest con 4/4 pruebas correctas;
+- evitación de recaptura situada después del horizonte;
+- resolución de secuencia de capturas;
+- inclusión de promoción sin captura;
+- búsqueda legal de evasiones de jaque sin stand pat;
+- ordenamiento MVV-LVA refinado;
+- prioridad correcta de la víctima más valiosa;
+- desempate correcto mediante el atacante menos valioso;
+- validación de orderedmoves con 13 jugadas legales;
+- qcompare 4 con la misma jugada y evaluación en ambas búsquedas;
+- reducción de 18 nodos de quietud mediante ordenamiento;
+- qprobe con qscore -510 y 0 impactos del límite de plies;
+- prueba de regresión táctica en profundidad 4;
+- evitación correcta de 10...Dc6?;
+- clasificación correcta de 11...Dxb5 como intento defensivo legal;
+- hallazgo correcto de 12.Cc7+;
+- perftknown 4 con 24/24 validaciones correctas;
+- go depth 1 estable;
+- go depth 2 estable;
+- go depth 3 estable;
+- go depth 4 estable;
+- go movetime 100 con detención correcta por límite de tiempo;
+- go movetime 500 con finalización normal de profundidad 4;
+- selección correcta del reloj e incremento de las blancas;
+- selección correcta del reloj e incremento de las negras;
+- 0 impactos del límite de plies en todas las pruebas ejecutadas;
+- cierre correcto del programa con código 0.
+
+Este es el primer gran hito de búsqueda de PHILOCHESS 0.2.
+
+PHILOCHESS ya no detiene inmediatamente su análisis en límites de profundidad tácticamente inestables.
+El motor ahora puede continuar mediante capturas, promociones y evasiones forzadas de jaque antes de aplicar su evaluación material estática.
+
+La validación externa continuará mediante torneos controlados en Myracle:
+- primero bajo las mismas condiciones del PHILOCHESS 0.1 Validation Tournament, sin tablebases Syzygy;
+- posteriormente en un entorno práctico con tablebases Syzygy activadas cuando corresponda.
+
+El siguiente paso interno de desarrollo debe enfocarse en ampliar la validación de la búsqueda de quietud, añadir nuevas posiciones de regresión táctica y medir con mayor amplitud el crecimiento de los nodos de quietud antes de introducir el siguiente gran componente de búsqueda.
