@@ -13,9 +13,7 @@ PHILOCHESS starts as a simple engine, but it is intended to grow into a tool tha
 
 ## About this repository
 
-This public repository documents the development of PHILOCHESS through
-development logs, technical notes, validation games and selected educational
-code samples.
+This public repository documents the development of PHILOCHESS through development logs, project documentation, validation games and selected educational code samples.
 
 The complete source code and the full sequence of development versions are
 maintained privately in PHILOCHESS-Lab. The code samples published here are
