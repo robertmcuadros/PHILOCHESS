@@ -3,8 +3,8 @@ PHILOCHESS 0.2-alpha-001 VALIDATION: NO SYZYGY
 ANÁLISIS DE PARTIDAS
 ===============================================================================
 
-Este documento forma parte de la documentación técnica y ajedrecística del
-desarrollo de PHILOCHESS 0.2.
+Esta colección de análisis de partidas forma parte de la documentación del 
+proyecto correspondiente al desarrollo de PHILOCHESS 0.2.
 
 Autor de los análisis y titular de los derechos sobre el contenido analítico:
 Robert M. Cuadros
