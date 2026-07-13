@@ -1,3 +1,32 @@
+===============================================================================
+PHILOCHESS 0.1 DEVELOPMENT LOG
+===============================================================================
+
+Author and copyright holder: Robert M. Cuadros
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is licensed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License
+(CC BY-NC-ND 4.0).
+
+When sharing this document under the license, you must give appropriate credit
+to Robert M. Cuadros, use it only for non-commercial purposes, and not
+distribute adapted versions.
+
+Preferred attribution:
+“PHILOCHESS 0.1 Development Log — Robert M. Cuadros”
+
+This copyright notice, attribution and license reference must be retained in
+every shared copy.
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+===============================================================================
+
 Date: June 29, 2026
 
 PHILOCHESS 0.1-alpha-001 — Minimal UCI Implementation
