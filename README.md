@@ -22,16 +22,16 @@ constitute the complete engine source code.
 
 ## Repository contents
 
-- [`docs/`](docs/) — Development logs and technical documentation
+- [`docs/`](docs/) — Development logs and project documentation
 - [`games/`](games/) — External tests, validation tournaments and game analyses
-- [`code-samples/`](code-samples/) — Selected educational code examples from completed phases
+- [`code-samples/`](code-samples/) — Selected educational code samples from completed phases
 - [`assets/`](assets/) — PHILOCHESS visual resources
 
 The published C++ samples are self-contained and can be compiled independently with a C++17-compatible compiler.
 
 ## Current status
 
-PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Development has now entered the PHILOCHESS 0.2 phase. Its first alpha introduced basic quiescence search and refined MVV-LVA capture ordering, passed its internal validation, and has now been tested in a controlled external validation tournament without Syzygy tablebases; analysis of the tournament games is currently in progress. Development in 0.2 will continue with iterative deepening, principal variation reporting, improved move ordering, basic time management, and the first positional evaluation layers.
+PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Development has now entered the PHILOCHESS 0.2 phase. Its first alpha introduced basic quiescence search and refined MVV-LVA capture ordering, passed its internal validation, and has now been tested in a controlled external validation tournament without Syzygy tablebases; analysis of the tournament games is currently in progress. Development of PHILOCHESS 0.2 will continue with iterative deepening, principal variation reporting, improved move ordering, basic time management, and the first positional evaluation layers.
 
 ## PHILOCHESS 0.1 development milestones
 
@@ -48,7 +48,7 @@ PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Devel
 | 0.1-alpha-012 | Pseudo-legal move generation complete |
 | 0.1-alpha-013–021 | Legal move validation, game status, FEN loading, special moves, perft and divide |
 | 0.1-alpha-022–024 | Extended perft validation suite and material evaluation |
-| 0.1-alpha-025–028 | Search preparation, basic negamax, useful UCI integration and basic alpha-beta pruning |
+| 0.1-alpha-025–028 | Search preparation, basic negamax, expanded UCI integration and basic alpha-beta pruning |
 | 0.1-alpha-029 | GUI compatibility and first external game validation |
 | 0.1-alpha-030 | Tactical regression test from first external game |
 | 0.1-alpha-031 | Basic move ordering for alpha-beta search |
