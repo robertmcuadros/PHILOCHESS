@@ -1,0 +1,4683 @@
+Fecha: 29 de junio de 2026
+
+PHILOCHESS 0.1-alpha-001 — UCI mínimo
+
+- UCI mínimo.
+- Responde: uci, isready, quit.
+
+Fecha: 29 de junio de 2026
+
+PHILOCHESS 0.1-alpha-002 — Primer bestmove e2e4
+
+- Acepta: ucinewgame, position startpos, go.
+- Responde go con: bestmove e2e4.
+- Todavía no guarda posición ni calcula jugadas.
+
+Fecha: 30 de junio de 2026
+
+PHILOCHESS 0.1-alpha-003 — Board y startpos
+
+Hito técnico:
+Se creó la primera estructura interna de tablero mediante un arreglo de 64 casillas.
+PHILOCHESS ya puede inicializar y almacenar la posición inicial.
+
+Prueba realizada:
+uci
+isready
+ucinewgame
+position startpos
+d
+go
+quit
+
+Resultado:
+El comando d imprimió correctamente el tablero inicial.
+El comando go todavía devuelve bestmove e2e4.
+El programa cerró correctamente con código 0.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-003 queda logrado.
+
+Fecha: 30 de junio de 2026
+
+PHILOCHESS 0.1-alpha-004 — Square conversion
+
+Hito técnico:
+Se añadieron funciones para convertir casillas algebraicas a índices internos y viceversa.
+PHILOCHESS ya puede traducir casillas como e2 y e4 a números internos, y también convertir números internos de vuelta a casillas algebraicas.
+
+Prueba realizada:
+uci
+isready
+position startpos
+d
+sq e2
+sq e4
+idx 12
+idx 28
+go
+quit
+
+Resultado:
+El comando sq e2 devolvió e2 = 12.
+El comando sq e4 devolvió e4 = 28.
+El comando idx 12 devolvió 12 = e2.
+El comando idx 28 devolvió 28 = e4.
+El comando d siguió imprimiendo correctamente el tablero inicial.
+El comando go todavía devuelve bestmove e2e4.
+El programa cerró correctamente con código 0.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-004 queda logrado.
+
+Fecha: 01 de julio de 2026
+
+PHILOCHESS 0.1-alpha-005 — Aplicación de movimientos simples
+
+Se implementó la aplicación de movimientos simples sobre el tablero interno de 64 casillas.
+
+Nueva funcionalidad:
+- Se añadió la función applySimpleMove().
+- Se añadió soporte para movimientos en formato UCI, como e2e4.
+- Se amplió el comando position para aceptar:
+  position startpos moves e2e4
+- El tablero interno ahora se actualiza después de aplicar movimientos simples.
+- El comando d puede usarse para verificar la posición resultante.
+
+Limitaciones actuales:
+- Todavía no hay validación de legalidad de movimientos.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- Todavía no hay manejo de promociones.
+- Las capturas solo se manejan como reemplazo directo en la casilla de destino.
+
+Probado correctamente:
+- position startpos moves e2e4
+- d
+- El peón blanco se movió de e2 a e4.
+- go todavía devuelve bestmove e2e4.
+- El programa compiló correctamente y cerró con código 0.
+
+Pruebas adicionales realizadas:
+- position startpos moves g1f3
+- d
+- El caballo blanco se movió correctamente de g1 a f3.
+
+- position startpos moves e2e4 e7e5 g1f3 b8c6
+- d
+- PHILOCHESS aplicó correctamente una secuencia simple de apertura.
+- La posición resultante mostró:
+  - Peón blanco en e4.
+  - Peón negro en e5.
+  - Caballo blanco en f3.
+  - Caballo negro en c6.
+
+Fecha: 02 de julio de 2026
+
+PHILOCHESS 0.1-alpha-006 — Generación de movimientos simples
+
+Se implementó la primera generación básica de movimientos sobre el tablero interno de 64 casillas.
+
+Hito técnico:
+PHILOCHESS ya puede recorrer el tablero, identificar piezas del bando que juega y generar movimientos simples de peones y caballos.
+
+Nueva funcionalidad:
+- Se añadió seguimiento básico del turno mediante sideToMove.
+- Se añadió cambio de turno después de aplicar un movimiento simple.
+- Se añadieron funciones auxiliares para identificar piezas blancas, piezas negras y piezas enemigas.
+- Se añadió generación simple de movimientos de peones.
+- Se añadió generación simple de movimientos de caballos.
+- Se añadió la función generateSimpleMoves().
+- Se añadió la función printSimpleMoves().
+- Se añadió el comando interno moves para listar las jugadas simples disponibles del bando que juega.
+
+Prueba realizada:
+position startpos
+moves
+quit
+
+Resultado:
+PHILOCHESS generó correctamente las 20 jugadas simples blancas desde la posición inicial.
+La lista incluyó:
+- 16 movimientos de peones.
+- 4 movimientos de caballos.
+El comando moves mostró Total: 20.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación todavía es simple y parcial.
+- Solo se generan movimientos de peones y caballos.
+- Todavía no se generan movimientos de alfiles, torres, dama ni rey.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- Todavía no hay manejo de promociones.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-006 queda iniciado y probado correctamente.
+El motor ya no solo aplica movimientos escritos por el usuario; ahora también puede generar sus primeras jugadas candidatas desde una posición.
+
+Fecha: 03 de julio de 2026
+
+PHILOCHESS 0.1-alpha-007 — Estructura Move y lectura de movimientos UCI
+
+Se implementó una estructura formal Move para representar internamente las jugadas.
+
+Hito técnico:
+PHILOCHESS ya puede convertir movimientos en formato UCI a datos internos y convertir esos datos internos nuevamente a texto UCI.
+Cada jugada ahora almacena:
+- casilla de origen;
+- casilla de destino;
+- pieza de promoción opcional.
+
+Nueva funcionalidad:
+- Se añadió la estructura Move.
+- Se añadieron los campos internos:
+  from
+  to
+  promotion
+- Se añadió parseMove() para convertir movimientos UCI como e2e4 y e7e8q en datos Move.
+- Se añadió soporte de moveToString() para objetos Move.
+- Se añadió soporte para el campo promotion, usando '-' cuando no hay promoción.
+- Se actualizó la aplicación de movimientos simples para trabajar con objetos Move.
+- Se actualizó la generación de movimientos simples para devolver objetos Move.
+- Se añadió el comando interno de depuración:
+  move
+- Se actualizó go para que PHILOCHESS devuelva la primera jugada generada desde su lista interna, en lugar de responder siempre la jugada fija e2e4.
+
+Prueba realizada:
+uci
+isready
+position startpos
+move e2e4
+move g1f3
+move e7e8q
+moves
+go
+quit
+
+Resultado:
+El comando move e2e4 devolvió:
+e2e4 -> from 12 to 28 promotion -
+
+El comando move g1f3 devolvió:
+g1f3 -> from 6 to 21 promotion -
+
+El comando move e7e8q devolvió:
+e7e8q -> from 52 to 60 promotion q
+
+El comando moves generó correctamente las 20 jugadas simples blancas desde la posición inicial.
+La lista incluyó:
+- 16 movimientos de peones.
+- 4 movimientos de caballos.
+
+La salida terminó con:
+Total: 20
+
+El comando go devolvió:
+bestmove b1c3
+
+Esto confirma que PHILOCHESS ya no depende de un bestmove fijo. Ahora puede elegir la primera jugada generada desde su lista interna de movimientos.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- El parser de movimientos valida el formato UCI, pero todavía no valida la legalidad ajedrecística completa.
+- La promoción ya está representada internamente, pero todavía no se valida completamente su legalidad.
+- La generación de movimientos todavía está limitada a peones y caballos.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay validación de seguridad del rey.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- Todavía no hay generación de movimientos de alfiles.
+- Todavía no hay generación de movimientos de torres.
+- Todavía no hay generación de movimientos de dama.
+- Todavía no hay generación de movimientos de rey.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-007 queda completado.
+El motor ahora tiene una representación interna más limpia de las jugadas y queda mejor preparado para la futura generación de movimientos, promociones, validación legal y búsqueda.
+
+Fecha: 03 de julio de 2026
+
+PHILOCHESS 0.1-alpha-008 — Generación de movimientos de alfil
+
+Se implementó la generación simple de movimientos de alfil sobre el tablero interno de 64 casillas.
+
+Hito técnico:
+PHILOCHESS ya puede generar movimientos diagonales deslizantes para los alfiles.
+Este es el primer paso hacia la generación completa de piezas deslizantes, que más adelante servirá también para torres, damas, detección de ataques, validación legal y pruebas perft.
+
+Nueva funcionalidad:
+- Se añadió generateSlidingMovesFromSquare().
+- Se añadió generateBishopMovesFromSquare().
+- Se añadieron direcciones diagonales para los alfiles.
+- La generación de movimientos de alfil respeta los bordes del tablero.
+- La generación de movimientos de alfil se detiene al encontrar una casilla ocupada.
+- La generación de movimientos de alfil no atraviesa piezas propias.
+- La generación de movimientos de alfil puede incluir capturas contra piezas enemigas.
+- Se actualizó generateSimpleMoves() para incluir alfiles.
+
+Prueba realizada:
+uci
+isready
+position startpos
+moves
+position startpos moves e2e4 e7e5
+moves
+go
+quit
+
+Resultado:
+Desde la posición inicial, el comando moves siguió generando:
+Total: 20
+
+Esto es correcto porque los alfiles están bloqueados por sus propios peones en la posición inicial.
+
+Después de:
+position startpos moves e2e4 e7e5
+
+El comando moves generó movimientos del alfil de f1, incluyendo:
+f1e2
+f1d3
+f1c4
+f1b5
+f1a6
+
+La salida terminó con:
+Total: 24
+
+El comando go devolvió:
+bestmove b1c3
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación de movimientos todavía es pseudo-legal.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay validación de seguridad del rey.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La promoción ya está representada internamente, pero todavía no se valida completamente.
+- Todavía no hay generación de movimientos de torres.
+- Todavía no hay generación de movimientos de dama.
+- Todavía no hay generación de movimientos de rey.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-008 queda completado.
+El motor ahora genera movimientos simples de peones, caballos y alfiles.
+Esta versión marca el inicio de la generación de piezas deslizantes en PHILOCHESS.
+
+Fecha: 03 de julio de 2026
+
+PHILOCHESS 0.1-alpha-009 — Generación de movimientos de torre
+
+Se implementó la generación simple de movimientos de torre sobre el tablero interno de 64 casillas.
+
+Hito técnico:
+PHILOCHESS ya puede generar movimientos ortogonales deslizantes para las torres.
+Esto amplía el sistema de generación de piezas deslizantes iniciado en alpha-008 y confirma que generateSlidingMovesFromSquare() puede reutilizarse para distintas piezas deslizantes.
+
+Nueva funcionalidad:
+- Se añadió generateRookMovesFromSquare().
+- Se añadieron direcciones ortogonales para las torres.
+- La generación de movimientos de torre respeta los bordes del tablero.
+- La generación de movimientos de torre se detiene al encontrar una casilla ocupada.
+- La generación de movimientos de torre no atraviesa piezas propias.
+- La generación de movimientos de torre puede incluir capturas contra piezas enemigas.
+- Se actualizó generateSimpleMoves() para incluir torres.
+
+Prueba realizada:
+uci
+isready
+position startpos
+moves
+position startpos moves a2a4 h7h5
+moves
+position startpos moves a2a4 h7h5 a1a3
+moves
+quit
+
+Resultado:
+Desde la posición inicial, el comando moves siguió generando:
+Total: 20
+
+Esto es correcto porque las torres están bloqueadas por sus propias piezas en la posición inicial.
+
+Después de:
+position startpos moves a2a4 h7h5
+
+El comando moves generó movimientos de la torre de a1, incluyendo:
+a1a2
+a1a3
+
+La salida terminó con:
+Total: 21
+
+Después de:
+position startpos moves a2a4 h7h5 a1a3
+
+Le tocaba jugar a las negras.
+El comando moves generó movimientos de la torre de h8, incluyendo:
+h8h7
+h8h6
+
+La salida terminó con:
+Total: 21
+
+Esto confirma que la generación de movimientos de torre funciona para ambos bandos y que el movimiento deslizante se detiene correctamente antes de una pieza propia bloqueadora.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación de movimientos todavía es pseudo-legal.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay validación de seguridad del rey.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La promoción ya está representada internamente, pero todavía no se valida completamente.
+- Todavía no hay generación de movimientos de dama.
+- Todavía no hay generación de movimientos de rey.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-009 queda completado.
+El motor ahora genera movimientos simples de peones, caballos, alfiles y torres.
+Esta versión confirma que el sistema de generación de piezas deslizantes es reutilizable y queda listo para la generación de movimientos de dama.
+
+Fecha: 03 de julio de 2026
+
+PHILOCHESS 0.1-alpha-010 — Generación de movimientos de dama
+
+Se implementó la generación simple de movimientos de dama sobre el tablero interno de 64 casillas.
+
+Hito técnico:
+PHILOCHESS ya puede generar movimientos de dama combinando direcciones ortogonales y diagonales deslizantes.
+Esto confirma que el sistema de generación de piezas deslizantes puede reutilizarse para alfiles, torres y damas.
+
+Nueva funcionalidad:
+- Se añadió generateQueenMovesFromSquare().
+- Se añadieron las ocho direcciones deslizantes de la dama.
+- La generación de movimientos de dama ahora usa tanto movimiento de torre como movimiento de alfil.
+- La generación de movimientos de dama respeta los bordes del tablero.
+- La generación de movimientos de dama se detiene al encontrar una casilla ocupada.
+- La generación de movimientos de dama no atraviesa piezas propias.
+- La generación de movimientos de dama puede incluir capturas contra piezas enemigas.
+- Se actualizó generateSimpleMoves() para incluir damas.
+
+Prueba realizada:
+uci
+isready
+position startpos
+moves
+position startpos moves d2d4 d7d5
+moves
+position startpos moves d2d4 d7d5 d1d3
+moves
+quit
+
+Resultado:
+Desde la posición inicial, el comando moves siguió generando:
+Total: 20
+
+Esto es correcto porque las damas están bloqueadas por sus propias piezas en la posición inicial.
+
+Después de:
+position startpos moves d2d4 d7d5
+
+El comando moves generó movimientos de la dama blanca desde d1, incluyendo:
+d1d2
+d1d3
+
+La salida terminó con:
+Total: 26
+
+Después de:
+position startpos moves d2d4 d7d5 d1d3
+
+Le tocaba jugar a las negras.
+El comando moves generó movimientos de la dama negra desde d8, incluyendo:
+d8d7
+d8d6
+
+La salida terminó con:
+Total: 26
+
+Esto confirma que la generación de movimientos de dama funciona para ambos bandos y que la dama combina correctamente las direcciones ortogonales y diagonales deslizantes.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación de movimientos todavía es pseudo-legal.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay validación de seguridad del rey.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La promoción ya está representada internamente, pero todavía no se valida completamente.
+- Todavía no hay generación de movimientos de rey.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-010 queda completado.
+El motor ahora genera movimientos simples de peones, caballos, alfiles, torres y damas.
+Esta versión confirma que el sistema de generación de piezas deslizantes queda completo para alfiles, torres y damas.
+PHILOCHESS está ahora a un paso de completar la generación pseudo-legal de movimientos para todas las piezas básicas.
+
+Fecha: 03 de julio de 2026
+
+PHILOCHESS 0.1-alpha-011 — Generación de movimientos de rey
+
+Se implementó la generación simple de movimientos de rey sobre el tablero interno de 64 casillas.
+
+Hito técnico:
+PHILOCHESS ya puede generar movimientos pseudo-legales de rey.
+El rey puede moverse una casilla en cualquier dirección, siempre que la casilla de destino esté dentro del tablero y no esté ocupada por una pieza propia.
+
+Con esto queda completada la generación pseudo-legal de movimientos para todas las piezas básicas del ajedrez: peones, caballos, alfiles, torres, damas y reyes.
+
+Nueva funcionalidad:
+- Se añadió generateKingMovesFromSquare().
+- Se añadieron los ocho desplazamientos posibles del rey.
+- La generación de movimientos de rey respeta los bordes del tablero.
+- La generación de movimientos de rey no permite mover sobre piezas propias.
+- La generación de movimientos de rey puede incluir capturas contra piezas enemigas.
+- Se actualizó generateSimpleMoves() para incluir reyes.
+
+Prueba realizada:
+uci
+isready
+position startpos
+moves
+position startpos moves e2e4 e7e5
+moves
+position startpos moves e2e4 e7e5 e1e2
+moves
+quit
+
+Resultado:
+Desde la posición inicial, el comando moves siguió generando:
+Total: 20
+
+Esto es correcto porque el rey está bloqueado por sus propias piezas en la posición inicial.
+
+Después de:
+position startpos moves e2e4 e7e5
+
+El comando moves generó un movimiento del rey blanco desde e1, incluyendo:
+e1e2
+
+La salida terminó con:
+Total: 29
+
+Después de:
+position startpos moves e2e4 e7e5 e1e2
+
+Le tocaba jugar a las negras.
+El comando moves generó un movimiento del rey negro desde e8, incluyendo:
+e8e7
+
+La salida terminó con:
+Total: 29
+
+Esto confirma que la generación de movimientos de rey funciona para ambos bandos y que el rey puede moverse una casilla cuando hay una casilla válida disponible.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación de movimientos todavía es pseudo-legal.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay validación de seguridad del rey.
+- El rey todavía puede moverse a casillas atacadas porque la detección de ataques no está implementada.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La promoción ya está representada internamente, pero todavía no se valida completamente.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-011 queda completado.
+El motor ahora genera movimientos pseudo-legales simples para todas las piezas básicas del ajedrez: peones, caballos, alfiles, torres, damas y reyes.
+Este es un hito mayor dentro de PHILOCHESS 0.1, porque el motor ya tiene una base completa de generación de movimientos antes de pasar a validación legal, detección de jaque, enroque, captura al paso, promociones y pruebas perft.
+
+Fecha: 03 de julio de 2026
+
+PHILOCHESS 0.1-alpha-012 — Generación pseudo-legal de movimientos completada
+
+Se implementó la generación básica de promociones de peón.
+
+Hito técnico:
+PHILOCHESS ya puede generar movimientos pseudo-legales básicos para todas las piezas estándar del ajedrez, incluyendo promociones de peón.
+Las promociones se generan tanto por avance directo del peón como por captura en la fila de promoción.
+
+Con esto queda completada la primera base de generación pseudo-legal básica para:
+- peones;
+- caballos;
+- alfiles;
+- torres;
+- damas;
+- reyes;
+- capturas básicas;
+- promociones básicas.
+
+Nueva funcionalidad:
+- Se añadió addPromotionMoves().
+- Se añadió la generación automática de cuatro opciones de promoción:
+  q
+  r
+  b
+  n
+- Se añadieron promociones blancas en la octava fila.
+- Se añadieron promociones negras en la primera fila.
+- Se añadió promoción por avance directo de peón.
+- Se añadió promoción por captura de peón.
+- Se actualizó la generación de movimientos de peón para producir objetos Move con el campo promotion correspondiente.
+
+Prueba realizada:
+uci
+isready
+position startpos
+moves
+go
+
+Resultado:
+Desde la posición inicial, el comando moves generó:
+Total: 20
+
+El comando go devolvió:
+bestmove b1c3
+
+Esto confirma que el conteo de movimientos de la posición inicial se mantiene estable después de añadir la lógica de promociones.
+
+Prueba interna adicional de promoción:
+position startpos moves e2e4 e8e7 e4e5 a7a6 e5e6 a6a5 e6e7 a5a4
+moves
+
+Resultado:
+El comando moves generó promociones blancas básicas, incluyendo:
+e7e8q
+e7e8r
+e7e8b
+e7e8n
+
+También generó promociones por captura, incluyendo:
+e7d8q
+e7d8r
+e7d8b
+e7d8n
+e7f8q
+e7f8r
+e7f8b
+e7f8n
+
+La salida terminó con:
+Total: 40
+
+Nota importante:
+La prueba adicional de promoción usó una secuencia interna artificial únicamente para verificar la generación de promociones.
+La función actual applySimpleMove() todavía aplica movimientos ingresados manualmente sin validación completa de legalidad.
+Por lo tanto, esta prueba confirma la generación de promociones, pero todavía no es una prueba de legalidad ajedrecística completa.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación de movimientos todavía es pseudo-legal.
+- La aplicación manual de movimientos todavía no valida completamente la legalidad antes de aplicar las jugadas.
+- applySimpleMove() todavía puede aplicar movimientos manuales ilegales.
+- Todavía no hay validación completa de legalidad.
+- Todavía no hay validación de seguridad del rey.
+- El rey todavía puede moverse a casillas atacadas porque la detección de ataques no está implementada.
+- Todavía no hay detección de jaque.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La promoción ya se genera para peones, pero la validación legal completa sigue pendiente.
+- Todavía no hay pruebas perft.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-012 queda completado.
+El motor ahora genera movimientos pseudo-legales básicos para todas las piezas estándar del ajedrez, incluyendo capturas básicas y promociones de peón.
+Este es un hito mayor dentro de PHILOCHESS 0.1: la primera capa completa de generación pseudo-legal de movimientos ya está implementada.
+La siguiente fase de desarrollo debe enfocarse en validar movimientos antes de aplicarlos, impedir secuencias manuales ilegales, detectar ataques, comprobar la seguridad del rey y preparar las pruebas perft.
+
+Fecha: 04 de julio de 2026
+
+PHILOCHESS 0.1-alpha-013 — Detección de rey y detección de ataques
+
+Se implementó la detección básica de reyes, ataques y jaque.
+
+Hito técnico:
+PHILOCHESS ya puede encontrar los reyes sobre el tablero interno de 64 casillas y determinar si una casilla está atacada por un bando específico.
+El motor también puede determinar si las blancas o las negras están actualmente en jaque.
+
+Este es el primer paso hacia la validación completa de jugadas legales, porque PHILOCHESS ya puede responder la pregunta esencial:
+¿Está el rey bajo ataque?
+
+Nueva funcionalidad:
+- Se añadió findKingSquare().
+- Se añadió isSquareAttacked().
+- Se añadió isInCheck().
+- Se añadió detección de ataques de peones.
+- Se añadió detección de ataques de caballos.
+- Se añadió detección de ataques de reyes.
+- Se añadió detección de ataques de piezas deslizantes: alfiles, torres y damas.
+- Se añadió el comando interno de depuración:
+  kings
+- Se añadió el comando interno de depuración:
+  check
+- Se añadió el comando interno de depuración:
+  attacked
+- Se añadió colorFromString() para los comandos de depuración.
+- Se añadió colorName() para mostrar con mayor claridad el bando en la consola.
+- El encabezado del código fuente ahora declara explícitamente:
+  Standard: C++17
+
+Prueba realizada:
+uci
+isready
+position startpos
+check
+moves
+position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
+check
+attacked e8 white
+quit
+
+Resultado:
+Desde la posición inicial, el comando check devolvió:
+White king: e1 (4)
+Black king: e8 (60)
+White in check: no
+Black in check: no
+
+El comando moves siguió generando:
+Total: 20
+
+Esto confirma que la posición inicial se mantiene estable después de añadir la detección de reyes y ataques.
+
+Después de:
+position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
+
+El comando check devolvió:
+White king: e1 (4)
+Black king: e8 (60)
+White in check: no
+Black in check: yes
+
+El comando:
+attacked e8 white
+
+devolvió:
+e8 attacked by white: yes
+
+Esto confirma que PHILOCHESS detecta correctamente que el rey negro en e8 está atacado por las blancas.
+
+Nota importante:
+La posición táctica probada es jaque mate en términos ajedrecísticos.
+Sin embargo, PHILOCHESS 0.1-alpha-013 todavía no detecta jaque mate.
+En esta etapa, el motor solo detecta reyes, casillas atacadas y estado de jaque.
+La detección de jaque mate requerirá filtrar jugadas legales y contar las respuestas legales disponibles para el bando en jaque.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La generación de movimientos todavía es pseudo-legal.
+- La aplicación manual de movimientos todavía no valida completamente la legalidad antes de aplicar las jugadas.
+- Todavía no se filtran completamente las jugadas legales.
+- PHILOCHESS ya puede detectar jaque, pero todavía no puede impedir una jugada ilegal que deje al propio rey en jaque.
+- PHILOCHESS todavía no puede detectar jaque mate.
+- PHILOCHESS todavía no puede detectar ahogado.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La promoción ya se genera para peones, pero la validación legal completa sigue pendiente.
+- Todavía no hay pruebas perft.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-013 queda completado.
+El motor ya puede detectar reyes, casillas atacadas y jaque.
+Este es un paso mayor desde la generación pseudo-legal de movimientos hacia la legalidad ajedrecística real.
+La siguiente fase de desarrollo debe enfocarse en filtrar las jugadas pseudo-legales, conservar solo las jugadas legales e impedir cualquier movimiento que deje al propio rey en jaque.
+
+Fecha: 05 de julio de 2026
+
+PHILOCHESS 0.1-alpha-014 — Filtrado de jugadas legales
+
+Se implementó la primera capa de filtrado de jugadas legales.
+
+Hito técnico:
+PHILOCHESS ya puede generar jugadas pseudo-legales, probar cada jugada candidata sobre una posición temporal y conservar solo aquellas jugadas que no dejan en jaque al propio rey del bando que mueve.
+
+Esta es la primera versión en la que el comando moves ya no lista solamente jugadas pseudo-legales. Ahora lista jugadas legales según la seguridad básica del rey.
+
+Nueva funcionalidad:
+- Se añadió sameMove().
+- Se añadió makeMove().
+- Se añadió isLegalMoveAfterMaking().
+- Se añadió generateLegalMoves().
+- Se añadió applyLegalMoveFromUci().
+- Se añadió el comando interno de depuración:
+  pmoves
+- Se actualizó moves para que ahora imprima jugadas legales.
+- Se actualizó go para que ahora elija la primera jugada legal.
+- Se actualizó position startpos moves ... para que las jugadas ingresadas sean validadas contra la lista actual de jugadas legales.
+- Las jugadas ilegales ingresadas mediante el comando position ahora son rechazadas en lugar de aplicarse silenciosamente.
+
+Prueba realizada:
+uci
+isready
+position startpos
+moves
+go
+position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
+check
+moves
+go
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-014
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando moves generó:
+Total: 20
+
+El comando go devolvió:
+bestmove b1c3
+
+Después de:
+position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
+
+El comando check devolvió:
+White king: e1 (4)
+Black king: e8 (60)
+White in check: no
+Black in check: yes
+
+El comando moves devolvió:
+Total: 0
+
+El comando go devolvió:
+bestmove 0000
+
+Esto confirma que PHILOCHESS filtra correctamente las jugadas legales en esta posición crítica de jaque mate. Las negras están en jaque y no tienen ninguna jugada legal disponible.
+
+Nota importante:
+PHILOCHESS 0.1-alpha-014 todavía no imprime explícitamente mate o ahogado.
+Sin embargo, la combinación de:
+- el bando que mueve está en jaque;
+- el número de jugadas legales es 0;
+
+ya representa jaque mate en términos ajedrecísticos.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- El jaque mate todavía no se informa explícitamente como mate.
+- El ahogado todavía no se informa explícitamente como ahogado.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La generación de promociones existe, pero la legalidad de promociones todavía necesita pruebas más completas.
+- Todavía no hay pruebas perft.
+- La legalidad completa de movimientos sigue pendiente hasta implementar enroque, captura al paso y todos los detalles de reglas especiales.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-014 queda completado.
+El motor ahora realiza filtrado básico de jugadas legales e impide movimientos que dejan al propio rey en jaque.
+Este es un hito mayor dentro de PHILOCHESS 0.1, porque el motor ha dado su primer paso real desde la generación pseudo-legal hacia la legalidad ajedrecística efectiva.
+
+Fecha: 05 de julio de 2026
+
+PHILOCHESS 0.1-alpha-015 — Detección del estado de la partida
+
+Se implementó la detección básica del estado de la partida.
+
+Hito técnico:
+PHILOCHESS ya puede interpretar el resultado de la generación de jugadas legales y determinar el estado actual de la partida para el bando que mueve.
+
+El motor ahora comprueba:
+- qué bando debe mover;
+- si ese bando está en jaque;
+- cuántas jugadas legales tiene disponibles;
+- si la posición es normal, jaque, jaque mate o ahogado.
+
+Esta versión se apoya directamente en alpha-014. La versión anterior ya filtraba jugadas legales y podía identificar implícitamente el jaque mate cuando el bando que mueve estaba en jaque y no tenía jugadas legales. Alpha-015 convierte ahora esa condición en un estado ajedrecístico explícito mediante un sistema de estado de partida.
+
+Nueva funcionalidad:
+- Se añadió el enum GameStatus:
+  Normal
+  Check
+  Checkmate
+  Stalemate
+- Se añadió statusName().
+- Se añadió getGameStatus().
+- Se añadió printGameStatus().
+- Se añadió el comando interno de depuración:
+  status
+- El comando status ahora imprime:
+  bando que mueve;
+  número de jugadas legales;
+  si el bando que mueve está en jaque;
+  estado actual de la partida.
+
+Prueba realizada:
+uci
+isready
+position startpos
+status
+go
+position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
+check
+status
+moves
+go
+quit
+
+Resultado:
+Desde la posición inicial, el comando status devolvió:
+Side to move: white
+Legal moves: 20
+In check: no
+Status: normal
+
+El comando go devolvió:
+bestmove b1c3
+
+Después de:
+position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
+
+El comando check devolvió:
+White king: e1 (4)
+Black king: e8 (60)
+White in check: no
+Black in check: yes
+
+El comando status devolvió:
+Side to move: black
+Legal moves: 0
+In check: yes
+Status: checkmate
+
+El comando moves devolvió:
+Total: 0
+
+El comando go devolvió:
+bestmove 0000
+
+Esto confirma que PHILOCHESS ahora reconoce explícitamente la posición de jaque mate probada.
+
+Nota importante:
+La lógica de detección de ahogado ya existe en alpha-015:
+- si no hay jugadas legales y el bando que mueve no está en jaque, el estado es ahogado.
+
+Sin embargo, el ahogado todavía no ha sido probado desde consola porque PHILOCHESS aún no permite cargar posiciones arbitrarias mediante FEN. Una futura carga de FEN permitirá probar posiciones de ahogado de forma directa.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La lógica de ahogado existe, pero todavía no ha sido validada con una posición directa de prueba.
+- Todavía no hay carga de FEN.
+- Todavía no hay enroque.
+- Todavía no hay captura al paso.
+- La generación de promociones existe, pero la legalidad de promociones todavía necesita pruebas más completas.
+- Todavía no hay pruebas perft.
+- La legalidad completa de movimientos sigue pendiente hasta implementar las reglas especiales y pruebas de validación más amplias.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-015 queda completado.
+El motor ahora puede informar el estado actual de la partida como posición normal, jaque, jaque mate o ahogado.
+Este es un hito importante de consolidación: PHILOCHESS ya no solo cuenta jugadas legales; ahora puede interpretarlas en términos ajedrecísticos.
+
+Fecha: 05 de julio de 2026
+
+PHILOCHESS 0.1-alpha-016 — Lectura básica de FEN
+
+Se implementó la lectura básica de FEN mediante el comando position.
+
+Hito técnico:
+PHILOCHESS ya puede cargar posiciones arbitrarias del tablero usando notación FEN básica.
+Esto permite probar posiciones específicas directamente desde la consola, incluyendo jaque mate, ahogado, posiciones inusuales de reyes, escenarios de promoción y futuras posiciones para perft.
+
+Esta versión también permitió validar directamente la detección de ahogado, que ya existía lógicamente en alpha-015 pero todavía no había sido probada desde una posición personalizada.
+
+Nueva funcionalidad:
+- Se añadieron campos relacionados con FEN a la estructura Position:
+  castlingRights
+  enPassantSquare
+  halfmoveClock
+  fullmoveNumber
+- Se añadió isValidFenPiece().
+- Se añadió parseNonNegativeInteger().
+- Se añadió parsePositiveInteger().
+- Se añadió parseFenPlacement().
+- Se añadió isValidCastlingRights().
+- Se añadió loadFen().
+- Se añadió applyMoveList().
+- Se actualizó setStartPosition() para inicializar los campos relacionados con FEN.
+- Se actualizó handlePositionCommand() para aceptar:
+  position fen ...
+- Se añadió soporte para:
+  position fen <fen>
+  position fen <fen> moves <lista de jugadas>
+
+Prueba realizada:
+uci
+isready
+position fen 7k/5Q2/6K1/8/8/8/8/8 b - - 0 1
+d
+status
+moves
+go
+quit
+
+Resultado:
+La posición FEN fue cargada correctamente.
+
+El tablero mostró:
+- rey negro en h8;
+- dama blanca en f7;
+- rey blanco en g6;
+- negras al turno.
+
+El comando status devolvió:
+Side to move: black
+Legal moves: 0
+In check: no
+Status: stalemate
+
+El comando moves devolvió:
+Total: 0
+
+El comando go devolvió:
+bestmove 0000
+
+Esto confirma que PHILOCHESS ya puede cargar una posición FEN y reconocer correctamente el ahogado desde la consola.
+
+Nota importante:
+La lectura básica de FEN ya está disponible, pero el motor todavía no usa los derechos de enroque ni la casilla al paso para generar completamente los movimientos especiales.
+Estos campos se almacenan, pero la lógica de enroque y captura al paso sigue pendiente.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Los derechos de enroque se leen desde FEN y se almacenan, pero el enroque todavía no está implementado.
+- La casilla al paso se lee desde FEN y se almacena, pero la captura al paso todavía no está implementada.
+- El contador de medio movimiento y el número de jugada se leen desde FEN, pero todavía no se usan para adjudicación de partida.
+- Todavía no hay comando perft.
+- La legalidad completa de movimientos sigue pendiente hasta implementar enroque, captura al paso y validación de reglas especiales.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-016 queda completado.
+El motor ya puede cargar posiciones FEN básicas y usarlas para pruebas directas.
+Este es un gran paso práctico porque PHILOCHESS ahora puede validar posiciones específicas sin depender de largas secuencias artificiales de jugadas.
+La lógica de ahogado introducida en alpha-015 quedó confirmada en consola mediante una posición real de prueba en FEN.
+
+Pruebas adicionales de validación para alpha-016:
+
+Se realizaron dos pruebas adicionales basadas en FEN para validar la nueva lectura de posiciones, el filtrado de jugadas legales y la seguridad del rey.
+
+Prueba 1 — Posición normal y rechazo de destino ocupado por pieza propia
+
+FEN probada:
+r1bqkb1r/p4ppp/2p2n2/nB2p1N1/8/8/PPPP1PPP/RNBQK2R w - - 0 1
+
+Comandos realizados:
+position fen r1bqkb1r/p4ppp/2p2n2/nB2p1N1/8/8/PPPP1PPP/RNBQK2R w - - 0 1
+d
+check
+status
+moves
+go
+
+Resultado:
+PHILOCHESS cargó correctamente la posición FEN.
+El motor informó:
+White in check: no
+Black in check: no
+Side to move: white
+Legal moves: 37
+In check: no
+Status: normal
+
+El comando go devolvió:
+bestmove b1c3
+
+Prueba adicional de jugada ilegal:
+position fen r1bqkb1r/p4ppp/2p2n2/nB2p1N1/8/8/PPPP1PPP/RNBQK2R w - - 0 1 moves b1d2
+
+Resultado:
+PHILOCHESS rechazó correctamente la jugada:
+info string illegal move ignored: b1d2
+
+Esto confirmó que el motor no permite mover una pieza hacia una casilla ocupada por una pieza propia.
+
+Prueba 2 — Posición de jaque y conservación exclusiva de respuestas legales
+
+FEN probada:
+r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP3PPP/RNBQK2R w - - 0 1
+
+En esta posición, el alfil negro de b4 da jaque al rey blanco en e1 por la diagonal:
+b4-c3-d2-e1
+
+Comandos realizados:
+position fen r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP3PPP/RNBQK2R w - - 0 1
+d
+check
+status
+moves
+go
+
+Resultado:
+PHILOCHESS cargó correctamente la posición FEN.
+El motor informó:
+White king: e1 (4)
+Black king: e8 (60)
+White in check: yes
+Black in check: no
+
+El comando status devolvió:
+Side to move: white
+Legal moves: 7
+In check: yes
+Status: check
+
+El comando moves devolvió las siguientes respuestas legales:
+b1c3
+b1d2
+c1d2
+d1d2
+e1e2
+e1f1
+f3d2
+
+El comando go devolvió:
+bestmove b1c3
+
+Esto confirma que PHILOCHESS detecta correctamente el jaque y filtra la lista de jugadas para conservar únicamente respuestas legales que resuelven el jaque.
+
+Fecha: 05 de julio de 2026
+
+PHILOCHESS 0.1-alpha-017 — Enroque
+
+Se implementó la generación y aplicación de movimientos de enroque.
+
+Hito técnico:
+PHILOCHESS ya puede generar y aplicar enroques básicos para ambos bandos.
+El motor utiliza los derechos de enroque leídos desde la notación FEN y valida las condiciones esenciales requeridas por las reglas del ajedrez.
+
+Esta versión se apoya directamente en alpha-016. La versión anterior ya leía y almacenaba los derechos de enroque desde FEN, pero todavía no los usaba para generar movimientos. Alpha-017 convierte ahora esos derechos almacenados en movimientos legales reales de enroque.
+
+Nueva funcionalidad:
+- Se añadió generación de enroque para:
+  - Enroque corto blanco: e1g1
+  - Enroque largo blanco: e1c1
+  - Enroque corto negro: e8g8
+  - Enroque largo negro: e8c8
+- Se añadió validación de derechos de enroque:
+  K
+  Q
+  k
+  q
+- Se añadió verificación de que el rey y la torre estén en sus casillas iniciales correctas.
+- Se añadió verificación de que las casillas entre el rey y la torre estén vacías.
+- Se añadió verificación de que el rey no esté actualmente en jaque.
+- Se añadió verificación de que el rey no pase por una casilla atacada.
+- Se añadió verificación de que el rey no termine en una casilla atacada.
+- Se añadió movimiento automático de la torre al aplicar el enroque.
+- Se añadió actualización de derechos de enroque después de:
+  - mover un rey;
+  - mover una torre desde su casilla original;
+  - capturar una torre en su casilla original;
+  - realizar un enroque.
+- Se respetó la regla de que una torre atacada no impide por sí sola el enroque. Solo importan las casillas inicial, intermedia y final del rey.
+
+Prueba 1 — Disponibilidad de enroques blancos y aplicación del enroque corto blanco
+
+FEN probada:
+r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1
+
+Comandos realizados:
+uci
+isready
+position fen r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1
+moves
+
+Resultado:
+PHILOCHESS cargó correctamente la posición FEN.
+El comando moves generó correctamente los dos enroques blancos:
+e1g1
+e1c1
+
+La salida terminó con:
+Total: 26
+
+Esto confirma que PHILOCHESS reconoce correctamente ambos derechos de enroque blancos en una posición abierta de enroque.
+
+Comando adicional:
+position fen r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1 moves e1g1
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente el enroque corto blanco.
+
+El tablero resultante mostró:
+- Rey blanco en g1.
+- Torre blanca de h1 en f1.
+- e1 vacío.
+- h1 vacío.
+- Turno de las negras.
+- Derechos de enroque reducidos a:
+  kq
+
+Esto confirma que PHILOCHESS mueve correctamente tanto el rey como la torre durante el enroque y actualiza los derechos de enroque.
+
+Prueba 2 — Enroque largo negro permitido y enroque corto negro ilegal porque el rey pasaría por jaque
+
+FEN probada:
+r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1
+
+En esta posición, la torre blanca de f1 ataca la columna f.
+Por lo tanto, el enroque corto negro es ilegal porque el rey negro tendría que pasar por f8.
+La misma torre también hace ilegales los movimientos del rey negro hacia f8 y f7.
+
+Comandos realizados:
+position fen r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1
+moves
+
+Resultado:
+PHILOCHESS cargó correctamente la posición FEN.
+El comando moves generó:
+Total: 23
+
+La jugada e8c8 fue generada.
+La jugada e8g8 no fue generada.
+
+Esto confirma que PHILOCHESS permite correctamente el enroque largo negro y rechaza el enroque corto negro porque el rey pasaría por una casilla atacada.
+
+Comando adicional:
+position fen r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1 moves e8c8
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente el enroque largo negro.
+
+El tablero resultante mostró:
+- Rey negro en c8.
+- Torre negra de a8 en d8.
+- e8 vacío.
+- a8 vacío.
+- Turno de las blancas.
+- Derechos de enroque:
+  -
+
+Esto confirma que PHILOCHESS aplica correctamente el enroque largo negro y elimina los derechos de enroque restantes de las negras.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Todavía no está implementada la captura al paso.
+- La casilla al paso se lee desde FEN y se almacena, pero todavía no se usa para generar capturas al paso.
+- Todavía no hay comando perft.
+- La legalidad completa de movimientos necesita todavía validación más amplia mediante perft y pruebas adicionales de reglas especiales.
+- El contador de medio movimiento y el número de jugada se actualizan de forma básica, pero todavía no se usan para adjudicación de partida.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-017 queda completado.
+El motor ya puede generar y aplicar enroques bajo las condiciones legales esenciales.
+Este es un paso mayor hacia la generación completa de jugadas legales, porque una de las reglas especiales más delicadas del ajedrez ya está implementada y validada mediante pruebas directas desde FEN en consola.
+El siguiente paso de desarrollo debe enfocarse en la captura al paso.
+
+Fecha: 05 de julio de 2026
+
+PHILOCHESS 0.1-alpha-018 — Captura al paso
+
+Se implementó la generación y aplicación de capturas al paso.
+
+Hito técnico:
+PHILOCHESS ya puede generar y aplicar capturas al paso.
+El motor actualiza la casilla al paso después de un avance doble de peón y elimina correctamente el peón capturado desde la casilla situada detrás de la casilla de destino durante una captura al paso.
+
+Esta versión se apoya directamente en alpha-017. La versión anterior ya mostraba y almacenaba la casilla al paso dentro de los datos relacionados con FEN, pero la captura al paso todavía no estaba implementada. Alpha-018 convierte ahora esa información almacenada y actualizada en generación y aplicación real de jugadas legales.
+
+Nueva funcionalidad:
+- Se añadió generación de capturas al paso.
+- Se añadió aplicación de capturas al paso.
+- Se añadió eliminación correcta del peón capturado durante la captura al paso.
+- Se añadió actualización de la casilla al paso después de un avance doble legal de peón.
+- Se añadió limpieza de la casilla al paso después de jugadas ordinarias.
+- Se añadió reinicio del contador de medio movimiento después de una captura al paso.
+- Se conservó el filtrado normal de jugadas legales, por lo que las capturas al paso también son comprobadas respecto a la seguridad del rey.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-018
+
+Prueba 1 — Generación de captura al paso blanca
+
+Secuencia de comandos:
+uci
+isready
+position startpos moves e2e4 a7a6 e4e5 d7d5
+moves
+
+Resultado:
+PHILOCHESS aceptó correctamente la secuencia de jugadas.
+Después de que el peón negro avanzó de d7 a d5, el peón blanco en e5 pudo capturar al paso.
+
+El comando moves generó la jugada de captura al paso:
+e5d6
+
+La salida terminó con:
+Total: 31
+
+Esto confirma que PHILOCHESS reconoce correctamente la oportunidad de captura al paso después de un avance doble de peón.
+
+Prueba 2 — Aplicación de captura al paso blanca
+
+Secuencia de comandos:
+position startpos moves e2e4 a7a6 e4e5 d7d5 e5d6
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la captura al paso.
+
+El tablero resultante mostró:
+- Peón blanco en d6.
+- El peón negro de d5 fue eliminado.
+- d5 quedó vacío.
+- Turno de las negras.
+- Los derechos de enroque permanecieron como:
+  KQkq
+- La casilla al paso quedó limpia:
+  -
+- El contador de medio movimiento quedó reiniciado en:
+  0
+- El número de jugada completa quedó en:
+  3
+
+Esto confirma que PHILOCHESS mueve correctamente el peón capturador, elimina el peón capturado desde la casilla correcta, limpia la casilla al paso, actualiza el contador de medio movimiento y conserva correctamente el resto del estado de la posición.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Todavía no hay comando perft.
+- La generación completa de jugadas todavía necesita verificación más amplia mediante perft y divide.
+- La captura al paso todavía debe recibir pruebas adicionales, incluyendo captura al paso negra y posiciones en las que capturar al paso dejaría al propio rey en jaque.
+- La generación de promociones existe, pero la legalidad de promociones todavía necesita validación más amplia.
+- El contador de medio movimiento y el número de jugada se actualizan de forma básica, pero todavía no se usan para adjudicación de partida.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-018 queda completado.
+El motor ya puede generar y aplicar capturas al paso.
+Este es un paso mayor hacia la generación completa de jugadas legales, porque la segunda gran regla especial del ajedrez, después del enroque, ya está implementada y validada mediante una prueba directa en consola.
+El siguiente paso de desarrollo debe enfocarse en pruebas adicionales de reglas especiales, consolidación de promociones y luego pruebas perft/divide.
+
+Pruebas adicionales de validación para alpha-018:
+
+Se realizaron varias pruebas adicionales para validar la captura al paso con mayor rigor, incluyendo seguridad del rey, la obligación de capturar inmediatamente y la captura al paso para las negras.
+
+Prueba 3 — Captura al paso rechazada porque dejaría al propio rey en jaque
+
+FEN probada sin casilla al paso activa:
+r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq - 0 7
+
+Comandos realizados:
+position fen r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq - 0 7
+moves
+
+Resultado:
+La jugada e5d6 no apareció en la lista de jugadas legales.
+
+Esto es correcto porque la casilla al paso no estaba activa.
+
+FEN adicional probada con casilla al paso activa:
+r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq d6 0 7
+
+Comando realizado:
+position fen r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq d6 0 7 moves e5d6
+
+Resultado:
+PHILOCHESS rechazó la jugada:
+info string illegal move ignored: e5d6
+
+Esto confirma que, incluso cuando la casilla al paso está activa, PHILOCHESS rechaza una captura al paso si esa captura deja al propio rey en jaque. En esta posición, al mover el peón blanco de e5 a d6, se abre la columna e y el rey blanco de e1 queda expuesto a la dama negra de e6.
+
+Prueba 4 — Las blancas pierden el derecho de captura al paso si no lo usan inmediatamente
+
+FEN probada:
+r1b1kbnr/1pp1qppp/p1n5/3pP3/8/N4N2/PPPP1PPP/R1BQ1RK1 w kq - 2 8
+
+Comandos realizados:
+position fen r1b1kbnr/1pp1qppp/p1n5/3pP3/8/N4N2/PPPP1PPP/R1BQ1RK1 w kq - 2 8
+moves
+
+Resultado:
+La jugada e5d6 no apareció en la lista de jugadas legales.
+
+Comando adicional:
+position fen r1b1kbnr/1pp1qppp/p1n5/3pP3/8/N4N2/PPPP1PPP/R1BQ1RK1 w kq - 2 8 moves e5d6
+
+Resultado:
+PHILOCHESS rechazó la jugada:
+info string illegal move ignored: e5d6
+
+Esto confirma que la captura al paso no puede postergarse. Si el jugador no captura al paso inmediatamente después del avance doble del peón rival, el derecho desaparece en el siguiente turno.
+
+Prueba 5 — Generación y aplicación de captura al paso negra
+
+FEN probada:
+r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0 9
+
+Comandos realizados:
+position fen r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0 9
+moves
+
+Resultado:
+PHILOCHESS generó la captura al paso negra:
+d4c3
+
+Comando adicional:
+position fen r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0 9 moves d4c3
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la captura al paso negra.
+
+El tablero resultante mostró:
+- Peón negro en c3.
+- El peón blanco de c4 fue eliminado.
+- d4 quedó vacío.
+- c4 quedó vacío.
+- Turno de las blancas.
+- La casilla al paso quedó limpia:
+  -
+- El contador de medio movimiento quedó reiniciado en:
+  0
+- El número de jugada completa quedó en:
+  10
+
+Esto confirma que la captura al paso funciona correctamente también para las negras.
+
+Prueba 6 — Las negras pierden el derecho de captura al paso si no lo usan inmediatamente
+
+FEN probada:
+r3kbnr/1ppbqppp/p1n5/4P3/2Pp4/N2P1N1P/PP3PP1/R1BQ1RK1 b kq - 0 10
+
+Comandos realizados:
+position fen r3kbnr/1ppbqppp/p1n5/4P3/2Pp4/N2P1N1P/PP3PP1/R1BQ1RK1 b kq - 0 10
+moves
+
+Resultado:
+La jugada d4c3 no apareció en la lista de jugadas legales.
+La salida terminó con:
+Total: 38
+
+Comando adicional:
+position fen r3kbnr/1ppbqppp/p1n5/4P3/2Pp4/N2P1N1P/PP3PP1/R1BQ1RK1 b kq - 0 10 moves d4c3
+
+Resultado:
+PHILOCHESS rechazó la jugada:
+info string illegal move ignored: d4c3
+
+Esto confirma que las negras también pierden el derecho de capturar al paso si no realizan la captura inmediatamente después del avance doble del peón rival.
+
+Conclusión de las pruebas adicionales de alpha-018:
+Las pruebas adicionales confirman que la captura al paso no solo se genera y se aplica, sino que también se filtra correctamente por seguridad del rey y por la regla de inmediatez. El comportamiento de la captura al paso para blancas y negras queda ahora validado con mayor profundidad.
+
+Fecha: 06 de julio de 2026
+
+PHILOCHESS 0.1-alpha-019 — Consolidación de promociones
+
+Se implementó la consolidación de promociones.
+
+Hito técnico:
+PHILOCHESS ahora aplica correctamente las promociones de peón y las valida dentro del filtrado de jugadas legales.
+La generación de promociones ya existía desde alpha-012, pero alpha-019 consolida esta regla al asegurar que las promociones se apliquen como la pieza promovida correcta, que las promociones inválidas sean rechazadas, que las jugadas de promoción incompletas sean rechazadas y que las promociones sigan respetando la seguridad del rey.
+
+Nueva funcionalidad:
+- Se consolidó la aplicación de movimientos de promoción.
+- Se añadió validación centralizada de piezas de promoción:
+  q
+  r
+  b
+  n
+- Se añadió conversión correcta de la pieza promovida según el bando:
+  - Las promociones blancas crean Q, R, B o N.
+  - Las promociones negras crean q, r, b o n.
+- Se añadió rechazo de piezas de promoción inválidas, como:
+  k
+  p
+  x
+- Se añadió rechazo de movimientos incompletos cuando la promoción es obligatoria.
+- Se conservó la generación de promociones por:
+  - avance directo de peón;
+  - captura de peón.
+- Se conservó el filtrado normal de jugadas legales, por lo que las promociones también son comprobadas respecto a la seguridad del rey.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-019
+
+Prueba 1 — Generación y aplicación de promoción blanca por avance directo
+
+FEN probada:
+4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+
+Comandos realizados:
+uci
+isready
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+moves
+
+Resultado:
+PHILOCHESS generó las cuatro promociones blancas por avance directo:
+a7a8q
+a7a8r
+a7a8b
+a7a8n
+
+La salida terminó con:
+Total: 9
+
+Comando adicional:
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8q
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la promoción.
+El tablero resultante mostró una dama blanca en a8.
+El turno pasó a las negras.
+La casilla al paso permaneció como:
+-
+El contador de medio movimiento quedó reiniciado en:
+0
+
+Prueba 2 — Generación y aplicación de promoción negra por avance directo
+
+FEN probada:
+4k3/8/8/8/8/8/p7/4K3 b - - 0 1
+
+Comandos realizados:
+position fen 4k3/8/8/8/8/8/p7/4K3 b - - 0 1
+moves
+
+Resultado:
+PHILOCHESS generó las cuatro promociones negras por avance directo:
+a2a1q
+a2a1r
+a2a1b
+a2a1n
+
+La salida terminó con:
+Total: 9
+
+Comando adicional:
+position fen 4k3/8/8/8/8/8/p7/4K3 b - - 0 1 moves a2a1q
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la promoción.
+El tablero resultante mostró una dama negra en a1.
+El turno pasó a las blancas.
+La casilla al paso permaneció como:
+-
+El contador de medio movimiento quedó reiniciado en:
+0
+El número de jugada completa pasó a:
+2
+
+Prueba 3 — Promoción blanca por captura
+
+FEN probada:
+3r2k1/4P3/8/8/8/8/8/4K3 w - - 0 1
+
+Comandos realizados:
+position fen 3r2k1/4P3/8/8/8/8/8/4K3 w - - 0 1
+moves
+
+Resultado:
+PHILOCHESS generó promociones blancas por avance:
+e7e8q
+e7e8r
+e7e8b
+e7e8n
+
+PHILOCHESS también generó promociones blancas por captura:
+e7d8q
+e7d8r
+e7d8b
+e7d8n
+
+La salida terminó con:
+Total: 11
+
+Comando adicional:
+position fen 3r2k1/4P3/8/8/8/8/8/4K3 w - - 0 1 moves e7d8q
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la promoción por captura.
+El tablero resultante mostró una dama blanca en d8.
+La torre negra de d8 fue eliminada.
+
+Prueba 4 — Promoción negra por captura
+
+FEN probada:
+4k3/8/8/8/8/8/4p3/3R2K1 b - - 0 1
+
+Comandos realizados:
+position fen 4k3/8/8/8/8/8/4p3/3R2K1 b - - 0 1
+moves
+
+Resultado:
+PHILOCHESS generó promociones negras por avance:
+e2e1q
+e2e1r
+e2e1b
+e2e1n
+
+PHILOCHESS también generó promociones negras por captura:
+e2d1q
+e2d1r
+e2d1b
+e2d1n
+
+La salida terminó con:
+Total: 11
+
+Comando adicional:
+position fen 4k3/8/8/8/8/8/4p3/3R2K1 b - - 0 1 moves e2d1q
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la promoción por captura.
+El tablero resultante mostró una dama negra en d1.
+La torre blanca de d1 fue eliminada.
+El número de jugada completa pasó a:
+2
+
+Prueba 5 — Rechazo de promociones inválidas e incompletas
+
+FEN probada:
+4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+
+Comandos realizados:
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8k
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8p
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8
+
+Resultado:
+PHILOCHESS rechazó las tres jugadas:
+info string illegal move ignored: a7a8k
+info string illegal move ignored: a7a8p
+info string illegal move ignored: a7a8
+
+Esto confirma que no se permite promover a rey, no se permite promover a peón y no se permite avanzar a la última fila sin indicar pieza de promoción.
+
+Prueba 6 — go devuelve una promoción completa
+
+FEN probada:
+4k2K/P7/8/8/8/8/8/8 w - - 0 1
+
+Comandos realizados:
+position fen 4k2K/P7/8/8/8/8/8/8 w - - 0 1
+moves
+go
+
+Resultado:
+PHILOCHESS generó las jugadas de promoción:
+a7a8q
+a7a8r
+a7a8b
+a7a8n
+
+El comando go devolvió:
+bestmove a7a8q
+
+Esto confirma que PHILOCHESS puede elegir y devolver una promoción en formato UCI completo.
+
+Prueba 7 — Promoción que resuelve un jaque y rechazo de promoción que no resuelve el jaque
+
+FEN probada:
+4r1k1/3P4/8/8/8/8/8/4K3 w - - 0 1
+
+Comandos realizados:
+position fen 4r1k1/3P4/8/8/8/8/8/4K3 w - - 0 1
+check
+moves
+
+Resultado:
+PHILOCHESS detectó correctamente:
+White in check: yes
+Black in check: no
+
+La lista de jugadas legales incluyó las promociones por captura:
+d7e8q
+d7e8r
+d7e8b
+d7e8n
+
+Comando adicional:
+position fen 4r1k1/3P4/8/8/8/8/8/4K3 w - - 0 1 moves d7e8q
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente la jugada.
+El peón blanco promovió a dama en e8 y capturó la torre negra.
+La jugada resolvió el jaque contra el rey blanco.
+
+Prueba adicional de jugada ilegal:
+position fen 4r1k1/3P4/8/8/8/8/8/4K3 w - - 0 1 moves d7d8q
+
+Resultado:
+PHILOCHESS rechazó la jugada:
+info string illegal move ignored: d7d8q
+
+Esto confirma que una promoción es rechazada si no resuelve un jaque existente.
+
+Prueba 8 — Subpromociones blancas aplicadas correctamente
+
+FEN probada:
+4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+
+Comandos realizados:
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8r
+d
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8b
+d
+position fen 4k3/P7/8/8/8/8/8/4K3 w - - 0 1 moves a7a8n
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente las tres subpromociones blancas:
+- a7a8r produjo una torre blanca en a8.
+- a7a8b produjo un alfil blanco en a8.
+- a7a8n produjo un caballo blanco en a8.
+
+Prueba 9 — Subpromociones negras aplicadas correctamente
+
+FEN probada:
+4k3/8/8/8/8/8/p7/4K3 b - - 0 1
+
+Comandos realizados:
+position fen 4k3/8/8/8/8/8/p7/4K3 b - - 0 1 moves a2a1r
+d
+position fen 4k3/8/8/8/8/8/p7/4K3 b - - 0 1 moves a2a1b
+d
+position fen 4k3/8/8/8/8/8/p7/4K3 b - - 0 1 moves a2a1n
+d
+
+Resultado:
+PHILOCHESS aplicó correctamente las tres subpromociones negras:
+- a2a1r produjo una torre negra en a1.
+- a2a1b produjo un alfil negro en a1.
+- a2a1n produjo un caballo negro en a1.
+
+El turno pasó a las blancas después de cada promoción negra.
+El número de jugada completa pasó a:
+2
+
+Prueba 10 — Promoción blanca rechazada porque dejaría al propio rey en jaque
+
+FEN probada:
+3br1k1/4P3/8/8/8/8/4K3/8 w - - 0 1
+
+Comandos realizados:
+position fen 3br1k1/4P3/8/8/8/8/4K3/8 w - - 0 1
+check
+moves
+
+Resultado:
+PHILOCHESS informó correctamente:
+White in check: no
+Black in check: no
+
+La lista de jugadas legales no incluyó las promociones por captura:
+e7d8q
+e7d8r
+e7d8b
+e7d8n
+
+Comando adicional:
+position fen 3br1k1/4P3/8/8/8/8/4K3/8 w - - 0 1 moves e7d8q
+
+Resultado:
+PHILOCHESS rechazó la jugada:
+info string illegal move ignored: e7d8q
+
+Esto confirma que PHILOCHESS rechaza una promoción si al mover el peón se deja al propio rey en jaque. En esta posición, mover el peón de e7 a d8 abriría la columna e y expondría al rey blanco de e2 a la torre negra de e8.
+
+Prueba 11 — Promoción negra rechazada porque dejaría al propio rey en jaque
+
+FEN probada:
+8/4k3/8/8/8/8/4p1K1/3BR3 b - - 0 1
+
+Comandos realizados:
+position fen 8/4k3/8/8/8/8/4p1K1/3BR3 b - - 0 1
+check
+moves
+
+Resultado:
+PHILOCHESS informó correctamente:
+White in check: no
+Black in check: no
+
+La lista de jugadas legales no incluyó:
+e2d1q
+e2d1r
+e2d1b
+e2d1n
+
+Comando adicional:
+position fen 8/4k3/8/8/8/8/4p1K1/3BR3 b - - 0 1 moves e2d1q
+
+Resultado:
+PHILOCHESS rechazó la jugada:
+info string illegal move ignored: e2d1q
+
+Esto confirma que PHILOCHESS también rechaza una promoción negra si al mover el peón se deja al propio rey en jaque. En esta posición, mover el peón de e2 a d1 abriría la columna e y expondría al rey negro de e7 a la torre blanca de e1.
+
+El programa compiló correctamente.
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Todavía no hay comando perft.
+- Todavía no hay comando divide.
+- La generación completa de jugadas legales todavía necesita verificación más amplia mediante perft y divide.
+- El contador de medio movimiento y el número de jugada se actualizan de forma básica, pero todavía no se usan para adjudicación de partida.
+- Todavía no hay adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-019 queda completado.
+El manejo de promociones queda consolidado.
+PHILOCHESS ya puede generar, aplicar, validar, rechazar y elegir promociones en formato UCI completo.
+Las tres principales reglas especiales de movimiento ya están implementadas y validadas en nivel básico:
+- enroque;
+- captura al paso;
+- promoción de peón.
+
+El siguiente paso de desarrollo debe enfocarse en las pruebas perft.
+
+Fecha: 06 de julio de 2026
+
+PHILOCHESS 0.1-alpha-020 — Perft básico
+
+Se implementó un comando interno básico de perft.
+
+Hito técnico:
+PHILOCHESS ya puede contar árboles de jugadas legales desde la posición actual usando su generador existente de jugadas legales.
+Esta es la primera versión en la que el motor puede verificar su generación de movimientos comparando conteos de nodos contra valores conocidos de referencia.
+
+La nueva función perft no evalúa posiciones, no busca la mejor jugada y no elige movimientos.
+Solo cuenta la cantidad de posiciones legales alcanzables hasta una profundidad determinada.
+
+Nueva funcionalidad:
+- Se añadió una función recursiva de perft.
+- Se añadió el comando interno:
+  perft <depth>
+- Se añadió conteo de nodos legales desde la posición actual.
+- Se reutilizó el generador existente de jugadas legales.
+- Se reutilizó la lógica existente de aplicación de movimientos.
+- Se añadió reporte de tiempo transcurrido en milisegundos.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-020
+
+Prueba realizada:
+uci
+isready
+position startpos
+perft 1
+perft 2
+perft 3
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-020
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando perft devolvió:
+
+perft 1:
+Perft depth: 1
+Nodes: 20
+
+perft 2:
+Perft depth: 2
+Nodes: 400
+
+perft 3:
+Perft depth: 3
+Nodes: 8902
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez:
+perft 1 = 20
+perft 2 = 400
+perft 3 = 8902
+
+Esto confirma que PHILOCHESS cuenta correctamente los árboles de jugadas legales desde la posición inicial hasta profundidad 3.
+
+El programa compiló correctamente.
+El programa cerró correctamente.
+
+Limitaciones actuales:
+- Todavía no está implementado el comando divide.
+- Perft actualmente muestra solo el conteo total de nodos, no el desglose por jugada raíz.
+- Todavía queda pendiente una validación más amplia desde posiciones especiales de prueba.
+- Las pruebas más profundas, como perft 4 y superiores, deben realizarse con cuidado porque la cantidad de nodos crece rápidamente.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada y no forma parte de perft en esta etapa.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-020 queda completado.
+El motor ahora tiene un comando básico de perft y puede verificar su generación de jugadas legales desde la posición inicial.
+Este es un hito mayor de verificación porque PHILOCHESS ya no solo genera jugadas legales; ahora puede contarlas y compararlas contra valores conocidos de referencia.
+El siguiente paso de desarrollo debe enfocarse en implementar divide, para desglosar los resultados de perft por cada jugada legal inicial.
+
+Fecha: 06 de julio de 2026
+
+PHILOCHESS 0.1-alpha-021 — Divide
+
+Se implementó un comando interno básico de divide.
+
+Hito técnico:
+PHILOCHESS ya puede desglosar los resultados de perft por cada jugada legal inicial desde la posición actual.
+Esto facilita mucho la depuración del generador de jugadas, porque el conteo de nodos ya no aparece solamente como un total global, sino también separado jugada por jugada.
+
+El comando divide reutiliza la función perft existente y el generador de jugadas legales.
+Para cada jugada legal de la posición actual, PHILOCHESS realiza esa jugada, ejecuta perft con una profundidad menor, imprime el conteo de nodos de esa jugada raíz y finalmente muestra el total.
+
+Nueva funcionalidad:
+- Se añadió el comando interno:
+  divide <depth>
+- Se añadió desglose de perft por jugada legal inicial.
+- Se reutilizó la función recursiva de perft.
+- Se reutilizó el generador existente de jugadas legales.
+- Se reutilizó la lógica existente de aplicación de movimientos.
+- Se añadió reporte del total de nodos para divide.
+- Se añadió reporte de tiempo transcurrido en milisegundos.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-021
+
+Prueba realizada:
+uci
+isready
+position startpos
+perft 1
+perft 2
+perft 3
+divide 1
+divide 2
+divide 3
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-021
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando perft devolvió:
+
+perft 1:
+Perft depth: 1
+Nodes: 20
+
+perft 2:
+Perft depth: 2
+Nodes: 400
+
+perft 3:
+Perft depth: 3
+Nodes: 8902
+
+El comando divide devolvió:
+
+divide 1:
+Total: 20
+
+divide 2:
+Total: 400
+
+divide 3:
+b1c3: 440
+b1a3: 400
+g1h3: 400
+g1f3: 440
+a2a3: 380
+a2a4: 420
+b2b3: 420
+b2b4: 421
+c2c3: 420
+c2c4: 441
+d2d3: 539
+d2d4: 560
+e2e3: 599
+e2e4: 600
+f2f3: 380
+f2f4: 401
+g2g3: 420
+g2g4: 421
+h2h3: 380
+h2h4: 420
+Total: 8902
+
+Esto confirma que divide produce el mismo conteo total de nodos que perft, pero además muestra cuántos nodos aporta cada jugada legal inicial.
+
+Prueba adicional de validación:
+position startpos
+perft 4
+divide 4
+
+Resultado:
+perft 4 devolvió:
+Perft depth: 4
+Nodes: 197281
+
+divide 4 devolvió:
+b1c3: 9755
+b1a3: 8885
+g1h3: 8881
+g1f3: 9748
+a2a3: 8457
+a2a4: 9329
+b2b3: 9345
+b2b4: 9332
+c2c3: 9272
+c2c4: 9744
+d2d3: 11959
+d2d4: 12435
+e2e3: 13134
+e2e4: 13160
+f2f3: 8457
+f2f4: 8929
+g2g3: 9345
+g2g4: 9328
+h2h3: 8457
+h2h4: 9329
+Total: 197281
+
+El valor perft 4 = 197281 coincide con el valor estándar conocido desde la posición inicial del ajedrez.
+El total de divide 4 también coincide con 197281, confirmando que el desglose por jugada raíz es coherente con el conteo global de perft.
+
+El programa compiló correctamente.
+El programa cerró correctamente.
+
+Limitaciones actuales:
+- Divide actualmente imprime el desglose completo por jugada raíz solo desde la posición actual.
+- Todavía queda pendiente una validación más amplia desde posiciones especiales de perft.
+- Las pruebas más profundas, como perft 5 y divide 5, son posibles, pero la cantidad de nodos crece rápidamente y deben usarse con cuidado.
+- Todavía no existe una batería automática de pruebas perft.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada y no forma parte de perft/divide en esta etapa.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-021 queda completado.
+El motor ahora tiene comandos perft y divide.
+PHILOCHESS puede verificar conteos totales de jugadas legales y también inspeccionar el aporte de cada jugada legal inicial.
+Este es un hito mayor de depuración y validación, porque futuros errores en la generación de movimientos podrán localizarse con mucha mayor precisión.
+El siguiente paso de desarrollo debe enfocarse en probar posiciones adicionales de referencia perft, especialmente posiciones con enroque, captura al paso, promociones, jaques, clavadas e interacciones entre reglas especiales.
+
+Fecha: 06 de julio de 2026
+
+PHILOCHESS 0.1-alpha-022 — Posiciones de validación perft
+
+Se implementaron posiciones internas de validación perft y pruebas perft contra posiciones conocidas de referencia.
+
+Hito técnico:
+PHILOCHESS ya puede ejecutar pruebas internas de validación perft desde posiciones seleccionadas y desde posiciones conocidas de referencia.
+Esta versión no añade búsqueda ni evaluación. Su objetivo es fortalecer la confianza en el generador de jugadas legales antes de pasar a evaluación material y búsqueda básica.
+
+Alpha-022 se apoya directamente en alpha-020 y alpha-021.
+Las versiones anteriores introdujeron perft y divide.
+Esta versión añade una capa estructurada de validación alrededor de esas herramientas, permitiendo que PHILOCHESS pruebe varias posiciones automáticamente y compare los conteos de nodos contra valores esperados.
+
+Nueva funcionalidad:
+- Se añadieron casos internos de validación perft.
+- Se añadieron casos conocidos de referencia perft.
+- Se añadió el comando interno:
+  perftcases
+- Se añadió el comando interno:
+  perftcheck <maxDepth>
+- Se añadió el comando interno:
+  perftknown <maxDepth>
+- Se añadieron posiciones internas de validación para:
+  - posición inicial;
+  - captura al paso blanca disponible;
+  - posición abierta de enroque;
+  - promoción blanca directa;
+  - ahogado directo.
+- Se añadieron posiciones conocidas de referencia para:
+  - posición inicial;
+  - posición de referencia Kiwipete.
+- Se añadió comparación automática entre nodos calculados y nodos esperados.
+- Se añadió reporte OK/FAIL para cada profundidad probada.
+- Se añadió resumen final de validación.
+- Se conservaron los comandos perft y divide ya existentes desde alpha-021.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-022
+
+Corrección importante durante la validación:
+Durante el primer intento de validación de Kiwipete, se detectó que la FEN usada en el código fuente era incorrecta.
+PHILOCHESS devolvió 43 jugadas legales para esa posición alterada, mientras que el valor esperado de 48 correspondía a la posición estándar de referencia Kiwipete.
+La FEN fue corregida a la posición estándar de referencia Kiwipete:
+
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
+
+Después de corregir la FEN y añadir el valor de referencia para profundidad 4, la validación de Kiwipete pasó correctamente hasta profundidad 4.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI realizada:
+uci
+isready
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-022
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Prueba 1 — Listado de casos disponibles de validación perft
+
+Comando realizado:
+perftcases
+
+Resultado:
+PHILOCHESS listó los casos internos de validación perft:
+
+1. Initial position
+FEN:
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+2. White en passant available
+FEN:
+rnbqkbnr/1pp1pppp/p7/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3
+
+3. Open castling position
+FEN:
+r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1
+
+4. White quiet promotion
+FEN:
+4k3/P7/8/8/8/8/8/4K3 w - - 0 1
+
+5. Direct stalemate
+FEN:
+7k/5Q2/6K1/8/8/8/8/8 b - - 0 1
+
+PHILOCHESS también listó los casos conocidos de referencia perft:
+
+1. Initial position
+FEN:
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+2. Kiwipete reference position
+FEN:
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
+
+Esto confirmó que alpha-022 muestra correctamente tanto los casos internos de validación como los casos conocidos de referencia.
+
+Prueba 2 — Validación perft interna hasta profundidad 4
+
+Comando realizado:
+perftcheck 4
+
+Resultado:
+PHILOCHESS ejecutó los casos internos de validación perft hasta profundidad 4 cuando existían valores esperados disponibles.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+depth 4: nodes 197281 expected 197281 -> OK
+
+White en passant available:
+depth 1: nodes 31 expected 31 -> OK
+
+Open castling position:
+depth 1: nodes 26 expected 26 -> OK
+
+White quiet promotion:
+depth 1: nodes 9 expected 9 -> OK
+
+Direct stalemate:
+depth 1: nodes 0 expected 0 -> OK
+
+Resumen de validación:
+Perft validation summary: 8/8 passed
+
+Esto confirma que las posiciones internas de validación pasaron correctamente, incluyendo pruebas básicas para posición inicial, disponibilidad de captura al paso, disponibilidad de enroque, promoción directa y ahogado.
+
+Prueba 3 — Validación perft de posiciones conocidas hasta profundidad 1
+
+Comando realizado:
+perftknown 1
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia hasta profundidad 1.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+
+Resumen de validación:
+Perft validation summary: 2/2 passed
+
+Esto confirmó que ambas posiciones conocidas de referencia pasaron en profundidad 1.
+
+Prueba 4 — Validación perft de posiciones conocidas hasta profundidad 2
+
+Comando realizado:
+perftknown 2
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia hasta profundidad 2.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+
+Resumen de validación:
+Perft validation summary: 4/4 passed
+
+Esto confirmó que ambas posiciones conocidas de referencia pasaron hasta profundidad 2.
+
+Prueba 5 — Validación perft de posiciones conocidas hasta profundidad 3
+
+Comando realizado:
+perftknown 3
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia hasta profundidad 3.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+depth 3: nodes 97862 expected 97862 -> OK
+
+Resumen de validación:
+Perft validation summary: 6/6 passed
+
+Esto confirmó que ambas posiciones conocidas de referencia pasaron hasta profundidad 3.
+
+Prueba 6 — Validación perft de posiciones conocidas hasta profundidad 4
+
+Comando realizado:
+perftknown 4
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia hasta profundidad 4.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+depth 4: nodes 197281 expected 197281 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+depth 3: nodes 97862 expected 97862 -> OK
+depth 4: nodes 4085603 expected 4085603 -> OK
+
+Resumen de validación:
+Perft validation summary: 8/8 passed
+
+La validación final en profundidad 4 confirma que PHILOCHESS coincide con los valores conocidos de referencia tanto para la posición inicial como para la posición Kiwipete.
+
+El resultado de Kiwipete es especialmente importante porque esta posición es mucho más exigente que la posición inicial. Incluye piezas activas, derechos de enroque, capturas, jaques, clavadas y muchas interacciones tácticas útiles para detectar errores en la generación de jugadas y en el filtrado legal.
+
+El programa compiló correctamente.
+El programa cerró correctamente.
+
+Limitaciones actuales:
+- Alpha-022 valida casos internos seleccionados y casos conocidos de referencia, pero todavía no es una batería automática completa de pruebas perft.
+- Los casos internos de reglas especiales actualmente validan principalmente conteos de profundidad 1.
+- La validación más profunda de posiciones con reglas especiales debe ampliarse en versiones posteriores.
+- Todavía no existen contadores extendidos de perft para capturas, capturas al paso, enroques, promociones, jaques, jaques descubiertos, jaques dobles y jaques mate.
+- Las pruebas perft 5 y superiores son posibles, pero la cantidad de nodos crece rápidamente y deben usarse con cuidado.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada y no forma parte de la validación perft en esta etapa.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-022 queda completado.
+El motor ahora incluye comandos estructurados de validación perft y pasa todas las pruebas internas y conocidas de referencia ejecutadas.
+PHILOCHESS pasó:
+- perftcheck 4 con 8/8 validaciones correctas;
+- perftknown 1 con 2/2 validaciones correctas;
+- perftknown 2 con 4/4 validaciones correctas;
+- perftknown 3 con 6/6 validaciones correctas;
+- perftknown 4 con 8/8 validaciones correctas.
+
+La posición Kiwipete corregida pasó hasta profundidad 4:
+perft 1 = 48
+perft 2 = 2039
+perft 3 = 97862
+perft 4 = 4085603
+
+Este es un hito mayor de validación del generador de jugadas legales.
+PHILOCHESS tiene ahora evidencia más fuerte de que su generador de jugadas legales, lógica de enroque, manejo de captura al paso, manejo de promociones, detección de jaque y filtrado de seguridad del rey funcionan de manera coherente en posiciones exigentes de referencia.
+
+El siguiente paso de desarrollo debe enfocarse en evaluación material, salvo que se decida añadir primero una capa adicional de contadores perft extendidos.
+
+Fecha: 06 de julio de 2026
+
+PHILOCHESS 0.1-alpha-023 — Posiciones extendidas de validación perft
+
+Se amplió la batería de validación perft con posiciones conocidas de referencia.
+
+Hito técnico:
+PHILOCHESS ya puede validar su generador de jugadas legales contra un conjunto más amplio de posiciones conocidas de referencia perft.
+Esta versión amplía el sistema de validación de alpha-022 añadiendo cuatro posiciones adicionales de referencia de ChessProgramming a la batería conocida de pruebas perft.
+
+Alpha-023 no añade búsqueda, evaluación ni fuerza de juego.
+Su objetivo es aumentar la confianza en el generador de jugadas legales después de haber implementado enroque, captura al paso, manejo de promociones, detección de jaque, filtrado de seguridad del rey, perft, divide y comandos básicos de validación perft.
+
+Nueva funcionalidad:
+- Se amplió la batería de posiciones conocidas de referencia perft.
+- Se conservaron los casos internos de validación de alpha-022.
+- Se conservó la posición Kiwipete corregida.
+- Se añadió ChessProgramming position 3.
+- Se añadió ChessProgramming position 4.
+- Se añadió ChessProgramming position 5.
+- Se añadió ChessProgramming position 6.
+- Se añadieron valores esperados de nodos para las nuevas posiciones de referencia.
+- Se conservaron los comandos:
+  perft
+  divide
+  perftcases
+  perftcheck
+  perftknown
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-023
+
+Posiciones conocidas de referencia incluidas en alpha-023:
+
+1. Initial position
+FEN:
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+Valores esperados:
+depth 1 = 20
+depth 2 = 400
+depth 3 = 8902
+depth 4 = 197281
+
+2. Kiwipete reference position
+FEN:
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
+
+Valores esperados:
+depth 1 = 48
+depth 2 = 2039
+depth 3 = 97862
+depth 4 = 4085603
+
+3. ChessProgramming position 3
+FEN:
+8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1
+
+Valores esperados:
+depth 1 = 14
+depth 2 = 191
+depth 3 = 2812
+depth 4 = 43238
+depth 5 = 674624
+
+4. ChessProgramming position 4
+FEN:
+r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1
+
+Valores esperados:
+depth 1 = 6
+depth 2 = 264
+depth 3 = 9467
+depth 4 = 422333
+
+5. ChessProgramming position 5
+FEN:
+rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8
+
+Valores esperados:
+depth 1 = 44
+depth 2 = 1486
+depth 3 = 62379
+depth 4 = 2103487
+
+6. ChessProgramming position 6
+FEN:
+r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10
+
+Valores esperados:
+depth 1 = 46
+depth 2 = 2079
+depth 3 = 89890
+depth 4 = 3894594
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI realizada:
+uci
+isready
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-023
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Prueba 1 — Listado de casos disponibles de validación perft
+
+Comando realizado:
+perftcases
+
+Resultado:
+PHILOCHESS listó los casos internos de validación perft de alpha-022:
+- Initial position
+- White en passant available
+- Open castling position
+- White quiet promotion
+- Direct stalemate
+
+PHILOCHESS también listó los casos conocidos de referencia perft ampliados:
+- Initial position
+- Kiwipete reference position
+- ChessProgramming position 3
+- ChessProgramming position 4
+- ChessProgramming position 5
+- ChessProgramming position 6
+
+Esto confirmó que alpha-023 muestra correctamente la batería ampliada de posiciones conocidas de referencia perft.
+
+Prueba 2 — Validación perft interna hasta profundidad 4
+
+Comando realizado:
+perftcheck 4
+
+Resultado:
+PHILOCHESS ejecutó los casos internos de validación perft hasta profundidad 4 cuando existían valores esperados disponibles.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+depth 4: nodes 197281 expected 197281 -> OK
+
+White en passant available:
+depth 1: nodes 31 expected 31 -> OK
+
+Open castling position:
+depth 1: nodes 26 expected 26 -> OK
+
+White quiet promotion:
+depth 1: nodes 9 expected 9 -> OK
+
+Direct stalemate:
+depth 1: nodes 0 expected 0 -> OK
+
+Resumen de validación:
+Perft validation summary: 8/8 passed
+
+Esto confirma que la batería interna de validación se mantiene estable después de ampliar las posiciones conocidas de referencia.
+
+Prueba 3 — Validación perft de posiciones conocidas hasta profundidad 1
+
+Comando realizado:
+perftknown 1
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia ampliadas hasta profundidad 1.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+
+ChessProgramming position 3:
+depth 1: nodes 14 expected 14 -> OK
+
+ChessProgramming position 4:
+depth 1: nodes 6 expected 6 -> OK
+
+ChessProgramming position 5:
+depth 1: nodes 44 expected 44 -> OK
+
+ChessProgramming position 6:
+depth 1: nodes 46 expected 46 -> OK
+
+Resumen de validación:
+Perft validation summary: 6/6 passed
+
+Prueba 4 — Validación perft de posiciones conocidas hasta profundidad 2
+
+Comando realizado:
+perftknown 2
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia ampliadas hasta profundidad 2.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+
+ChessProgramming position 3:
+depth 1: nodes 14 expected 14 -> OK
+depth 2: nodes 191 expected 191 -> OK
+
+ChessProgramming position 4:
+depth 1: nodes 6 expected 6 -> OK
+depth 2: nodes 264 expected 264 -> OK
+
+ChessProgramming position 5:
+depth 1: nodes 44 expected 44 -> OK
+depth 2: nodes 1486 expected 1486 -> OK
+
+ChessProgramming position 6:
+depth 1: nodes 46 expected 46 -> OK
+depth 2: nodes 2079 expected 2079 -> OK
+
+Resumen de validación:
+Perft validation summary: 12/12 passed
+
+Prueba 5 — Validación perft de posiciones conocidas hasta profundidad 3
+
+Comando realizado:
+perftknown 3
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia ampliadas hasta profundidad 3.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+depth 3: nodes 97862 expected 97862 -> OK
+
+ChessProgramming position 3:
+depth 1: nodes 14 expected 14 -> OK
+depth 2: nodes 191 expected 191 -> OK
+depth 3: nodes 2812 expected 2812 -> OK
+
+ChessProgramming position 4:
+depth 1: nodes 6 expected 6 -> OK
+depth 2: nodes 264 expected 264 -> OK
+depth 3: nodes 9467 expected 9467 -> OK
+
+ChessProgramming position 5:
+depth 1: nodes 44 expected 44 -> OK
+depth 2: nodes 1486 expected 1486 -> OK
+depth 3: nodes 62379 expected 62379 -> OK
+
+ChessProgramming position 6:
+depth 1: nodes 46 expected 46 -> OK
+depth 2: nodes 2079 expected 2079 -> OK
+depth 3: nodes 89890 expected 89890 -> OK
+
+Resumen de validación:
+Perft validation summary: 18/18 passed
+
+Prueba 6 — Validación perft de posiciones conocidas hasta profundidad 4
+
+Comando realizado:
+perftknown 4
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia ampliadas hasta profundidad 4.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+depth 4: nodes 197281 expected 197281 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+depth 3: nodes 97862 expected 97862 -> OK
+depth 4: nodes 4085603 expected 4085603 -> OK
+
+ChessProgramming position 3:
+depth 1: nodes 14 expected 14 -> OK
+depth 2: nodes 191 expected 191 -> OK
+depth 3: nodes 2812 expected 2812 -> OK
+depth 4: nodes 43238 expected 43238 -> OK
+
+ChessProgramming position 4:
+depth 1: nodes 6 expected 6 -> OK
+depth 2: nodes 264 expected 264 -> OK
+depth 3: nodes 9467 expected 9467 -> OK
+depth 4: nodes 422333 expected 422333 -> OK
+
+ChessProgramming position 5:
+depth 1: nodes 44 expected 44 -> OK
+depth 2: nodes 1486 expected 1486 -> OK
+depth 3: nodes 62379 expected 62379 -> OK
+depth 4: nodes 2103487 expected 2103487 -> OK
+
+ChessProgramming position 6:
+depth 1: nodes 46 expected 46 -> OK
+depth 2: nodes 2079 expected 2079 -> OK
+depth 3: nodes 89890 expected 89890 -> OK
+depth 4: nodes 3894594 expected 3894594 -> OK
+
+Resumen de validación:
+Perft validation summary: 24/24 passed
+
+Esto confirma que PHILOCHESS coincide con todos los valores conocidos registrados hasta profundidad 4 en las seis posiciones conocidas.
+
+Prueba 7 — Validación perft de posiciones conocidas hasta profundidad 5
+
+Comando realizado:
+perftknown 5
+
+Resultado:
+PHILOCHESS probó las posiciones conocidas de referencia ampliadas hasta profundidad 5 cuando existían valores esperados disponibles.
+
+Initial position:
+depth 1: nodes 20 expected 20 -> OK
+depth 2: nodes 400 expected 400 -> OK
+depth 3: nodes 8902 expected 8902 -> OK
+depth 4: nodes 197281 expected 197281 -> OK
+
+Kiwipete reference position:
+depth 1: nodes 48 expected 48 -> OK
+depth 2: nodes 2039 expected 2039 -> OK
+depth 3: nodes 97862 expected 97862 -> OK
+depth 4: nodes 4085603 expected 4085603 -> OK
+
+ChessProgramming position 3:
+depth 1: nodes 14 expected 14 -> OK
+depth 2: nodes 191 expected 191 -> OK
+depth 3: nodes 2812 expected 2812 -> OK
+depth 4: nodes 43238 expected 43238 -> OK
+depth 5: nodes 674624 expected 674624 -> OK
+
+ChessProgramming position 4:
+depth 1: nodes 6 expected 6 -> OK
+depth 2: nodes 264 expected 264 -> OK
+depth 3: nodes 9467 expected 9467 -> OK
+depth 4: nodes 422333 expected 422333 -> OK
+
+ChessProgramming position 5:
+depth 1: nodes 44 expected 44 -> OK
+depth 2: nodes 1486 expected 1486 -> OK
+depth 3: nodes 62379 expected 62379 -> OK
+depth 4: nodes 2103487 expected 2103487 -> OK
+
+ChessProgramming position 6:
+depth 1: nodes 46 expected 46 -> OK
+depth 2: nodes 2079 expected 2079 -> OK
+depth 3: nodes 89890 expected 89890 -> OK
+depth 4: nodes 3894594 expected 3894594 -> OK
+
+Resumen de validación:
+Perft validation summary: 25/25 passed
+
+Tiempo total:
+76195 ms
+
+Esta prueba final confirma que todos los valores conocidos registrados en alpha-023 pasaron correctamente.
+La única posición con valor registrado en profundidad 5 dentro de esta versión es ChessProgramming position 3, y también pasó correctamente.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Alpha-023 todavía valida solamente conteos de nodos. No cuenta por separado capturas, capturas al paso, enroques, promociones, jaques, jaques descubiertos, jaques dobles ni jaques mate.
+- Los casos internos de reglas especiales todavía validan principalmente valores de profundidad 1.
+- No se incluyeron valores más profundos para ChessProgramming positions 4, 5 y 6 porque sus conteos de nodos crecen considerablemente.
+- Las pruebas perft 5 y superiores siguen siendo posibles, pero deben usarse con cuidado por el rápido aumento del tiempo de cálculo.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada y no forma parte de la validación perft en esta etapa.
+- Todavía no se ha añadido búsqueda ni evaluación.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-023 queda completado.
+El motor ahora incluye una batería mucho más fuerte de validación perft con posiciones conocidas de referencia.
+
+PHILOCHESS pasó:
+- perftcheck 4 con 8/8 validaciones correctas;
+- perftknown 1 con 6/6 validaciones correctas;
+- perftknown 2 con 12/12 validaciones correctas;
+- perftknown 3 con 18/18 validaciones correctas;
+- perftknown 4 con 24/24 validaciones correctas;
+- perftknown 5 con 25/25 validaciones correctas.
+
+Este es un hito mayor de validación del generador de jugadas legales.
+PHILOCHESS ahora pasa seis posiciones conocidas de referencia perft, incluyendo la posición inicial, Kiwipete y cuatro posiciones adicionales de ChessProgramming.
+
+Estas pruebas ofrecen evidencia fuerte de que el generador actual de jugadas legales, el filtrado de seguridad del rey, la lógica de enroque, el manejo de la captura al paso, el manejo de promociones, la detección de jaque y la aplicación de movimientos funcionan de manera coherente en una variedad más amplia de posiciones tácticas, posiciones con reglas especiales, medio juego y finales.
+
+El siguiente paso de desarrollo puede enfocarse ahora en evaluación material, salvo que se decida añadir primero una capa de contadores perft extendidos.
+
+Fecha: 06 de julio de 2026
+
+PHILOCHESS 0.1-alpha-024 — Evaluación material
+
+Se implementó la evaluación básica por material.
+
+Hito técnico:
+PHILOCHESS ya puede evaluar una posición de ajedrez mediante un balance material simple.
+Esta es la primera capa de evaluación añadida al motor.
+
+Alpha-024 se apoya directamente en el trabajo de generación legal de jugadas y validación perft completado en alpha-023.
+El objetivo de esta versión no es añadir todavía fuerza real de búsqueda, sino darle a PHILOCHESS su primera forma numérica de valorar una posición.
+
+Nueva funcionalidad:
+- Se añadieron valores estándar de piezas:
+  Peón    = 100
+  Caballo = 320
+  Alfil   = 330
+  Torre   = 500
+  Dama    = 900
+  Rey     = 0
+- Se añadió pieceValue().
+- Se añadió materialEvaluation().
+- Se añadió sideToMoveEvaluation().
+- Se añadió un sistema de desglose material.
+- Se añadió el comando interno:
+  eval
+- El comando eval ahora imprime:
+  - valores materiales usados;
+  - material total de las blancas;
+  - material total de las negras;
+  - balance material desde la perspectiva de las blancas;
+  - evaluación desde la perspectiva del bando que mueve.
+- Se actualizó go para que PHILOCHESS pueda elegir una jugada legal usando una evaluación material simple a una jugada.
+- Se conservó el generador existente de jugadas legales.
+- Se conservó el comando perft.
+- Se conservó el comando divide.
+- Se conservó el comando de validación perftknown.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-024
+
+Nota importante:
+La evaluación añadida en alpha-024 es solamente material.
+Todavía no incluye tablas de casillas, movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación, iniciativa, profundidad de búsqueda, alpha-beta, búsqueda de quietud ni control de tiempo.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI y evaluación material realizada:
+uci
+isready
+position startpos
+eval
+moves
+perft 1
+perft 2
+perftknown 4
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-024
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando eval devolvió:
+Material values: P=100 N=320 B=330 R=500 Q=900 K=0
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
+Evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Esto confirma que PHILOCHESS evalúa correctamente la posición inicial como materialmente igualada.
+
+El comando moves devolvió:
+Total: 20
+
+Esto confirma que la generación de jugadas legales desde la posición inicial se mantiene estable.
+
+El comando perft devolvió:
+perft 1 = 20
+perft 2 = 400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4 en esta ejecución de alpha-024.
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que los añadidos de evaluación material no rompieron el generador de jugadas legales ni la validación perft conocida hasta profundidad 4.
+
+Prueba adicional de desequilibrio material:
+
+FEN probada:
+rnb1kbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+En esta posición, falta la dama negra.
+
+Comandos realizados:
+position fen rnb1kbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+eval
+quit
+
+Resultado:
+PHILOCHESS devolvió:
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 3100 cp  (p=8, n=2, b=2, r=2, q=0)
+Evaluation: +900 cp  (positive = White is ahead)
+Side-to-move evaluation: +900 cp
+
+Esto confirma que PHILOCHESS detecta correctamente una ventaja material de una dama para las blancas.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La evaluación actual es solamente material.
+- Todavía no se ha añadido una búsqueda real.
+- go usa solo una selección muy básica basada en evaluación material a una jugada.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- Todavía no hay búsqueda alpha-beta.
+- Todavía no hay búsqueda de quietud.
+- Todavía no hay control de tiempo.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-024 queda completado.
+El motor ahora tiene su primera función de evaluación estática basada en balance material.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- prueba de evaluación material inicial con 4000 cp contra 4000 cp;
+- generación de jugadas desde la posición inicial con Total: 20;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- prueba de desequilibrio material con evaluación correcta de +900 cp para las blancas.
+
+Este es un hito conceptual importante.
+PHILOCHESS ya no solo genera y valida jugadas legales; ahora también puede asignar una primera evaluación numérica básica a una posición de ajedrez.
+
+El siguiente paso de desarrollo debe enfocarse en añadir una capa simple de búsqueda, probablemente una búsqueda negamax básica usando la nueva función de evaluación material.
+
+Fecha: 07 de julio de 2026
+
+PHILOCHESS 0.1-alpha-025 — Preparación de búsqueda
+
+Se implementó una capa conservadora de preparación de búsqueda.
+
+Hito técnico:
+PHILOCHESS ya puede aceptar comandos básicos orientados a búsqueda, como go depth N.
+Esta versión todavía no implementa una búsqueda negamax real. Su propósito es preparar la estructura interna necesaria para el siguiente paso de desarrollo sin poner en riesgo la estabilidad ya conseguida en generación legal de jugadas, evaluación material, perft, divide y validación con posiciones conocidas.
+
+Alpha-025 se apoya directamente en alpha-024.
+La versión anterior introdujo la evaluación material.
+Esta versión reorganiza la ruta de selección de jugada para que una futura función de búsqueda pueda añadirse de forma más limpia.
+
+Nueva funcionalidad:
+- Se añadieron constantes básicas relacionadas con búsqueda:
+  SEARCH_DEFAULT_DEPTH
+  SEARCH_MAX_DEPTH
+  INF_SCORE
+  MATE_SCORE
+- Se añadió la estructura SearchLimits.
+- Se añadió la estructura SearchResult.
+- Se añadió parseGoLimits().
+- Se añadió searchBestMove().
+- Se añadió printSearchInfo().
+- Se añadió rootSideScore().
+- Se añadió soporte para:
+  go
+  go depth 1
+  go depth 2
+- Se actualizó go para que pase por una ruta básica de preparación de búsqueda.
+- Se añadió una línea info string para mostrar información de preparación de búsqueda.
+- Se conservó la selección basada en material de alpha-024.
+- Se conservó eval.
+- Se conservó perft.
+- Se conservó divide.
+- Se conservó perftknown.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-025
+
+Nota importante:
+Alpha-025 todavía no realiza búsqueda recursiva real.
+El comando go depth 2 se acepta y se informa, pero el motor todavía usa la ruta preparada de selección material en la raíz.
+La búsqueda negamax real queda reservada para el siguiente paso de desarrollo.
+
+Corrección durante la validación de alpha-025:
+Durante la revisión de la batería de posiciones conocidas de perft, se corrigió un caso registrado.
+La posición espejo anterior fue reemplazada por la verdadera Position 5 de ChessProgramming, renombrada internamente como:
+
+Promotion bug trap
+
+FEN:
+rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8
+
+Valores esperados:
+depth 1 = 44
+depth 2 = 1486
+depth 3 = 62379
+depth 4 = 2103487
+
+Esta corrección hace que la batería de posiciones conocidas sea más fiel a las posiciones estándar de perft de ChessProgramming y mejora la calidad de la validación.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI, evaluación, preparación de búsqueda y perft realizada:
+uci
+isready
+position startpos
+eval
+go
+go depth 1
+go depth 2
+perft 1
+perft 2
+perftknown 4
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-025
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando eval devolvió:
+Material values: P=100 N=320 B=330 R=500 Q=900 K=0
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
+Evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Esto confirma que la evaluación material introducida en alpha-024 se mantiene estable.
+
+El comando go devolvió:
+info string search preparation depth 1 legalmoves 20 score 0 cp
+bestmove b1c3
+
+El comando go depth 1 devolvió:
+info string search preparation depth 1 legalmoves 20 score 0 cp
+bestmove b1c3
+
+El comando go depth 2 devolvió:
+info string search preparation depth 2 legalmoves 20 score 0 cp
+bestmove b1c3
+
+Esto confirma que PHILOCHESS ya acepta un parámetro de profundidad mediante go depth N y reporta la profundidad solicitada en su salida de preparación de búsqueda.
+
+El comando perft devolvió:
+perft 1 = 20
+perft 2 = 400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4 en esta ejecución de alpha-025.
+
+Las posiciones conocidas de referencia probadas fueron:
+- Initial position
+- Kiwipete
+- Endgame en passant/captures
+- Promotions and castling pressure
+- Promotion bug trap
+- Middle game development
+
+La prueba corregida Promotion bug trap devolvió:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que los añadidos de preparación de búsqueda y la corrección de la batería de posiciones conocidas no rompieron el generador de jugadas legales ni la validación perft conocida hasta profundidad 4.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Alpha-025 es solo una versión de preparación de búsqueda.
+- Todavía no se ha implementado búsqueda negamax real.
+- go depth N se interpreta y se informa, pero todavía no se realiza búsqueda recursiva más profunda.
+- El motor todavía usa una selección simple de jugada raíz basada en material.
+- Todavía no hay búsqueda alpha-beta.
+- Todavía no hay búsqueda de quietud.
+- Todavía no hay iterative deepening.
+- Todavía no hay sistema de ordenamiento de jugadas.
+- Todavía no hay control de tiempo.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-025 queda completado.
+El motor ahora tiene una capa más limpia de preparación para la futura búsqueda.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- prueba de evaluación material desde la posición inicial con 4000 cp contra 4000 cp;
+- go;
+- go depth 1;
+- go depth 2;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- validación corregida de Promotion bug trap con 44, 1486, 62379 y 2103487 nodos hasta profundidad 4.
+
+Este es un hito técnico de preparación.
+PHILOCHESS todavía no se ha vuelto más fuerte, pero la ruta interna para elegir una jugada queda ahora mejor preparada para una búsqueda real.
+
+El siguiente paso de desarrollo debe enfocarse en implementar una búsqueda negamax básica usando el generador de jugadas legales existente, la lógica makeMove y la función de evaluación material.
+
+Fecha: 07 de julio de 2026
+
+PHILOCHESS 0.1-alpha-026 — Negamax básico
+
+Se implementó una búsqueda negamax básica.
+
+Hito técnico:
+PHILOCHESS ya puede realizar una búsqueda recursiva real mediante un algoritmo negamax básico.
+Esta es la primera versión en la que el motor no solo genera jugadas legales y evalúa material, sino que también mira hacia adelante considerando respuestas del rival según la profundidad solicitada.
+
+Alpha-026 se apoya directamente en alpha-025.
+La versión anterior preparó la ruta de búsqueda y permitió comandos como go depth N, pero todavía no realizaba una búsqueda recursiva real.
+Alpha-026 convierte ahora esa estructura preparada en una primera capa funcional de búsqueda.
+
+Nueva funcionalidad:
+- Se añadió búsqueda negamax recursiva básica.
+- Se actualizó go depth N para que ahora realice búsqueda real hasta la profundidad solicitada.
+- Se añadió conteo de nodos de búsqueda.
+- Se añadió salida de búsqueda en el formato:
+  info depth N nodes X score cp Y pv <move>
+- Se conservó la evaluación material como función de evaluación estática.
+- Se conservó la generación de jugadas legales.
+- Se conservó la transición de posiciones mediante makeMove.
+- Se conservó el reconocimiento de jaque mate y ahogado mediante la lógica existente de estado de partida.
+- Se añadió manejo terminal de búsqueda:
+  - el jaque mate se valora como una puntuación negativa alta para el bando que mueve;
+  - el ahogado se valora como 0.
+- Se mantuvo SEARCH_MAX_DEPTH en un valor conservador por seguridad.
+- Se conservó eval.
+- Se conservó perft.
+- Se conservó divide.
+- Se conservó perftknown.
+- Se conservó el caso corregido de referencia Promotion bug trap.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-026
+
+Nota importante:
+Alpha-026 implementa solo negamax básico.
+Todavía no incluye poda alpha-beta, búsqueda de quietud, iterative deepening, ordenamiento de jugadas, tablas de transposición, control de tiempo ni evaluación posicional.
+La evaluación usada en las hojas de búsqueda sigue siendo solamente material.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI, evaluación, negamax y perft realizada:
+uci
+isready
+position startpos
+eval
+go
+go depth 1
+go depth 2
+perft 1
+perft 2
+perftknown 4
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-026
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando eval devolvió:
+Material values: P=100 N=320 B=330 R=500 Q=900 K=0
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
+Evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Esto confirma que la evaluación material introducida en alpha-024 se mantiene estable.
+
+El comando go devolvió:
+info depth 1 nodes 20 score cp 0 pv b1c3
+bestmove b1c3
+
+El comando go depth 1 devolvió:
+info depth 1 nodes 20 score cp 0 pv b1c3
+bestmove b1c3
+
+El comando go depth 2 devolvió:
+info depth 2 nodes 420 score cp 0 pv b1c3
+bestmove b1c3
+
+Esto confirma que PHILOCHESS ahora realiza una búsqueda negamax recursiva real.
+Desde la posición inicial, la profundidad 2 revisó las 20 jugadas legales de raíz y las 400 respuestas legales posibles del rival, produciendo 420 nodos de búsqueda contados.
+
+La evaluación se mantuvo en:
+score cp 0
+
+Esto es esperado desde la posición inicial porque la evaluación actual es solo material y todas las jugadas normales de apertura conservan el equilibrio material.
+
+La mejor jugada devuelta fue:
+bestmove b1c3
+
+Esto todavía no representa una preferencia estratégica. Con evaluación solamente material, muchas jugadas iniciales reciben la misma puntuación, por lo que el motor elige la primera mejor jugada según su orden interno de generación.
+
+El comando perft devolvió:
+perft 1 = 20
+perft 2 = 400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4 en esta ejecución de alpha-026.
+
+Las posiciones conocidas de referencia probadas fueron:
+- Initial position
+- Kiwipete
+- Endgame en passant/captures
+- Promotions and castling pressure
+- Promotion bug trap
+- Middle game development
+
+La prueba corregida Promotion bug trap devolvió:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que la implementación de negamax básico no rompió el generador de jugadas legales ni la validación perft conocida hasta profundidad 4.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Negamax es básico y no está optimizado.
+- Todavía no hay poda alpha-beta.
+- Todavía no hay búsqueda de quietud.
+- Todavía no hay iterative deepening.
+- Todavía no hay sistema de ordenamiento de jugadas.
+- Todavía no hay tabla de transposición.
+- Todavía no hay control de tiempo.
+- La salida de variante principal muestra actualmente solo la jugada raíz seleccionada.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La profundidad de búsqueda debe mantenerse conservadora porque el negamax puro crece rápidamente.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-026 queda completado.
+El motor ahora tiene su primera función real de búsqueda recursiva.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- prueba de evaluación material desde la posición inicial con 4000 cp contra 4000 cp;
+- go con búsqueda a profundidad 1;
+- go depth 1 con 20 nodos de búsqueda;
+- go depth 2 con 420 nodos de búsqueda;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- validación corregida de Promotion bug trap con 44, 1486, 62379 y 2103487 nodos hasta profundidad 4.
+
+Este es un hito conceptual mayor.
+PHILOCHESS ya no solo genera jugadas legales y evalúa posiciones de forma estática. Ahora puede mirar hacia adelante recursivamente y elegir una jugada mediante un proceso básico de búsqueda.
+
+El siguiente paso de desarrollo debe enfocarse en implementar poda alpha-beta, para que PHILOCHESS pueda buscar con mayor eficiencia sin cambiar la estructura básica de negamax.
+
+Fecha: 07 de julio de 2026
+
+PHILOCHESS 0.1-alpha-027 — Integración UCI más útil
+
+Se implementó una capa de integración UCI más útil.
+
+Hito técnico:
+PHILOCHESS ya puede interpretar y reportar comandos UCI de búsqueda más prácticos.
+Esta versión mejora la forma en que el motor se comunica con interfaces externas y entornos de prueba, conservando la búsqueda negamax básica introducida en alpha-026.
+
+Alpha-027 se apoya directamente en alpha-026.
+La versión anterior introdujo la primera búsqueda negamax recursiva real.
+Esta versión no aumenta todavía la fuerza ajedrecística del motor, pero mejora la capa de comandos UCI para que las futuras mejoras de búsqueda puedan probarse de manera más práctica y profesional.
+
+Nueva funcionalidad:
+- Se mejoró la interpretación del comando go.
+- Se conservó el soporte para:
+  go
+  go depth N
+- Se añadió soporte básico para:
+  go movetime N
+  go wtime N btime N
+  go winc N binc N
+  go movestogo N
+  go infinite
+- Se añadió una línea de reporte de límites:
+  info string go limits ...
+- Se añadió una salida de búsqueda más informativa:
+  info depth N nodes X time Y nps Z score cp S pv <move>
+- Se añadió reporte del tiempo transcurrido de búsqueda.
+- Se añadió reporte de nps.
+- Se añadió manejo básico de límite de tiempo para movetime y comandos basados en reloj.
+- Se añadió reconocimiento de:
+  stop
+  ponderhit
+- Se conservó la búsqueda negamax básica de alpha-026.
+- Se conservó la evaluación material.
+- Se conservó eval.
+- Se conservó perft.
+- Se conservó divide.
+- Se conservó perftknown.
+- Se conservó el caso corregido de referencia Promotion bug trap.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-027
+
+Nota importante:
+Alpha-027 reconoce stop, pero todavía no interrumpe una búsqueda en curso de forma asíncrona.
+El ciclo actual del motor todavía ejecuta la búsqueda de manera síncrona.
+Un sistema completo de stop asíncrono requerirá una arquitectura posterior de control de búsqueda.
+
+Otra nota importante:
+nps significa nodes per second, es decir, nodos por segundo.
+Se calcula a partir de la cantidad de nodos buscados y el tiempo transcurrido.
+En esta etapa, nps sirve principalmente como dato de diagnóstico, no como objetivo de fuerza.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI, evaluación, comandos de búsqueda, comandos de tiempo y perft realizada:
+uci
+isready
+position startpos
+eval
+go
+go depth 1
+go depth 2
+go movetime 100
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+perft 1
+perft 2
+perftknown 4
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-027
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando eval devolvió:
+Material values: P=100 N=320 B=330 R=500 Q=900 K=0
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
+Evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Esto confirma que la evaluación material se mantiene estable.
+
+El comando go devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
+bestmove b1c3
+
+Esto confirma que el comando go sin parámetros sigue buscando a profundidad 1 por defecto.
+
+El comando go depth 1 devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
+bestmove b1c3
+
+Esto confirma que PHILOCHESS interpreta correctamente una búsqueda explícita a profundidad 1.
+
+El comando go depth 2 devolvió:
+info string go limits depth 2
+info depth 2 nodes 420 time 45 nps 9333 score cp 0 pv b1c3
+bestmove b1c3
+
+Esto confirma que la búsqueda negamax básica introducida en alpha-026 se mantiene activa.
+Desde la posición inicial, la profundidad 2 revisó las 20 jugadas legales de raíz y las 400 respuestas legales posibles del rival, produciendo 420 nodos de búsqueda contados.
+
+El comando go movetime 100 devolvió:
+info string go limits depth 4 movetime 100 timelimit 100
+info depth 4 nodes 851 time 100 nps 8510 score cp 0 pv b1c3 string stopped by limit
+bestmove b1c3
+
+Esto confirma que PHILOCHESS interpreta movetime y aplica un límite de tiempo.
+En esta ejecución, la búsqueda se detuvo al alcanzar el límite de 100 ms.
+
+El comando:
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+
+devolvió:
+info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000 timelimit 2500
+info depth 4 nodes 21797 time 2500 nps 8718 score cp 0 pv b1c3 string stopped by limit
+bestmove b1c3
+
+Esto confirma que PHILOCHESS ya puede interpretar parámetros UCI basados en reloj, incrementos y movestogo.
+En esta ejecución, el límite de tiempo calculado fue de 2500 ms.
+
+La evaluación se mantuvo en:
+score cp 0
+
+Esto es esperado desde la posición inicial porque la evaluación actual es solamente material y las jugadas normales de apertura conservan la igualdad material.
+
+La mejor jugada devuelta fue:
+bestmove b1c3
+
+Esto todavía no representa una preferencia estratégica profunda.
+Con evaluación solamente material y sin puntuación posicional, muchas jugadas iniciales reciben la misma evaluación, por lo que el motor elige la primera mejor jugada según su orden interno de generación.
+
+El comando perft devolvió:
+perft 1 = 20
+perft 2 = 400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4 en esta ejecución de alpha-027.
+
+Las posiciones conocidas de referencia probadas fueron:
+- Initial position
+- Kiwipete
+- Endgame en passant/captures
+- Promotions and castling pressure
+- Promotion bug trap
+- Middle game development
+
+La prueba corregida Promotion bug trap devolvió:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que los cambios de integración UCI no rompieron el generador de jugadas legales, la capa de búsqueda ni la validación perft conocida hasta profundidad 4.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La búsqueda sigue siendo negamax básico.
+- Todavía no hay poda alpha-beta.
+- Todavía no hay búsqueda de quietud.
+- Todavía no hay iterative deepening.
+- Todavía no hay sistema de ordenamiento de jugadas.
+- Todavía no hay tabla de transposición.
+- El control de tiempo todavía es muy simple.
+- stop se reconoce, pero todavía no interrumpe una búsqueda de forma asíncrona.
+- go infinite se interpreta, pero el motor todavía necesita un ciclo de control de búsqueda más avanzado para un verdadero modo de análisis infinito.
+- La salida de variante principal muestra actualmente solo la jugada raíz seleccionada.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+- nps se reporta, pero la implementación actual todavía no está optimizada para velocidad.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-027 queda completado.
+El motor ahora tiene una capa de comandos UCI más útil para pruebas prácticas de búsqueda.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- prueba de evaluación material desde la posición inicial con 4000 cp contra 4000 cp;
+- go con profundidad 1 por defecto;
+- go depth 1 con 20 nodos de búsqueda;
+- go depth 2 con 420 nodos de búsqueda;
+- go movetime 100 con manejo de límite de tiempo;
+- go wtime/btime/winc/binc/movestogo con manejo de límite de tiempo calculado;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- validación corregida de Promotion bug trap con 44, 1486, 62379 y 2103487 nodos hasta profundidad 4.
+
+Este es un hito importante de integración.
+PHILOCHESS queda ahora mejor preparado para interactuar con interfaces compatibles con UCI y para probar futuras mejoras de búsqueda bajo condiciones de comando más realistas.
+
+El siguiente paso de desarrollo debe enfocarse en implementar poda alpha-beta básica, para que PHILOCHESS pueda buscar con mayor eficiencia conservando la estructura negamax introducida en alpha-026.
+
+Fecha: 07 de julio de 2026
+
+PHILOCHESS 0.1-alpha-028 — Poda alpha-beta básica
+
+Se implementó poda alpha-beta básica sobre la estructura negamax existente.
+
+Hito técnico:
+PHILOCHESS ya puede buscar de manera más eficiente podando ramas que no pueden mejorar el resultado final.
+Esta versión conserva la estructura negamax básica introducida en alpha-026 y la integración UCI más útil introducida en alpha-027, pero reemplaza la búsqueda negamax pura por negamax con poda alpha-beta.
+
+Alpha-028 se apoya directamente en alpha-027.
+La versión anterior mejoró la capa de comandos UCI y añadió soporte más práctico para comandos de búsqueda por profundidad y por tiempo.
+Alpha-028 mejora ahora la eficiencia interna de búsqueda conservando el mismo comportamiento externo UCI.
+
+Nueva funcionalidad:
+- Se añadió poda alpha-beta a la búsqueda negamax existente.
+- Se reemplazó la función de negamax puro por una función de búsqueda alpha-beta.
+- Se añadieron límites alpha y beta a la búsqueda recursiva.
+- Se añadió conteo de cortes alpha-beta.
+- Se añadió reporte de cortes alpha-beta:
+  info string alpha-beta cutoffs X
+- Se conservó la integración UCI útil de alpha-027.
+- Se conservó soporte para:
+  go
+  go depth N
+  go movetime N
+  go wtime N btime N
+  go winc N binc N
+  go movestogo N
+  go infinite
+- Se conservó la salida de búsqueda:
+  info depth N nodes X time Y nps Z score cp S pv <move>
+- Se conservó el manejo básico de límites de tiempo.
+- Se conservó la evaluación material.
+- Se conservó eval.
+- Se conservó perft.
+- Se conservó divide.
+- Se conservó perftknown.
+- Se conservó el caso corregido de referencia Promotion bug trap.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-028
+
+Nota importante:
+Alpha-028 no cambia la función de evaluación.
+El motor todavía evalúa posiciones usando solamente material.
+La mejora está en la eficiencia de búsqueda, no todavía en la comprensión posicional.
+
+Otra nota importante:
+La poda alpha-beta es más efectiva cuando las mejores jugadas se revisan primero.
+PHILOCHESS todavía no tiene ordenamiento de jugadas, por lo que la implementación actual de alpha-beta es básica.
+Aun así, la reducción de nodos ya se observa claramente en las pruebas.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI, evaluación, búsqueda alpha-beta, comandos de tiempo y perft realizada:
+uci
+isready
+position startpos
+eval
+go
+go depth 1
+go depth 2
+go depth 3
+go movetime 100
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+perft 1
+perft 2
+perftknown 4
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-028
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando eval devolvió:
+Material values: P=100 N=320 B=330 R=500 Q=900 K=0
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
+Evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Esto confirma que la evaluación material se mantiene estable.
+
+El comando go devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
+info string alpha-beta cutoffs 0
+bestmove b1c3
+
+Esto confirma que el comando go sin parámetros sigue buscando a profundidad 1.
+En profundidad 1, desde la posición inicial, no hay cortes alpha-beta útiles, por eso el conteo de cortes se mantuvo en 0.
+
+El comando go depth 1 devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
+info string alpha-beta cutoffs 0
+bestmove b1c3
+
+Esto confirma que PHILOCHESS interpreta correctamente una búsqueda explícita a profundidad 1.
+
+El comando go depth 2 devolvió:
+info string go limits depth 2
+info depth 2 nodes 59 time 7 nps 8428 score cp 0 pv b1c3
+info string alpha-beta cutoffs 19
+bestmove b1c3
+
+Este es el primer resultado claro de alpha-beta.
+En alpha-026 y alpha-027, la misma búsqueda a profundidad 2 desde la posición inicial revisaba 420 nodos con negamax puro.
+En alpha-028, alpha-beta redujo esa búsqueda a 59 nodos y produjo 19 cortes.
+
+El comando go depth 3 devolvió:
+info string go limits depth 3
+info depth 3 nodes 585 time 61 nps 9590 score cp 0 pv b1c3
+info string alpha-beta cutoffs 38
+bestmove b1c3
+
+Esto confirma que la búsqueda alpha-beta funciona más allá de profundidad 2 y sigue devolviendo una jugada válida.
+
+El comando go movetime 100 devolvió:
+info string go limits depth 4 movetime 100 timelimit 100
+info depth 4 nodes 943 time 100 nps 9430 score cp 0 pv b1c3 string stopped by limit
+info string alpha-beta cutoffs 247
+bestmove b1c3
+
+Esto confirma que PHILOCHESS sigue interpretando movetime y aplicando un límite de tiempo.
+En esta ejecución, la búsqueda se detuvo al alcanzar el límite de 100 ms.
+
+El comando:
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+
+devolvió:
+info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30 timelimit 2500
+info depth 4 nodes 1416 time 152 nps 9315 score cp 0 pv b1c3
+info string alpha-beta cutoffs 482
+bestmove b1c3
+
+Esto confirma que PHILOCHESS sigue interpretando parámetros UCI basados en reloj y calculando un límite práctico de tiempo a partir de ellos.
+En esta ejecución, el motor completó la búsqueda a profundidad 4 antes de alcanzar el límite de 2500 ms.
+
+La evaluación se mantuvo en:
+score cp 0
+
+Esto es esperado desde la posición inicial porque la evaluación actual es solamente material y las jugadas normales de apertura conservan la igualdad material.
+
+La mejor jugada devuelta fue:
+bestmove b1c3
+
+Esto todavía no representa una preferencia estratégica profunda.
+Con evaluación solamente material y sin puntuación posicional, muchas jugadas iniciales reciben la misma evaluación, por lo que el motor elige la primera mejor jugada según su orden interno actual.
+
+El comando perft devolvió:
+perft 1 = 20
+perft 2 = 400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4 en esta ejecución de alpha-028.
+
+Las posiciones conocidas de referencia probadas fueron:
+- Initial position
+- Kiwipete
+- Endgame en passant/captures
+- Promotions and castling pressure
+- Promotion bug trap
+- Middle game development
+
+La prueba corregida Promotion bug trap devolvió:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que los cambios de búsqueda alpha-beta no rompieron el generador de jugadas legales, la aplicación de movimientos ni la validación perft conocida hasta profundidad 4.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- La poda alpha-beta es básica.
+- Todavía no hay sistema de ordenamiento de jugadas.
+- Todavía no hay ordenamiento de capturas.
+- Todavía no hay MVV-LVA.
+- Todavía no hay heurística de killer moves.
+- Todavía no hay history heuristic.
+- Todavía no hay tabla de transposición.
+- Todavía no hay iterative deepening.
+- Todavía no hay búsqueda de quietud.
+- El control de tiempo todavía es simple.
+- stop se reconoce, pero todavía no interrumpe una búsqueda de forma asíncrona.
+- go infinite se interpreta, pero el motor todavía necesita un ciclo de control de búsqueda más avanzado para un verdadero modo de análisis infinito.
+- La salida de variante principal muestra actualmente solo la jugada raíz seleccionada.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+- nps se reporta, pero la implementación actual todavía no está optimizada para velocidad.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-028 queda completado.
+El motor ahora busca con poda alpha-beta básica.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- prueba de evaluación material desde la posición inicial con 4000 cp contra 4000 cp;
+- go con profundidad 1 por defecto;
+- go depth 1 con 20 nodos de búsqueda y 0 cortes;
+- go depth 2 con 59 nodos de búsqueda y 19 cortes alpha-beta;
+- go depth 3 con 585 nodos de búsqueda y 38 cortes alpha-beta;
+- go movetime 100 con manejo de límite de tiempo y 247 cortes;
+- go wtime/btime/winc/binc/movestogo con manejo de límite de tiempo calculado y 482 cortes;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- validación corregida de Promotion bug trap con 44, 1486, 62379 y 2103487 nodos hasta profundidad 4.
+
+Este es un hito mayor de eficiencia de búsqueda.
+PHILOCHESS ya no revisa todas las ramas ciegamente con negamax puro. Ahora puede podar ramas que no pueden mejorar el resultado y buscar de manera más eficiente conservando la estructura negamax existente.
+
+El siguiente paso de desarrollo debe enfocarse en ordenamiento básico de jugadas, para que la poda alpha-beta sea más efectiva al revisar antes las jugadas candidatas más prometedoras.
+
+Fecha: 08 de julio de 2026
+
+PHILOCHESS 0.1-alpha-029 — Compatibilidad UCI con GUI
+
+Se implementó un parche de compatibilidad UCI con interfaces gráficas, enfocado en el vaciado inmediato de salida y en una comunicación más limpia con GUIs externas de ajedrez.
+
+Hito técnico:
+PHILOCHESS ya puede comunicarse de forma más confiable con interfaces gráficas compatibles con UCI.
+Esta versión se creó después de que PHILOCHESS 0.1-alpha-028 no fuera aceptado correctamente por Cute Chess.
+
+Por eso, alpha-029 se enfocó en hacer que la salida UCI del motor sea más inmediata y más compatible con interfaces gráficas.
+
+Alpha-029 se apoya directamente en alpha-028.
+La versión anterior introdujo poda alpha-beta básica.
+Esta versión no cambia el algoritmo de búsqueda, la función de evaluación, el generador de jugadas legales, la validación perft ni la fuerza de juego.
+Su objetivo es mejorar la compatibilidad de protocolo antes de continuar con el ordenamiento básico de jugadas.
+
+Nueva funcionalidad:
+- Se añadió vaciado automático para la salida estándar y la salida de error al inicio de main:
+  cout << unitbuf;
+  cerr << unitbuf;
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-029
+- Se actualizó el texto de ayuda a:
+  PHILOCHESS 0.1-alpha-029 commands:
+- Se reemplazaron salidas UCI críticas para que terminen con endl y se vacíen inmediatamente.
+- Se actualizó la respuesta al comando uci para que id name, id author y uciok se entreguen inmediatamente.
+- Se actualizó la respuesta al comando isready para que readyok se entregue inmediatamente.
+- Se actualizó la salida bestmove para que bestmove 0000 y bestmove <move> se entreguen inmediatamente.
+- Se actualizó la salida de información de búsqueda para que las líneas info depth e info string alpha-beta cutoffs se entreguen inmediatamente.
+- Se actualizó la salida de límites de búsqueda para que info string go limits se entregue inmediatamente.
+- Se actualizaron las salidas informativas de stop y ponderhit para usar vaciado inmediato.
+- Se actualizó el texto informativo de stop de alpha-028 a alpha-029.
+- Se conservó la búsqueda alpha-beta existente de alpha-028.
+- Se conservó la evaluación material.
+- Se conservó eval.
+- Se conservó perft.
+- Se conservó divide.
+- Se conservó perftknown.
+- Se conservó el caso corregido de validación de referencia Promotion bug trap.
+
+Nota importante:
+Alpha-029 no es una mejora de fuerza.
+El comportamiento ajedrecístico del motor se mantiene esencialmente igual que en alpha-028.
+La mejora está en la confiabilidad del protocolo y en la comunicación con GUIs.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI en consola realizada:
+uci
+isready
+position startpos
+go depth 1
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-029
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+El comando de posición fue aceptado:
+position startpos
+
+El comando:
+go depth 1
+
+devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
+info string alpha-beta cutoffs 0
+bestmove b1c3
+
+Esto confirma que PHILOCHESS sigue buscando correctamente desde la posición inicial y devuelve una jugada válida en formato UCI.
+
+El comando quit cerró correctamente el programa.
+El programa cerró correctamente con código 0.
+
+Resultado inicial de compatibilidad con GUI:
+Después de los cambios de vaciado de salida, PHILOCHESS 0.1-alpha-029 fue aceptado por Cute Chess como motor UCI.
+Esto indica que el problema anterior de arranque probablemente estaba relacionado con buffering de salida UCI o con respuestas de protocolo entregadas demasiado tarde.
+
+Configuración adicional en GUI:
+PHILOCHESS 0.1-alpha-029 también fue importado a Myracle.
+El motor quedó configurado con:
+Protocol: uci
+
+Validación preliminar del rival:
+Antes de la primera partida práctica de PHILOCHESS, Pulse Chess 1.6.1 fue probado en Myracle contra Ajedrez Táctico 2.73b.
+
+La partida terminó en tablas por triple repetición desde una posición favorable para Pulse.
+Esto quedó anotado como una limitación práctica de Pulse en la conversión de finales o en el manejo de repeticiones, pero no afectó su validez como primer rival externo para PHILOCHESS.
+
+Primera prueba práctica en Myracle:
+PHILOCHESS 0.1-alpha-029 completó su primera partida práctica en Myracle contra un motor UCI externo.
+
+Prueba realizada:
+Pulse Chess 1.6.1 vs PHILOCHESS 0.1-alpha-029
+
+Condiciones:
+- PHILOCHESS jugó con negras.
+- Control de tiempo: 900+10.
+- Libro de aperturas: no book.
+
+Resultado:
+Pulse Chess 1.6.1 ganó por adjudicación después de 18 movimientos.
+
+PHILOCHESS 0.1-alpha-029 completó su primera partida práctica en Myracle contra un motor UCI externo, Pulse Chess 1.6.1.
+El motor jugó 18 movimientos legales con negras, respondió correctamente al control de tiempo, no se colgó, no produjo jugadas ilegales y perdió por adjudicación después de un colapso táctico en la apertura/medio juego.
+
+Nota importante:
+Esta prueba no fue una validación de fuerza de juego.
+Su objetivo principal fue comprobar la compatibilidad práctica con GUI, la comunicación UCI, la respuesta al control de tiempo y la estabilidad en partida completa dentro de Myracle.
+
+Limitación ajedrecística observada:
+La partida mostró debilidades esperadas de una versión temprana.
+PHILOCHESS todavía usa evaluación solamente material, búsqueda alpha-beta básica, no tiene ordenamiento de jugadas, no tiene búsqueda de quietud y todavía no evalúa desarrollo, movilidad, seguridad del rey, actividad de piezas, estructura de peones, coordinación ni iniciativa.
+
+Conclusión de la prueba práctica:
+PHILOCHESS 0.1-alpha-029 completó correctamente su primera partida real dentro de Myracle.
+Esto confirma que el parche de compatibilidad UCI con GUI cumplió su objetivo práctico principal.
+
+Limitaciones actuales:
+- Alpha-029 mejora la comunicación UCI, pero no añade fuerza de juego.
+- La búsqueda sigue siendo alpha-beta básica.
+- Todavía no hay sistema de ordenamiento de jugadas.
+- Todavía no hay ordenamiento de capturas.
+- Todavía no hay MVV-LVA.
+- Todavía no hay heurística de killer moves.
+- Todavía no hay history heuristic.
+- Todavía no hay tabla de transposición.
+- Todavía no hay iterative deepening.
+- Todavía no hay búsqueda de quietud.
+- El control de tiempo todavía es simple.
+- stop se reconoce, pero todavía no interrumpe una búsqueda de forma asíncrona.
+- go infinite se interpreta, pero el motor todavía necesita un ciclo de control de búsqueda más avanzado para un verdadero modo de análisis infinito.
+- La salida de variante principal muestra actualmente solo la jugada raíz seleccionada.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+- La validación práctica completa en partida dentro de Myracle todavía queda pendiente.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-029 queda completado como parche de compatibilidad UCI con GUI.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI en consola;
+- salida inmediata de uciok;
+- salida inmediata de readyok;
+- salida inmediata de bestmove;
+- salida inmediata de líneas info durante la búsqueda;
+- go depth 1 desde la posición inicial con 20 nodos de búsqueda;
+- reporte de cortes alpha-beta con vaciado inmediato de salida;
+- cierre correcto del programa con código 0;
+- aceptación inicial en Cute Chess después del parche de compatibilidad.
+- importación correcta e inicio de partida práctica en Myracle;
+- finalización de una partida práctica completa contra Pulse Chess 1.6.1;
+- 18 movimientos legales con negras bajo control de tiempo 900+10;
+- sin cuelgue, sin jugada ilegal, sin fallo de protocolo y sin pérdida por tiempo durante la partida.
+
+Este es un hito práctico importante de integración.
+PHILOCHESS ahora puede comunicarse de forma más confiable con GUIs UCI.
+
+Fecha: 08 de julio de 2026
+
+PHILOCHESS 0.1-alpha-030 — Prueba de regresión táctica
+
+Se implementó una prueba de regresión táctica basada en el principal fallo táctico observado en la primera partida práctica dentro de GUI.
+
+Hito técnico:
+PHILOCHESS ya puede reproducir e inspeccionar un fallo táctico específico tomado de una partida práctica real.
+Esta versión todavía no mejora la fuerza de juego.
+Su objetivo es convertir un error real de partida en una prueba interna de diagnóstico que pueda reutilizarse después de futuras mejoras de búsqueda.
+
+Alpha-030 se apoya directamente en alpha-029.
+La versión anterior mejoró la compatibilidad UCI con GUI y permitió que PHILOCHESS completara su primera partida práctica contra un motor UCI externo.
+Esta versión conserva la misma búsqueda, evaluación, generación de jugadas legales, validación perft y comunicación con GUI, pero añade un comando interno de regresión táctica.
+
+Nueva funcionalidad:
+- Se añadió una prueba interna de regresión táctica.
+- Se añadió el comando interno:
+  tactictest
+- Se añadió el comando alias:
+  regression
+- Se añadieron casos de regresión táctica tomados de la primera partida práctica contra Pulse Chess 1.6.1.
+- Se añadió reporte de:
+  - secuencia de jugadas;
+  - bando que mueve;
+  - evaluación material;
+  - número de jugadas legales;
+  - mejor jugada de regresión a profundidad 4;
+  - detección de jugada mala conocida;
+  - detección de jugada táctica esperada;
+  - notas explicativas para cada caso.
+- Se conservó la búsqueda alpha-beta existente de alpha-029.
+- Se conservó la evaluación material.
+- Se conservó eval.
+- Se conservó perft.
+- Se conservó divide.
+- Se conservó perftknown.
+- Se conservó el comportamiento de compatibilidad UCI con GUI de alpha-029.
+
+Nota importante:
+Alpha-030 es una versión de diagnóstico.
+Todavía no se espera que resuelva el problema táctico.
+El objetivo de esta versión es registrar el fallo de forma reproducible para que futuras mejoras, especialmente el ordenamiento de jugadas y la búsqueda de quietud, puedan comprobarse contra la misma prueba.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI y prueba de regresión táctica realizada:
+uci
+isready
+tactictest
+quit
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-030
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+El comando tactictest ejecutó correctamente la batería interna de regresión táctica.
+
+Case 1 — before 10...Qc6?
+PHILOCHESS analizó la posición crítica a profundidad 4.
+La mejor jugada de regresión fue:
+b6c6
+
+Esta coincidió con la jugada mala conocida:
+b6c6
+
+Estado:
+KNOWN ISSUE STILL PRESENT
+
+Esto confirma que PHILOCHESS todavía elige la jugada que permitió 11.Bb5, dejando a la dama negra dentro de una red táctica.
+
+Case 2 — after 11.Bb5
+PHILOCHESS analizó la posición siguiente a profundidad 4.
+La mejor jugada de regresión fue:
+c6b5
+
+Esta coincidió con la jugada mala conocida:
+c6b5
+
+Estado:
+KNOWN ISSUE STILL PRESENT
+
+Esto confirma que PHILOCHESS todavía elige 11...Qxb5, que no salva a la dama porque sigue 12.Nc7+ con un ataque doble.
+
+Case 3 — after 11...Qxb5
+PHILOCHESS analizó la posición de refutación táctica a profundidad 4.
+La mejor jugada de regresión fue:
+d5c7
+
+Esta coincidió con la jugada táctica esperada:
+d5c7
+
+Estado:
+EXPECTED TACTICAL MOVE FOUND
+
+Esto confirma que, una vez alcanzada la posición táctica, PHILOCHESS sí encuentra 12.Nc7+, la horquilla que da jaque al rey y ataca la dama.
+
+Resumen de regresión:
+- El fallo táctico de la primera partida práctica dentro de GUI queda ahora registrado dentro de PHILOCHESS.
+- Las futuras mejoras de búsqueda podrán comprobarse contra esta misma prueba.
+- El objetivo futuro será evitar las jugadas malas conocidas sin romper la generación de jugadas legales.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4.
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que los añadidos de regresión táctica no rompieron el generador de jugadas legales ni la validación perft conocida hasta profundidad 4.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Alpha-030 añade una prueba de regresión táctica, pero todavía no mejora la fuerza de juego.
+- Las jugadas malas conocidas de la prueba de regresión siguen presentes.
+- La búsqueda sigue siendo alpha-beta básica.
+- Todavía no hay sistema de ordenamiento de jugadas.
+- Todavía no hay ordenamiento de capturas.
+- Todavía no hay MVV-LVA.
+- Todavía no hay heurística de killer moves.
+- Todavía no hay history heuristic.
+- Todavía no hay tabla de transposición.
+- Todavía no hay iterative deepening.
+- Todavía no hay búsqueda de quietud.
+- El control de tiempo todavía es simple.
+- stop se reconoce, pero todavía no interrumpe una búsqueda de forma asíncrona.
+- go infinite se interpreta, pero el motor todavía necesita un ciclo de control de búsqueda más avanzado para un verdadero modo de análisis infinito.
+- La salida de variante principal muestra actualmente solo la jugada raíz seleccionada.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-030 queda completado como versión de prueba de regresión táctica.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- identificación correcta como PHILOCHESS 0.1-alpha-030;
+- salida inmediata de uciok;
+- salida inmediata de readyok;
+- ejecución correcta del comando tactictest;
+- registro correcto del fallo táctico conocido;
+- detección de las dos jugadas malas conocidas que siguen presentes;
+- detección de la refutación táctica esperada 12.Nc7+;
+- perftknown 4 con 24/24 validaciones correctas;
+- cierre correcto del programa con código 0.
+
+Este es un hito importante de diagnóstico.
+PHILOCHESS ahora puede conservar un fallo táctico real como prueba interna de regresión.
+Las futuras mejoras de búsqueda podrán medirse no solo por comportamiento general, sino también por la capacidad del motor de evitar progresivamente esta trampa táctica registrada.
+
+El siguiente paso de desarrollo debe enfocarse en ordenamiento básico de jugadas, para que la poda alpha-beta sea más efectiva al revisar antes las jugadas candidatas más prometedoras.
+
+Fecha: 08 de julio de 2026
+
+PHILOCHESS 0.1-alpha-031 — Ordenamiento básico de jugadas
+
+Se implementó el ordenamiento básico de jugadas para la búsqueda alpha-beta.
+
+Hito técnico:
+PHILOCHESS ya puede puntuar y reordenar las jugadas legales antes de buscarlas.
+Esta es la primera capa de ordenamiento de jugadas añadida al motor.
+
+Alpha-031 se apoya directamente en alpha-030.
+La versión anterior añadió una prueba de regresión táctica basada en la primera partida práctica de GUI contra Pulse Chess 1.6.1.
+Esta versión empieza a mejorar el proceso de búsqueda haciendo que alpha-beta revise primero jugadas más prometedoras.
+
+Nueva funcionalidad:
+- Se añadió puntuación básica de jugadas para ordenamiento de búsqueda.
+- Se añadió ordenamiento de capturas con criterio tipo MVV-LVA.
+- Se añadieron bonificaciones de prioridad para:
+  - capturas;
+  - promociones;
+  - jugadas que dan jaque;
+  - enroques.
+- Se añadió generación ordenada de jugadas para la búsqueda.
+- Se aplicó el ordenamiento de jugadas en:
+  - la búsqueda alpha-beta;
+  - la búsqueda raíz.
+- Se añadió el comando interno de diagnóstico:
+  orderedmoves
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-031
+
+Nota importante:
+Alpha-031 no cambia la función de evaluación.
+El motor todavía usa evaluación solamente material.
+El objetivo de esta versión es mejorar el orden en que se buscan las jugadas legales, no añadir nueva comprensión posicional.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+Prueba básica UCI, generación de jugadas, jugadas ordenadas y perft:
+uci
+isready
+position startpos
+moves
+orderedmoves
+perft 1
+perft 2
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-031
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando moves devolvió:
+Total: 20
+
+El comando orderedmoves también devolvió:
+Total: 20
+
+Todas las jugadas ordenadas iniciales recibieron:
+score 0
+
+Esto es correcto desde la posición inicial porque no hay capturas, promociones, jaques ni enroques disponibles.
+Por lo tanto, el sistema básico de ordenamiento no tiene todavía ningún rasgo táctico que priorizar en la posición inicial.
+
+El comando perft devolvió:
+perft 1 = 20
+perft 2 = 400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft de posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4 en esta ejecución de alpha-031.
+
+Las posiciones conocidas de referencia probadas fueron:
+- Initial position
+- Kiwipete
+- Endgame en passant/captures
+- Promotions and castling pressure
+- Promotion bug trap
+- Middle game development
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que los cambios de ordenamiento de jugadas no rompieron el generador de jugadas legales, la aplicación de movimientos ni la validación perft conocida hasta profundidad 4.
+
+Pruebas de búsqueda desde la posición inicial:
+
+El comando:
+go depth 1
+
+devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
+info string alpha-beta cutoffs 0
+bestmove b1c3
+
+El comando:
+go depth 2
+
+devolvió:
+info string go limits depth 2
+info depth 2 nodes 59 time 8 nps 7375 score cp 0 pv b1c3
+info string alpha-beta cutoffs 19
+bestmove b1c3
+
+El comando:
+go depth 3
+
+devolvió:
+info string go limits depth 3
+info depth 3 nodes 585 time 67 nps 8731 score cp 0 pv b1c3
+info string alpha-beta cutoffs 38
+bestmove b1c3
+
+El comando:
+go movetime 100
+
+devolvió:
+info string go limits depth 4 movetime 100 timelimit 100
+info depth 4 nodes 726 time 100 nps 7260 score cp 0 pv b1c3 string stopped by limit
+info string alpha-beta cutoffs 125
+bestmove b1c3
+
+Esto confirma que la búsqueda alpha-beta sigue funcionando correctamente después de añadir ordenamiento de jugadas.
+También confirma que el límite movetime se respeta y que la búsqueda puede detenerse al alcanzar el tiempo asignado.
+
+La evaluación se mantuvo en:
+score cp 0
+
+Esto es esperable desde la posición inicial porque la evaluación actual es solamente material y las jugadas normales de apertura mantienen la igualdad material.
+
+Prueba de regresión táctica:
+El comando realizado fue:
+regression 4
+
+Resultado:
+PHILOCHESS ejecutó la prueba interna de regresión táctica basada en la primera partida práctica de GUI contra Pulse Chess 1.6.1.
+
+Case 1 - before 10...Qc6?
+
+La posición de regresión se construyó correctamente.
+Bando al turno:
+negras
+
+Evaluación material:
++100 cp  (positivo = ventaja blanca)
+
+Jugadas legales:
+35
+
+Resultado de búsqueda:
+info depth 4 nodes 4549 time 1009 nps 4508 score cp -100 pv b6e6
+info string alpha-beta cutoffs 953
+
+Regression bestmove depth 4:
+b6e6
+
+Jugada mala conocida:
+b6c6
+
+Estado:
+IMPROVED - known bad move avoided
+
+Este es un avance importante respecto de alpha-030.
+PHILOCHESS ya no elige la jugada mala conocida 10...Qc6 en el primer caso de regresión.
+
+Case 2 - after 11.Bb5
+
+La posición de regresión se construyó correctamente.
+Bando al turno:
+negras
+
+Evaluación material:
++100 cp  (positivo = ventaja blanca)
+
+Jugadas legales:
+21
+
+Resultado de búsqueda:
+info depth 4 nodes 3446 time 711 nps 4846 score cp -670 pv c6b5
+info string alpha-beta cutoffs 254
+
+Regression bestmove depth 4:
+c6b5
+
+Jugada mala conocida:
+c6b5
+
+Estado:
+KNOWN ISSUE STILL PRESENT
+
+Esto confirma que alpha-031 todavía no resuelve completamente el problema táctico.
+PHILOCHESS sigue eligiendo 11...Qxb5 después de 11.Bb5, aunque sabemos que sigue 12.Nc7+.
+
+Case 3 - after 11...Qxb5
+
+La posición de regresión se construyó correctamente.
+Bando al turno:
+blancas
+
+Evaluación material:
+-230 cp  (positivo = ventaja blanca)
+
+Jugadas legales:
+38
+
+Resultado de búsqueda:
+info depth 4 nodes 4093 time 951 nps 4303 score cp 350 pv d5c7
+info string alpha-beta cutoffs 1278
+
+Regression bestmove depth 4:
+d5c7
+
+Jugada táctica esperada:
+d5c7
+
+Estado:
+EXPECTED TACTICAL MOVE FOUND
+
+Esto confirma que PHILOCHESS sigue encontrando la refutación táctica 12.Nc7+ cuando se alcanza la posición posterior a 11...Qxb5.
+
+Resumen de la regresión:
+- El fallo táctico conocido de la partida contra Pulse sigue registrado dentro de PHILOCHESS.
+- Alpha-031 mejora el primer caso de regresión al evitar 10...Qc6.
+- El segundo caso de regresión permanece como problema conocido.
+- El tercer caso de regresión encuentra correctamente la jugada táctica esperada 12.Nc7+.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- El ordenamiento de jugadas todavía es básico.
+- El ordenamiento de capturas se limita a una puntuación simple tipo MVV-LVA.
+- Todavía no hay ordenamiento por jugada de variante principal.
+- Todavía no hay ordenamiento por jugada hash.
+- Todavía no hay heurística killer move.
+- Todavía no hay heurística history.
+- Todavía no hay tabla de transposición.
+- Todavía no hay profundización iterativa.
+- Todavía no hay búsqueda de quietud.
+- La poda alpha-beta sigue siendo básica.
+- El Case 2 de la regresión táctica sigue sin resolverse.
+- El control de tiempo todavía es simple.
+- stop es reconocido, pero todavía no interrumpe la búsqueda de forma asíncrona.
+- go infinite es interpretado, pero el motor todavía necesita un ciclo de control de búsqueda más avanzado para un modo de análisis infinito real.
+- La salida de variante principal muestra actualmente solo la jugada raíz seleccionada.
+- La evaluación sigue siendo solamente material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- La adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente no está implementada.
+- nps se informa, pero la implementación actual todavía no está optimizada para velocidad.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-031 queda completado.
+El motor ahora incluye su primera capa básica de ordenamiento de jugadas para la búsqueda alpha-beta.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- validación básica UCI;
+- identificación correcta como PHILOCHESS 0.1-alpha-031;
+- salida inmediata de uciok;
+- salida inmediata de readyok;
+- generación de jugadas legales desde la posición inicial con Total: 20;
+- orderedmoves desde la posición inicial con Total: 20;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- go depth 1;
+- go depth 2;
+- go depth 3;
+- go movetime 100;
+- prueba de regresión táctica en profundidad 4;
+- evasión correcta de la jugada mala conocida 10...Qc6 en el Case 1;
+- detección correcta de que el Case 2 sigue siendo un problema conocido;
+- hallazgo correcto de la jugada táctica esperada 12.Nc7+ en el Case 3;
+- cierre correcto del programa con código 0.
+
+Este es un hito significativo de mejora en búsqueda.
+PHILOCHESS empieza ahora a usar ordenamiento de jugadas para que la poda alpha-beta sea más efectiva.
+El siguiente paso de desarrollo debe enfocarse en mejorar la estabilidad táctica, probablemente mediante quiescence search u otra mejora de búsqueda capaz de reducir problemas de horizonte en posiciones forzadas.
+
+Fecha: 09 de julio de 2026
+
+PHILOCHESS 0.1-alpha-032 — Validación final y cierre de 0.1
+
+Se completó la validación final y el cierre de PHILOCHESS 0.1.
+
+Hito técnico:
+PHILOCHESS 0.1-alpha-032 cierra el ciclo de desarrollo de PHILOCHESS 0.1 como motor mínimo UCI validado.
+
+Esta versión no introduce nueva lógica interna de motor.
+Se basa en el código de alpha-031 y conserva:
+- generación de jugadas legales;
+- lectura de FEN;
+- enroque;
+- captura al paso;
+- promoción de peón;
+- detección de jaque, jaque mate y ahogado;
+- herramientas perft y divide;
+- validación perft con posiciones conocidas;
+- evaluación material;
+- búsqueda alpha-beta básica;
+- lectura básica de controles de tiempo;
+- prueba de regresión táctica;
+- ordenamiento básico de jugadas.
+
+Alpha-032 actualiza la identidad visible de la versión y ejecuta una batería final de validación para confirmar que la línea PHILOCHESS 0.1 se mantiene estable.
+
+Nueva funcionalidad:
+- No se añadió nueva lógica de búsqueda, evaluación ni generación de movimientos.
+- El código fuente de alpha-031 fue copiado y archivado como código fuente de alpha-032.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.1-alpha-032
+- Se actualizaron los textos visibles de diagnóstico para identificar correctamente alpha-032.
+- El texto de la prueba de regresión táctica fue actualizado para mostrar:
+  PHILOCHESS 0.1-alpha-032 - Tactical regression test
+- El texto de ayuda fue actualizado para mostrar:
+  PHILOCHESS 0.1-alpha-032 commands:
+- El mensaje diagnóstico del comando stop fue actualizado para identificar alpha-032.
+- La nota de regresión táctica ahora indica correctamente que alpha-032 conserva las mejoras de ordenamiento de jugadas de alpha-031.
+
+Nota importante:
+Alpha-032 es una versión de validación y cierre.
+No mejora la fuerza de juego respecto de alpha-031.
+Su objetivo es cerrar PHILOCHESS 0.1 con identidad de versión limpia, compilación correcta, verificación UCI, verificación de búsqueda, verificación de regresión táctica y validación perft.
+
+Prueba de compilación:
+El programa compiló correctamente en Visual Studio.
+
+La salida de compilación informó:
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+El ejecutable fue generado en:
+D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
+
+Prueba final de validación realizada:
+uci
+isready
+position startpos
+eval
+go depth 1
+go depth 2
+go depth 3
+go depth 4
+go movetime 100
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+tactictest
+perft 1
+perft 2
+perftknown 4
+quit
+
+Prueba adicional de control de tiempo realizada:
+go movetime 500
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.1-alpha-032
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+Desde la posición inicial, el comando eval devolvió:
+Material values: P=100 N=320 B=330 R=500 Q=900 K=0
+White material: 4000 cp  (P=8, N=2, B=2, R=2, Q=1)
+Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
+Evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Esto confirma que la posición inicial se mantiene materialmente igualada y que el sistema de evaluación material permanece estable.
+
+Pruebas de búsqueda desde la posición inicial:
+
+El comando:
+go depth 1
+
+devolvió:
+info string go limits depth 1
+info depth 1 nodes 20 time 3 nps 6666 score cp 0 pv b1c3
+info string alpha-beta cutoffs 0
+bestmove b1c3
+
+El comando:
+go depth 2
+
+devolvió:
+info string go limits depth 2
+info depth 2 nodes 59 time 8 nps 7375 score cp 0 pv b1c3
+info string alpha-beta cutoffs 19
+bestmove b1c3
+
+El comando:
+go depth 3
+
+devolvió:
+info string go limits depth 3
+info depth 3 nodes 585 time 66 nps 8863 score cp 0 pv b1c3
+info string alpha-beta cutoffs 38
+bestmove b1c3
+
+El comando:
+go depth 4
+
+devolvió:
+info string go limits depth 4
+info depth 4 nodes 1440 time 208 nps 6923 score cp 0 pv b1c3
+info string alpha-beta cutoffs 482
+bestmove b1c3
+
+El comando:
+go movetime 100
+
+devolvió:
+info string go limits depth 4 movetime 100 timelimit 100
+info depth 4 nodes 744 time 100 nps 7440 score cp 0 pv b1c3 string stopped by limit
+info string alpha-beta cutoffs 134
+bestmove b1c3
+
+Esto confirma que el límite movetime se respeta y que la búsqueda puede detenerse al alcanzar el tiempo asignado.
+
+El comando:
+go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
+
+devolvió:
+info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000 timelimit 2500
+info depth 4 nodes 1440 time 201 nps 7164 score cp 0 pv b1c3
+info string alpha-beta cutoffs 482
+bestmove b1c3
+
+Esto confirma que el lector básico de control de tiempo sigue funcionando y calcula un límite utilizable para la búsqueda.
+
+Prueba adicional de control de tiempo:
+El comando:
+go movetime 500
+
+devolvió:
+info string go limits depth 4 movetime 500 timelimit 500
+info depth 4 nodes 1440 time 210 nps 6857 score cp 0 pv b1c3
+info string alpha-beta cutoffs 482
+bestmove b1c3
+
+Esto confirma que, con un valor fijo de movetime más amplio, PHILOCHESS puede completar su profundidad máxima actual sin consumir todo el tiempo asignado.
+
+La evaluación se mantuvo en:
+score cp 0
+
+Esto es esperable desde la posición inicial porque la evaluación actual es solo material y las jugadas normales de apertura conservan la igualdad material.
+
+Prueba de regresión táctica:
+El comando realizado fue:
+tactictest
+
+Resultado:
+PHILOCHESS ejecutó la prueba interna de regresión táctica basada en la primera partida práctica en GUI contra Pulse Chess 1.6.1.
+
+La prueba quedó correctamente identificada como:
+PHILOCHESS 0.1-alpha-032 - Tactical regression test
+
+La prueba también informó:
+Alpha-032 preserves the alpha-031 move ordering improvements, but this test remains diagnostic.
+
+Caso 1 - antes de 10...Qc6?
+
+La posición de regresión fue construida correctamente.
+Bando que mueve:
+negras
+
+Evaluación material:
++100 cp  (positivo = ventaja blanca)
+
+Jugadas legales:
+35
+
+Resultado de búsqueda:
+info depth 4 nodes 4549 time 1021 nps 4455 score cp -100 pv b6e6
+info string alpha-beta cutoffs 953
+
+Mejor jugada de regresión en profundidad 4:
+b6e6
+
+Jugada mala conocida:
+b6c6
+
+Estado:
+IMPROVED - known bad move avoided
+
+Esto confirma que PHILOCHESS todavía evita la jugada mala conocida 10...Qc6 en el primer caso de regresión.
+
+Caso 2 - después de 11.Bb5
+
+La posición de regresión fue construida correctamente.
+Bando que mueve:
+negras
+
+Evaluación material:
++100 cp  (positivo = ventaja blanca)
+
+Jugadas legales:
+21
+
+Resultado de búsqueda:
+info depth 4 nodes 3446 time 750 nps 4594 score cp -670 pv c6b5
+info string alpha-beta cutoffs 254
+
+Mejor jugada de regresión en profundidad 4:
+c6b5
+
+Jugada mala conocida:
+c6b5
+
+Estado:
+KNOWN ISSUE STILL PRESENT
+
+Esto confirma que alpha-032 todavía no resuelve el segundo caso de regresión táctica.
+PHILOCHESS sigue eligiendo 11...Qxb5 después de 11.Bb5, aunque después viene 12.Nc7+.
+
+Caso 3 - después de 11...Qxb5
+
+La posición de regresión fue construida correctamente.
+Bando que mueve:
+blancas
+
+Evaluación material:
+-230 cp  (positivo = ventaja blanca)
+
+Jugadas legales:
+38
+
+Resultado de búsqueda:
+info depth 4 nodes 4093 time 934 nps 4382 score cp 350 pv d5c7
+info string alpha-beta cutoffs 1278
+
+Mejor jugada de regresión en profundidad 4:
+d5c7
+
+Jugada táctica esperada:
+d5c7
+
+Estado:
+EXPECTED TACTICAL MOVE FOUND
+
+Esto confirma que, una vez alcanzada la posición posterior a 11...Qxb5, PHILOCHESS todavía encuentra la refutación táctica 12.Nc7+.
+
+Resumen de regresión:
+- El fallo táctico conocido de la partida contra Pulse permanece registrado dentro de PHILOCHESS.
+- Alpha-032 conserva la mejora de ordenamiento de jugadas de alpha-031 que evita 10...Qc6 en el Caso 1.
+- El segundo caso de regresión sigue siendo un problema conocido.
+- El tercer caso de regresión encuentra correctamente la jugada táctica esperada 12.Nc7+.
+
+Pruebas perft desde la posición inicial:
+
+El comando:
+perft 1
+
+devolvió:
+20
+
+El comando:
+perft 2
+
+devolvió:
+400
+
+Estos valores coinciden con los valores estándar conocidos de perft desde la posición inicial del ajedrez.
+
+Validación perft con posiciones conocidas:
+El comando realizado fue:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó todas las pruebas conocidas de referencia registradas hasta profundidad 4.
+
+Initial position:
+depth 1: 20 / 20 OK
+depth 2: 400 / 400 OK
+depth 3: 8902 / 8902 OK
+depth 4: 197281 / 197281 OK
+
+Kiwipete:
+depth 1: 48 / 48 OK
+depth 2: 2039 / 2039 OK
+depth 3: 97862 / 97862 OK
+depth 4: 4085603 / 4085603 OK
+
+Endgame en passant/captures:
+depth 1: 14 / 14 OK
+depth 2: 191 / 191 OK
+depth 3: 2812 / 2812 OK
+depth 4: 43238 / 43238 OK
+
+Promotions and castling pressure:
+depth 1: 6 / 6 OK
+depth 2: 264 / 264 OK
+depth 3: 9467 / 9467 OK
+depth 4: 422333 / 422333 OK
+
+Promotion bug trap:
+depth 1: 44 / 44 OK
+depth 2: 1486 / 1486 OK
+depth 3: 62379 / 62379 OK
+depth 4: 2103487 / 2103487 OK
+
+Middle game development:
+depth 1: 46 / 46 OK
+depth 2: 2079 / 2079 OK
+depth 3: 89890 / 89890 OK
+depth 4: 3894594 / 3894594 OK
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma que la actualización de identidad y textos diagnósticos de alpha-032 no rompió la generación de jugadas legales, la aplicación de movimientos, el manejo de reglas especiales ni la validación perft con posiciones conocidas.
+
+El programa cerró correctamente con código 0.
+
+Limitaciones actuales:
+- Alpha-032 es una versión de cierre y validación, no una versión de mejora de fuerza de juego.
+- El ordenamiento de jugadas todavía es básico.
+- El ordenamiento de capturas está limitado a una puntuación simple de estilo MVV-LVA.
+- Todavía no hay ordenamiento por jugada de variante principal.
+- Todavía no hay ordenamiento por hash move.
+- Todavía no hay heurística killer move.
+- Todavía no hay history heuristic.
+- Todavía no hay tabla de transposición.
+- Todavía no hay iterative deepening.
+- Todavía no hay quiescence search.
+- La poda alpha-beta todavía es básica.
+- El Caso 2 de la regresión táctica sigue sin resolverse.
+- El control de tiempo todavía es simple.
+- stop es reconocido, pero todavía no interrumpe la búsqueda de forma asíncrona.
+- go infinite es leído, pero el motor todavía necesita un bucle de control de búsqueda más avanzado para un verdadero modo de análisis infinito.
+- La salida de variante principal actualmente muestra solo la jugada raíz seleccionada.
+- La evaluación todavía es solo material.
+- El motor todavía no usa tablas de casillas.
+- El motor todavía no evalúa movilidad, seguridad del rey, estructura de peones, desarrollo, actividad, coordinación ni iniciativa.
+- Todavía no hay adjudicación de tablas por regla de los cincuenta movimientos, repetición o material insuficiente.
+- nps se informa, pero la implementación actual todavía no está optimizada para velocidad.
+
+Conclusión:
+PHILOCHESS 0.1-alpha-032 queda completado.
+Esta versión cierra el ciclo de desarrollo de PHILOCHESS 0.1.
+
+PHILOCHESS pasó:
+- compilación correcta con 0 errores;
+- identificación correcta como PHILOCHESS 0.1-alpha-032;
+- validación básica UCI;
+- salida inmediata uciok;
+- salida inmediata readyok;
+- evaluación material correcta de la posición inicial con 4000 cp contra 4000 cp;
+- evaluación 0 desde la posición inicial;
+- go depth 1;
+- go depth 2;
+- go depth 3;
+- go depth 4;
+- go movetime 100;
+- go movetime 500;
+- búsqueda con control básico de tiempo usando wtime, btime, winc, binc y movestogo;
+- prueba de regresión táctica;
+- evitación correcta de la jugada mala conocida 10...Qc6 en el Caso 1;
+- detección correcta de que el Caso 2 sigue siendo un problema conocido;
+- hallazgo correcto de la jugada táctica esperada 12.Nc7+ en el Caso 3;
+- perft 1 = 20;
+- perft 2 = 400;
+- perftknown 4 con 24/24 validaciones correctas;
+- cierre correcto del programa con código 0.
+
+Este es el hito formal de cierre de PHILOCHESS 0.1.
+El motor ya existe como un motor mínimo UCI validado, con generación de jugadas legales, manejo de reglas especiales, soporte FEN, detección de estado de partida, validación perft, evaluación material, búsqueda alpha-beta básica, manejo básico de tiempo, prueba de regresión táctica y ordenamiento básico de jugadas.
+
+La siguiente fase de desarrollo debe construirse sobre esta base estable y enfocarse en mejorar la estabilidad táctica, probablemente mediante quiescence search u otra mejora de búsqueda capaz de reducir problemas de horizonte en posiciones forzadas.
