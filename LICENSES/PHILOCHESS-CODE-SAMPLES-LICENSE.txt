@@ -1,1 +1,108 @@
+PHILOCHESS EDUCATIONAL CODE SAMPLE LICENSE
+Version 1.0 — July 13, 2026
 
+Copyright (c) 2026 Robert M. Cuadros.
+All rights reserved.
+
+NOTICE
+
+This is a proprietary, source-available educational license. It is not an
+open-source license.
+
+1. SCOPE
+
+This License applies to the source-code files contained in the
+"code-samples/" directory of the PHILOCHESS repository and to any other file
+that expressly refers to this License (collectively, the "Code Samples").
+
+By downloading, copying, compiling, executing, modifying or otherwise using
+the Code Samples, you agree to the terms of this License.
+
+2. PERMITTED USES
+
+Subject to all terms of this License, the copyright holder grants you a
+limited, non-exclusive, worldwide, royalty-free, non-transferable and
+non-sublicensable license to:
+
+a. download and retain copies of the Code Samples;
+
+b. compile and execute the Code Samples;
+
+c. inspect and study the Code Samples for personal, educational and
+   non-commercial purposes; and
+
+d. privately modify the Code Samples solely for personal, educational and
+   non-commercial study.
+
+3. RESTRICTIONS
+
+Without prior written permission from the copyright holder, you may not:
+
+a. redistribute, publish, mirror, upload, sublicense, sell, rent, lease or
+   otherwise make available the Code Samples, whether modified or unmodified,
+   in source-code, executable or any other form;
+
+b. publish or distribute modifications, adaptations or derivative works based
+   on the Code Samples;
+
+c. incorporate, copy or adapt any part of the Code Samples into another chess
+   engine, software program, library, product or service;
+
+d. use the Code Samples or any derivative work for commercial,
+   revenue-generating or professional purposes;
+
+e. remove, obscure or alter any copyright, attribution or licensing notice
+   contained in the Code Samples; or
+
+f. use the PHILOCHESS name, logo or visual identity in a manner that suggests
+   endorsement, sponsorship or official association.
+
+The limited rights provided through GitHub's built-in functionality and Terms
+of Service do not grant any additional right to use, redistribute or publish
+the Code Samples outside that functionality.
+
+4. ATTRIBUTION
+
+All copies retained or used under this License must preserve the original
+copyright and licensing notices.
+
+5. OWNERSHIP AND RESERVED RIGHTS
+
+The Code Samples are licensed, not sold. The copyright holder retains all
+ownership, copyright and intellectual-property rights in the Code Samples.
+
+No rights are granted except those expressly stated in this License. All other
+rights are reserved.
+
+6. NO TRADEMARK LICENSE
+
+This License does not grant permission to use the PHILOCHESS name, logo,
+trademarks or other branding elements.
+
+7. DISCLAIMER OF WARRANTY
+
+THE CODE SAMPLES ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, RELIABILITY AND NON-INFRINGEMENT.
+
+8. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER SHALL
+NOT BE LIABLE FOR ANY CLAIM, DAMAGE, LOSS OR OTHER LIABILITY ARISING FROM OR
+RELATED TO THE CODE SAMPLES OR THEIR USE.
+
+9. TERMINATION
+
+Your rights under this License terminate automatically if you violate any of
+its terms. Upon termination, you must cease using the Code Samples and delete
+all copies and private modifications in your possession or control.
+
+10. APPLICABLE LAW
+
+Nothing in this License is intended to restrict any exception, limitation or
+right that cannot lawfully be excluded under applicable law.
+
+11. ADDITIONAL PERMISSIONS
+
+Any use not expressly permitted by this License requires prior written
+permission from the copyright holder.
