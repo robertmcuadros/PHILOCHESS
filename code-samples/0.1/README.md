@@ -9,3 +9,8 @@ PHILOCHESS source code and may differ from the current private implementation.
 
 The published C++ samples are self-contained and can be compiled independently
 with a C++17-compatible compiler.
+
+## License
+
+These samples are distributed under the
+[PHILOCHESS Educational Code Sample License](../../LICENSES/PHILOCHESS-CODE-SAMPLES-LICENSE.txt).
