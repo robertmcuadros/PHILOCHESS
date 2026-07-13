@@ -1,3 +1,41 @@
+===============================================================================
+PHILOCHESS 0.2-alpha-001 VALIDATION: NO SYZYGY
+ANÁLISIS DE PARTIDAS
+===============================================================================
+
+Este documento forma parte de la documentación técnica y ajedrecística del
+desarrollo de PHILOCHESS 0.2.
+
+Autor de los análisis y titular de los derechos sobre el contenido analítico:
+Robert M. Cuadros
+
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Los análisis, resúmenes, conclusiones, diagnósticos y organización editorial
+originales de este documento se distribuyen bajo la licencia Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0 Internacional
+(CC BY-NC-ND 4.0).
+
+Este documento puede compartirse únicamente sin modificaciones, con la debida
+atribución y para fines no comerciales. Este aviso de autoría y licencia deberá
+conservarse en toda copia compartida.
+
+Atribución recomendada:
+«Análisis de PHILOCHESS 0.2-alpha-001 Validation: No Syzygy —
+Robert M. Cuadros»
+
+Las partidas y los datos PGN se incluyen como registro documental del torneo.
+La licencia indicada se aplica específicamente al contenido analítico original
+y a su presentación editorial.
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
+
+===============================================================================
+
 RONDA 1
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
