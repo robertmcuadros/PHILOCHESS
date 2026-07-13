@@ -60,6 +60,11 @@ PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Devel
 |---|---|
 | 0.2-alpha-001 | Basic quiescence search and refined MVV-LVA capture ordering |
 
+## Licensing
+
+Different parts of this repository are distributed under different terms.
+See [`LICENSE.md`](LICENSE.md) for the complete licensing structure.
+
 ## Author
 
 Robert M. Cuadros
