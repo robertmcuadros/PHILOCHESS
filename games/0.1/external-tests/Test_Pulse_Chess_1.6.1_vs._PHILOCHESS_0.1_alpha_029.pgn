@@ -1,0 +1,16 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.07.08"]
+[Round "1"]
+[White "Pulse Chess 1.6.1"]
+[Black "PHILOCHESS 0.1 alpha 029"]
+[Result "1-0"]
+[WhiteElo "1515"]
+[BlackElo "800"]
+[Time "08:27:50"]
+[ECO "B13"]
+[Opening "Caro-Kann Defense"]
+[Variation "Exchange Variation"]
+[Termination "white wins by adjudication"]
+
+1. d4 c6 2. e4 d5 3. exd5 Qa5+ 4. Nc3 Qc7 5. Nf3 cxd5 6. Nxd5 Qa5+ 7. Nc3 Bg4 8. h3 Bh5 9. Bd2 Qb6 10. Nd5 Qc6 11. Bb5 Qxb5 12. Nc7+ Kd8 13. Nxb5 a6 14. Ba5+ b6 15. Bxb6+ Kc8 16. Nc7 Kb7 17. Nxa8 Kxa8 18. g4 Bg6 1-0
