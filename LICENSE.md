@@ -12,7 +12,7 @@ See [`LICENSES/DOCUMENTATION-CC-BY-NC-ND-4.0.txt`](LICENSES/DOCUMENTATION-CC-BY-
 
 ## Code samples
 
-The files contained in `code-samples/` are distributed under the PHILOCHESS Educational Code Sample License.
+The files contained in [`code-samples/`](code-samples/) are distributed under the PHILOCHESS Educational Code Sample License.
 
 See [`LICENSES/PHILOCHESS-CODE-SAMPLES-LICENSE.txt`](LICENSES/PHILOCHESS-CODE-SAMPLES-LICENSE.txt).
 
@@ -24,7 +24,7 @@ See `LICENSES/PHILOCHESS-BINARY-EULA.txt` when executable releases become availa
 
 ## Visual assets
 
-The PHILOCHESS name, logo and visual assets contained in `assets/` are not covered by the documentation or code-sample licenses.
+The PHILOCHESS name, logo and visual assets contained in [`assets/`](assets/) are not covered by the documentation or code-sample licenses.
 
 Copyright © 2026 Robert M. Cuadros. All rights reserved.
 
