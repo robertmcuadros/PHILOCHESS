@@ -11,6 +11,17 @@ I am not a professional programmer. I am a chemical engineer, a chess coach and 
 
 PHILOCHESS starts as a simple engine, but it is intended to grow into a tool that reflects a human way of understanding chess and, eventually, may become useful for students, trainers, and chess lovers.
 
+## About this repository
+
+This public repository documents the development of PHILOCHESS through
+development logs, technical notes, validation games and selected educational
+code samples.
+
+The complete source code and the full sequence of development versions are
+maintained privately in PHILOCHESS-Lab. The code samples published here are
+selected and adapted for educational and documentary purposes; they do not
+constitute the complete engine source code.
+
 ## Current status
 
 PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Development has now entered the PHILOCHESS 0.2 phase. Its first alpha introduced basic quiescence search and refined MVV-LVA capture ordering, passed its internal validation, and has now been tested in a controlled external validation tournament without Syzygy tablebases; analysis of the tournament games is currently in progress. Development in 0.2 will continue with iterative deepening, principal variation reporting, improved move ordering, basic time management, and the first positional evaluation layers.
