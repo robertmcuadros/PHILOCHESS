@@ -1,7 +1,7 @@
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
 [Site "Lima, PER"]
 [Date "2026.07.12"]
-[Round "1.1"]
+[Round "1"]
 [White "Zoidberg 0.1"]
 [Black "PHILOCHESS 0.2 alpha 001"]
 [Result "1-0"]
@@ -15,6 +15,51 @@
 [PlyCount "60"]
 [Termination "white wins by adjudication"]
 
-1. d4 a6 2. e4 a5 3. Nf3 a4 4. Bb5 c6 5. Be2 Qa5+ 6. Bd2 Qb6 7. Na3 Qc7 8. O-O c5 9. Nb5 Qb6 10. dxc5 Qxc5 11. Be3 Qc6 12. Ne5 Qxe4 13. Nc7+ Kd8 14. Qd5 Qxd5 15. Nxd5 e6 16. Nb6 f6 17. Nf7+ Ke8 18. Nxh8 Ra7 19. Nxc8 Ra8 20. Nb6 Ra5 21. Nc4 Rd5 22. Nb6 Ra5 23. Rad1 e5 24. Bc4 Nh6 25. Nd5 a3 26. Bxh6 gxh6 27. Nxf6+ Kd8 28. Nf7+ Kc8 29. bxa3 Bxa3 30. Nxh6 Bf8 1-0
+1. d4 a6 2. e4 a5 3. Nf3 a4 4. Bb5 c6 5. Be2 Qa5+ 6. Bd2 Qb6 7. Na3 Qc7 
+8. O-O c5 9. Nb5 Qb6 10. dxc5 Qxc5 11. Be3 Qc6 12. Ne5 Qxe4 13. Nc7+ Kd8 14. Qd5 Qxd5 
+15. Nxd5 e6 16. Nb6 f6 17. Nf7+ Ke8 18. Nxh8 Ra7 19. Nxc8 Ra8 20. Nb6 Ra5 21. Nc4 Rd5 
+22. Nb6 Ra5 23. Rad1 e5 24. Bc4 Nh6 25. Nd5 a3 26. Bxh6 gxh6 27. Nxf6+ Kd8 28. Nf7+ Kc8 
+29. bxa3 Bxa3 30. Nxh6 Bf8 1-0
 
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "2"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Needle 0.531"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1490"]
+[Time "08:29:07"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:11:27"]
+[PlyCount "51"]
+[Termination "black wins by adjudication"]
 
+1. Nc3 d5 2. Rb1 d4 3. Na4 b5 4. Nc5 e5 5. b4 c6 6. Ra1 Bxc5 7. bxc5 Na6 
+8. Rb1 Nxc5 9. Ra1 Nf6 10. Rb1 Qa5 11. Ra1 Nce4 12. Bb2 Be6 13. a3 Ng4 14. Nh3 O-O-O 
+15. Rb1 Ne3 16. Qc1 Nc4 17. Ba1 Nexd2 18. Rb4 c5 19. c3 cxb4 20. axb4 Qa2 21. e4 d3 
+22. Bxd3 Rxd3 23. Bb2 Nxb2 24. Ng5 Nb3 25. Qc2 Qa1+ 26. Ke2 0-1
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "3"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Shallow Blue 2.0.0"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1617"]
+[Time "09:06:36"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:10:40"]
+[PlyCount "41"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 Nf6 2. Rb1 e5 3. Ra1 d5 4. Rb1 d4 5. Nb5 a6 6. Na3 Nc6 7. Ra1 Bb4 
+8. Rb1 Qd5 9. Ra1 Qc5 10. Nf3 e4 11. Ng1 Nd5 12. Rb1 e3 13. Ra1 Bf5 14. Nh3 Bxa3 
+15. dxe3 Bxc2 16. exd4 Nxd4 17. bxa3 Bxd1 18. e4 Bf3 19. Bxa6 Qa5+ 20. Kf1 Qxa6+ 21. Kg1 0-1
