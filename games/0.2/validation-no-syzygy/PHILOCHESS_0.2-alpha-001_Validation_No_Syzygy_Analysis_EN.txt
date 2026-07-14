@@ -36,6 +36,7 @@ https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 ===============================================================================
 
+
 Round 1
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
@@ -104,6 +105,7 @@ CONCLUSIONS
 
 General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine, but its evaluation still lacks the positional knowledge required to conduct the opening. The defeat was caused mainly by an accumulation of poor strategic decisions rather than by a single tactical mistake.
 
+
 Round 2
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
@@ -171,3 +173,79 @@ CONCLUSIONS
    - regression tests for the positions before 2.Rb1, 8...Nxc5, 15...Ne3, and 18...c5.
 
 General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine and even recognized the mating threat present after 18...c5. However, its evaluation still does not adequately distinguish between useful moves and moves that merely consume tempi. The defeat was caused mainly by the repeated rook moves, the lack of development, the loss of central control, and the king remaining in the center.
+
+
+Round 3
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "3"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Shallow Blue 2.0.0"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1617"]
+[Time "09:06:36"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:10:40"]
+[PlyCount "41"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 Nf6 2. Rb1 e5 3. Ra1 d5 4. Rb1 d4 5. Nb5 a6 6. Na3 Nc6
+7. Ra1 Bb4 8. Rb1 Qd5 9. Ra1 Qc5 10. Nf3 e4 11. Ng1 Nd5
+12. Rb1 e3 13. Ra1 Bf5 14. Nh3 Bxa3 15. dxe3 Bxc2
+16. exd4 Nxd4 17. bxa3 Bxd1 18. e4 Bf3 19. Bxa6 Qa5+
+20. Kf1 Qxa6+ 21. Kg1 0-1
+
+
+SUMMARY
+
+PHILOCHESS began the game by developing the knight with 1.Nc3, but once again moved the rook prematurely with 2.Rb1. Shallow Blue occupied the center and advanced the d-pawn from d5 to d4, attacking the white knight and forcing it to move first to b5 and then to a3. Meanwhile, Black established a broad center and developed its pieces.
+
+The main opening anomaly was the repeated movement of the a1-rook. The rook moved eight times during the first thirteen moves without gaining mobility or activity: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1, Rb1, and Ra1. These moves consumed tempi that should have been used to develop the remaining pieces, contest the center, and prepare castling.
+
+When PHILOCHESS developed the second knight with 10.Nf3, Black already possessed a considerable space advantage. The advance 10...e4 attacked the knight and forced it to return to its original square. The development of that piece was therefore immediately neutralized by the pressure exerted from Black's center.
+
+After 14...Bxa3, PHILOCHESS did not recapture immediately, since 15...Bxc2 would have attacked the white queen and left it without a satisfactory retreat square. The decision to play 15.dxe3 avoided the immediate loss of the queen.
+
+After 15...Bxc2, the white queen came under attack. Its only viable retreat was 16.Qd2, but 16...Bb4 would then have pinned the queen and maintained the threat of capturing it. The retreat 16.Qd3 was also impossible because d3 was controlled by the bishop on c2.
+
+The move 16.exd4 made sense as a counterattack because the white pawn captured on d4 and attacked the black queen on c5. Had Shallow Blue replied with 16...Bxd1, both queens would have come off the board after 17.dxc5. Although the continuation 17...Ba4 18.bxa3 Nd4! would still have given Black a decisive advantage, PHILOCHESS would at least have remained in the fight.
+
+However, Shallow Blue found the strongest continuation: the knight captured the pawn attacking the black queen while preserving the threat against the white queen. After 17.bxa3 Bxd1, PHILOCHESS ultimately lost its queen. The continuation 19...Qa5+ 20.Kf1 Qxa6+ kept the white king exposed and left White with a decisive material disadvantage, so the game was adjudicated in Shallow Blue’s favor. Moreover, in the final position, Black had a forced mate in three.
+
+
+CONCLUSIONS
+
+1. The main cause of the defeat was once again the poor management of opening tempi. PHILOCHESS moved the rook eight times while the remaining pieces stayed undeveloped.
+
+2. The repeated rook moves produced no mobility or activity. Meanwhile, Shallow Blue occupied the center, gained space, developed its pieces, and attacked the white knights.
+
+3. The development of the knight with 10.Nf3 came too late. Black's space advantage made it possible to attack the knight immediately with 10...e4 and force it back to g1.
+
+4. PHILOCHESS correctly avoided the immediate recapture 15.bxa3, which would have allowed 15...Bxc2 and left the white queen trapped.
+
+5. The move 16.exd4 was a logical counterattack against the black queen. Nevertheless, 16...Nxd4! removed the attacking pawn, saved the black queen, and maintained the threat of capturing the white queen.
+
+6. The loss of the queen was not caused by overlooking a clearly safe retreat. After 15...Bxc2, even 16.Qd2 would have allowed 16...Bb4, pinning the queen.
+
+7. The game shows no failures in move legality, UCI communication, or move execution. It also shows that PHILOCHESS recognized some tactical dangers.
+
+8. Priority improvements should include:
+   - basic development evaluation;
+   - penalties for repeatedly moving the same piece during the opening;
+   - specific penalties for premature rook moves;
+   - piece-square tables;
+   - evaluation of the center and space;
+   - mobility and activity evaluation;
+   - king safety and encouragement of castling when appropriate;
+   - a regression test in the position before 15.bxa3, verifying the ...Bxc2 sequence and the trapping of the queen;
+   - a regression test after 15...Bxc2, checking the queen retreats and the ...Bb4 resource;
+   - a regression test for the sequence 16.exd4 Nxd4 17.bxa3 Bxd1;
+   - verification that quiescence correctly evaluates capture sequences, counterattacks, and unavoidable material losses;
+   - verification of all legal evasions in the checking positions after 19...Qa5+.
+
+General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine and avoided a recapture that would have trapped its queen immediately. However, the eight rook moves, the lack of development, and Shallow Blue's central domination led to a position in which the loss of the queen became inevitable. The sequence 16.exd4 Nxd4 17.bxa3 Bxd1 provides an especially valuable test for quiescence correctness and tactical regression in PHILOCHESS 0.2-alpha-002.
