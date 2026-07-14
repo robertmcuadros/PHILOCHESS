@@ -249,3 +249,4 @@ CONCLUSIONS
    - verification of all legal evasions in the checking positions after 19...Qa5+.
 
 General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine and avoided a recapture that would have trapped its queen immediately. However, the eight rook moves, the lack of development, and Shallow Blue's central domination led to a position in which the loss of the queen became inevitable. The sequence 16.exd4 Nxd4 17.bxa3 Bxd1 provides an especially valuable test for quiescence correctness and tactical regression in PHILOCHESS 0.2-alpha-002.
+
