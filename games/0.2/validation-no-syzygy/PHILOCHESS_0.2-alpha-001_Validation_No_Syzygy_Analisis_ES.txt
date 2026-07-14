@@ -36,6 +36,7 @@ https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 
 ===============================================================================
 
+
 RONDA 1
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
@@ -104,6 +105,7 @@ CONCLUSIONES
 
 Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, pero su evaluación todavía carece de los conocimientos posicionales necesarios para conducir la apertura. La derrota fue provocada principalmente por una acumulación de decisiones estratégicas deficientes, no por un único error táctico.
 
+
 RONDA 2
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
@@ -171,3 +173,79 @@ CONCLUSIONES
    - pruebas de regresión en las posiciones anteriores a 2.Rb1, 8...Nxc5, 15...Ne3 y 18...c5.
 
 Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, e incluso reconoció la amenaza de mate existente después de 18...c5. Sin embargo, su evaluación todavía no distingue adecuadamente entre movimientos útiles y movimientos que solo consumen tiempos. La derrota fue provocada principalmente por los movimientos repetidos de la torre, la falta de desarrollo, la pérdida del control central y la permanencia del rey en el centro.
+
+
+RONDA 3
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Lima, PER"]
+[Date "2026.07.12"]
+[Round "3"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Shallow Blue 2.0.0"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1617"]
+[Time "09:06:36"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:10:40"]
+[PlyCount "41"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 Nf6 2. Rb1 e5 3. Ra1 d5 4. Rb1 d4 5. Nb5 a6 6. Na3 Nc6
+7. Ra1 Bb4 8. Rb1 Qd5 9. Ra1 Qc5 10. Nf3 e4 11. Ng1 Nd5
+12. Rb1 e3 13. Ra1 Bf5 14. Nh3 Bxa3 15. dxe3 Bxc2
+16. exd4 Nxd4 17. bxa3 Bxd1 18. e4 Bf3 19. Bxa6 Qa5+
+20. Kf1 Qxa6+ 21. Kg1 0-1
+
+
+RESUMEN
+
+PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero volvió a mover prematuramente la torre con 2.Rb1. Shallow Blue ocupó el centro y avanzó el peón de d5 a d4, atacando al caballo blanco y obligándolo a desplazarse primero a b5 y luego a a3. Mientras tanto, las negras establecieron un centro amplio y desarrollaron sus piezas.
+
+La anomalía principal de la apertura fue el movimiento reiterado de la torre de a1. La torre se movió ocho veces durante las primeras trece jugadas sin conseguir movilidad ni actividad: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1, Rb1 y Ra1. Estos movimientos consumieron tiempos que debieron emplearse en desarrollar las demás piezas, disputar el centro y preparar el enroque.
+
+Cuando PHILOCHESS desarrolló el segundo caballo mediante 10.Nf3, las negras ya poseían una considerable ventaja de espacio. El avance 10...e4 atacó al caballo y lo obligó a regresar a su casilla de origen. De esta manera, el desarrollo de esa pieza fue anulado inmediatamente por la presión ejercida desde el centro negro.
+
+Después de 14...Bxa3, PHILOCHESS no recapturó inmediatamente, ya que 15...Bxc2 habría atacado a la dama blanca y la habría dejado sin una casilla satisfactoria de retirada. La decisión de jugar 15.dxe3 evitó la pérdida inmediata de la dama.
+
+Tras 15...Bxc2, la dama blanca quedó atacada. Su única retirada viable era 16.Qd2, pero entonces 16...Bb4 habría clavado la dama y mantenido la amenaza de capturarla. La retirada 16.Qd3 tampoco era posible, porque la casilla d3 estaba controlada por el alfil de c2.
+
+La jugada 16.exd4 tuvo sentido como contraataque, porque el peón blanco capturó en d4 y dejó amenazada a la dama negra de c5. Si Shallow Blue hubiera respondido con 16...Bxd1, se habrían eliminado ambas damas mediante 17.dxc5. Aunque la variante 17...Ba4 18.bxa3 Nd4! habría conservado una ventaja decisiva para las negras, PHILOCHESS todavía habría continuado en la lucha.
+
+Sin embargo, Shallow Blue encontró la respuesta más fuerte: el caballo capturó el peón que atacaba a la dama negra y mantuvo la amenaza contra la dama blanca. Después de 17.bxa3 Bxd1, PHILOCHESS acabó perdiendo la dama. La continuación 19...Qa5+ 20.Kf1 Qxa6+ mantuvo expuesto al rey blanco y dejó a las blancas con una desventaja material decisiva, por lo que la partida fue adjudicada a favor de Shallow Blue. Además, en la posición final, las negras disponían de una secuencia forzada que les habría permitido dar mate en tres.
+
+
+CONCLUSIONES
+
+1. La causa principal de la derrota fue nuevamente la gestión deficiente de los tiempos de apertura. PHILOCHESS movió ocho veces la torre mientras las demás piezas permanecían sin desarrollar.
+
+2. Los movimientos repetidos de la torre no produjeron movilidad ni actividad. Mientras tanto, Shallow Blue ocupó el centro, ganó espacio, desarrolló sus piezas y atacó a los caballos blancos.
+
+3. El desarrollo del caballo mediante 10.Nf3 llegó demasiado tarde. La ventaja de espacio de las negras permitió atacarlo inmediatamente con 10...e4 y obligarlo a regresar a g1.
+
+4. PHILOCHESS evitó correctamente la recaptura inmediata 15.bxa3, que habría permitido 15...Bxc2 y habría dejado a la dama blanca atrapada.
+
+5. La jugada 16.exd4 fue un contraataque lógico contra la dama negra. No obstante, 16...Nxd4! eliminó al peón atacante, salvó la dama negra y mantuvo la amenaza de capturar la dama blanca.
+
+6. La pérdida de la dama no fue consecuencia de haber ignorado una retirada claramente segura. Después de 15...Bxc2, incluso 16.Qd2 habría permitido 16...Bb4, clavando la dama.
+
+7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación de movimientos. También muestra que PHILOCHESS pudo reconocer algunos peligros tácticos.
+
+8. Las mejoras prioritarias deben incluir:
+   - evaluación básica del desarrollo;
+   - penalización de movimientos repetidos de una misma pieza durante la apertura;
+   - penalización específica de movimientos prematuros de las torres;
+   - tablas pieza-casilla;
+   - valoración del centro y del espacio;
+   - evaluación de movilidad y actividad;
+   - seguridad del rey e incentivo al enroque cuando sea apropiado;
+   - prueba de regresión en la posición anterior a 15.bxa3, verificando la secuencia ...Bxc2 y el atrapamiento de la dama;
+   - prueba de regresión después de 15...Bxc2, comprobando las retiradas de la dama y el recurso ...Bb4;
+   - prueba de regresión para la secuencia 16.exd4 Nxd4 17.bxa3 Bxd1;
+   - comprobación de que la quiescence evalúe correctamente capturas encadenadas, contraataques y pérdidas inevitables de material;
+   - comprobación de todas las evasiones legales en las posiciones con jaque posteriores a 19...Qa5+.
+
+Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, y evitó una recaptura que habría atrapado inmediatamente su dama. Sin embargo, los ocho movimientos de torre, la falta de desarrollo y el dominio central de Shallow Blue condujeron a una posición en la que la pérdida de la dama resultó inevitable. La secuencia 16.exd4 Nxd4 17.bxa3 Bxd1 constituye una prueba especialmente valiosa para la corrección de la quiescence y la regresión táctica de PHILOCHESS 0.2-alpha-002.
