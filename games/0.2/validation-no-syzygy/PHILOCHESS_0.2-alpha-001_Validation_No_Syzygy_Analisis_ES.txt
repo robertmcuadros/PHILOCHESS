@@ -40,7 +40,7 @@ https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 RONDA 1
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
-[Site "Lima, PER"]
+[Site "Myracle GUI"]
 [Date "2026.07.12"]
 [Round "1"]
 [White "Zoidberg 0.1"]
@@ -109,7 +109,7 @@ Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y esta
 RONDA 2
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
-[Site "Lima, PER"]
+[Site "Myracle GUI"]
 [Date "2026.07.12"]
 [Round "2"]
 [White "PHILOCHESS 0.2 alpha 001"]
@@ -178,7 +178,7 @@ Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y esta
 RONDA 3
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
-[Site "Lima, PER"]
+[Site "Myracle GUI"]
 [Date "2026.07.12"]
 [Round "3"]
 [White "PHILOCHESS 0.2 alpha 001"]
