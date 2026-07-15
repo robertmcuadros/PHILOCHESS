@@ -1,5 +1,5 @@
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
-[Site "Lima, PER"]
+[Site "Myracle GUI"]
 [Date "2026.07.12"]
 [Round "1"]
 [White "Zoidberg 0.1"]
@@ -22,7 +22,7 @@
 29. bxa3 Bxa3 30. Nxh6 Bf8 1-0
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
-[Site "Lima, PER"]
+[Site "Myracle GUI"]
 [Date "2026.07.12"]
 [Round "2"]
 [White "PHILOCHESS 0.2 alpha 001"]
@@ -44,7 +44,7 @@
 22. Bxd3 Rxd3 23. Bb2 Nxb2 24. Ng5 Nb3 25. Qc2 Qa1+ 26. Ke2 0-1
 
 [Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
-[Site "Lima, PER"]
+[Site "Myracle GUI"]
 [Date "2026.07.12"]
 [Round "3"]
 [White "PHILOCHESS 0.2 alpha 001"]
