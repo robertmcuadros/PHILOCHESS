@@ -249,3 +249,77 @@ CONCLUSIONS
    - verification of all legal evasions in the checking positions after 19...Qa5+.
 
 General diagnosis: PHILOCHESS operated correctly as a legal and stable chess engine and avoided a recapture that would have trapped its queen immediately. However, the eight rook moves, the lack of development, and Shallow Blue's central domination led to a position in which the loss of the queen became inevitable. The sequence 16.exd4 Nxd4 17.bxa3 Bxd1 provides an especially valuable test for quiescence correctness and tactical regression in PHILOCHESS 0.2-alpha-002.
+
+
+Round 4
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "4"]
+[White "Dreamer 0.3.0"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1314"]
+[BlackElo "800"]
+[Time "09:20:57"]
+[ECO "A04"]
+[Opening "Zukertort Opening: St. George Defense"]
+[GameDuration "00:13:32"]
+[PlyCount "54"]
+[Termination "white wins by adjudication"]
+
+1. Nf3 a6 2. e3 a5 3. Be2 a4 4. O-O b6 5. Nc3 c6 6. d3 b5
+7. Ne4 b4 8. a3 bxa3 9. Rxa3 e6 10. Ra2 Qe7 11. b3 a3
+12. Nc3 c5 13. Bxa3 d6 14. d4 Qf6 15. Nb5 Qd8 16. dxc5 dxc5
+17. Qxd8+ Kxd8 18. Bxc5 Rxa2 19. Bxf8 g6 20. Bg7 Rxc2
+21. Bc4 Rb2 22. Bxb2 f6 23. Nd6 Nh6 24. Bxf6+ Kc7
+25. Bxh8 Kxd6 26. Be5+ Ke7 27. Bxb8 Ng4 1-0
+
+
+SUMMARY
+
+During its first eight moves, PHILOCHESS moved only queenside pawns. The a-pawn later advanced to a3 through ...a6, ...a5, ...a4, and ...a3. These moves consumed several tempi without contributing to piece development, central control, or king safety.
+
+Up to 16...dxc5, PHILOCHESS had moved only pawns and the queen. No knight, bishop, or rook had been developed. Dreamer, by contrast, had developed its pieces, castled, and achieved a clear advantage in activity and coordination.
+
+After 17.Qxd8+ Kxd8, PHILOCHESS permanently lost the right to castle, and the king remained exposed in the center. Following 18.Bxc5, the white bishop attacked the bishop on f8, which had not yet been developed. After 18...Rxa2 19.Bxf8, PHILOCHESS had realized the exchange gain.
+
+The material advantage could not be consolidated because of the lack of development and coordination. After 19...g6 20.Bg7, the h8-rook was attacked and had no retreat squares. PHILOCHESS continued with 20...Rxc2, activating the other rook and capturing a pawn.
+
+Following 21.Bc4, PHILOCHESS played 21...Rb2 and sacrificed the active rook to deflect the bishop from g7 and temporarily save the inactive rook on h8. The rook was captured by 22.Bxb2. This decision should be regarded as a positional mistake: PHILOCHESS preserved a rook that had not yet entered the game at the cost of a rook that already possessed mobility and activity.
+
+The move 22...f6 blocked the white bishop's diagonal toward h8. However, 23.Nd6 created further threats, including a knight fork on f7, and restricted Black's queenside pieces even more. The reply 23...Nh6 defended f7 and attempted to address several problems simultaneously; it should not be interpreted as an isolated tactical mistake, because Black no longer had a satisfactory solution.
+
+Dreamer continued with 24.Bxf6+, a double attack that enabled White to win the rook on h8. On move 27, White also captured the knight on b8, which had still not been developed. Black’s material deficit and exposed king then became decisive, and the game was adjudicated in Dreamer’s favor.
+
+
+CONCLUSIONS
+
+1. The main cause of the defeat was the general lack of development. Up to move sixteen, PHILOCHESS had moved only pawns and the queen.
+
+2. The repeated queenside pawn moves consumed too many tempi without producing any advantage. Meanwhile, Dreamer developed its pieces, castled, and achieved greater activity and coordination.
+
+3. The queen exchange forced the black king to capture on d8. The inability to castle increased the king's vulnerability and made it even more difficult to connect and activate the rooks.
+
+4. The move 21...Rb2 was a positional mistake. PHILOCHESS sacrificed an active rook to preserve temporarily an inactive rook that was attacked and had no retreat squares.
+
+5. The move 23...Nh6 was not an isolated tactical mistake. Black had to respond to the threat of Nf7+ and to other problems caused by the lack of development, the restriction of its pieces, and the exposed king.
+
+6. The game shows no failures in move legality, UCI communication, move execution, or recapture handling. The defeat was caused mainly by accumulated positional deficiencies.
+
+7. Priority improvements should include:
+   - basic development evaluation;
+   - penalties for repeated flank-pawn moves during the opening;
+   - piece-square tables;
+   - evaluation of the center and space;
+   - mobility, activity, and coordination evaluation;
+   - distinguishing between an active rook and a rook that has not yet entered the game;
+   - king safety and encouragement of castling when appropriate;
+   - a regression test after 17...Kxd8, verifying the sequence 18.Bxc5 Rxa2 19.Bxf8 and its material outcome;
+   - a regression test after 21...Rb2, checking the capture 22.Bxb2;
+   - a regression test after 23...Nh6, verifying 24.Bxf6+ and the continuation through 25.Bxh8;
+   - verification that quiescence examines every legal evasion after 24.Bxf6+ and correctly continues the forced captures.
+
+General diagnosis: PHILOCHESS managed to win the exchange, but was unable to consolidate its advantage. The lack of development, the king remaining in the center, and the absence of coordination led to a position in which Black no longer had a satisfactory defense.
