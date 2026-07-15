@@ -249,3 +249,77 @@ CONCLUSIONES
    - comprobación de todas las evasiones legales en las posiciones con jaque posteriores a 19...Qa5+.
 
 Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, y evitó una recaptura que habría atrapado inmediatamente su dama. Sin embargo, los ocho movimientos de torre, la falta de desarrollo y el dominio central de Shallow Blue condujeron a una posición en la que la pérdida de la dama resultó inevitable. La secuencia 16.exd4 Nxd4 17.bxa3 Bxd1 constituye una prueba especialmente valiosa para la corrección de la quiescence y la regresión táctica de PHILOCHESS 0.2-alpha-002.
+
+
+RONDA 4
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "4"]
+[White "Dreamer 0.3.0"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1314"]
+[BlackElo "800"]
+[Time "09:20:57"]
+[ECO "A04"]
+[Opening "Zukertort Opening: St. George Defense"]
+[GameDuration "00:13:32"]
+[PlyCount "54"]
+[Termination "white wins by adjudication"]
+
+1. Nf3 a6 2. e3 a5 3. Be2 a4 4. O-O b6 5. Nc3 c6 6. d3 b5
+7. Ne4 b4 8. a3 bxa3 9. Rxa3 e6 10. Ra2 Qe7 11. b3 a3
+12. Nc3 c5 13. Bxa3 d6 14. d4 Qf6 15. Nb5 Qd8 16. dxc5 dxc5
+17. Qxd8+ Kxd8 18. Bxc5 Rxa2 19. Bxf8 g6 20. Bg7 Rxc2
+21. Bc4 Rb2 22. Bxb2 f6 23. Nd6 Nh6 24. Bxf6+ Kc7
+25. Bxh8 Kxd6 26. Be5+ Ke7 27. Bxb8 Ng4 1-0
+
+
+RESUMEN
+
+Durante sus primeras ocho jugadas, PHILOCHESS movió únicamente peones del flanco de dama. El peón de la columna a avanzó posteriormente hasta a3 mediante ...a6, ...a5, ...a4 y ...a3. Estos movimientos consumieron varios tiempos sin contribuir al desarrollo de las piezas, al control del centro ni a la seguridad del rey.
+
+Hasta 16...dxc5, PHILOCHESS había movido solamente peones y la dama. Ningún caballo, alfil o torre había sido desarrollado. Dreamer, por el contrario, había desarrollado sus piezas, enrocado y conseguido una clara superioridad de actividad y coordinación.
+
+Después de 17.Qxd8+ Kxd8, PHILOCHESS perdió definitivamente el derecho a enrocar y el rey quedó expuesto en el centro. Tras 18.Bxc5, el alfil blanco atacó al alfil de f8, que todavía no había sido desarrollado. Después de 18...Rxa2 19.Bxf8, PHILOCHESS había ejecutado la ganancia de la calidad.
+
+La ventaja material no pudo ser consolidada debido a la falta de desarrollo y coordinación. Después de 19...g6 20.Bg7, la torre de h8 quedó atacada y sin casillas de retirada. PHILOCHESS continuó con 20...Rxc2, activando la otra torre y capturando un peón.
+
+Tras 21.Bc4, PHILOCHESS jugó 21...Rb2 y entregó la torre activa para desviar al alfil de g7 y salvar momentáneamente la torre inactiva de h8. La torre fue capturada mediante 22.Bxb2. Esta decisión debe considerarse un error posicional: PHILOCHESS conservó una torre que todavía no había entrado en juego a costa de una torre que ya poseía movilidad y actividad.
+
+La jugada 22...f6 bloqueó la diagonal del alfil blanco hacia h8. Sin embargo, 23.Nd6 creó nuevas amenazas, entre ellas el ataque doble de caballo en f7, y restringió todavía más a las piezas negras del flanco de dama. La respuesta 23...Nh6 defendió f7 y trató de atender varios problemas simultáneos; no debe interpretarse como un error táctico aislado, pues las negras ya carecían de una solución satisfactoria.
+
+Dreamer continuó con 24.Bxf6+, un ataque doble que permitió capturar la torre de h8. En la jugada 27, las blancas eliminaron también el caballo de b8, que aún no había sido desarrollado. La desventaja material y la vulnerabilidad del rey negro se volvieron decisivas, por lo que la partida fue adjudicada a favor de Dreamer.
+
+
+CONCLUSIONES
+
+1. La causa principal de la derrota fue la falta general de desarrollo. Hasta la decimosexta jugada, PHILOCHESS solo había movido peones y la dama.
+
+2. Los movimientos reiterados de los peones del flanco de dama consumieron demasiados tiempos sin producir ninguna ventaja. Mientras tanto, Dreamer desarrolló sus piezas, enrocó y consiguió mayor actividad y coordinación.
+
+3. El cambio de damas obligó al rey negro a capturar en d8. La imposibilidad de enrocar agravó la vulnerabilidad del rey y dificultó todavía más la conexión y activación de las torres.
+
+4. La jugada 21...Rb2 fue un error posicional. PHILOCHESS entregó una torre activa para conservar momentáneamente una torre inactiva que estaba atacada y sin casillas de retirada.
+
+5. La jugada 23...Nh6 no constituye un error táctico aislado. Las negras debían responder a la amenaza de Nf7+ y a otros problemas derivados de la falta de desarrollo, la restricción de sus piezas y la exposición del rey.
+
+6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas. La derrota fue causada principalmente por deficiencias posicionales acumuladas.
+
+7. Las mejoras prioritarias deben incluir:
+   - evaluación básica del desarrollo;
+   - penalización de movimientos repetidos de peones laterales durante la apertura;
+   - tablas pieza-casilla;
+   - valoración del centro y del espacio;
+   - evaluación de movilidad, actividad y coordinación;
+   - distinción entre una torre activa y una torre que todavía no ha entrado en juego;
+   - seguridad del rey e incentivo al enroque cuando sea apropiado;
+   - prueba de regresión después de 17...Kxd8, verificando la secuencia 18.Bxc5 Rxa2 19.Bxf8 y su resultado material;
+   - prueba de regresión después de 21...Rb2, comprobando la captura 22.Bxb2;
+   - prueba de regresión después de 23...Nh6, verificando 24.Bxf6+ y la continuación hasta 25.Bxh8;
+   - comprobación de que la quiescence examine todas las evasiones legales después de 24.Bxf6+ y continúe correctamente las capturas forzadas.
+
+Diagnóstico general: PHILOCHESS consiguió ganar la calidad, pero no pudo consolidar la ventaja. La falta de desarrollo, la permanencia del rey en el centro y la ausencia de coordinación llevaron a una posición que ya no ofrecía una defensa satisfactoria.
