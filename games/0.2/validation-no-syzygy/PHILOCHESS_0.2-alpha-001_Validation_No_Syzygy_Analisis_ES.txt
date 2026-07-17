@@ -323,3 +323,78 @@ CONCLUSIONES
    - comprobación de que la quiescence examine todas las evasiones legales después de 24.Bxf6+ y continúe correctamente las capturas forzadas.
 
 Diagnóstico general: PHILOCHESS consiguió ganar la calidad, pero no pudo consolidar la ventaja. La falta de desarrollo, la permanencia del rey en el centro y la ausencia de coordinación llevaron a una posición que ya no ofrecía una defensa satisfactoria.
+
+
+RONDA 5
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "5"]
+[White "Pulse Chess 1.7.3"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1520"]
+[BlackElo "800"]
+[Time "09:39:17"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:08:17"]
+[PlyCount "36"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nc3 b6 4. Nf3 c6 5. Bf4 b5 6. Bd3 a4
+7. b3 axb3 8. axb3 Rxa1 9. Qxa1 d6 10. e5 dxe5 11. Bxe5 Nd7
+12. Qa8 b4 13. Qxc6 e6 14. Nb5 Qb6 15. Qxc8+ Qd8
+16. Nc7+ Ke7 17. Bd6+ Kxd6 18. Qxd8 Nf6 1-0
+
+
+RESUMEN
+
+Durante sus primeras siete jugadas, PHILOCHESS movió únicamente peones del flanco de dama: ...a6, ...a5, ...b6, ...c6, ...b5, ...a4 y ...axb3. Estos movimientos consumieron numerosos tiempos sin contribuir al desarrollo de las piezas, al control del centro ni a la seguridad del rey.
+
+Después del cambio de torres en la columna a, PHILOCHESS continuó con movimientos de peones y no desarrolló una pieza menor hasta 11...Nd7. Mientras tanto, Pulse Chess desarrolló ambos caballos y alfiles, ocupó el centro y consiguió una clara superioridad de actividad y coordinación.
+
+La entrada 12.Qa8 permitió a la dama blanca penetrar profundamente en el campo negro. Tras 12...b4 13.Qxc6, las blancas mantuvieron una fuerte presión sobre la posición negra.
+
+La jugada 14.Nb5 creó una amenaza inmediata: 15.Nc7+, con consecuencias decisivas para la seguridad del rey negro.
+
+PHILOCHESS respondió con 14...Qb6, desocupando d8 para proporcionar al rey una posible casilla de escape después de Nc7+. Sin embargo, al abandonar d8, la dama dejó de proteger al alfil de c8.
+
+La posición ya no ofrecía una defensa satisfactoria. Si PHILOCHESS hubiera desocupado f8 mediante 14...Be7, las blancas habrían respondido con 15.Bc7, atacando a la dama de d8 y dejándola sin una retirada adecuada.
+
+Después de 15.Qxc8+, PHILOCHESS bloqueó el jaque mediante 15...Qd8. Pulse Chess continuó con una secuencia de jugadas forzadas: 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8. El jaque del alfil obligó al rey negro a desplazarse hasta d6, tras lo cual la dama de d8 fue capturada.
+
+Con la pérdida del alfil de c8 y posteriormente de la dama, PHILOCHESS quedó con una desventaja material decisiva. La partida fue adjudicada a favor de Pulse Chess.
+
+
+CONCLUSIONES
+
+1. La causa principal de la derrota fue nuevamente la falta general de desarrollo. Durante las primeras siete jugadas, PHILOCHESS movió solamente peones del flanco de dama.
+
+2. La primera pieza menor negra no fue desarrollada hasta 11...Nd7. Para entonces, Pulse Chess ya había desarrollado todas sus piezas menores y había conseguido mayor actividad y coordinación.
+
+3. La jugada 14...Qb6 intentó crear una casilla de escape en d8 para el rey, pero dejó indefenso al alfil de c8. La alternativa 14...Be7 tampoco solucionaba la posición debido a 15.Bc7, que habría dejado atrapada a la dama negra.
+
+4. La secuencia 15.Qxc8+ Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8 estuvo compuesta por jaques forzados que culminaron con la pérdida de la dama negra.
+
+5. La pérdida del alfil y de la dama no fue consecuencia de dos errores independientes. Ambas fueron manifestaciones tácticas de una posición deteriorada por la falta de desarrollo, la exposición del rey y la ausencia de coordinación.
+
+6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas.
+
+7. Las mejoras prioritarias deben incluir:
+   - evaluación básica del desarrollo;
+   - penalización de movimientos repetidos de peones laterales durante la apertura;
+   - tablas pieza-casilla;
+   - valoración del centro y del espacio;
+   - evaluación de movilidad, actividad y coordinación;
+   - seguridad del rey e incentivo al enroque cuando sea apropiado;
+   - prueba de regresión después de 14.Nb5, verificando que la amenaza inmediata sea Nc7+;
+   - comparación de 14...Qb6 con 14...Be7 15.Bc7, comprobando el atrapamiento de la dama;
+   - prueba de regresión después de 15.Qxc8+, verificando todas las evasiones legales del jaque;
+   - prueba de regresión para la secuencia 15...Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8;
+   - comprobación de que la quiescence no aplique stand pat cuando el rey está en jaque;
+   - comprobación de que la búsqueda continúe correctamente las secuencias de jaques forzados hasta reconocer una pérdida inevitable de material.
+
+Diagnóstico general: PHILOCHESS no perdió por una equivocación aislada después de 14.Nb5. Los movimientos reiterados de los peones del flanco de dama, el desarrollo tardío y la permanencia del rey en el centro condujeron a una posición sin una defensa satisfactoria. La secuencia final proporciona una prueba especialmente útil de jaques forzados, evasiones legales, atrapamiento de la dama y pérdida inevitable de material para PHILOCHESS 0.2-alpha-002.
