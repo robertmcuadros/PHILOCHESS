@@ -85,3 +85,24 @@
 8. a3 bxa3 9. Rxa3 e6 10. Ra2 Qe7 11. b3 a3 12. Nc3 c5 13. Bxa3 d6 14. d4 Qf6 
 15. Nb5 Qd8 16. dxc5 dxc5 17. Qxd8+ Kxd8 18. Bxc5 Rxa2 19. Bxf8 g6 20. Bg7 Rxc2 21. Bc4 Rb2 
 22. Bxb2 f6 23. Nd6 Nh6 24. Bxf6+ Kc7 25. Bxh8 Kxd6 26. Be5+ Ke7 27. Bxb8 Ng4 1-0
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "5"]
+[White "Pulse Chess 1.7.3"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1520"]
+[BlackElo "800"]
+[Time "09:39:17"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:08:17"]
+[PlyCount "36"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nc3 b6 4. Nf3 c6 5. Bf4 b5 6. Bd3 a4 7. b3 axb3 
+8. axb3 Rxa1 9. Qxa1 d6 10. e5 dxe5 11. Bxe5 Nd7 12. Qa8 b4 13. Qxc6 e6 14. Nb5 Qb6 
+15. Qxc8+ Qd8 16. Nc7+ Ke7 17. Bd6+ Kxd6 18. Qxd8 Nf6 1-0
