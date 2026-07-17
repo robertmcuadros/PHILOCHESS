@@ -323,3 +323,78 @@ CONCLUSIONS
    - verification that quiescence examines every legal evasion after 24.Bxf6+ and correctly continues the forced captures.
 
 General diagnosis: PHILOCHESS managed to win the exchange, but was unable to consolidate its advantage. The lack of development, the king remaining in the center, and the absence of coordination led to a position in which Black no longer had a satisfactory defense.
+
+
+Round 5
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "5"]
+[White "Pulse Chess 1.7.3"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1520"]
+[BlackElo "800"]
+[Time "09:39:17"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:08:17"]
+[PlyCount "36"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nc3 b6 4. Nf3 c6 5. Bf4 b5 6. Bd3 a4
+7. b3 axb3 8. axb3 Rxa1 9. Qxa1 d6 10. e5 dxe5 11. Bxe5 Nd7
+12. Qa8 b4 13. Qxc6 e6 14. Nb5 Qb6 15. Qxc8+ Qd8
+16. Nc7+ Ke7 17. Bd6+ Kxd6 18. Qxd8 Nf6 1-0
+
+
+SUMMARY
+
+During its first seven moves, PHILOCHESS moved only queenside pawns: ...a6, ...a5, ...b6, ...c6, ...b5, ...a4, and ...axb3. These moves consumed numerous tempi without contributing to piece development, central control, or king safety.
+
+After the rook exchange on the a-file, PHILOCHESS continued making pawn moves and did not develop a minor piece until 11...Nd7. Meanwhile, Pulse Chess developed both knights and bishops, occupied the center, and achieved a clear advantage in activity and coordination.
+
+The penetration 12.Qa8 allowed the white queen to enter deeply into Black's position. After 12...b4 13.Qxc6, White maintained strong pressure on the black position.
+
+The move 14.Nb5 created one immediate threat: 15.Nc7+, with decisive consequences for the safety of the black king.
+
+PHILOCHESS replied with 14...Qb6, vacating d8 to provide the king with a possible escape square after Nc7+. However, by leaving d8, the queen stopped protecting the c8-bishop.
+
+The position no longer offered a satisfactory defense. Had PHILOCHESS vacated f8 with 14...Be7, White would have replied with 15.Bc7, attacking the queen on d8 and leaving it without an adequate retreat.
+
+After 15.Qxc8+, PHILOCHESS blocked the check with 15...Qd8. Pulse Chess continued with a forcing sequence: 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8. The bishop check forced the black king to d6, after which the queen on d8 was captured.
+
+With the loss of the c8-bishop and subsequently the queen, PHILOCHESS reached a decisive material deficit. The game was adjudicated in Pulse Chess's favor.
+
+
+CONCLUSIONS
+
+1. The main cause of the defeat was once again the general lack of development. During its first seven moves, PHILOCHESS moved only queenside pawns.
+
+2. Black's first minor piece was not developed until 11...Nd7. By that point, Pulse Chess had already developed all its minor pieces and achieved greater activity and coordination.
+
+3. The move 14...Qb6 attempted to create an escape square for the king on d8, but left the c8-bishop undefended. The alternative 14...Be7 did not solve the position either because of 15.Bc7, which would have trapped the black queen.
+
+4. The sequence 15.Qxc8+ Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8 consisted of forcing checks that culminated in the loss of the black queen.
+
+5. The loss of the bishop and queen did not result from two independent mistakes. Both were tactical manifestations of a position damaged by the lack of development, the exposed king, and the absence of coordination.
+
+6. The game shows no failures in move legality, UCI communication, move execution, or recapture handling.
+
+7. Priority improvements should include:
+   - basic development evaluation;
+   - penalties for repeated flank-pawn moves during the opening;
+   - piece-square tables;
+   - evaluation of the center and space;
+   - mobility, activity, and coordination evaluation;
+   - king safety and encouragement of castling when appropriate;
+   - a regression test after 14.Nb5, verifying that the immediate threat is Nc7+;
+   - comparison of 14...Qb6 with 14...Be7 15.Bc7, checking the trapping of the queen;
+   - a regression test after 15.Qxc8+, verifying every legal check evasion;
+   - a regression test for the sequence 15...Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8;
+   - verification that quiescence does not apply stand pat while the king is in check;
+   - verification that the search correctly continues forcing check sequences until it recognizes an unavoidable material loss.
+
+General diagnosis: PHILOCHESS did not lose because of an isolated mistake after 14.Nb5. The repeated queenside pawn moves, delayed development, and the king remaining in the center led to a position without a satisfactory defense. The final sequence provides an especially useful test of forcing checks, legal evasions, queen trapping, and unavoidable material loss for PHILOCHESS 0.2-alpha-002.
