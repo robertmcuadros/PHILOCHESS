@@ -106,3 +106,30 @@
 1. d4 a6 2. e4 a5 3. Nc3 b6 4. Nf3 c6 5. Bf4 b5 6. Bd3 a4 7. b3 axb3 
 8. axb3 Rxa1 9. Qxa1 d6 10. e5 dxe5 11. Bxe5 Nd7 12. Qa8 b4 13. Qxc6 e6 14. Nb5 Qb6 
 15. Qxc8+ Qd8 16. Nc7+ Ke7 17. Bd6+ Kxd6 18. Qxd8 Nf6 1-0
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "6"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Zoidberg 0.1"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1665"]
+[Time "10:02:02"]
+[ECO "A00"]
+[Opening "Van Geet Opening: Reversed Nimzowitsch"]
+[GameDuration "00:13:34"]
+[PlyCount "121"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 e5 2. Rb1 Nc6 3. Ra1 d5 4. Rb1 d4 5. Nb5 a6 6. Na3 Qd5 7. Ra1 Bxa3 
+8. bxa3 Nge7 9. Bb2 Bf5 10. Qc1 Be4 11. Nf3 Ng6 12. Qd1 Qc5 13. c3 dxc3 14. dxc3 Bxf3 
+15. exf3 Qd6 16. Qxd6 cxd6 17. Rb1 h5 18. Rc1 Nf8 19. Rd1 Rd8 20. Rc1 Ne6 21. Rd1 Rd7 
+22. Rc1 Rd8 23. Rd1 a5 24. Rc1 O-O 25. Rd1 Kh7 26. Bd3+ g6 27. O-O b6 28. Rde1 Rc8 
+29. Rd1 Ne7 30. Rde1 f6 31. Rd1 Nf4 32. Bb5 Rfd8 33. Rde1 Kh6 34. Rd1 g5 35. Rde1 Ned5 
+36. Rc1 Nc7 37. g3 Nxb5 38. gxf4 gxf4 39. Rfe1 Nc7 40. Rcd1 b5 41. Rc1 Nd5 42. Rc2 Rc6 
+43. Rf1 Rdc8 44. Rfc1 b4 45. c4 Nb6 46. axb4 axb4 47. Rd1 d5 48. Re1 Rxc4 49. Rxc4 dxc4 
+50. Rf1 c3 51. Ba1 Rg8+ 52. Kh1 Ra8 53. Rg1 Rxa2 54. Rf1 c2 55. Rg1 Rxa1 56. Rxa1 b3 
+57. Rg1 b2 58. Rf1 c1=Q 59. Rxc1 bxc1=Q+ 60. Kg2 Nc4 61. h3 0-1
