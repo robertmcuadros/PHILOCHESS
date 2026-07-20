@@ -398,3 +398,95 @@ CONCLUSIONS
    - verification that the search correctly continues forcing check sequences until it recognizes an unavoidable material loss.
 
 General diagnosis: PHILOCHESS did not lose because of an isolated mistake after 14.Nb5. The repeated queenside pawn moves, delayed development, and the king remaining in the center led to a position without a satisfactory defense. The final sequence provides an especially useful test of forcing checks, legal evasions, queen trapping, and unavoidable material loss for PHILOCHESS 0.2-alpha-002.
+
+
+Round 6
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "6"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Zoidberg 0.1"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1665"]
+[Time "10:02:02"]
+[ECO "A00"]
+[Opening "Van Geet Opening: Reversed Nimzowitsch"]
+[GameDuration "00:13:34"]
+[PlyCount "121"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 e5 2. Rb1 Nc6 3. Ra1 d5 4. Rb1 d4 5. Nb5 a6
+6. Na3 Qd5 7. Ra1 Bxa3 8. bxa3 Nge7 9. Bb2 Bf5 10. Qc1 Be4
+11. Nf3 Ng6 12. Qd1 Qc5 13. c3 dxc3 14. dxc3 Bxf3
+15. exf3 Qd6 16. Qxd6 cxd6 17. Rb1 h5 18. Rc1 Nf8
+19. Rd1 Rd8 20. Rc1 Ne6 21. Rd1 Rd7 22. Rc1 Rd8
+23. Rd1 a5 24. Rc1 O-O 25. Rd1 Kh7 26. Bd3+ g6
+27. O-O b6 28. Rde1 Rc8 29. Rd1 Ne7 30. Rde1 f6
+31. Rd1 Nf4 32. Bb5 Rfd8 33. Rde1 Kh6 34. Rd1 g5
+35. Rde1 Ned5 36. Rc1 Nc7 37. g3 Nxb5 38. gxf4 gxf4
+39. Rfe1 Nc7 40. Rcd1 b5 41. Rc1 Nd5 42. Rc2 Rc6
+43. Rf1 Rdc8 44. Rfc1 b4 45. c4 Nb6 46. axb4 axb4
+47. Rd1 d5 48. Re1 Rxc4 49. Rxc4 dxc4 50. Rf1 c3
+51. Ba1 Rg8+ 52. Kh1 Ra8 53. Rg1 Rxa2 54. Rf1 c2
+55. Rg1 Rxa1 56. Rxa1 b3 57. Rg1 b2 58. Rf1 c1=Q
+59. Rxc1 bxc1=Q+ 60. Kg2 Nc4 61. h3 0-1
+
+
+SUMMARY
+
+PHILOCHESS once again began with 1.Nc3, but during its first seven moves it moved the a1-rook four times and the b1-knight three times. The advances 4...d4 and 5...a6 attacked the knight in succession, forcing it first to b5 and then to a3. Finally, 7...Bxa3 8.bxa3 removed that piece and damaged White's queenside pawn structure.
+
+Zoidberg developed its pieces, occupied the center, and achieved a significant positional advantage. The sequence 14...Bxf3 15.exf3 removed White's second knight and produced doubled pawns on the f-file. White retained both bishops but was left with a weakened structure and inferior coordination.
+
+The move 15...Qd6 was strategically imprecise because it allowed the queen exchange. A continuation such as 15...O-O would have completed Black's king safety and preserved the possibility of increasing the pressure along the d-file. The disappearance of the queens reduced the threats against the white king and allowed PHILOCHESS to prolong its resistance considerably.
+
+After the queen exchange, the main anomaly of the game emerged. Between 17.Rb1 and 36.Rc1, PHILOCHESS used seventeen of its twenty turns for rook moves, mainly among b1, c1, d1, and e1. These moves did not produce a proportional improvement in mobility, activity, or threat creation.
+
+During this sequence, PHILOCHESS managed to complete its development. Nevertheless, Zoidberg used the numerous available tempi to coordinate the knights and rooks, improve the position of the king, and prepare the advance of its queenside pawns.
+
+The most important technical moment came with 47...d5. The pawn on c4 was pinned by the rook on c6. After 48.Re1 Rxc4 49.Rxc4 dxc4, Black obtained a passed pawn on c4 and retained an advanced pawn on b4.
+
+After 50...c3, the c-pawn continued approaching promotion. The capture 53...Rxa2 also turned the b4-pawn into a passed pawn. From that moment onward, Black had two connected passed pawns on the queenside.
+
+The final conversion was precise. After 55...Rxa1 56.Rxa1, the b-pawn advanced while the c-pawn forced the white rook to remain tied to defensive duties. The sequence 58...c1=Q 59.Rxc1 bxc1=Q+ allowed the first pawn to promote and force the capture of the new queen, after which the second pawn captured the rook and promoted with check. The resulting advantage was decisive, and the game was adjudicated in Zoidberg’s favor.
+
+
+CONCLUSIONS
+
+1. PHILOCHESS once again managed the opening tempi poorly. During its first seven moves, it moved only the b1-knight and the a1-rook while Zoidberg occupied the center and developed its pieces.
+
+2. The captures 7...Bxa3 and 14...Bxf3 removed both white knights and produced structural weaknesses on the queenside and kingside.
+
+3. The move 15...Qd6 allowed a queen exchange that favored White's defensive prospects. The absence of the queens reduced Zoidberg's attacking chances and helped PHILOCHESS extend the game to move 61.
+
+4. Between moves 17 and 36, PHILOCHESS used seventeen of twenty turns for rook moves. Although it completed development during this period, most of these moves produced no useful mobility, real activity, or threats.
+
+5. The break 47...d5 exploited the pin of the c4-pawn. The sequence 48.Re1 Rxc4 49.Rxc4 dxc4 allowed Black to create a passed pawn on c4.
+
+6. The black pawn on b4 was not yet a passed pawn after 49...dxc4. It acquired that status after 53...Rxa2, when the last white pawn capable of stopping it from an adjacent file was removed.
+
+7. The sequence 58...c1=Q 59.Rxc1 bxc1=Q+ is a particularly important tactical conversion: it combines a non-capturing promotion, the capture of the new queen, and a second promotion by capture with check.
+
+8. The game shows no failures in move legality, UCI communication, move execution, castling, or promotion handling. PHILOCHESS operated stably throughout a game of 121 plies.
+
+9. Priority improvements should include:
+   - basic development evaluation;
+   - penalties for repeated and unproductive rook moves;
+   - distinguishing between movement, mobility, activity, and threat creation;
+   - evaluation of open files and rook coordination;
+   - evaluation of doubled pawns and other structural weaknesses;
+   - evaluation of passed pawns, connected passed pawns, and proximity to promotion;
+   - contextual evaluation of queen exchanges;
+   - a regression test after 47...d5, verifying the pin of the c4-pawn and the sequence ...Rxc4, Rxc4, and ...dxc4;
+   - a regression test after 49...dxc4, correctly distinguishing between the passed c4-pawn and the b4-pawn, which was not yet passed;
+   - a regression test after 53...Rxa2, updating the status of the b4-pawn;
+   - a regression test for the sequence 55...Rxa1 56.Rxa1 b3;
+   - a regression test for 58...c1=Q 59.Rxc1 bxc1=Q+;
+   - verification that quiescence examines both non-capturing promotions and capturing promotions;
+   - verification of every legal evasion after 51...Rg8+ and 59...bxc1=Q+.
+
+General diagnosis: The queen exchange allowed PHILOCHESS to prolong its resistance and eventually complete development, but the repeated and unproductive rook moves gave Zoidberg enough time to coordinate its forces. The break 47...d5 and the subsequent creation of two connected passed pawns decided the game. The final sequence provides an especially valuable test of quiescence correctness, capture sequences, and promotion evaluation for PHILOCHESS 0.2-alpha-002.
