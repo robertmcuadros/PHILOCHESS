@@ -7,7 +7,7 @@
 
 PHILOCHESS was born from a technical curiosity about how a chess engine generates moves, but also from a personal desire to express a chess philosophy through code. The project is being built step by step, from board representation and move generation toward an engine guided by a classical understanding of chess.
 
-I am not a professional programmer. I am a chemical engineer, a chess coach and analyst, and a lifelong student of this beautiful art of the sixty-four squares. For that reason, PHILOCHESS is also a learning journey: an attempt to translate chess logic, training ideas, and strategic concepts into a working engine. Its long-term ambition is to evaluate chess through factors such as development, mobility, activity, coordination, structure, material, king safety, and initiative.
+I am not a professional programmer. I am a chemical engineer, a chess coach, and a chess analyst, as well as a lifelong student of this beautiful art of the sixty-four squares. For that reason, PHILOCHESS is also a learning journey: an attempt to translate chess logic, training ideas, and strategic concepts into a working engine. Its long-term ambition is to evaluate chess through factors such as development, mobility, activity, coordination, structure, material, king safety, and initiative.
 
 PHILOCHESS starts as a simple engine, but it is intended to grow into a tool that reflects a human way of understanding chess and, eventually, may become useful for students, trainers, and chess lovers.
 
