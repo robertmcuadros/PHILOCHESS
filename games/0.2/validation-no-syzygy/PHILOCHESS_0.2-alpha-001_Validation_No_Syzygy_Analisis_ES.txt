@@ -398,3 +398,95 @@ CONCLUSIONES
    - comprobación de que la búsqueda continúe correctamente las secuencias de jaques forzados hasta reconocer una pérdida inevitable de material.
 
 Diagnóstico general: PHILOCHESS no perdió por una equivocación aislada después de 14.Nb5. Los movimientos reiterados de los peones del flanco de dama, el desarrollo tardío y la permanencia del rey en el centro condujeron a una posición sin una defensa satisfactoria. La secuencia final proporciona una prueba especialmente útil de jaques forzados, evasiones legales, atrapamiento de la dama y pérdida inevitable de material para PHILOCHESS 0.2-alpha-002.
+
+
+RONDA 6
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "6"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Zoidberg 0.1"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1665"]
+[Time "10:02:02"]
+[ECO "A00"]
+[Opening "Van Geet Opening: Reversed Nimzowitsch"]
+[GameDuration "00:13:34"]
+[PlyCount "121"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 e5 2. Rb1 Nc6 3. Ra1 d5 4. Rb1 d4 5. Nb5 a6
+6. Na3 Qd5 7. Ra1 Bxa3 8. bxa3 Nge7 9. Bb2 Bf5 10. Qc1 Be4
+11. Nf3 Ng6 12. Qd1 Qc5 13. c3 dxc3 14. dxc3 Bxf3
+15. exf3 Qd6 16. Qxd6 cxd6 17. Rb1 h5 18. Rc1 Nf8
+19. Rd1 Rd8 20. Rc1 Ne6 21. Rd1 Rd7 22. Rc1 Rd8
+23. Rd1 a5 24. Rc1 O-O 25. Rd1 Kh7 26. Bd3+ g6
+27. O-O b6 28. Rde1 Rc8 29. Rd1 Ne7 30. Rde1 f6
+31. Rd1 Nf4 32. Bb5 Rfd8 33. Rde1 Kh6 34. Rd1 g5
+35. Rde1 Ned5 36. Rc1 Nc7 37. g3 Nxb5 38. gxf4 gxf4
+39. Rfe1 Nc7 40. Rcd1 b5 41. Rc1 Nd5 42. Rc2 Rc6
+43. Rf1 Rdc8 44. Rfc1 b4 45. c4 Nb6 46. axb4 axb4
+47. Rd1 d5 48. Re1 Rxc4 49. Rxc4 dxc4 50. Rf1 c3
+51. Ba1 Rg8+ 52. Kh1 Ra8 53. Rg1 Rxa2 54. Rf1 c2
+55. Rg1 Rxa1 56. Rxa1 b3 57. Rg1 b2 58. Rf1 c1=Q
+59. Rxc1 bxc1=Q+ 60. Kg2 Nc4 61. h3 0-1
+
+
+RESUMEN
+
+PHILOCHESS comenzó nuevamente con 1.Nc3, pero durante sus primeras siete jugadas movió cuatro veces la torre de a1 y tres veces el caballo de b1. Los avances 4...d4 y 5...a6 atacaron sucesivamente al caballo, que tuvo que desplazarse a b5 y después a a3. Finalmente, 7...Bxa3 8.bxa3 eliminó esa pieza y deterioró la estructura de peones blanca en el flanco de dama.
+
+Zoidberg desarrolló sus piezas, ocupó el centro y consiguió una ventaja posicional importante. La secuencia 14...Bxf3 15.exf3 eliminó el segundo caballo blanco y produjo peones doblados en la columna f. Las blancas conservaron ambos alfiles, pero quedaron con una estructura debilitada y menor coordinación.
+
+La jugada 15...Qd6 fue estratégicamente imprecisa porque permitió el cambio de damas. Una continuación como 15...O-O habría completado la seguridad del rey negro y conservado la posibilidad de aumentar la presión sobre la columna d. La desaparición de las damas redujo las amenazas contra el rey blanco y permitió que PHILOCHESS prolongara considerablemente la resistencia.
+
+Después del cambio de damas apareció la principal anomalía de la partida. Entre 17.Rb1 y 36.Rc1, PHILOCHESS empleó diecisiete de sus veinte turnos en movimientos de torre, principalmente entre las casillas b1, c1, d1 y e1. Estos desplazamientos no produjeron una mejora proporcional de la movilidad, la actividad ni la creación de amenazas.
+
+Durante esta secuencia, PHILOCHESS consiguió completar su desarrollo. Sin embargo, Zoidberg aprovechó los numerosos tiempos disponibles para coordinar los caballos y las torres, mejorar la posición del rey y preparar el avance de sus peones del flanco de dama.
+
+El momento técnico más importante llegó con 47...d5. El peón de c4 estaba clavado por la torre de c6. Después de 48.Re1 Rxc4 49.Rxc4 dxc4, las negras obtuvieron un peón pasado en c4 y conservaron un peón avanzado en b4.
+
+Tras 50...c3, el peón de c continuó acercándose a la promoción. La captura 53...Rxa2 convirtió también al peón de b4 en un peón pasado. Desde ese momento, las negras dispusieron de dos peones pasados conectados en el flanco de dama.
+
+La conversión final fue precisa. Después de 55...Rxa1 56.Rxa1, el peón de b avanzó mientras el peón de c obligaba a la torre blanca a permanecer en tareas defensivas. La secuencia 58...c1=Q 59.Rxc1 bxc1=Q+ permitió que el primer peón promoviera y forzara la captura de la nueva dama, tras lo cual el segundo peón capturó la torre y promovió con jaque. La ventaja resultante era decisiva y la partida fue adjudicada a favor de Zoidberg.
+
+
+CONCLUSIONES
+
+1. PHILOCHESS volvió a gestionar deficientemente los tiempos de apertura. Durante sus primeras siete jugadas, movió únicamente el caballo de b1 y la torre de a1, mientras Zoidberg ocupaba el centro y desarrollaba sus piezas.
+
+2. Las capturas 7...Bxa3 y 14...Bxf3 eliminaron ambos caballos blancos y produjeron debilidades estructurales en los flancos de dama y de rey.
+
+3. La jugada 15...Qd6 permitió un cambio de damas favorable para la defensa blanca. La ausencia de las damas redujo las posibilidades de ataque de Zoidberg y ayudó a PHILOCHESS a prolongar la partida hasta la jugada 61.
+
+4. Entre las jugadas 17 y 36, PHILOCHESS empleó diecisiete de veinte turnos en movimientos de torre. Aunque durante ese periodo terminó su desarrollo, la mayoría de esos desplazamientos no generaron movilidad útil, actividad real ni amenazas.
+
+5. La ruptura 47...d5 explotó la clavada del peón de c4. La secuencia 48.Re1 Rxc4 49.Rxc4 dxc4 permitió a las negras crear un peón pasado en c4.
+
+6. El peón negro de b4 no era todavía un peón pasado después de 49...dxc4. Adquirió esa condición tras 53...Rxa2, cuando desapareció el último peón blanco capaz de detenerlo desde una columna adyacente.
+
+7. La secuencia 58...c1=Q 59.Rxc1 bxc1=Q+ constituye una conversión táctica especialmente importante: combina una promoción sin captura, una captura de la nueva dama y una segunda promoción mediante captura con jaque.
+
+8. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos, enroque ni promociones. PHILOCHESS funcionó de manera estable durante una partida de 121 medios movimientos.
+
+9. Las mejoras prioritarias deben incluir:
+   - evaluación básica del desarrollo;
+   - penalización de movimientos repetidos e improductivos de una torre;
+   - distinción entre movimiento, movilidad, actividad y creación de amenazas;
+   - valoración de columnas abiertas y coordinación de torres;
+   - evaluación de peones doblados y otras debilidades estructurales;
+   - valoración de peones pasados, peones pasados conectados y cercanía a la promoción;
+   - evaluación contextual de los cambios de damas;
+   - prueba de regresión después de 47...d5, verificando la clavada del peón de c4 y la secuencia ...Rxc4, Rxc4 y ...dxc4;
+   - prueba de regresión después de 49...dxc4, distinguiendo correctamente entre el peón pasado de c4 y el peón todavía no pasado de b4;
+   - prueba de regresión después de 53...Rxa2, actualizando la condición del peón de b4;
+   - prueba de regresión para la secuencia 55...Rxa1 56.Rxa1 b3;
+   - prueba de regresión para 58...c1=Q 59.Rxc1 bxc1=Q+;
+   - comprobación de que la quiescence examine promociones sin captura y promociones mediante captura;
+   - comprobación de todas las evasiones legales después de 51...Rg8+ y 59...bxc1=Q+.
+
+Diagnóstico general: El cambio de damas permitió que PHILOCHESS prolongara la resistencia y completara finalmente su desarrollo, pero la repetición improductiva de movimientos de torre concedió a Zoidberg el tiempo necesario para coordinar sus fuerzas. La ruptura 47...d5 y la posterior creación de dos peones pasados conectados decidieron la partida. La secuencia final constituye una prueba especialmente valiosa para la corrección de la quiescence, el tratamiento de capturas encadenadas y la evaluación de promociones en PHILOCHESS 0.2-alpha-002.
