@@ -745,3 +745,479 @@ External validation will continue through controlled Myracle tournaments:
 - later in a practical environment with Syzygy tablebases enabled where applicable.
 
 The next internal development step should focus on further quiescence correctness, additional tactical regression positions, and broader measurement of quiescence growth before introducing the next major search component.
+
+===============================================================================
+
+Date: July 21, 2026
+
+PHILOCHESS 0.2-alpha-002 — Tactical Regression and Quiescence Correctness
+
+Implemented a complete executable regression inventory derived from the ten
+games of the PHILOCHESS 0.2-alpha-001 Validation: No Syzygy tournament.
+
+Technical milestone:
+PHILOCHESS can now execute a reproducible 64-case battery that distinguishes
+direct quiescence tests, normal-search tactical tests, and positional baselines
+reserved for later versions.
+
+This is the second version of the PHILOCHESS 0.2 development cycle.
+It builds directly on PHILOCHESS 0.2-alpha-001 and converts the conclusions of
+the tournament analyses into controlled internal tests.
+
+Alpha-002 preserves:
+- legal move generation;
+- FEN loading;
+- castling;
+- en passant;
+- pawn promotion;
+- check, checkmate, and stalemate detection;
+- perft and divide;
+- known reference perft validation;
+- material evaluation;
+- alpha-beta search;
+- basic quiescence search;
+- MVV-LVA move ordering;
+- basic UCI time-control parsing;
+- the established qprobe, qcompare, qtest, and tactictest commands.
+
+New functionality:
+- Added an executable inventory of 64 tests taken from the ten analysed games.
+- Preserved a stable identifier for every inventory case, from R01-T01 through
+  R10-T08.
+- Divided the inventory into three categories:
+  - [A] quiescence tests;
+  - [B] normal search combined with quiescence;
+  - [C] positional baselines for later versions.
+- Added four explicit result states:
+  - PASS;
+  - FAIL;
+  - OPEN;
+  - BASELINE.
+- Added exact inventory counting by result and category.
+- Added an automatic structural check for the required distribution:
+  - 21 category [A] cases;
+  - 33 category [B] cases;
+  - 10 category [C] cases;
+  - 64 cases in total.
+- Added helpers to validate:
+  - FEN loading and king presence;
+  - legal reference sequences;
+  - final checkmate positions;
+  - exact sets of legal check evasions;
+  - promotion and capture-promotion sets;
+  - checking moves;
+  - quiescence consistency with and without move ordering;
+  - tactical search targets;
+  - positional baseline stability.
+- Added a dedicated fixed-depth search path for diagnostic regression tests.
+- Set regression depth 4 as the default and depth 7 as the diagnostic maximum.
+- Kept the normal playing search limited to SEARCH_MAX_DEPTH = 4.
+- Centralised quiescence move selection in generateQuiescenceMoves.
+- Added a separate counter for quiescence stand-pat nodes.
+- Added stand-pat node statistics to normal search information and qprobe.
+- Added UCI mate-score output with distance expressed as score mate.
+- Preserved centipawn output for evaluations that are not mate scores.
+
+New internal diagnostic commands:
+- inventorytest [depth]
+- fullregression [depth]
+
+inventorytest [depth]:
+Executes the complete 64-case inventory. If no depth is supplied, category [B]
+search targets use diagnostic depth 4.
+
+The command reports for every case:
+- its stable identifier;
+- category;
+- result state;
+- test title;
+- the relevant legal, tactical, search, node, or evaluation data.
+
+It concludes with:
+- PASS, FAIL, OPEN, BASELINE, and TOTAL counts;
+- category counts;
+- an inventory structure result.
+
+fullregression [depth]:
+Provides an alias for the same complete inventory execution.
+
+Meaning of result states:
+- PASS means that the case fulfilled its implemented criterion.
+- FAIL means that the test infrastructure or required criterion failed.
+- OPEN means that the position and search executed correctly, but the documented
+  tactical target was not demonstrated at the tested depth.
+- BASELINE means that a category [C] position was loaded and verified as a
+  reference without requiring positional understanding that the engine does not
+  yet possess.
+
+UCI identification was updated to:
+id name PHILOCHESS 0.2-alpha-002
+
+Important note:
+Alpha-002 does not change the static evaluation function.
+PHILOCHESS still uses material-only evaluation.
+
+Non-capturing checking moves remain outside the direct quiescence move set.
+Combinations that require quiet moves or non-capturing checks must begin in the
+normal search and use quiescence at the horizon.
+
+The purpose of this version is to make quiescence behaviour and tactical
+regression measurable, repeatable, and explicitly classified. It does not yet
+add positional understanding through piece-square tables, mobility, pawn
+structure, king safety, development, activity, coordination, or initiative.
+
+Release compilation test:
+The program compiled successfully in Visual Studio using Release | x64.
+
+The compilation output reported:
+1 successful build, 0 errors.
+
+The executable was generated in:
+D:\PHILOCHESS\PHILOCHESS\x64\Release\PHILOCHESS.exe
+
+Test 1 — Complete executable inventory in Release
+
+Command performed:
+inventorytest
+
+The command used the default normal-search diagnostic depth of 4.
+
+Final result:
+PASS 46  FAIL 0  OPEN 8  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+Category [A] result:
+21 PASS, 0 FAIL
+
+All direct quiescence tests fulfilled their criteria. These cases covered:
+- capture chains;
+- counterattacks within capture sequences;
+- exact legal evasions while in check;
+- stand pat prohibition while in check;
+- quiet promotions;
+- capture-promotions;
+- all four legal promotion pieces;
+- ordered and unordered quiescence agreement;
+- quiescence termination without emergency ply-limit hits.
+
+Category [B] result:
+25 PASS, 8 OPEN, 0 FAIL
+
+The 25 successful cases demonstrated their implemented normal-search tactical
+targets at the tested depth.
+
+The eight open targets were:
+- R02-T03 — 15...Ne3 attacks the queen;
+- R09-T02 — knight manoeuvre Nb4-a2-xc1;
+- R09-T04 — attack on the rook and 25.Ke1 intermezzo;
+- R09-T05 — rook doubling and relative pin;
+- R09-T08 — final mating net;
+- R09-T10 — mate-distance propagation;
+- R10-T05 — 23...d3 and the forced mate;
+- R10-T06 — material clearances and final mate.
+
+These eight cases loaded correctly, contained legal reference lines where
+applicable, and completed their diagnostic searches without a technical failure.
+Their tactical objectives remain open because the current material-only search
+did not demonstrate them at the tested diagnostic depth.
+
+Category [C] result:
+10 BASELINE, 0 FAIL
+
+All category [C] positions were preserved as legal and stable reference cases.
+They were not reported as tactical successes because their intended criteria
+depend on future positional evaluation.
+
+The category line [B] 33/33 confirms that all 33 planned category [B] entries
+were present and executed. It does not mean that all 33 tactical targets passed.
+Their precise result was 25 PASS and 8 OPEN.
+
+Inventory conclusion:
+- all 64 identifiers were executed exactly once;
+- the required 21 + 33 + 10 distribution was preserved;
+- no test produced FAIL;
+- open objectives were retained without being reported as successful;
+- all category [C] cases remained explicit baselines.
+
+Test 2 — Known reference perft validation
+
+Command performed:
+perftknown 4
+
+Result:
+PHILOCHESS passed all 24 registered reference values.
+
+Initial position:
+4/4 passed
+
+Kiwipete:
+4/4 passed
+
+Endgame en passant/captures:
+4/4 passed
+
+Promotions and castling pressure:
+4/4 passed
+
+Promotion bug trap:
+4/4 passed
+
+Middle game development:
+4/4 passed
+
+Validation summary:
+perftknown 4: 24/24 passed
+
+This confirms the preservation of:
+- legal move generation;
+- move application;
+- castling;
+- en passant;
+- promotion handling;
+- check detection;
+- king safety filtering.
+
+Test 3 — Quiescence correctness suite
+
+Command performed:
+qtest
+
+Result:
+PHILOCHESS executed four controlled quiescence tests.
+
+Horizon recapture avoidance:
+PASS
+
+Capture chain:
+PASS
+
+Non-capturing promotion:
+PASS
+
+Check evasion without stand pat:
+PASS
+
+Final result:
+Quiescence tests: 4/4 passed
+
+This suite is independent of the 64-case inventory. Its four original controlled
+positions remained successful in alpha-002.
+
+Test 4 — Preserved tactical regression test
+
+Command performed:
+tactictest 4
+
+Case 1 — Before 10...Qc6?
+
+Regression bestmove:
+b6e6
+
+Known bad move:
+b6c6
+
+Status:
+IMPROVED - known bad move avoided
+
+PHILOCHESS selected 10...Qe6 and avoided 10...Qc6?.
+
+Case 2 — After 11.Bb5
+
+Regression bestmove:
+c6b5
+
+PHILOCHESS selected 11...Qxb5, a legal defensive attempt in a position where
+the queen is already tactically lost because 12.Nc7+ follows with a fork.
+
+Case 3 — After 11...Qxb5
+
+Regression bestmove:
+d5c7
+
+Expected tactical move:
+d5c7
+
+Status:
+EXPECTED TACTICAL MOVE FOUND
+
+PHILOCHESS found 12.Nc7+, which gives check and attacks the black queen.
+
+Regression conclusion:
+- the original 10...Qc6? error was avoided;
+- the legal defensive continuation 11...Qxb5 was searched;
+- the expected tactical move 12.Nc7+ was found;
+- all three inherited tactical positions executed normally.
+
+Test 5 — Basic UCI communication and fixed movetime
+
+Commands performed:
+uci
+isready
+ucinewgame
+position startpos
+go movetime 500
+
+Result:
+The uci command returned:
+id name PHILOCHESS 0.2-alpha-002
+id author Robert M. Cuadros
+uciok
+
+The isready command returned:
+readyok
+
+The engine accepted ucinewgame and position startpos.
+The search reached depth 4 and returned:
+bestmove b1c3
+
+The move b1c3 is legal.
+The search completed normally with 0 quiescence ply-limit hits.
+
+The engine completed its current maximum normal depth before consuming the full
+500 ms. A movetime value is a maximum time allowance, not a requirement to use
+all of the available time.
+
+Test 6 — Basic UCI clock control
+
+Commands performed:
+ucinewgame
+position startpos
+go wtime 60000 btime 60000 winc 1000 binc 1000
+
+PHILOCHESS calculated:
+timelimit 2500
+
+Result:
+depth 4
+bestmove b1c3
+ply-limit hits 0
+
+PHILOCHESS interpreted the remaining times and increments, calculated its basic
+internal time budget, completed depth 4, and returned a legal move without a
+timeout or crash.
+
+Test 7 — UCI mate-score output
+
+FEN tested:
+7k/6pp/8/8/8/8/6PP/5RK1 w - - 0 1
+
+Commands performed:
+ucinewgame
+position fen 7k/6pp/8/8/8/8/6PP/5RK1 w - - 0 1
+go depth 1
+
+Result:
+score mate 1
+pv f1f8
+bestmove f1f8
+
+PHILOCHESS correctly recognised 1.Rf8# as mate in one, expressed the evaluation
+through the UCI mate-score format, and returned the mating move.
+
+Test 8 — Release program exit
+
+Command performed:
+quit
+
+Result:
+The Release executable exited successfully with code:
+0 (0x0)
+
+This confirms a clean program termination without a crash or unhandled
+exception.
+
+Test 9 — Debug compilation and complete inventory
+
+The program compiled successfully in Visual Studio using Debug | x64.
+
+The compilation output reported:
+1 successful build, 0 errors.
+
+The executable was generated in:
+D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
+
+Command performed:
+inventorytest
+
+Final Debug result:
+PASS 46  FAIL 0  OPEN 8  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+The Debug execution reproduced the same functional classification as Release.
+Its longer execution time is expected because Debug does not use the same
+optimisations as Release.
+
+Current limitations:
+- The static evaluation remains material-only.
+- Eight category [B] tactical objectives remain OPEN at the tested diagnostic
+  depths.
+- Category [C] positions remain baselines until positional evaluation is added.
+- Quiescence searches captures and promotions only when the side to move is not
+  in check.
+- Non-capturing checking moves remain outside direct quiescence.
+- No static exchange evaluation is implemented.
+- No SEE pruning is implemented.
+- No delta pruning is implemented.
+- No transposition table is implemented.
+- No hash move ordering is implemented.
+- No principal variation move ordering is implemented.
+- No killer move heuristic is implemented.
+- No history heuristic is implemented.
+- No iterative deepening is implemented.
+- Maximum normal search depth remains 4.
+- Diagnostic regression search is limited to depth 7.
+- The principal variation output still reports only the selected root move.
+- Time management remains basic.
+- stop is recognised, but search is still synchronous and cannot yet be
+  interrupted asynchronously.
+- go infinite is parsed, but true infinite analysis is not implemented.
+- Quiescence nodes can significantly outnumber normal search nodes in tactical
+  positions.
+- The 64-ply quiescence limit remains an emergency safety mechanism.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient material
+  is not implemented.
+- External tournament validation of alpha-002 remains pending.
+
+Conclusion:
+The internal development and console validation of PHILOCHESS 0.2-alpha-002
+have been completed.
+
+PHILOCHESS now includes a complete, executable, and reproducible 64-case
+inventory derived from all ten games of the first PHILOCHESS 0.2 validation
+tournament.
+
+PHILOCHESS passed:
+- successful Visual Studio Release | x64 compilation with 0 errors;
+- successful Visual Studio Debug | x64 compilation with 0 errors;
+- correct UCI identification as PHILOCHESS 0.2-alpha-002;
+- immediate uciok output;
+- immediate readyok output;
+- complete execution of 64/64 inventory cases;
+- correct inventory distribution of 21 [A], 33 [B], and 10 [C] cases;
+- 46 PASS results;
+- 0 FAIL results;
+- explicit retention of 8 OPEN tactical objectives;
+- registration of 10 positional BASELINE cases;
+- 21/21 successful direct quiescence cases;
+- 25 successful category [B] tactical targets;
+- inventory structure validation;
+- perftknown 4 with 24/24 successful validations;
+- qtest with 4/4 successful tests;
+- preserved tactictest execution at depth 4;
+- legal bestmove output with go movetime 500;
+- basic UCI clock-control calculation and legal bestmove output;
+- correct score mate 1 output for a mate in one;
+- 0 quiescence ply-limit hits in the executed UCI searches;
+- identical inventory classification in Release and Debug;
+- clean Release program exit with code 0.
+
+Alpha-002 transforms the tournament analysis into a permanent engineering
+instrument. Future versions can rerun the same real-game positions, preserve
+the cases already demonstrated, close currently open tactical targets, and
+measure later positional progress against the ten recorded baselines.
+
+The next internal development step should focus on iterative deepening and
+principal variation reporting while preserving the complete alpha-002
+regression battery.
