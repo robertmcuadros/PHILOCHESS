@@ -745,3 +745,500 @@ La validación externa continuará mediante torneos controlados en Myracle:
 - posteriormente en un entorno práctico con tablebases Syzygy activadas cuando corresponda.
 
 El siguiente paso interno de desarrollo debe enfocarse en ampliar la validación de la búsqueda de quietud, añadir nuevas posiciones de regresión táctica y medir con mayor amplitud el crecimiento de los nodos de quietud antes de introducir el siguiente gran componente de búsqueda.
+
+===============================================================================
+
+Fecha: 21 de julio de 2026
+
+PHILOCHESS 0.2-alpha-002 — Regresión táctica y corrección de la búsqueda de
+quietud
+
+Se implementó un inventario ejecutable completo de regresión, derivado de las
+diez partidas del torneo PHILOCHESS 0.2-alpha-001 Validation: No Syzygy.
+
+Hito técnico:
+PHILOCHESS ya puede ejecutar una batería reproducible de 64 casos que distingue
+pruebas directas de búsqueda de quietud, pruebas tácticas de búsqueda normal y
+líneas base posicionales reservadas para versiones posteriores.
+
+Esta es la segunda versión del ciclo de desarrollo de PHILOCHESS 0.2.
+Se apoya directamente en PHILOCHESS 0.2-alpha-001 y convierte las conclusiones
+de los análisis del torneo en pruebas internas controladas.
+
+Alpha-002 conserva:
+- generación de jugadas legales;
+- lectura de FEN;
+- enroque;
+- captura al paso;
+- promoción de peón;
+- detección de jaque, jaque mate y ahogado;
+- perft y divide;
+- validación perft con posiciones conocidas;
+- evaluación material;
+- búsqueda alpha-beta;
+- búsqueda de quietud básica;
+- ordenamiento de jugadas MVV-LVA;
+- lectura básica de controles de tiempo UCI;
+- los comandos ya establecidos qprobe, qcompare, qtest y tactictest.
+
+Nueva funcionalidad:
+- Se añadió un inventario ejecutable de 64 pruebas procedentes de las diez
+  partidas analizadas.
+- Se conservó un identificador estable para cada caso del inventario, desde
+  R01-T01 hasta R10-T08.
+- Se dividió el inventario en tres categorías:
+  - [A] pruebas de búsqueda de quietud;
+  - [B] búsqueda normal combinada con búsqueda de quietud;
+  - [C] líneas base posicionales para versiones posteriores.
+- Se añadieron cuatro estados explícitos de resultado:
+  - PASS;
+  - FAIL;
+  - OPEN;
+  - BASELINE.
+- Se añadió el conteo exacto del inventario por resultado y categoría.
+- Se añadió una comprobación estructural automática de la distribución
+  requerida:
+  - 21 casos de categoría [A];
+  - 33 casos de categoría [B];
+  - 10 casos de categoría [C];
+  - 64 casos en total.
+- Se añadieron funciones auxiliares para validar:
+  - carga de FEN y presencia de ambos reyes;
+  - secuencias legales de referencia;
+  - posiciones finales de jaque mate;
+  - conjuntos exactos de evasiones legales de jaque;
+  - conjuntos de promociones y promociones por captura;
+  - jugadas que dan jaque;
+  - consistencia de la búsqueda de quietud con y sin ordenamiento;
+  - objetivos de búsqueda táctica;
+  - estabilidad de las líneas base posicionales.
+- Se añadió una ruta independiente de búsqueda a profundidad fija para las
+  pruebas diagnósticas de regresión.
+- Se fijó profundidad 4 como valor predeterminado y profundidad 7 como máximo
+  diagnóstico de la regresión.
+- Se mantuvo la búsqueda normal de juego limitada a SEARCH_MAX_DEPTH = 4.
+- Se centralizó la selección de jugadas de quietud en
+  generateQuiescenceMoves.
+- Se añadió un contador independiente de nodos con stand pat.
+- Se añadieron las estadísticas de nodos con stand pat a la información de
+  búsqueda normal y a qprobe.
+- Se añadió la salida UCI de puntuaciones de mate con la distancia expresada
+  mediante score mate.
+- Se conservó la salida en centipeones para las evaluaciones que no representan
+  mate.
+
+Nuevos comandos internos de diagnóstico:
+- inventorytest [depth]
+- fullregression [depth]
+
+inventorytest [depth]:
+Ejecuta el inventario completo de 64 casos. Si no se indica una profundidad,
+los objetivos de búsqueda de categoría [B] utilizan profundidad diagnóstica 4.
+
+El comando informa para cada caso:
+- su identificador estable;
+- categoría;
+- estado de resultado;
+- título de la prueba;
+- los datos legales, tácticos, de búsqueda, nodos o evaluación que correspondan.
+
+Finaliza con:
+- conteos PASS, FAIL, OPEN, BASELINE y TOTAL;
+- conteos por categoría;
+- resultado de la estructura del inventario.
+
+fullregression [depth]:
+Proporciona un nombre alternativo para ejecutar el mismo inventario completo.
+
+Significado de los estados:
+- PASS significa que el caso cumplió su criterio implementado.
+- FAIL significa que falló la infraestructura de prueba o el criterio exigido.
+- OPEN significa que la posición y la búsqueda se ejecutaron correctamente,
+  pero el objetivo táctico documentado no fue demostrado a la profundidad
+  probada.
+- BASELINE significa que una posición de categoría [C] se cargó y verificó como
+  referencia, sin exigir la comprensión posicional que el motor todavía no posee.
+
+Se actualizó la identificación UCI a:
+id name PHILOCHESS 0.2-alpha-002
+
+Nota importante:
+Alpha-002 no cambia la función de evaluación estática.
+PHILOCHESS todavía utiliza evaluación solamente material.
+
+Los jaques sin captura continúan fuera del conjunto directo de jugadas de
+quietud. Las combinaciones que requieren jugadas tranquilas o jaques sin captura
+deben comenzar en la búsqueda normal y utilizar la búsqueda de quietud al llegar
+al horizonte.
+
+El propósito de esta versión es hacer que el comportamiento de la búsqueda de
+quietud y la regresión táctica sean medibles, reproducibles y explícitamente
+clasificados. Todavía no añade comprensión posicional mediante tablas de
+casillas, movilidad, estructura de peones, seguridad del rey, desarrollo,
+actividad, coordinación o iniciativa.
+
+Prueba de compilación Release:
+El programa compiló correctamente en Visual Studio mediante Release | x64.
+
+La salida de compilación informó:
+1 compilación correcta, 0 errores.
+
+El ejecutable fue generado en:
+D:\PHILOCHESS\PHILOCHESS\x64\Release\PHILOCHESS.exe
+
+Prueba 1 — Inventario ejecutable completo en Release
+
+Comando realizado:
+inventorytest
+
+El comando utilizó la profundidad diagnóstica predeterminada 4 para la búsqueda
+normal.
+
+Resultado final:
+PASS 46  FAIL 0  OPEN 8  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+Resultado de la categoría [A]:
+21 PASS, 0 FAIL
+
+Todas las pruebas directas de búsqueda de quietud cumplieron sus criterios.
+Estos casos abarcaron:
+- secuencias de capturas;
+- contraataques dentro de secuencias de capturas;
+- evasiones legales exactas cuando el bando que mueve está en jaque;
+- prohibición de stand pat cuando el bando que mueve está en jaque;
+- promociones sin captura;
+- promociones por captura;
+- las cuatro piezas legales de promoción;
+- coincidencia entre búsqueda de quietud ordenada y no ordenada;
+- finalización de la búsqueda de quietud sin impactos del límite de seguridad.
+
+Resultado de la categoría [B]:
+25 PASS, 8 OPEN, 0 FAIL
+
+Los 25 casos aprobados demostraron sus objetivos tácticos implementados de
+búsqueda normal a la profundidad probada.
+
+Los ocho objetivos abiertos fueron:
+- R02-T03 — 15...Ce3 ataca la dama;
+- R09-T02 — maniobra de caballo Cb4-a2-xc1;
+- R09-T04 — ataque a la torre y jugada intermedia 25.Re1;
+- R09-T05 — doblaje de torres y clavada relativa;
+- R09-T08 — red de mate final;
+- R09-T10 — propagación de la distancia al mate;
+- R10-T05 — 23...d3 y el mate forzado;
+- R10-T06 — despejes materiales y mate final.
+
+Estos ocho casos se cargaron correctamente, contenían secuencias legales de
+referencia cuando correspondía y completaron sus búsquedas diagnósticas sin
+fallos técnicos. Sus objetivos tácticos permanecen abiertos porque la búsqueda
+actual, con evaluación solamente material, no los demostró a la profundidad
+diagnóstica probada.
+
+Resultado de la categoría [C]:
+10 BASELINE, 0 FAIL
+
+Todas las posiciones de categoría [C] se conservaron como casos legales y estables
+de referencia. No fueron presentadas como éxitos tácticos porque sus criterios
+previstos dependen de una futura evaluación posicional.
+
+La línea de categoría [B] 33/33 confirma que las 33 entradas [B] previstas
+estuvieron presentes y se ejecutaron. No significa que los 33 objetivos tácticos
+hayan aprobado. Su resultado preciso fue 25 PASS y 8 OPEN.
+
+Conclusión del inventario:
+- los 64 identificadores se ejecutaron exactamente una vez;
+- se conservó la distribución requerida de 21 + 33 + 10;
+- ninguna prueba produjo FAIL;
+- los objetivos abiertos se conservaron sin presentarlos como aprobados;
+- los diez casos de categoría [C] permanecieron como líneas base explícitas.
+
+Prueba 2 — Validación perft con posiciones conocidas
+
+Comando realizado:
+perftknown 4
+
+Resultado:
+PHILOCHESS pasó los 24 valores de referencia registrados.
+
+Initial position:
+4/4 correctos
+
+Kiwipete:
+4/4 correctos
+
+Endgame en passant/captures:
+4/4 correctos
+
+Promotions and castling pressure:
+4/4 correctos
+
+Promotion bug trap:
+4/4 correctos
+
+Middle game development:
+4/4 correctos
+
+Resumen de validación:
+perftknown 4: 24/24 passed
+
+Esto confirma la conservación de:
+- generación de jugadas legales;
+- aplicación de jugadas;
+- enroque;
+- captura al paso;
+- manejo de promociones;
+- detección de jaque;
+- filtrado de seguridad del rey.
+
+Prueba 3 — Batería de validación de la búsqueda de quietud
+
+Comando realizado:
+qtest
+
+Resultado:
+PHILOCHESS ejecutó cuatro pruebas controladas de búsqueda de quietud.
+
+Evitación de recaptura situada después del horizonte:
+PASS
+
+Secuencia de capturas:
+PASS
+
+Promoción sin captura:
+PASS
+
+Evasión de jaque sin stand pat:
+PASS
+
+Resultado final:
+Quiescence tests: 4/4 passed
+
+Esta batería es independiente del inventario de 64 casos. Sus cuatro posiciones
+controladas originales continuaron aprobadas en alpha-002.
+
+Prueba 4 — Prueba de regresión táctica conservada
+
+Comando realizado:
+tactictest 4
+
+Caso 1 — Antes de 10...Dc6?
+
+Mejor jugada de regresión:
+b6e6
+
+Jugada mala conocida:
+b6c6
+
+Estado:
+IMPROVED - known bad move avoided
+
+PHILOCHESS eligió 10...De6 y evitó 10...Dc6?.
+
+Caso 2 — Después de 11.Ab5
+
+Mejor jugada de regresión:
+c6b5
+
+PHILOCHESS eligió 11...Dxb5, un intento defensivo legal en una posición en la
+que la dama ya está tácticamente perdida, porque sigue 12.Cc7+ con un ataque
+doble.
+
+Caso 3 — Después de 11...Dxb5
+
+Mejor jugada de regresión:
+d5c7
+
+Jugada táctica esperada:
+d5c7
+
+Estado:
+EXPECTED TACTICAL MOVE FOUND
+
+PHILOCHESS encontró 12.Cc7+, que da jaque y ataca la dama negra.
+
+Conclusión de la regresión:
+- se evitó el error original 10...Dc6?;
+- se examinó la continuación defensiva legal 11...Dxb5;
+- se encontró la jugada táctica esperada 12.Cc7+;
+- las tres posiciones tácticas heredadas se ejecutaron normalmente.
+
+Prueba 5 — Comunicación UCI básica y movetime fijo
+
+Comandos realizados:
+uci
+isready
+ucinewgame
+position startpos
+go movetime 500
+
+Resultado:
+El comando uci devolvió:
+id name PHILOCHESS 0.2-alpha-002
+id author Robert M. Cuadros
+uciok
+
+El comando isready devolvió:
+readyok
+
+El motor aceptó ucinewgame y position startpos.
+La búsqueda alcanzó profundidad 4 y devolvió:
+bestmove b1c3
+
+La jugada b1c3 es legal.
+La búsqueda terminó normalmente con 0 impactos del límite de plies.
+
+El motor completó su profundidad normal máxima actual antes de consumir los
+500 ms disponibles. El valor movetime es un límite máximo y no obliga a emplear
+todo el tiempo concedido.
+
+Prueba 6 — Control UCI básico con relojes
+
+Comandos realizados:
+ucinewgame
+position startpos
+go wtime 60000 btime 60000 winc 1000 binc 1000
+
+PHILOCHESS calculó:
+timelimit 2500
+
+Resultado:
+depth 4
+bestmove b1c3
+ply-limit hits 0
+
+PHILOCHESS interpretó los tiempos restantes y los incrementos, calculó su
+presupuesto interno básico, completó profundidad 4 y devolvió una jugada legal
+sin pérdida de tiempo ni cierre inesperado.
+
+Prueba 7 — Salida UCI de puntuación de mate
+
+FEN probada:
+7k/6pp/8/8/8/8/6PP/5RK1 w - - 0 1
+
+Comandos realizados:
+ucinewgame
+position fen 7k/6pp/8/8/8/8/6PP/5RK1 w - - 0 1
+go depth 1
+
+Resultado:
+score mate 1
+pv f1f8
+bestmove f1f8
+
+PHILOCHESS reconoció correctamente 1.Tf8# como mate en una, expresó la
+evaluación mediante el formato UCI de puntuación de mate y devolvió la jugada
+que da mate.
+
+Prueba 8 — Cierre del programa Release
+
+Comando realizado:
+quit
+
+Resultado:
+El ejecutable Release cerró correctamente con código:
+0 (0x0)
+
+Esto confirma un cierre limpio del programa, sin bloqueo, excepción ni fallo
+inesperado.
+
+Prueba 9 — Compilación Debug e inventario completo
+
+El programa compiló correctamente en Visual Studio mediante Debug | x64.
+
+La salida de compilación informó:
+1 compilación correcta, 0 errores.
+
+El ejecutable fue generado en:
+D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
+
+Comando realizado:
+inventorytest
+
+Resultado final en Debug:
+PASS 46  FAIL 0  OPEN 8  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+La ejecución Debug reprodujo la misma clasificación funcional obtenida en
+Release. Su mayor tiempo de ejecución es normal porque Debug no utiliza las
+mismas optimizaciones que Release.
+
+Limitaciones actuales:
+- La evaluación estática continúa siendo solamente material.
+- Ocho objetivos tácticos de categoría [B] permanecen OPEN a las profundidades
+  diagnósticas probadas.
+- Las posiciones de categoría [C] continúan como líneas base hasta que se añada
+  evaluación posicional.
+- Cuando el bando que mueve no está en jaque, la búsqueda de quietud examina
+  únicamente capturas y promociones.
+- Los jaques sin captura continúan fuera de la búsqueda directa de quietud.
+- Todavía no hay evaluación estática de intercambios.
+- Todavía no hay SEE pruning.
+- Todavía no hay delta pruning.
+- Todavía no hay tabla de transposición.
+- Todavía no hay ordenamiento por hash move.
+- Todavía no hay ordenamiento por jugada de variante principal.
+- Todavía no hay heurística killer move.
+- Todavía no hay history heuristic.
+- Todavía no hay iterative deepening.
+- La profundidad máxima de búsqueda normal continúa siendo 4.
+- La búsqueda diagnóstica de regresión está limitada a profundidad 7.
+- La salida de variante principal todavía muestra solamente la jugada raíz
+  elegida.
+- El control de tiempo continúa siendo básico.
+- stop es reconocido, pero la búsqueda todavía es sincrónica y no puede
+  interrumpirse de forma asíncrona.
+- go infinite es leído, pero todavía no existe un verdadero modo de análisis
+  infinito.
+- Los nodos de quietud pueden superar ampliamente a los nodos de búsqueda normal
+  en posiciones tácticas.
+- El límite de 64 plies de la búsqueda de quietud continúa siendo una protección
+  de emergencia.
+- Todavía no hay adjudicación de tablas por regla de los cincuenta movimientos,
+  repetición o material insuficiente.
+- Todavía queda pendiente la validación externa de alpha-002 mediante torneos.
+
+Conclusión:
+El desarrollo interno y la validación por consola de
+PHILOCHESS 0.2-alpha-002 quedan completados.
+
+PHILOCHESS incorpora ahora un inventario completo, ejecutable y reproducible de
+64 casos, derivado de las diez partidas del primer torneo de validación de
+PHILOCHESS 0.2.
+
+PHILOCHESS pasó:
+- compilación correcta en Visual Studio mediante Release | x64 con 0 errores;
+- compilación correcta en Visual Studio mediante Debug | x64 con 0 errores;
+- identificación UCI correcta como PHILOCHESS 0.2-alpha-002;
+- salida inmediata uciok;
+- salida inmediata readyok;
+- ejecución completa de 64/64 casos del inventario;
+- distribución correcta de 21 casos [A], 33 [B] y 10 [C];
+- 46 resultados PASS;
+- 0 resultados FAIL;
+- conservación explícita de 8 objetivos tácticos OPEN;
+- registro de 10 casos posicionales BASELINE;
+- 21/21 casos directos de búsqueda de quietud aprobados;
+- 25 objetivos tácticos de categoría [B] aprobados;
+- validación de la estructura del inventario;
+- perftknown 4 con 24/24 validaciones correctas;
+- qtest con 4/4 pruebas correctas;
+- ejecución satisfactoria de tactictest a profundidad 4;
+- salida de una bestmove legal con go movetime 500;
+- cálculo básico del control de tiempo UCI y salida de una bestmove legal;
+- salida correcta score mate 1 para un mate en una;
+- 0 impactos del límite de plies en las búsquedas UCI ejecutadas;
+- clasificación idéntica del inventario en Release y Debug;
+- cierre limpio del programa Release con código 0.
+
+Alpha-002 transforma los análisis del torneo en un instrumento permanente de
+ingeniería. Las versiones futuras podrán repetir las mismas posiciones de
+partidas reales, conservar los casos ya demostrados, cerrar los objetivos
+tácticos actualmente abiertos y medir el progreso posicional posterior frente
+a las diez líneas base registradas.
+
+El siguiente paso interno de desarrollo debe centrarse en iterative deepening y
+la presentación de la variante principal, conservando la batería completa de
+regresión de alpha-002.
