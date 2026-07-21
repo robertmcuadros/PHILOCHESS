@@ -52,6 +52,7 @@ PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Devel
 | Version | Milestone |
 |---|---|
 | 0.2-alpha-001 | Basic quiescence search and refined MVV-LVA capture ordering |
+| 0.2-alpha-002 | Tactical regression and quiescence correctness |
 
 ## Licensing
 
