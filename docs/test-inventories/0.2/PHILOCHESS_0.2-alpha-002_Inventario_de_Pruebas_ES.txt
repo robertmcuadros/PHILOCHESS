@@ -1,0 +1,829 @@
+===============================================================================
+PHILOCHESS 0.2-alpha-002
+INVENTARIO DE PRUEBAS
+REGRESIÓN TÁCTICA Y CORRECCIÓN DE LA BÚSQUEDA DE QUIETUD
+===============================================================================
+
+Autor y titular de los derechos de autor: Robert M. Cuadros
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Este documento se distribuye bajo la licencia Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0 Internacional
+(CC BY-NC-ND 4.0).
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
+
+Fecha: 21 de julio de 2026
+
+Documento de trabajo elaborado a partir de:
+- PHILOCHESS 0.2-alpha-001 Validation: No Syzygy — Análisis de partidas (ES)
+- PHILOCHESS 0.2-alpha-001 Validation: No Syzygy — Game Analyses (EN)
+
+Los dos documentos fuente contienen el mismo material en sus respectivos idiomas. 
+Este inventario se publica en español y en inglés, con contenido equivalente en 
+ambas versiones.
+
+===============================================================================
+1. OBJETIVO Y ALCANCE
+===============================================================================
+
+Este documento reúne todas las pruebas de regresión y comprobaciones propuestas
+expresamente en las conclusiones de las diez partidas del torneo
+PHILOCHESS 0.2-alpha-001 Validation: No Syzygy.
+
+El inventario conserva inicialmente todos los casos, incluso cuando varios
+comprueban un mismo principio general. Dos posiciones distintas no se consideran
+duplicadas solo porque compartan el mismo motivo táctico.
+
+Las FEN fueron reconstruidas reproduciendo legalmente los PGN completos. Cuando
+una prueba comprende varias posiciones con jaque, se incluyen todas las FEN
+identificadas en el análisis.
+
+Este inventario todavía no fija:
+- la profundidad definitiva de cada prueba de búsqueda normal;
+- valores exactos de evaluación cuando el análisis solo establece una relación
+  cualitativa;
+- límites rígidos de nodos de quietud;
+- una única mejor jugada cuando pueden existir varias alternativas correctas.
+
+Esos parámetros deberán determinarse al convertir el inventario en la batería
+ejecutable de PHILOCHESS 0.2-alpha-002.
+
+===============================================================================
+2. CLASIFICACIÓN
+===============================================================================
+
+[A] ALPHA-002 — BÚSQUEDA DE QUIETUD
+    Pruebas apropiadas para qprobe o para un nuevo comando interno de regresión
+    de quietud. Comprenden capturas, promociones, evasiones completas de jaque,
+    prohibición de stand pat en jaque y continuaciones forzadas admitidas por el
+    conjunto actual de jugadas de quietud.
+
+[B] ALPHA-002 — BÚSQUEDA NORMAL + BÚSQUEDA DE QUIETUD
+    Pruebas que contienen jugadas tranquilas, jaques sin captura, amenazas, 
+    entregas de material seguidas de maniobras o secuencias de mate que la búsqueda 
+    de quietud actual no debe resolver aisladamente. Deben ejecutarse mediante 
+    la búsqueda normal, que utilizará la búsqueda de quietud al alcanzar el horizonte.
+
+[C] VERSIONES POSTERIORES — EVALUACIÓN POSICIONAL
+    Pruebas cuya aprobación real depende principalmente de desarrollo, movilidad,
+    actividad, estructura, seguridad del rey, coordinación u otros conocimientos
+    todavía ausentes. Se conservan desde ahora, pero en alpha-002 solo pueden
+    emplearse como líneas base de legalidad, estabilidad y medición.
+
+Resumen cuantitativo:
+- Ronda 1:   3 pruebas
+- Ronda 2:   4 pruebas
+- Ronda 3:   6 pruebas
+- Ronda 4:   4 pruebas
+- Ronda 5:   6 pruebas
+- Ronda 6:   7 pruebas
+- Ronda 7:   9 pruebas
+- Ronda 8:   7 pruebas
+- Ronda 9:  10 pruebas
+- Ronda 10:  8 pruebas
+- TOTAL:    64 pruebas
+
+Distribución provisional:
+- [A] Búsqueda de quietud:                           21
+- [B] Búsqueda normal + búsqueda de quietud:         33
+- [C] Evaluación posicional futura:                  10
+- TOTAL:                                             64
+
+===============================================================================
+3. INVENTARIO COMPLETO POR RONDAS
+===============================================================================
+
+-------------------------------------------------------------------------------
+RONDA 1 — Zoidberg 0.1 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R01-T01 [C] Posición anterior a 8...c5
+Inicio: después de 8.O-O; juegan las negras.
+FEN: rnb1kbnr/1pqppppp/2p5/8/p2PP3/N4N2/PPPBBPPP/R2Q1RK1 b kq - 7 8
+Objetivo: comprobar que 8...c5 abandona el control de b5, permite 9.Nb5 y
+facilita la entrada posterior del caballo en c7.
+Criterio: la futura evaluación posicional debe comparar 8...c5 con alternativas
+que mantengan el control de b5 y favorezcan desarrollo y seguridad del rey. En
+alpha-002 se conservará solamente como línea base.
+
+R01-T02 [B] Posición anterior a 12...Qxe4
+Inicio: después de 12.Ne5; juegan las negras.
+FEN: rnb1kbnr/1p1ppppp/2q5/1N2N3/p3P3/4B3/PPP1BPPP/R2Q1RK1 b kq - 3 12
+Objetivo: comprobar que la captura 12...Qxe4 no se valore como una ganancia
+limpia y que la búsqueda alcance 13.Nc7+, con ataque doble sobre rey y torre.
+Criterio: reconocer la consecuencia táctica sin clasificar necesariamente
+12...Qxe4 como un error independiente, pues la dama negra ya carece de una
+retirada satisfactoria que conserve c7 protegido.
+
+R01-T03 [B] Posición anterior a 16...f6
+Inicio: después de 16.Nb6; juegan las negras.
+FEN: rnbk1bnr/1p1p1ppp/1N2p3/4N3/p7/4B3/PPP1BPPP/R4RK1 b - - 1 16
+Objetivo: comprobar la amenaza y la consecuencia de 16...f6 17.Nf7+ Ke8
+18.Nxh8.
+Criterio: la búsqueda debe reconocer el ataque doble y la pérdida de la torre,
+sin presentar 16...f6 como la única causa de una posición ya deteriorada.
+
+-------------------------------------------------------------------------------
+RONDA 2 — PHILOCHESS 0.2-alpha-001 vs Needle 0.531
+-------------------------------------------------------------------------------
+
+R02-T01 [C] Posición anterior a 2.Rb1
+Inicio: después de 1...d5; juegan las blancas.
+FEN: rnbqkbnr/ppp1pppp/8/3p4/8/2N5/PPPPPPPP/R1BQKBNR w KQkq - 0 2
+Objetivo: comparar 2.Rb1 con jugadas de desarrollo, control central y preparación
+del enroque.
+Criterio: una evaluación futura debe penalizar el movimiento prematuro de torre
+cuando todavía existen piezas menores sin desarrollar. En alpha-002 se registrará
+solo el comportamiento de referencia.
+
+R02-T02 [B] Posición anterior a 8...Nxc5
+Inicio: después de 8.Rb1; juegan las negras.
+FEN: r1bqk1nr/p4ppp/n1p5/1pP1p3/3p4/8/P1PPPPPP/1RBQKBNR b Kkq - 2 8
+Objetivo: comprobar que 8...Nxc5 gana el peón de c5, que no puede ser sostenido
+por las piezas blancas sin desarrollar.
+Criterio: la búsqueda debe reconocer la ganancia material y no inventar una
+recaptura o compensación táctica inexistente.
+
+R02-T03 [B] Posición anterior a 15...Ne3
+Inicio: después de 15.Rb1; juegan las negras.
+FEN: 2kr3r/p4ppp/2p1b3/qp2p3/3pn1n1/P6N/1BPPPPPP/1R1QKB1R b K - 4 15
+Objetivo: verificar 15...Ne3, que invade la posición blanca y ataca la dama.
+Criterio: la búsqueda debe reconocer la amenaza contra la dama y las respuestas
+legales disponibles, incluida 16.Qc1.
+
+R02-T04 [B] Posición anterior a 18...c5
+Inicio: después de 18.Rb4; juegan las negras.
+FEN: 2kr3r/p4ppp/2p1b3/qp2p3/1Rnp4/P6N/2PnPPPP/B1Q1KB1R b K - 1 18
+Objetivo: comprobar que 18...c5 ataca la torre y que una retirada ordinaria abre
+la diagonal a5-e1 y permite una secuencia de mate en dos.
+Criterio: reconocer que 19.c3 es una defensa necesaria contra el mate inmediato,
+aunque 19...cxb4 produzca la pérdida material de la torre.
+
+-------------------------------------------------------------------------------
+RONDA 3 — PHILOCHESS 0.2-alpha-001 vs Shallow Blue 2.0.0
+-------------------------------------------------------------------------------
+
+R03-T01 [B] Posición anterior a 15.bxa3
+Inicio: después de 14...Bxa3; juegan las blancas.
+FEN: r3k2r/1pp2ppp/p1n5/2qn1b2/3p4/b3p2N/PPPPPPPP/R1BQKB1R w Kkq - 0 15
+Objetivo: verificar que 15.bxa3 permite 15...Bxc2 y deja a la dama blanca sin una
+retirada satisfactoria.
+Criterio: la búsqueda debe comprender la consecuencia táctica y conservar el
+comportamiento positivo de alpha-001, que eligió 15.dxe3 en vez de recapturar
+inmediatamente.
+
+R03-T02 [B] Retiradas de la dama después de 15...Bxc2
+Inicio: después de 15...Bxc2; juegan las blancas.
+FEN: r3k2r/1pp2ppp/p1n5/2qn4/3p4/b3P2N/PPb1PPPP/R1BQKB1R w Kkq - 0 16
+Objetivo: comprobar las retiradas de la dama y el recurso ...Bb4.
+Criterio: verificar que 16.Qd2 permite ...Bb4 con clavada de la dama y que 16.Qd3
+no constituye una retirada segura porque d3 está controlada por el alfil de c2.
+No debe declararse una casilla segura inexistente.
+
+R03-T03 [A] Capturas encadenadas y contraataque sobre la dama
+Inicio: después de 15...Bxc2; juegan las blancas.
+FEN: r3k2r/1pp2ppp/p1n5/2qn4/3p4/b3P2N/PPb1PPPP/R1BQKB1R w Kkq - 0 16
+Secuencia: 16.exd4 Nxd4 17.bxa3 Bxd1.
+Objetivo: comprobar que 16.exd4 ataca a la dama negra, pero 16...Nxd4 elimina el
+peón atacante, salva la dama y mantiene la amenaza contra la dama blanca.
+Criterio: la búsqueda de quietud debe continuar las capturas hasta obtener el 
+resultado material estable y no detenerse después de una ganancia aparente 
+intermedia.
+
+R03-T04 [A] Regla general de capturas, contraataques y pérdidas inevitables
+Conjunto principal: R03-T01, R03-T02 y R03-T03.
+Objetivo: comprobar que la búsqueda de quietud evalúa correctamente capturas 
+encadenadas, contraataques y pérdidas inevitables de material.
+Criterio: misma conclusión material con ordenamiento activado y desactivado;
+ningún impacto del límite de 64 plies; resultado independiente del orden de
+exploración de jugadas equivalentes.
+
+R03-T05 [A] Evasiones legales después de los jaques de dama
+Posición A: después de 19...Qa5+; juegan las blancas.
+FEN A: r3k2r/1pp2ppp/B7/q2n4/3nP3/P4b1N/P4PPP/R1B1K2R w Kkq - 1 20
+Evasiones legales A: 20.Bd2 y 20.Kf1.
+Posición B: después de 20...Qxa6+; juegan las blancas.
+FEN B: r3k2r/1pp2ppp/q7/3n4/3nP3/P4b1N/P4PPP/R1B2K1R w kq - 0 21
+Evasiones legales B: 21.Kg1 y 21.Ke1.
+Objetivo: comprobar la generación completa de evasiones y la desactivación de
+stand pat en ambos nodos con jaque.
+Criterio: explorar exactamente todas las evasiones legales y ninguna jugada que
+deje al rey en jaque.
+
+R03-T06 [B] Mate forzado después de una evasión legal
+Posición: después de 21.Kg1; juegan las negras.
+FEN: r3k2r/1pp2ppp/q7/3n4/3nP3/P4b1N/P4PPP/R1B3KR b kq - 1 21
+Secuencia esperada: 21...Ne2+ 22.Kf1 Ng3+ 23.Kg1 Qf1#.
+Objetivo: comprobar que la búsqueda normal reconoce el mate forzado mediante 
+una secuencia de jaques sin captura.
+Criterio: encontrar 21...Ne2+ y propagar correctamente la puntuación y la 
+distancia hasta el mate.
+
+-------------------------------------------------------------------------------
+RONDA 4 — Dreamer 0.3.0 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R04-T01 [A] Cadena material después de 17...Kxd8
+Inicio: después de 17...Kxd8; juegan las blancas.
+FEN: rnbk1bnr/5ppp/4p3/1Np5/8/BP2PN2/R1P1BPPP/5RK1 w - - 0 18
+Secuencia: 18.Bxc5 Rxa2 19.Bxf8.
+Objetivo: verificar el resultado material de la captura del peón de c5, la 
+captura de la torre blanca mediante ...Rxa2 y la captura posterior del alfil de f8.
+Criterio: continuar toda la cadena antes de aplicar la evaluación estática.
+
+R04-T02 [A] Captura de la torre después de 21...Rb2
+Inicio: después de 21...Rb2; juegan las blancas.
+FEN: 1nbk2nr/5pBp/4p1p1/1N6/2B5/1P2PN2/1r3PPP/5RK1 w - - 2 22
+Secuencia esperada: 22.Bxb2.
+Objetivo: comprobar que la búsqueda de quietud incluye la captura de la torre activa 
+y refleja correctamente el cambio material.
+Criterio: no detenerse mediante stand pat ignorando una captura favorable legal.
+
+R04-T03 [A] Ataque doble y captura de la torre de h8
+Inicio: después de 23...Nh6; juegan las blancas.
+FEN: 1nbk3r/7p/3Npppn/8/2B5/1P2PN2/1B3PPP/5RK1 w - - 2 24
+Secuencia principal: 24.Bxf6+ y continuación hasta 25.Bxh8.
+Objetivo: verificar el jaque con captura, las evasiones del rey y la captura
+posterior de la torre.
+Criterio: reconocer que 24.Bxf6+ crea el ataque doble decisivo y continuar la
+línea después de la evasión.
+
+R04-T04 [A] Evasiones después de 24.Bxf6+
+Inicio: después de 24.Bxf6+; juegan las negras.
+FEN: 1nbk3r/7p/3NpBpn/8/2B5/1P2PN2/5PPP/5RK1 b - - 0 24
+Evasiones legales: 24...Kd7 y 24...Kc7.
+Objetivo: comprobar que la búsqueda de quietud desactiva stand pat, examina ambas 
+evasiones y continúa correctamente las capturas forzadas.
+Criterio: generar exactamente las dos evasiones legales y evaluar las
+continuaciones hasta una posición tácticamente estable.
+
+-------------------------------------------------------------------------------
+RONDA 5 — Pulse Chess 1.7.3 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R05-T01 [B] Amenaza inmediata después de 14.Nb5
+Inicio: después de 14.Nb5; juegan las negras.
+FEN: 2bqkbnr/3n1ppp/2Q1p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 1 14
+Objetivo: comprobar que 14.Nb5 crea la amenaza inmediata 15.Nc7+.
+Criterio: identificar 15.Nc7+ como la única amenaza táctica inmediata que las 
+negras deben prevenir.
+
+R05-T02 [B] Comparación de 14...Qb6 y 14...Be7
+Inicio: después de 14.Nb5; juegan las negras.
+FEN: 2bqkbnr/3n1ppp/2Q1p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 1 14
+Variantes: 14...Qb6 y 14...Be7 15.Bc7.
+Objetivo: comprobar que 14...Qb6 desocupa d8 pero deja sin defensa al alfil de c8,
+mientras 14...Be7 permite 15.Bc7 y el atrapamiento de la dama negra.
+Criterio: reconocer que ninguna de las dos alternativas resuelve
+satisfactoriamente la posición.
+
+R05-T03 [A] Evasiones legales después de 15.Qxc8+
+Inicio: después de 15.Qxc8+; juegan las negras.
+FEN: 2Q1kbnr/3n1ppp/1q2p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 0 15
+Evasiones legales: 15...Ke7 y 15...Qd8.
+Objetivo: comprobar que la búsqueda de quietud desactiva stand pat y busca todas 
+las evasiones legales.
+Criterio: generar exactamente ambas evasiones y ninguna respuesta ilegal.
+
+R05-T04 [B] Secuencia de jaques forzados y pérdida de la dama
+Inicio: después de 15.Qxc8+; juegan las negras.
+FEN: 2Q1kbnr/3n1ppp/1q2p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 0 15
+Secuencia principal: 15...Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8.
+Objetivo: comprobar bloqueos, evasiones y jaques forzados hasta la pérdida
+inevitable de la dama negra.
+Criterio: usar búsqueda normal + búsqueda de quietud porque 16.Nc7+ y 17.Bd6+ 
+son jaques sin captura, deliberadamente excluidos del conjunto actual 
+de quietud.
+
+R05-T05 [A] Prohibición de stand pat en posiciones con jaque
+Conjunto principal: R05-T03 y todos los nodos con jaque de R05-T04.
+Objetivo: comprobar que ningún nodo con el rey atacado puede aceptar la
+evaluación estática sin ejecutar una evasión legal.
+Criterio: contador de nodos de quietud en jaque mayor que cero; stand pat no se
+aplica; todas las líneas terminan en una evasión, mate o posición legal.
+
+R05-T06 [B] Continuidad de secuencias de jaques forzados
+Conjunto principal: R05-T04.
+Objetivo: verificar que la búsqueda normal y la búsqueda de quietud cooperan hasta
+reconocer una pérdida inevitable de material.
+Criterio: no truncar la variante en el primer bloqueo o desplazamiento del rey;
+registrar la línea completa o una variante equivalente con el mismo resultado.
+
+-------------------------------------------------------------------------------
+RONDA 6 — PHILOCHESS 0.2-alpha-001 vs Zoidberg 0.1
+-------------------------------------------------------------------------------
+
+R06-T01 [B] Ruptura 47...d5 y clavada del peón de c4
+Inicio: después de 47...d5; juegan las blancas.
+FEN: 2r5/8/1nr2p1k/3pp2p/1pP2p2/5P2/PBR2P1P/3R2K1 w - - 0 48
+Secuencia principal: 48.Re1 Rxc4 49.Rxc4 dxc4.
+Objetivo: comprobar la explotación táctica de la clavada del peón de c4 y la
+creación posterior del peón pasado negro en c4.
+Criterio: usar búsqueda normal + búsqueda de quietud porque 48.Re1 es una jugada 
+tranquila; resolver correctamente todas las capturas posteriores.
+
+R06-T02 [C] Estado de los peones después de 49...dxc4
+Inicio: después de 49...dxc4; juegan las blancas.
+FEN: 2r5/8/1n3p1k/4p2p/1pp2p2/5P2/PB3P1P/4R1K1 w - - 0 50
+Objetivo: distinguir que el peón de c4 ya es pasado y que el peón de b4 todavía
+no lo es, porque el peón blanco de a2 puede detenerlo desde una columna adyacente.
+Criterio: reservar la aprobación evaluativa para la versión que incorpore
+estructura de peones; en alpha-002 verificar solo la posición y su legalidad.
+
+R06-T03 [C] Actualización después de 53...Rxa2
+Inicio: después de 53...Rxa2; juegan las blancas.
+FEN: 8/8/1n3p1k/4p2p/1p3p2/2p2P2/r4P1P/B5RK w - - 0 54
+Objetivo: comprobar que la desaparición del peón blanco de a2 convierte al peón
+negro de b4 en peón pasado y deja dos peones pasados conectados.
+Criterio: futura evaluación estructural debe actualizar el estado de los peones
+después de la captura; alpha-002 conserva la FEN como referencia.
+
+R06-T04 [B] Liquidación de torre y avance del segundo peón
+Inicio: después de 55.Rg1; juegan las negras.
+FEN: 8/8/1n3p1k/4p2p/1p3p2/5P2/r1p2P1P/B5RK b - - 1 55
+Secuencia: 55...Rxa1 56.Rxa1 b3.
+Objetivo: comprobar la liquidación de torres y el avance tranquilo del peón b.
+Criterio: usar búsqueda normal + búsqueda de quietud, pues 56...b3 no es captura, 
+promoción ni evasión de jaque.
+
+R06-T05 [A] Doble promoción con captura intermedia
+Inicio: después de 58.Rf1; juegan las negras.
+FEN: 8/8/1n3p1k/4p2p/5p2/5P2/1pp2P1P/5R1K b - - 1 58
+Secuencia: 58...c1=Q 59.Rxc1 bxc1=Q+.
+Objetivo: comprobar una promoción sin captura, la captura de la nueva dama y una
+segunda promoción mediante captura con jaque.
+Criterio: qprobe debe incluir ambas clases de promoción, aplicar correctamente
+las capturas y devolver una posición legal con evaluación material coherente.
+
+R06-T06 [A] Regla general para las promociones en la búsqueda de quietud
+Conjunto principal: R06-T05 y las posiciones de promoción de la ronda 8.
+Objetivo: comprobar que la búsqueda de quietud examina promociones sin captura,
+promociones por captura y subpromociones legales cuando correspondan.
+Criterio: ninguna promoción legal debe omitirse por no ser una captura; deben
+generarse las cuatro piezas de promoción permitidas y evaluarse sus continuaciones.
+
+R06-T07 [A] Evasiones después de 51...Rg8+ y 59...bxc1=Q+
+Posición A: después de 51...Rg8+; juegan las blancas.
+FEN A: 6r1/8/1n3p1k/4p2p/1p3p2/2p2P2/P4P1P/B4RK1 w - - 2 52
+Evasión legal A: 52.Kh1.
+Posición B: después de 59...bxc1=Q+; juegan las blancas.
+FEN B: 8/8/1n3p1k/4p2p/5p2/5P2/5P1P/2q4K w - - 0 60
+Evasión legal B: 60.Kg2.
+Objetivo: comprobar la desactivación de stand pat y la generación completa de
+evasiones en un jaque de torre y un jaque producido por promoción.
+Criterio: generar exactamente la única evasión legal en cada posición.
+
+-------------------------------------------------------------------------------
+RONDA 7 — Needle 0.531 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R07-T01 [C] Incursión 6...Rxa3
+Inicio: después de 6.bxa3; juegan las negras.
+FEN: rnbqkbnr/2pppppp/1p6/6B1/2PPP3/P1N5/P4PPP/R2QKBNR b KQkq - 0 6
+Objetivo: evaluar correctamente la captura 6...Rxa3 y la movilidad segura de la
+torre que penetra antes de que las piezas negras hayan sido desarrolladas.
+Criterio: reservar la valoración completa para movilidad y desarrollo futuros;
+alpha-002 conservará la secuencia como referencia legal y material.
+
+R07-T02 [B] Restricción y liquidación de la torre de a3
+Posición contextual A: después de 7.Na4; juegan las negras.
+FEN A: 1nbqkbnr/2pppppp/1p6/6B1/N1PPP3/r7/P4PPP/R2QKBNR b KQk - 1 7
+Posición principal B: después de 8.Bc1; juegan las negras.
+FEN B: 1nbqkbnr/2p1pppp/1p1p4/8/N1PPP3/r7/P4PPP/R1BQKBNR b KQk - 1 8
+Secuencia: 8...Rxa4 9.Qxa4+.
+Objetivo: reconocer la movilidad restringida de la torre y la mejor liquidación
+práctica disponible.
+Criterio: la búsqueda debe resolver correctamente la captura y recaptura; la
+valoración de movilidad se perfeccionará en una versión posterior.
+
+R07-T03 [B] Combinación iniciada después de 18.Ne5
+Inicio: después de 18.Ne5; juegan las negras.
+FEN: 1nb1k1nr/5ppp/1pp2q2/4N3/Q1BP4/8/P4PPP/R4RK1 b k - 5 18
+Secuencia principal: 18...b5 19.Bxf7+ Ke7 20.Qa8 Nh6 21.Qxb8 Nxf7.
+Objetivo: comprobar la defensa, los jaques y el balance material de la
+combinación que termina cambiando el alfil blanco por un caballo y un peón.
+Criterio: usar búsqueda normal + búsqueda de quietud porque la línea contiene 
+varias jugadas tranquilas que qprobe aislado no examina.
+
+R07-T04 [A] Evasiones legales después de 22.Qc7+
+Inicio: después de 22.Qc7+; juegan las negras.
+FEN: 2b4r/2Q1knpp/2p2q2/1p2N3/3P4/8/P4PPP/R4RK1 b - - 1 22
+Evasiones legales: 22...Bd7, 22...Ke8, 22...Kf8 y 22...Ke6.
+Objetivo: comprobar la generación completa de bloqueos y desplazamientos del rey.
+Criterio: stand pat desactivado; explorar exactamente las cuatro evasiones y
+ninguna jugada que mantenga al rey en jaque.
+
+R07-T05 [B] Posibilidades de jaque a la descubierta después de 23.Rae1
+Inicio: después de 23.Rae1; juegan las negras.
+FEN: 2b4r/2Q2npp/2p1kq2/1p2N3/3P4/8/P4PPP/4RRK1 b - - 3 23
+Objetivo: identificar la presión sobre la columna e y las posibilidades de jaque
+a la descubierta que explican 23...Kd5.
+Criterio: la búsqueda debe reconocer la amenaza táctica y no tratar el movimiento
+del rey como un avance voluntario sin causa.
+
+R07-T06 [B] Amenaza de mate después de 25.Qb6
+Inicio: después de 25.Qb6; juegan las negras.
+FEN: 2b3r1/5Npp/1Qp2q2/1p1k4/3P4/8/P4PPP/4RRK1 b - - 2 25
+Objetivo: detectar la amenaza inmediata 26.Qc5#.
+Criterio: la búsqueda debe reconocer que 25...Kc4 atiende la amenaza inmediata;
+no debe considerar seguras jugadas que permitan Qc5#.
+
+R07-T07 [B] Mate forzado en tres jugadas
+Inicio: después de 25...Kc4; juegan las blancas.
+FEN: 2b3r1/5Npp/1Qp2q2/1p6/2kP4/8/P4PPP/4RRK1 w - - 3 26
+Secuencia: 26.Qc5+ Kd3 27.Re3+ Kd2 28.Qc3#.
+Objetivo: comprobar evasiones de jaque, continuidad de la variante y
+reconocimiento del mate.
+Criterio: la búsqueda normal debe encontrar el mate y propagar una puntuación de
+mate coherente con la distancia; los jaques sin captura impiden usar qprobe solo.
+
+R07-T08 [A] Regla general: sin stand pat y con todas las evasiones
+Conjunto principal: R07-T04 y los nodos con jaque de R07-T07.
+Objetivo: comprobar que la búsqueda de quietud no aplica stand pat cuando el rey 
+está en jaque y genera todas las evasiones legales.
+Criterio: ningún nodo en jaque termina mediante evaluación estática mientras
+exista una evasión; mate reconocido solo cuando no haya respuestas legales.
+
+R07-T09 [B] Propagación de puntuaciones de mate
+Conjunto principal: R07-T07 y las redes de mate de las rondas 9 y 10.
+Objetivo: comprobar que PHILOCHESS distingue mates de diferente longitud y
+prefiere dar mate antes o retrasar el mate recibido.
+Criterio: puntuaciones ajustadas por ply; estabilidad del signo y de la distancia
+al retroceder por negamax; mate inmediato preferido frente a uno más largo.
+
+-------------------------------------------------------------------------------
+RONDA 8 — Shallow Blue 2.0.0 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R08-T01 [B] Amenaza Qxf7# después de 7...b4 8.Qf3
+Inicio: después de 8.Qf3; juegan las negras.
+FEN: rnbqkbnr/3ppppp/2p5/4P1N1/pp1P4/2NB1Q2/PPP2PPP/R1B1K2R b KQkq - 1 8
+Objetivo: verificar la amenaza 9.Qxf7# y conservar la capacidad de encontrar
+8...Nh6 como defensa de f7.
+Criterio: la búsqueda normal debe detectar la amenaza de mate y rechazar jugadas
+que no la neutralicen.
+
+R08-T02 [B] Mate preparado por 12.Bc4 y defensa 12...e6
+Inicio: después de 12.Bc4; juegan las negras.
+FEN: rnbqkb1r/3ppp1p/2p3pn/4P1N1/2BP4/p4Q2/P1PBNPPP/R3K2R b KQkq - 1 12
+Amenazas:
+13.Qxf7+ Nxf7 14.Bxf7#
+13.Bxf7+ Nxf7 14.Qxf7#
+Objetivo: comprobar que 12...e6 bloquea la diagonal del alfil de c4 y neutraliza 
+ambos órdenes de la secuencia de mate.
+Criterio: conservar la respuesta defensiva 12...e6 de alpha-001 y no aceptar una 
+línea que permita ninguna de las dos secuencias de mate anunciadas.
+
+R08-T03 [B] Ataque contra h8 y defensa 20...f6
+Inicio: después de 20.Qe5; juegan las negras.
+FEN: rnb1k1nr/3p1p2/1qpPp3/4Q3/1BBP2pp/p7/P1P1NPPP/1R3RK1 b kq - 1 20
+Objetivo: verificar el ataque contra la torre de h8 y la respuesta 20...f6, que
+bloquea la diagonal y ataca simultáneamente a la dama.
+Criterio: reconocer ambas funciones tácticas de 20...f6 y mantener la respuesta
+como recurso defensivo válido.
+
+R08-T04 [A] Capturas y jaque intermedio desde 23.Bxe6
+Inicio: después de 22...Kf8; juegan las blancas.
+FEN: rnb2knr/3p4/1qpPppQ1/8/1BBP3p/p5p1/P1P1NPPP/1R3RK1 w - - 2 23
+Secuencia: 23.Bxe6 gxh2+ 24.Kxh2 dxe6.
+Objetivo: comprobar capturas encadenadas, jaque intermedio, evasión mediante
+captura y liberación de la casilla d7.
+Criterio: qprobe debe recorrer la secuencia completa y alcanzar un balance
+material legal y estable.
+
+R08-T05 [A] Jaque descubierto y evasiones después de 25.d7+
+Inicio: después de 25.d7+; juegan las negras.
+FEN: rnb2knr/3P4/1qp1ppQ1/8/1B1P3p/p7/P1P1NPPK/1R3R2 b - - 0 25
+Evasiones legales: 25...Ne7, 25...Qc5, 25...Qxb4 y 25...c5.
+Objetivo: comprobar el jaque descubierto del alfil de b4 y todas las formas
+legales de responder mediante bloqueo o captura.
+Criterio: stand pat desactivado; generar exactamente las cuatro evasiones.
+
+R08-T06 [A] Bloqueo, captura con promoción y nueva evasión
+Inicio: después de 25.d7+; juegan las negras.
+FEN: rnb2knr/3P4/1qp1ppQ1/8/1B1P3p/p7/P1P1NPPK/1R3R2 b - - 0 25
+Secuencia: 25...c5 26.dxc8=Q+ Ke7.
+Objetivo: verificar el bloqueo del jaque, la captura con promoción que vuelve a
+dar jaque y la respuesta legal del rey.
+Criterio: la búsqueda de quietud debe incluir 25...c5 por ser una evasión, 
+generar las cuatro promociones legales en c8 y continuar mientras el rey permanezca 
+en jaque.
+
+R08-T07 [A] Regla general para jaques, capturas y promociones
+Conjunto principal: R08-T04, R08-T05 y R08-T06.
+Objetivo: comprobar que la búsqueda de quietud no aplica stand pat en jaque 
+y procesa correctamente capturas, promociones y todas las evasiones legales.
+Criterio: ninguna línea termina en posición ilegal; cero impactos del límite de
+64 plies; resultado estable con y sin ordenamiento de jugadas.
+
+-------------------------------------------------------------------------------
+RONDA 9 — PHILOCHESS 0.2-alpha-001 vs Dreamer 0.3.0
+-------------------------------------------------------------------------------
+
+R09-T01 [C] Presión central después de 10.Nh3
+Inicio: después de 10.Nh3; juegan las negras.
+FEN: r4rk1/pppqbppp/2n1bn2/3pp3/8/2N4N/PPPPPPPP/R1BQKB1R b K - 7 10
+Secuencia contextual: 10...d4 11.Nb1.
+Objetivo: verificar que el avance central ataca al caballo y anula su desarrollo.
+Criterio: la futura evaluación debe valorar la ganancia de tiempo y el retroceso
+del caballo; alpha-002 conserva la posición como línea base.
+
+R09-T02 [B] Maniobra ...Nb4-a2-xc1
+Inicio: después de 11.Nb1; juegan las negras.
+FEN: r4rk1/pppqbppp/2n1bn2/4p3/3p4/7N/PPPPPPPP/RNBQKB1R b K - 1 11
+Secuencia: 11...Nb4 12.a3 Na2 13.Rg1 Nxc1 14.Qxc1.
+Objetivo: comprobar la penetración del caballo, la captura del alfil de c1 y la
+recaptura de la dama.
+Criterio: la búsqueda normal debe mantener una variante legal y evaluar el
+resultado material completo.
+
+R09-T03 [A] Capturas encadenadas con jaque intermedio
+Inicio: después de 16...e3; juegan las blancas.
+FEN: r4rk1/pppqbppp/4b3/8/3p2n1/P3p2N/1PPPPPPP/RN1QKB1R w - - 0 17
+Secuencia: 17.dxe3 dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7
+20.Nxg4 Bxg4.
+Objetivo: comprobar una cadena larga de capturas con jaque intermedio antes de
+completar el cambio de damas.
+Criterio: qprobe debe continuar hasta el final material estable; stand pat
+desactivado en el nodo posterior a ...exf2+; cero impactos del límite de plies.
+
+R09-T04 [B] Ataque a la torre e intermedia 25.Ke1
+Inicio: después de 24.b4; juegan las negras.
+FEN: 5rk1/ppp1bppp/8/8/1P4b1/P1N5/R1PrPKPP/5B1R b - - 0 24
+Secuencia principal: 24...Be6 25.Ke1.
+Objetivo: reconocer que 24...Be6 ataca la torre de a2 y que 25.Ke1 es una
+intermedia que ataca la torre indefensa de d2.
+Criterio: la búsqueda debe considerar el contraataque antes de retirar la torre
+blanca y evaluar las respuestas negras.
+
+R09-T05 [B] Duplicación de torres y clavada relativa
+Inicio: después de 25.Ke1; juegan las negras.
+FEN: 5rk1/ppp1bppp/4b3/8/1P6/P1N5/R1PrP1PP/4KB1R b - - 2 25
+Secuencia: 25...Rfd8 26.Ra1 Bf6.
+Objetivo: verificar la protección de la torre de d2, la duplicación en la
+columna d y la clavada relativa del caballo de c3.
+Criterio: usar búsqueda normal; registrar la línea táctica ahora y reservar la
+valoración posicional completa de la clavada y la actividad para versiones
+posteriores.
+
+R09-T06 [B] Recurso 27.Ne4 y liquidación material
+Inicio: después de 26...Bf6; juegan las blancas.
+FEN: 3r2k1/ppp2ppp/4bb2/8/1P6/P1N5/2PrP1PP/R3KB1R w - - 5 27
+Secuencia: 27.Ne4 Bxa1 28.Nxd2.
+Objetivo: comprobar el ataque simultáneo contra el alfil de f6 y la torre de d2,
+seguido por el cambio de una torre por otra.
+Criterio: no valorar 27.Ne4 como una pérdida inmediata sin examinar la captura
+28.Nxd2.
+
+R09-T07 [B] Clavada absoluta después de 28...Bc3
+Inicio: después de 28...Bc3; juegan las blancas.
+FEN: 3r2k1/ppp2ppp/4b3/8/1P6/P1b5/2PNP1PP/4KB1R w - - 1 29
+Secuencia principal: movimiento legal del rey y ...Rxd2.
+Objetivo: identificar que el caballo de d2 está absolutamente clavado y que las 
+negras pueden capturarlo después de apartarse el rey.
+Criterio: el generador no debe permitir movimientos ilegales del caballo que
+expongan al rey; la búsqueda debe alcanzar ...Rxd2.
+
+R09-T08 [B] Red de mate final
+Inicio: después de 30.Rg1; juegan las negras.
+FEN: 6k1/ppp2ppp/4b3/8/1P6/P1b5/2PrPKPP/5BR1 b - - 1 30
+Secuencia: 30...Bd4+ 31.Ke1 Be3 32.Rh1 Rxc2 33.Kd1 Rc1#.
+Objetivo: comprobar jaques, una jugada tranquila dentro de la red, captura y mate.
+Criterio: usar búsqueda normal + búsqueda de quietud; reconocer el mate válido 
+y propagar su distancia correctamente.
+
+R09-T09 [A] Regla general para capturas y evasiones
+Conjunto principal: R09-T03 y los nodos con jaque de R09-T08.
+Objetivo: comprobar que la búsqueda de quietud no aplica stand pat en jaque 
+y examina correctamente capturas encadenadas y evasiones legales.
+Criterio: todos los nodos con jaque generan evasiones completas; mate solo cuando
+no exista ninguna; cero posiciones ilegales.
+
+R09-T10 [B] Propagación de la distancia al mate
+Conjunto principal: R09-T08, en relación con R07-T09.
+Objetivo: comprobar signo, distancia y preferencia de puntuaciones de mate.
+Criterio: el bando atacante prefiere la línea de mate más corta y el defensor la
+más larga; negamax conserva correctamente el signo en cada ply.
+
+-------------------------------------------------------------------------------
+RONDA 10 — PHILOCHESS 0.2-alpha-001 vs Pulse Chess 1.7.3
+-------------------------------------------------------------------------------
+
+R10-T01 [C] Secuencia inicial 1.Nc3 d5 2.Rb1 d4
+Inicio: posición inicial; juegan las blancas.
+FEN: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+Secuencia: 1.Nc3 d5 2.Rb1 d4.
+Objetivo: comparar el movimiento improductivo de torre con el desarrollo y la
+respuesta central que gana tiempo sobre el caballo.
+Criterio: reservar la preferencia posicional para evaluación futura; alpha-002
+solo conserva la secuencia como referencia estable.
+
+R10-T02 [C] Ataques sucesivos contra el caballo
+Inicio: después de 6.Ne4; juegan las negras.
+FEN: r1bqkbnr/p1p2ppp/2n5/1p2p3/3pN3/8/PPPPPPPP/R1BQKBNR b Kkq - 1 6
+Secuencia contextual: 6...f5 7.Ng3 f4 8.Ne4 Bf5 9.d3 Nf6.
+Objetivo: valorar la pérdida de tiempos impuesta por ataques sucesivos y la
+calidad de las casillas de retirada del caballo.
+Criterio: conservar como prueba futura de movilidad segura y desarrollo; en
+alpha-002 verificar legalidad, estabilidad y continuidad de la búsqueda.
+
+R10-T03 [C] Comparación de desarrollo después de 14...O-O
+Inicio: después de 14...O-O; juegan las blancas.
+FEN: r4rk1/p1p1b1pp/2n1b1q1/1p2p3/3p1p2/3P4/PPPBPPPP/R1Q1KBNR w K - 8 15
+Objetivo: comparar el desarrollo y la coordinación de ambos ejércitos: las
+negras han enrocado y conectado las torres; las blancas mantienen piezas sin
+desarrollar.
+Criterio: futura evaluación debe expresar la ventaja negra más allá del material;
+alpha-002 registra la línea base.
+
+R10-T04 [C] Maniobra activa 19...Rf5-h5 y coordinación
+Inicio: después de 19.Kd1; juegan las negras.
+FEN: r4rk1/p1p3pp/4b3/1p6/1b1pqp2/8/PPP1PPPP/RQ1K1BNR b - - 1 19
+Secuencia: 19...Rf5 20.Qc1 Rh5 21.Qb1 Re8 22.Qc1 Bc4.
+Objetivo: distinguir una verdadera maniobra activa de torre de una repetición
+improductiva: la torre cambia de frente y participa en el ataque al rey.
+Criterio: reservar la valoración de actividad y coordinación para versiones
+posteriores; conservar ahora la posición y la secuencia completa.
+
+R10-T05 [B] Ruptura 23...d3 y mate forzado
+Inicio: después de 23.Rb1; juegan las negras.
+FEN: 4r1k1/p1p3pp/8/1p5r/1bbpqp2/8/PPP1PPPP/1RQK1BNR b - - 9 23
+Jugada esperada: 23...d3.
+Objetivo: detectar que la ruptura establece una secuencia forzada de mate.
+Criterio: la búsqueda normal debe encontrar 23...d3 o demostrar una línea de
+mate equivalente; la puntuación debe expresar mate y no solo ventaja material.
+
+R10-T06 [B] Entregas de material, despejes y mate final
+Inicio: después de 23...d3; juegan las blancas.
+FEN: 4r1k1/p1p3pp/8/1p5r/1bb1qp2/3p4/PPP1PPPP/1RQK1BNR w - - 0 24
+Secuencia: 24.cxd3 Qxd3+ 25.exd3 Bb3+ 26.axb3 Re1+
+27.Kc2 Rc5#.
+Objetivo: comprobar la entrega de dama, la entrega de alfil, los despejes de las
+columnas e y c, el bloqueo de b3 y el mate de torre.
+Criterio: usar búsqueda normal + búsqueda de quietud. La jugada 25...Bb3+ es 
+un jaque sin captura y constituye deliberadamente un límite de qprobe aislado.
+
+R10-T07 [A] Regla general: prohibición de stand pat en jaque
+Conjunto principal: todos los nodos con jaque de R10-T06.
+Objetivo: comprobar que la búsqueda de quietud examina todas las evasiones legales 
+y no acepta la evaluación estática mientras el rey está atacado.
+Criterio: cada nodo en jaque termina en evasión legal o mate; ninguna línea
+continúa desde una posición en la que el jaque no haya sido resuelto.
+
+R10-T08 [B] Entregas de material seguidas de jugadas sin captura
+Conjunto principal: R10-T06.
+Objetivo: comprobar el límite funcional entre la búsqueda normal y la
+búsqueda de quietud actual cuando una combinación contiene entregas de material 
+seguidas de una jugada tranquila o de un jaque sin captura.
+Criterio: la prueba completa debe resolverse mediante búsqueda normal +
+búsqueda de quietud; qprobe aislado no tiene la obligación de encontrar 25...Bb3+ 
+mientras los jaques sin captura permanezcan excluidos por diseño.
+
+===============================================================================
+4. PRUEBAS TRANSVERSALES DERIVADAS DEL INVENTARIO
+===============================================================================
+
+Las siguientes comprobaciones no sustituyen los 64 casos anteriores. Agrupan
+propiedades que deben verificarse en varias posiciones para evitar errores de
+implementación aislados.
+
+TR-01 — Stand pat prohibido en jaque
+Conjuntos: R03-T05, R04-T04, R05-T03/T05, R06-T07, R07-T04/T08,
+R08-T05/T07, R09-T09 y R10-T07.
+Debe cumplirse en todos los nodos con jaque, no solamente en la raíz de qprobe.
+
+TR-02 — Generación completa de evasiones
+Comprobar bloqueos, capturas de la pieza atacante y movimientos del rey.
+Comparar el conjunto generado con el conjunto legal esperado de cada FEN.
+
+TR-03 — Capturas encadenadas hasta estabilidad
+Conjuntos: R03-T03/T04, R04-T01/T03, R08-T04, R09-T03/T09.
+No detener la evaluación en una ganancia aparente si existe una recaptura o
+contraataque legal dentro del conjunto de quietud.
+
+TR-04 — Promociones
+Conjuntos: R06-T05/T06 y R08-T06/T07.
+Incluir promociones sin captura, promociones por captura, promociones con jaque
+y las cuatro piezas legales de promoción.
+
+TR-05 — Ordenamiento sin alteración ajedrecística
+Ejecutar posiciones seleccionadas con y sin ordenamiento de jugadas dentro de
+la búsqueda de quietud. La mejor jugada aceptable y la evaluación deben coincidir; 
+solo deben cambiar nodos y cortes.
+
+TR-06 — Crecimiento de la búsqueda de quietud
+Registrar por caso:
+- nodos principales;
+- nodos de quietud;
+- proporción qnodes/nodes;
+- cortes beta de quietud;
+- nodos de quietud iniciados en jaque;
+- profundidad selectiva;
+- impactos del límite de 64 plies.
+No fijar todavía un techo universal de nodos; identificar posiciones atípicas y
+comparar el crecimiento antes y después de cada corrección.
+
+TR-07 — Límite de 64 plies
+Todos los casos deben terminar con cero impactos en condiciones normales. Si se
+produce un impacto, la prueba debe registrar la FEN, la línea y el motivo antes
+de decidir si existe un error o una posición excepcional.
+
+TR-08 — Puntuaciones de mate
+Conjuntos: R07-T07/T09, R09-T08/T10 y R10-T05/T06.
+Comprobar signo, distancia, preferencia por el mate más corto y resistencia con
+el mate más largo. Esta prueba pertenece a búsqueda normal + búsqueda de quietud.
+
+TR-09 — Límite deliberado de la búsqueda de quietud actual
+Conjuntos: R05-T04, R07-T07, R09-T08 y R10-T06/T08.
+Documentar que los jaques sin captura y otras jugadas tranquilas no forman parte
+de qprobe en alpha-001. No declarar un fallo de búsqueda de quietud cuando la 
+combinación solo puede descubrirse desde la búsqueda normal, salvo que alpha-002 
+cambie expresamente ese diseño.
+
+TR-10 — Conservación de capacidades positivas
+Conjuntos principales: R03-T01, R08-T01, R08-T02, R08-T03 y recursos tácticos
+de R09-T04/T06.
+Las correcciones de alpha-002 no deben eliminar defensas o recursos que
+alpha-001 ya encontró correctamente.
+
+TR-11 — Legalidad y estabilidad general
+Para cada FEN:
+- carga correcta de la posición;
+- generación exclusiva de jugadas legales;
+- aplicación y deshacer de jugadas sin corrupción del tablero;
+- salida de una jugada legal;
+- ausencia de bloqueo, excepción o cierre inesperado;
+- terminación limpia bajo límite de tiempo.
+
+TR-12 — Regresión perft independiente
+Repetir perftknown 4 con sus 24/24 valores correctos para confirmar que las
+correcciones de la búsqueda de quietud no alteran generación legal, enroque, 
+captura al paso, promociones, detección de jaque o seguridad del rey.
+
+===============================================================================
+5. CAMPOS RECOMENDADOS PARA LA BATERÍA EJECUTABLE
+===============================================================================
+
+Al convertir cada entrada en código, registrar:
+
+- identificador estable;
+- ronda y jugada de origen;
+- FEN inicial;
+- bando que mueve;
+- categoría [A], [B] o [C];
+- motivo táctico o posicional;
+- comando de prueba;
+- profundidad o límite de tiempo;
+- jugada exacta, conjunto aceptable o propiedad esperada;
+- evaluación esperada o relación cualitativa entre evaluaciones;
+- secuencia principal de referencia;
+- conjunto completo de evasiones cuando exista jaque;
+- nodos principales y nodos de quietud;
+- cortes de quietud y profundidad selectiva;
+- impactos del límite de plies;
+- resultado PASS/FAIL;
+- observaciones y versión en la que se cerró la regresión.
+
+===============================================================================
+6. ORDEN PROPUESTO DE CONVERSIÓN A PRUEBAS
+===============================================================================
+
+Fase 1 — Casos [A]
+Implementar primero las 21 pruebas de búsqueda de quietud y las comprobaciones
+TR-01 a TR-07. Estas definen el núcleo de corrección de alpha-002.
+
+Fase 2 — Casos [B]
+Agregar las 33 pruebas de búsqueda normal + búsqueda de quietud. Determinar para 
+cada una la profundidad mínima estable y distinguir entre mejor jugada única, 
+conjunto aceptable y propiedad táctica.
+
+Fase 3 — Casos [C]
+Conservar las 10 posiciones posicionales como corpus futuro. No exigir que la
+evaluación solamente material de alpha-002 prefiera una jugada posicional que
+todavía no puede comprender.
+
+Fase 4 — Ejecución integral
+Ejecutar las pruebas del inventario, qtest, tactictest, perftknown, controles de
+tiempo UCI y pruebas de salida limpia. Registrar resultados y cualquier nuevo
+caso descubierto durante el desarrollo.
+
+===============================================================================
+7. CONCLUSIÓN
+===============================================================================
+
+Los análisis de las diez partidas proporcionan 64 pruebas documentales. El
+inventario demuestra que no todos los problemas observados deben resolverse en
+PHILOCHESS 0.2-alpha-002: algunos pertenecen a evaluación posicional futura.
+
+El objetivo inmediato de alpha-002 debe ser convertir los casos [A] y [B] en
+una batería reproducible que pruebe corrección, estabilidad, crecimiento
+controlado y ausencia de regresiones. Los casos [C] se conservan para que las
+versiones posteriores puedan demostrar mejoras posicionales sobre exactamente
+las mismas posiciones reales del torneo.
+
+===============================================================================

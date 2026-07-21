@@ -1,0 +1,831 @@
+===============================================================================
+PHILOCHESS 0.2-alpha-002
+TEST INVENTORY
+TACTICAL REGRESSION AND QUIESCENCE CORRECTNESS
+===============================================================================
+
+Author and copyright holder: Robert M. Cuadros
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is distributed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International license
+(CC BY-NC-ND 4.0).
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en
+
+Date: July 21, 2026
+
+Working document prepared from:
+- PHILOCHESS 0.2-alpha-001 Validation: No Syzygy — Game Analyses (ES)
+- PHILOCHESS 0.2-alpha-001 Validation: No Syzygy — Game Analyses (EN)
+
+The two source documents contain the same material in their respective languages.
+This inventory is published in Spanish and English, with equivalent content in
+both versions.
+
+===============================================================================
+1. OBJECTIVE AND SCOPE
+===============================================================================
+
+This document compiles all the regression tests and checks explicitly proposed
+in the conclusions of the ten games from the
+PHILOCHESS 0.2-alpha-001 Validation: No Syzygy tournament.
+
+The inventory initially retains every case, even when several of them test the
+same general principle. Two different positions are not considered duplicates
+merely because they share the same tactical motif.
+
+The FEN positions were reconstructed by legally replaying the complete PGNs.
+When a test comprises several positions involving check, all FEN positions
+identified in the analysis are included.
+
+This inventory does not yet specify:
+- the final depth for each normal-search test;
+- exact evaluation values when the analysis establishes only a qualitative
+  relationship;
+- strict limits on quiescence nodes;
+- a single best move when several correct alternatives may exist.
+
+Those parameters must be determined when the inventory is converted into the
+executable PHILOCHESS 0.2-alpha-002 test suite.
+
+===============================================================================
+2. CLASSIFICATION
+===============================================================================
+
+[A] ALPHA-002 — QUIESCENCE SEARCH
+    Tests suitable for qprobe or for a new internal quiescence-regression
+    command. They cover captures, promotions, complete check evasions, the
+    prohibition of stand pat while in check, and forced continuations supported
+    by the current set of quiescence moves.
+
+[B] ALPHA-002 — NORMAL SEARCH + QUIESCENCE SEARCH
+    Tests containing quiet moves, non-capturing checks, threats, material
+    sacrifices followed by maneuvers, or mating sequences that the current
+    quiescence search is not expected to solve in isolation. They must be run
+    through the normal search, which will use quiescence search upon reaching
+    the horizon.
+
+[C] LATER VERSIONS — POSITIONAL EVALUATION
+    Tests whose successful completion depends primarily on development, mobility,
+    activity, structure, king safety, coordination, or other knowledge that is
+    not yet present. They are retained now, but in alpha-002 they can be used
+    only as baselines for legality, stability, and measurement.
+
+Quantitative summary:
+- Round 1:   3 tests
+- Round 2:   4 tests
+- Round 3:   6 tests
+- Round 4:   4 tests
+- Round 5:   6 tests
+- Round 6:   7 tests
+- Round 7:   9 tests
+- Round 8:   7 tests
+- Round 9:  10 tests
+- Round 10:  8 tests
+- TOTAL:    64 tests
+
+Provisional distribution:
+- [A] Quiescence search:                           21
+- [B] Normal search + quiescence search:           33
+- [C] Future positional evaluation:                10
+- TOTAL:                                           64
+
+===============================================================================
+3. COMPLETE INVENTORY BY ROUND
+===============================================================================
+
+-------------------------------------------------------------------------------
+ROUND 1 — Zoidberg 0.1 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R01-T01 [C] Position before 8...c5
+Starting position: after 8.O-O; Black to move.
+FEN: rnb1kbnr/1pqppppp/2p5/8/p2PP3/N4N2/PPPBBPPP/R2Q1RK1 b kq - 7 8
+Objective: verify that 8...c5 relinquishes control of b5, allows 9.Nb5, and
+facilitates the knight's subsequent entry on c7.
+Criterion: the future positional evaluation must compare 8...c5 with alternatives
+that retain control of b5 and favor development and king safety. In alpha-002,
+this will be retained only as a baseline.
+
+R01-T02 [B] Position before 12...Qxe4
+Starting position: after 12.Ne5; Black to move.
+FEN: rnb1kbnr/1p1ppppp/2q5/1N2N3/p3P3/4B3/PPP1BPPP/R2Q1RK1 b kq - 3 12
+Objective: verify that the capture 12...Qxe4 is not evaluated as a clean gain
+and that the search reaches 13.Nc7+, with a double attack on the king and rook.
+Criterion: recognize the tactical consequence without necessarily classifying
+12...Qxe4 as an independent error, since the black queen already has no
+satisfactory retreat that keeps c7 protected.
+
+R01-T03 [B] Position before 16...f6
+Starting position: after 16.Nb6; Black to move.
+FEN: rnbk1bnr/1p1p1ppp/1N2p3/4N3/p7/4B3/PPP1BPPP/R4RK1 b - - 1 16
+Objective: verify the threat and consequence of 16...f6 17.Nf7+ Ke8 18.Nxh8.
+Criterion: the search must recognize the double attack and loss of the rook,
+without presenting 16...f6 as the sole cause of a position that was already
+deteriorated.
+
+-------------------------------------------------------------------------------
+ROUND 2 — PHILOCHESS 0.2-alpha-001 vs Needle 0.531
+-------------------------------------------------------------------------------
+
+R02-T01 [C] Position before 2.Rb1
+Starting position: after 1...d5; White to move.
+FEN: rnbqkbnr/ppp1pppp/8/3p4/8/2N5/PPPPPPPP/R1BQKBNR w KQkq - 0 2
+Objective: compare 2.Rb1 with moves that develop pieces, control the center, and
+prepare castling.
+Criterion: a future evaluation must penalize the premature rook move while minor
+pieces remain undeveloped. In alpha-002, only the baseline behavior will be
+recorded.
+
+R02-T02 [B] Position before 8...Nxc5
+Starting position: after 8.Rb1; Black to move.
+FEN: r1bqk1nr/p4ppp/n1p5/1pP1p3/3p4/8/P1PPPPPP/1RBQKBNR b Kkq - 2 8
+Objective: verify that 8...Nxc5 wins the c5-pawn, which cannot be supported by
+White's undeveloped pieces.
+Criterion: the search must recognize the material gain and not invent a
+nonexistent recapture or tactical compensation.
+
+R02-T03 [B] Position before 15...Ne3
+Starting position: after 15.Rb1; Black to move.
+FEN: 2kr3r/p4ppp/2p1b3/qp2p3/3pn1n1/P6N/1BPPPPPP/1R1QKB1R b K - 4 15
+Objective: verify 15...Ne3, which invades White's position and attacks the queen.
+Criterion: the search must recognize the threat against the queen and the legal
+responses available, including 16.Qc1.
+
+R02-T04 [B] Position before 18...c5
+Starting position: after 18.Rb4; Black to move.
+FEN: 2kr3r/p4ppp/2p1b3/qp2p3/1Rnp4/P6N/2PnPPPP/B1Q1KB1R b K - 1 18
+Objective: verify that 18...c5 attacks the rook and that an ordinary retreat
+opens the a5-e1 diagonal and permits a mate-in-two sequence.
+Criterion: recognize that 19.c3 is a necessary defense against immediate mate,
+although 19...cxb4 results in the material loss of the rook.
+
+-------------------------------------------------------------------------------
+ROUND 3 — PHILOCHESS 0.2-alpha-001 vs Shallow Blue 2.0.0
+-------------------------------------------------------------------------------
+
+R03-T01 [B] Position before 15.bxa3
+Starting position: after 14...Bxa3; White to move.
+FEN: r3k2r/1pp2ppp/p1n5/2qn1b2/3p4/b3p2N/PPPPPPPP/R1BQKB1R w Kkq - 0 15
+Objective: verify that 15.bxa3 allows 15...Bxc2 and leaves the white queen
+without a satisfactory retreat.
+Criterion: the search must understand the tactical consequence and preserve the
+positive behavior of alpha-001, which chose 15.dxe3 instead of recapturing
+immediately.
+
+R03-T02 [B] Queen retreats after 15...Bxc2
+Starting position: after 15...Bxc2; White to move.
+FEN: r3k2r/1pp2ppp/p1n5/2qn4/3p4/b3P2N/PPb1PPPP/R1BQKB1R w Kkq - 0 16
+Objective: verify the queen retreats and the ...Bb4 resource.
+Criterion: verify that 16.Qd2 allows ...Bb4, pinning the queen, and that 16.Qd3
+is not a safe retreat because d3 is controlled by the bishop on c2. A nonexistent
+safe square must not be declared.
+
+R03-T03 [A] Chained captures and counterattack against the queen
+Starting position: after 15...Bxc2; White to move.
+FEN: r3k2r/1pp2ppp/p1n5/2qn4/3p4/b3P2N/PPb1PPPP/R1BQKB1R w Kkq - 0 16
+Sequence: 16.exd4 Nxd4 17.bxa3 Bxd1.
+Objective: verify that 16.exd4 attacks the black queen, but 16...Nxd4 eliminates
+the attacking pawn, saves the queen, and maintains the threat against the white
+queen.
+Criterion: the quiescence search must continue the captures until it reaches a
+stable material outcome and must not stop after an apparent intermediate gain.
+
+R03-T04 [A] General rule for captures, counterattacks, and unavoidable losses
+Main set: R03-T01, R03-T02, and R03-T03.
+Objective: verify that quiescence search correctly evaluates chained captures,
+counterattacks, and unavoidable material losses.
+Criterion: same material conclusion with move ordering enabled and disabled; no
+impact from the 64-ply limit; result independent of the exploration order of
+equivalent moves.
+
+R03-T05 [A] Legal evasions after the queen checks
+Position A: after 19...Qa5+; White to move.
+FEN A: r3k2r/1pp2ppp/B7/q2n4/3nP3/P4b1N/P4PPP/R1B1K2R w Kkq - 1 20
+Legal evasions A: 20.Bd2 and 20.Kf1.
+Position B: after 20...Qxa6+; White to move.
+FEN B: r3k2r/1pp2ppp/q7/3n4/3nP3/P4b1N/P4PPP/R1B2K1R w kq - 0 21
+Legal evasions B: 21.Kg1 and 21.Ke1.
+Objective: verify complete evasion generation and the disabling of stand pat at
+both nodes where the king is in check.
+Criterion: explore exactly all legal evasions and no move that leaves the king
+in check.
+
+R03-T06 [B] Forced mate after a legal evasion
+Position: after 21.Kg1; Black to move.
+FEN: r3k2r/1pp2ppp/q7/3n4/3nP3/P4b1N/P4PPP/R1B3KR b kq - 1 21
+Expected sequence: 21...Ne2+ 22.Kf1 Ng3+ 23.Kg1 Qf1#.
+Objective: verify that the normal search recognizes the forced mate through a
+sequence of non-capturing checks.
+Criterion: find 21...Ne2+ and correctly propagate the score and distance to mate.
+
+-------------------------------------------------------------------------------
+ROUND 4 — Dreamer 0.3.0 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R04-T01 [A] Material sequence after 17...Kxd8
+Starting position: after 17...Kxd8; White to move.
+FEN: rnbk1bnr/5ppp/4p3/1Np5/8/BP2PN2/R1P1BPPP/5RK1 w - - 0 18
+Sequence: 18.Bxc5 Rxa2 19.Bxf8.
+Objective: verify the material outcome of capturing the c5-pawn, the capture of
+White's rook with ...Rxa2, and the subsequent capture of the bishop on f8.
+Criterion: continue the entire sequence before applying the static evaluation.
+
+R04-T02 [A] Rook capture after 21...Rb2
+Starting position: after 21...Rb2; White to move.
+FEN: 1nbk2nr/5pBp/4p1p1/1N6/2B5/1P2PN2/1r3PPP/5RK1 w - - 2 22
+Expected sequence: 22.Bxb2.
+Objective: verify that quiescence search includes the capture of the active rook
+and correctly reflects the material change.
+Criterion: do not terminate via stand pat while ignoring a legal, favorable
+capture.
+
+R04-T03 [A] Double attack and capture of the rook on h8
+Starting position: after 23...Nh6; White to move.
+FEN: 1nbk3r/7p/3Npppn/8/2B5/1P2PN2/1B3PPP/5RK1 w - - 2 24
+Main line: 24.Bxf6+ and continuation through 25.Bxh8.
+Objective: verify the checking capture, the king evasions, and the subsequent
+capture of the rook.
+Criterion: recognize that 24.Bxf6+ creates the decisive double attack and
+continue the line after the evasion.
+
+R04-T04 [A] Evasions after 24.Bxf6+
+Starting position: after 24.Bxf6+; Black to move.
+FEN: 1nbk3r/7p/3NpBpn/8/2B5/1P2PN2/5PPP/5RK1 b - - 0 24
+Legal evasions: 24...Kd7 and 24...Kc7.
+Objective: verify that quiescence search disables stand pat, examines both
+evasions, and correctly continues the forced captures.
+Criterion: generate exactly the two legal evasions and evaluate the continuations
+until a tactically stable position is reached.
+
+-------------------------------------------------------------------------------
+ROUND 5 — Pulse Chess 1.7.3 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R05-T01 [B] Immediate threat after 14.Nb5
+Starting position: after 14.Nb5; Black to move.
+FEN: 2bqkbnr/3n1ppp/2Q1p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 1 14
+Objective: verify that 14.Nb5 creates the immediate threat 15.Nc7+.
+Criterion: identify 15.Nc7+ as the only immediate tactical threat that Black
+must prevent.
+
+R05-T02 [B] Comparison of 14...Qb6 and 14...Be7
+Starting position: after 14.Nb5; Black to move.
+FEN: 2bqkbnr/3n1ppp/2Q1p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 1 14
+Lines: 14...Qb6 and 14...Be7 15.Bc7.
+Objective: verify that 14...Qb6 vacates d8 but leaves the bishop on c8
+undefended, while 14...Be7 allows 15.Bc7 and the trapping of the black queen.
+Criterion: recognize that neither alternative resolves the position
+satisfactorily.
+
+R05-T03 [A] Legal evasions after 15.Qxc8+
+Starting position: after 15.Qxc8+; Black to move.
+FEN: 2Q1kbnr/3n1ppp/1q2p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 0 15
+Legal evasions: 15...Ke7 and 15...Qd8.
+Objective: verify that quiescence search disables stand pat and searches all
+legal evasions.
+Criterion: generate exactly both evasions and no illegal response.
+
+R05-T04 [B] Sequence of forced checks and loss of the queen
+Starting position: after 15.Qxc8+; Black to move.
+FEN: 2Q1kbnr/3n1ppp/1q2p3/1N2B3/1p1P4/1P1B1N2/2P2PPP/4K2R b Kk - 0 15
+Main line: 15...Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8.
+Objective: verify blocks, evasions, and forced checks through the inevitable
+loss of the black queen.
+Criterion: use normal search + quiescence search because 16.Nc7+ and 17.Bd6+
+are non-capturing checks, deliberately excluded from the current quiescence set.
+
+R05-T05 [A] Prohibition of stand pat in positions where the king is in check
+Main set: R05-T03 and every node involving check in R05-T04.
+Objective: verify that no node with the king under attack can accept the static
+evaluation without making a legal evasion.
+Criterion: number of in-check quiescence nodes greater than zero; stand pat is
+not applied; every line ends in an evasion, mate, or legal position.
+
+R05-T06 [B] Continuity of forced-check sequences
+Main set: R05-T04.
+Objective: verify that normal search and quiescence search cooperate until they
+recognize an unavoidable material loss.
+Criterion: do not truncate the line at the first block or king move; record the
+complete line or an equivalent line with the same outcome.
+
+-------------------------------------------------------------------------------
+ROUND 6 — PHILOCHESS 0.2-alpha-001 vs Zoidberg 0.1
+-------------------------------------------------------------------------------
+
+R06-T01 [B] The 47...d5 break and pin of the c4-pawn
+Starting position: after 47...d5; White to move.
+FEN: 2r5/8/1nr2p1k/3pp2p/1pP2p2/5P2/PBR2P1P/3R2K1 w - - 0 48
+Main line: 48.Re1 Rxc4 49.Rxc4 dxc4.
+Objective: verify the tactical exploitation of the pinned c4-pawn and the
+subsequent creation of Black's passed pawn on c4.
+Criterion: use normal search + quiescence search because 48.Re1 is a quiet move;
+correctly resolve all subsequent captures.
+
+R06-T02 [C] Pawn status after 49...dxc4
+Starting position: after 49...dxc4; White to move.
+FEN: 2r5/8/1n3p1k/4p2p/1pp2p2/5P2/PB3P1P/4R1K1 w - - 0 50
+Objective: distinguish that the c4-pawn is already passed and that the b4-pawn
+is not yet passed because the white pawn on a2 can stop it from an adjacent file.
+Criterion: reserve evaluative completion for the version that incorporates pawn
+structure; in alpha-002, verify only the position and its legality.
+
+R06-T03 [C] Update after 53...Rxa2
+Starting position: after 53...Rxa2; White to move.
+FEN: 8/8/1n3p1k/4p2p/1p3p2/2p2P2/r4P1P/B5RK w - - 0 54
+Objective: verify that the disappearance of the white pawn on a2 turns the black
+pawn on b4 into a passed pawn and leaves two connected passed pawns.
+Criterion: the future structural evaluation must update the status of the pawns
+after the capture; alpha-002 retains the FEN as a reference.
+
+R06-T04 [B] Rook liquidation and advance of the second pawn
+Starting position: after 55.Rg1; Black to move.
+FEN: 8/8/1n3p1k/4p2p/1p3p2/5P2/r1p2P1P/B5RK b - - 1 55
+Sequence: 55...Rxa1 56.Rxa1 b3.
+Objective: verify the exchange of rooks and the quiet advance of the b-pawn.
+Criterion: use normal search + quiescence search because 56...b3 is not a
+capture, promotion, or check evasion.
+
+R06-T05 [A] Double promotion with an intermediate capture
+Starting position: after 58.Rf1; Black to move.
+FEN: 8/8/1n3p1k/4p2p/5p2/5P2/1pp2P1P/5R1K b - - 1 58
+Sequence: 58...c1=Q 59.Rxc1 bxc1=Q+.
+Objective: verify a non-capturing promotion, the capture of the new queen, and a
+second promotion by capture with check.
+Criterion: qprobe must include both types of promotion, apply the captures
+correctly, and return a legal position with a coherent material evaluation.
+
+R06-T06 [A] General rule for promotions in quiescence search
+Main set: R06-T05 and the promotion positions from Round 8.
+Objective: verify that quiescence search examines non-capturing promotions,
+promotions by capture, and legal underpromotions where applicable.
+Criterion: no legal promotion may be omitted because it is not a capture; all
+four permitted promotion pieces must be generated and their continuations
+evaluated.
+
+R06-T07 [A] Evasions after 51...Rg8+ and 59...bxc1=Q+
+Position A: after 51...Rg8+; White to move.
+FEN A: 6r1/8/1n3p1k/4p2p/1p3p2/2p2P2/P4P1P/B4RK1 w - - 2 52
+Legal evasion A: 52.Kh1.
+Position B: after 59...bxc1=Q+; White to move.
+FEN B: 8/8/1n3p1k/4p2p/5p2/5P2/5P1P/2q4K w - - 0 60
+Legal evasion B: 60.Kg2.
+Objective: verify the disabling of stand pat and complete evasion generation in
+a rook check and a check delivered by promotion.
+Criterion: generate exactly the sole legal evasion in each position.
+
+-------------------------------------------------------------------------------
+ROUND 7 — Needle 0.531 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R07-T01 [C] The 6...Rxa3 incursion
+Starting position: after 6.bxa3; Black to move.
+FEN: rnbqkbnr/2pppppp/1p6/6B1/2PPP3/P1N5/P4PPP/R2QKBNR b KQkq - 0 6
+Objective: correctly evaluate the capture 6...Rxa3 and the safe mobility of the
+rook that penetrates before Black's pieces have been developed.
+Criterion: reserve the complete assessment for future mobility and development
+terms; alpha-002 will retain the sequence as a legal and material reference.
+
+R07-T02 [B] Restriction and liquidation of the rook on a3
+Contextual position A: after 7.Na4; Black to move.
+FEN A: 1nbqkbnr/2pppppp/1p6/6B1/N1PPP3/r7/P4PPP/R2QKBNR b KQk - 1 7
+Main position B: after 8.Bc1; Black to move.
+FEN B: 1nbqkbnr/2p1pppp/1p1p4/8/N1PPP3/r7/P4PPP/R1BQKBNR b KQk - 1 8
+Sequence: 8...Rxa4 9.Qxa4+.
+Objective: recognize the rook's restricted mobility and the best practical
+liquidation available.
+Criterion: the search must correctly resolve the capture and recapture; mobility
+evaluation will be refined in a later version.
+
+R07-T03 [B] Combination beginning after 18.Ne5
+Starting position: after 18.Ne5; Black to move.
+FEN: 1nb1k1nr/5ppp/1pp2q2/4N3/Q1BP4/8/P4PPP/R4RK1 b k - 5 18
+Main line: 18...b5 19.Bxf7+ Ke7 20.Qa8 Nh6 21.Qxb8 Nxf7.
+Objective: verify the defense, checks, and material balance of the combination
+that ends by exchanging the white bishop for a knight and a pawn.
+Criterion: use normal search + quiescence search because the line contains
+several quiet moves that qprobe does not examine in isolation.
+
+R07-T04 [A] Legal evasions after 22.Qc7+
+Starting position: after 22.Qc7+; Black to move.
+FEN: 2b4r/2Q1knpp/2p2q2/1p2N3/3P4/8/P4PPP/R4RK1 b - - 1 22
+Legal evasions: 22...Bd7, 22...Ke8, 22...Kf8, and 22...Ke6.
+Objective: verify complete generation of blocks and king moves.
+Criterion: stand pat disabled; explore exactly the four evasions and no move
+that leaves the king in check.
+
+R07-T05 [B] Discovered-check possibilities after 23.Rae1
+Starting position: after 23.Rae1; Black to move.
+FEN: 2b4r/2Q2npp/2p1kq2/1p2N3/3P4/8/P4PPP/4RRK1 b - - 3 23
+Objective: identify the pressure along the e-file and the discovered-check
+possibilities that explain 23...Kd5.
+Criterion: the search must recognize the tactical threat and not treat the king
+move as an unprovoked voluntary advance.
+
+R07-T06 [B] Mating threat after 25.Qb6
+Starting position: after 25.Qb6; Black to move.
+FEN: 2b3r1/5Npp/1Qp2q2/1p1k4/3P4/8/P4PPP/4RRK1 b - - 2 25
+Objective: detect the immediate threat 26.Qc5#.
+Criterion: the search must recognize that 25...Kc4 addresses the immediate
+threat; it must not consider safe any move that allows Qc5#.
+
+R07-T07 [B] Forced mate in three moves
+Starting position: after 25...Kc4; White to move.
+FEN: 2b3r1/5Npp/1Qp2q2/1p6/2kP4/8/P4PPP/4RRK1 w - - 3 26
+Sequence: 26.Qc5+ Kd3 27.Re3+ Kd2 28.Qc3#.
+Objective: verify check evasions, continuity of the line, and recognition of
+mate.
+Criterion: the normal search must find mate and propagate a mate score consistent
+with the distance; the non-capturing checks preclude using qprobe alone.
+
+R07-T08 [A] General rule: no stand pat and all evasions included
+Main set: R07-T04 and the nodes involving check in R07-T07.
+Objective: verify that quiescence search does not apply stand pat when the king
+is in check and generates all legal evasions.
+Criterion: no in-check node ends through static evaluation while an evasion
+exists; mate is recognized only when there are no legal responses.
+
+R07-T09 [B] Mate-score propagation
+Main set: R07-T07 and the mating nets from Rounds 9 and 10.
+Objective: verify that PHILOCHESS distinguishes mates of different lengths and
+prefers to deliver mate sooner or delay being mated.
+Criterion: scores adjusted by ply; stability of sign and distance when backing
+up through negamax; immediate mate preferred over a longer one.
+
+-------------------------------------------------------------------------------
+ROUND 8 — Shallow Blue 2.0.0 vs PHILOCHESS 0.2-alpha-001
+-------------------------------------------------------------------------------
+
+R08-T01 [B] Qxf7# threat after 7...b4 8.Qf3
+Starting position: after 8.Qf3; Black to move.
+FEN: rnbqkbnr/3ppppp/2p5/4P1N1/pp1P4/2NB1Q2/PPP2PPP/R1B1K2R b KQkq - 1 8
+Objective: verify the threat 9.Qxf7# and preserve the ability to find 8...Nh6 as
+a defense of f7.
+Criterion: the normal search must detect the mating threat and reject moves that
+do not neutralize it.
+
+R08-T02 [B] Mate prepared by 12.Bc4 and the 12...e6 defense
+Starting position: after 12.Bc4; Black to move.
+FEN: rnbqkb1r/3ppp1p/2p3pn/4P1N1/2BP4/p4Q2/P1PBNPPP/R3K2R b KQkq - 1 12
+Threats:
+13.Qxf7+ Nxf7 14.Bxf7#
+13.Bxf7+ Nxf7 14.Qxf7#
+Objective: verify that 12...e6 blocks the diagonal of the bishop on c4 and
+neutralizes both move orders of the mating sequence.
+Criterion: preserve the 12...e6 defensive response found by alpha-001 and do not
+accept a line that allows either of the announced mating sequences.
+
+R08-T03 [B] Attack against h8 and the 20...f6 defense
+Starting position: after 20.Qe5; Black to move.
+FEN: rnb1k1nr/3p1p2/1qpPp3/4Q3/1BBP2pp/p7/P1P1NPPP/1R3RK1 b kq - 1 20
+Objective: verify the attack against the rook on h8 and the response 20...f6,
+which blocks the diagonal and simultaneously attacks the queen.
+Criterion: recognize both tactical functions of 20...f6 and retain the response
+as a valid defensive resource.
+
+R08-T04 [A] Captures and intermediate check from 23.Bxe6
+Starting position: after 22...Kf8; White to move.
+FEN: rnb2knr/3p4/1qpPppQ1/8/1BBP3p/p5p1/P1P1NPPP/1R3RK1 w - - 2 23
+Sequence: 23.Bxe6 gxh2+ 24.Kxh2 dxe6.
+Objective: verify chained captures, an intermediate check, an evasion by capture,
+and the clearance of the d7-square.
+Criterion: qprobe must traverse the complete sequence and reach a legal, stable
+material balance.
+
+R08-T05 [A] Discovered check and evasions after 25.d7+
+Starting position: after 25.d7+; Black to move.
+FEN: rnb2knr/3P4/1qp1ppQ1/8/1B1P3p/p7/P1P1NPPK/1R3R2 b - - 0 25
+Legal evasions: 25...Ne7, 25...Qc5, 25...Qxb4, and 25...c5.
+Objective: verify the discovered check from the bishop on b4 and every legal
+means of responding by blocking or capturing.
+Criterion: stand pat disabled; generate exactly the four evasions.
+
+R08-T06 [A] Block, capture with promotion, and another evasion
+Starting position: after 25.d7+; Black to move.
+FEN: rnb2knr/3P4/1qp1ppQ1/8/1B1P3p/p7/P1P1NPPK/1R3R2 b - - 0 25
+Sequence: 25...c5 26.dxc8=Q+ Ke7.
+Objective: verify the blocking of the check, the capturing promotion that gives
+check again, and the legal king response.
+Criterion: quiescence search must include 25...c5 because it is an evasion,
+generate all four legal promotions on c8, and continue while the king remains
+in check.
+
+R08-T07 [A] General rule for checks, captures, and promotions
+Main set: R08-T04, R08-T05, and R08-T06.
+Objective: verify that quiescence search does not apply stand pat while in check
+and correctly processes captures, promotions, and all legal evasions.
+Criterion: no line ends in an illegal position; zero impacts from the 64-ply
+limit; stable result with and without move ordering.
+
+-------------------------------------------------------------------------------
+ROUND 9 — PHILOCHESS 0.2-alpha-001 vs Dreamer 0.3.0
+-------------------------------------------------------------------------------
+
+R09-T01 [C] Central pressure after 10.Nh3
+Starting position: after 10.Nh3; Black to move.
+FEN: r4rk1/pppqbppp/2n1bn2/3pp3/8/2N4N/PPPPPPPP/R1BQKB1R b K - 7 10
+Contextual sequence: 10...d4 11.Nb1.
+Objective: verify that the central advance attacks the knight and nullifies its
+development.
+Criterion: the future evaluation must value the gain of time and the knight's
+retreat; alpha-002 retains the position as a baseline.
+
+R09-T02 [B] The ...Nb4-a2-xc1 maneuver
+Starting position: after 11.Nb1; Black to move.
+FEN: r4rk1/pppqbppp/2n1bn2/4p3/3p4/7N/PPPPPPPP/RNBQKB1R b K - 1 11
+Sequence: 11...Nb4 12.a3 Na2 13.Rg1 Nxc1 14.Qxc1.
+Objective: verify the knight's penetration, the capture of the bishop on c1,
+and the queen's recapture.
+Criterion: the normal search must maintain a legal line and evaluate the complete
+material outcome.
+
+R09-T03 [A] Chained captures with an intermediate check
+Starting position: after 16...e3; White to move.
+FEN: r4rk1/pppqbppp/4b3/8/3p2n1/P3p2N/1PPPPPPP/RN1QKB1R w - - 0 17
+Sequence: 17.dxe3 dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7
+20.Nxg4 Bxg4.
+Objective: verify a long chain of captures with an intermediate check before
+completing the queen exchange.
+Criterion: qprobe must continue until the stable material outcome; stand pat
+disabled at the node after ...exf2+; zero impacts from the ply limit.
+
+R09-T04 [B] Attack on the rook and the 25.Ke1 intermediate move
+Starting position: after 24.b4; Black to move.
+FEN: 5rk1/ppp1bppp/8/8/1P4b1/P1N5/R1PrPKPP/5B1R b - - 0 24
+Main line: 24...Be6 25.Ke1.
+Objective: recognize that 24...Be6 attacks the rook on a2 and that 25.Ke1 is an
+intermediate move attacking the undefended rook on d2.
+Criterion: the search must consider the counterattack before retreating the
+white rook and evaluate Black's responses.
+
+R09-T05 [B] Doubling the rooks and relative pin
+Starting position: after 25.Ke1; Black to move.
+FEN: 5rk1/ppp1bppp/4b3/8/1P6/P1N5/R1PrP1PP/4KB1R b - - 2 25
+Sequence: 25...Rfd8 26.Ra1 Bf6.
+Objective: verify protection of the rook on d2, doubling on the d-file, and the
+relative pin of the knight on c3.
+Criterion: use normal search; record the tactical line now and reserve the full
+positional assessment of the pin and activity for later versions.
+
+R09-T06 [B] The 27.Ne4 resource and material liquidation
+Starting position: after 26...Bf6; White to move.
+FEN: 3r2k1/ppp2ppp/4bb2/8/1P6/P1N5/2PrP1PP/R3KB1R w - - 5 27
+Sequence: 27.Ne4 Bxa1 28.Nxd2.
+Objective: verify the simultaneous attack against the bishop on f6 and the rook
+on d2, followed by the exchange of one rook for the other.
+Criterion: do not evaluate 27.Ne4 as an immediate loss without examining the
+capture 28.Nxd2.
+
+R09-T07 [B] Absolute pin after 28...Bc3
+Starting position: after 28...Bc3; White to move.
+FEN: 3r2k1/ppp2ppp/4b3/8/1P6/P1b5/2PNP1PP/4KB1R w - - 1 29
+Main line: a legal king move and ...Rxd2.
+Objective: identify that the knight on d2 is absolutely pinned and that Black
+can capture it after the king moves away.
+Criterion: the generator must not allow illegal knight moves that expose the
+king; the search must reach ...Rxd2.
+
+R09-T08 [B] Final mating net
+Starting position: after 30.Rg1; Black to move.
+FEN: 6k1/ppp2ppp/4b3/8/1P6/P1b5/2PrPKPP/5BR1 b - - 1 30
+Sequence: 30...Bd4+ 31.Ke1 Be3 32.Rh1 Rxc2 33.Kd1 Rc1#.
+Objective: verify checks, a quiet move within the mating net, a capture, and mate.
+Criterion: use normal search + quiescence search; recognize the valid mate and
+propagate its distance correctly.
+
+R09-T09 [A] General rule for captures and evasions
+Main set: R09-T03 and the nodes involving check in R09-T08.
+Objective: verify that quiescence search does not apply stand pat while in check
+and correctly examines chained captures and legal evasions.
+Criterion: every node involving check generates complete evasions; mate only
+when none exists; zero illegal positions.
+
+R09-T10 [B] Propagation of the distance to mate
+Main set: R09-T08, in relation to R07-T09.
+Objective: verify the sign, distance, and preference of mate scores.
+Criterion: the attacking side prefers the shortest mating line and the defender
+the longest; negamax correctly preserves the sign at each ply.
+
+-------------------------------------------------------------------------------
+ROUND 10 — PHILOCHESS 0.2-alpha-001 vs Pulse Chess 1.7.3
+-------------------------------------------------------------------------------
+
+R10-T01 [C] Initial sequence 1.Nc3 d5 2.Rb1 d4
+Starting position: initial position; White to move.
+FEN: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+Sequence: 1.Nc3 d5 2.Rb1 d4.
+Objective: compare the unproductive rook move with development and with the
+central response that gains time against the knight.
+Criterion: reserve the positional preference for future evaluation; alpha-002
+only retains the sequence as a stable reference.
+
+R10-T02 [C] Successive attacks against the knight
+Starting position: after 6.Ne4; Black to move.
+FEN: r1bqkbnr/p1p2ppp/2n5/1p2p3/3pN3/8/PPPPPPPP/R1BQKBNR b Kkq - 1 6
+Contextual sequence: 6...f5 7.Ng3 f4 8.Ne4 Bf5 9.d3 Nf6.
+Objective: evaluate the loss of tempi imposed by successive attacks and the
+quality of the knight's retreat squares.
+Criterion: retain as a future test of safe mobility and development; in
+alpha-002, verify legality, stability, and continuity of the search.
+
+R10-T03 [C] Development comparison after 14...O-O
+Starting position: after 14...O-O; White to move.
+FEN: r4rk1/p1p1b1pp/2n1b1q1/1p2p3/3p1p2/3P4/PPPBPPPP/R1Q1KBNR w K - 8 15
+Objective: compare the development and coordination of both armies: Black has
+castled and connected the rooks; White still has undeveloped pieces.
+Criterion: the future evaluation must express Black's advantage beyond material;
+alpha-002 records the baseline.
+
+R10-T04 [C] The active 19...Rf5-h5 maneuver and coordination
+Starting position: after 19.Kd1; Black to move.
+FEN: r4rk1/p1p3pp/4b3/1p6/1b1pqp2/8/PPP1PPPP/RQ1K1BNR b - - 1 19
+Sequence: 19...Rf5 20.Qc1 Rh5 21.Qb1 Re8 22.Qc1 Bc4.
+Objective: distinguish a genuinely active rook maneuver from an unproductive
+repetition: the rook moves from one front to another and participates in the
+attack on the king.
+Criterion: reserve the evaluation of activity and coordination for later
+versions; for now, retain the position and complete sequence.
+
+R10-T05 [B] The 23...d3 break and forced mate
+Starting position: after 23.Rb1; Black to move.
+FEN: 4r1k1/p1p3pp/8/1p5r/1bbpqp2/8/PPP1PPPP/1RQK1BNR b - - 9 23
+Expected move: 23...d3.
+Objective: detect that the break establishes a forced mating sequence.
+Criterion: the normal search must find 23...d3 or demonstrate an equivalent
+mating line; the score must express mate rather than merely material advantage.
+
+R10-T06 [B] Material sacrifices, clearances, and final mate
+Starting position: after 23...d3; White to move.
+FEN: 4r1k1/p1p3pp/8/1p5r/1bb1qp2/3p4/PPP1PPPP/1RQK1BNR w - - 0 24
+Sequence: 24.cxd3 Qxd3+ 25.exd3 Bb3+ 26.axb3 Re1+
+27.Kc2 Rc5#.
+Objective: verify the queen sacrifice, bishop sacrifice, clearance of the e- and
+c-files, the block on b3, and the rook mate.
+Criterion: use normal search + quiescence search. The move 25...Bb3+ is a
+non-capturing check and deliberately constitutes a limit of qprobe in isolation.
+
+R10-T07 [A] General rule: prohibition of stand pat while in check
+Main set: all nodes involving check in R10-T06.
+Objective: verify that quiescence search examines all legal evasions and does not
+accept the static evaluation while the king is under attack.
+Criterion: every in-check node ends in a legal evasion or mate; no line continues
+from a position in which the check has not been resolved.
+
+R10-T08 [B] Material sacrifices followed by non-capturing moves
+Main set: R10-T06.
+Objective: verify the functional boundary between normal search and the current
+quiescence search when a combination contains material sacrifices followed by a
+quiet move or a non-capturing check.
+Criterion: the complete test must be solved through normal search + quiescence
+search; qprobe in isolation is not required to find 25...Bb3+ while non-capturing
+checks remain excluded by design.
+
+===============================================================================
+4. CROSS-CUTTING TESTS DERIVED FROM THE INVENTORY
+===============================================================================
+
+The following checks do not replace the preceding 64 cases. They group properties
+that must be verified in several positions to prevent isolated implementation
+errors.
+
+TR-01 — Stand pat prohibited while in check
+Sets: R03-T05, R04-T04, R05-T03/T05, R06-T07, R07-T04/T08,
+R08-T05/T07, R09-T09, and R10-T07.
+This must hold at every in-check node, not only at the qprobe root.
+
+TR-02 — Complete evasion generation
+Verify blocks, captures of the attacking piece, and king moves.
+Compare the generated set with the expected legal set for each FEN.
+
+TR-03 — Chained captures through stability
+Sets: R03-T03/T04, R04-T01/T03, R08-T04, R09-T03/T09.
+Do not stop the evaluation at an apparent gain when a legal recapture or
+counterattack exists within the quiescence set.
+
+TR-04 — Promotions
+Sets: R06-T05/T06 and R08-T06/T07.
+Include non-capturing promotions, promotions by capture, promotions with check,
+and all four legal promotion pieces.
+
+TR-05 — Move ordering without altering the chess outcome
+Run selected positions with and without move ordering within quiescence search.
+The acceptable best move and evaluation must coincide; only nodes and cutoffs
+should change.
+
+TR-06 — Quiescence-search growth
+Record for each case:
+- main nodes;
+- quiescence nodes;
+- qnodes/nodes ratio;
+- quiescence beta cutoffs;
+- quiescence nodes started while in check;
+- selective depth;
+- 64-ply limit hits.
+Do not yet set a universal node ceiling; identify outlier positions and compare
+growth before and after each correction.
+
+TR-07 — 64-ply limit
+All cases must end with zero hits under normal conditions. If a hit occurs, the
+test must record the FEN, line, and reason before determining whether an error or
+an exceptional position exists.
+
+TR-08 — Mate scores
+Sets: R07-T07/T09, R09-T08/T10, and R10-T05/T06.
+Verify sign, distance, preference for the shortest mate, and resistance by
+choosing the longest mating line. This test belongs to normal search +
+quiescence search.
+
+TR-09 — Deliberate limit of the current quiescence search
+Sets: R05-T04, R07-T07, R09-T08, and R10-T06/T08.
+Document that non-capturing checks and other quiet moves are not part of qprobe
+in alpha-001. Do not declare a quiescence-search failure when the combination can
+only be discovered from the normal search, unless alpha-002 expressly changes
+that design.
+
+TR-10 — Preservation of positive capabilities
+Main sets: R03-T01, R08-T01, R08-T02, R08-T03, and the tactical resources in
+R09-T04/T06.
+The alpha-002 corrections must not eliminate defenses or resources that
+alpha-001 already found correctly.
+
+TR-11 — General legality and stability
+For each FEN:
+- correct loading of the position;
+- generation of legal moves only;
+- make and unmake moves without board corruption;
+- output of a legal move;
+- no freeze, exception, or unexpected termination;
+- clean termination within the time limit.
+
+TR-12 — Independent perft regression
+Repeat perftknown 4 with its 24/24 correct values to confirm that the quiescence-
+search corrections do not alter legal move generation, castling, en passant
+captures, promotions, check detection, or king safety.
+
+===============================================================================
+5. RECOMMENDED FIELDS FOR THE EXECUTABLE TEST SUITE
+===============================================================================
+
+When converting each entry into code, record:
+
+- stable identifier;
+- source round and move;
+- initial FEN;
+- side to move;
+- category [A], [B], or [C];
+- tactical or positional motif;
+- test command;
+- depth or time limit;
+- exact move, acceptable set, or expected property;
+- expected evaluation or qualitative relationship between evaluations;
+- main reference line;
+- complete set of evasions when the king is in check;
+- main nodes and quiescence nodes;
+- quiescence cutoffs and selective depth;
+- ply-limit hits;
+- PASS/FAIL result;
+- observations and the version in which the regression was closed.
+
+===============================================================================
+6. PROPOSED ORDER FOR CONVERSION INTO TESTS
+===============================================================================
+
+Phase 1 — [A] cases
+First implement the 21 quiescence-search tests and checks TR-01 through TR-07.
+These define the correctness core of alpha-002.
+
+Phase 2 — [B] cases
+Add the 33 normal-search + quiescence-search tests. Determine the minimum stable
+depth for each one and distinguish among a unique best move, an acceptable set,
+and a tactical property.
+
+Phase 3 — [C] cases
+Retain the 10 positional positions as a future corpus. Do not require the purely
+material evaluation of alpha-002 to prefer a positional move that it cannot yet
+understand.
+
+Phase 4 — Full execution
+Run the inventory tests, qtest, tactictest, perftknown, UCI time-control tests,
+and clean-exit tests. Record the results and any new case discovered during
+development.
+
+===============================================================================
+7. CONCLUSION
+===============================================================================
+
+The analyses of the ten games provide 64 documented tests. The inventory shows
+that not all the problems observed must be resolved in PHILOCHESS 0.2-alpha-002:
+some belong to future positional evaluation.
+
+The immediate objective of alpha-002 should be to convert the [A] and [B] cases
+into a reproducible test suite that verifies correctness, stability, controlled
+growth, and absence of regressions. The [C] cases are retained so that later
+versions can demonstrate positional improvements on exactly the same real
+tournament positions.
+
+===============================================================================
