@@ -133,3 +133,92 @@
 43. Rf1 Rdc8 44. Rfc1 b4 45. c4 Nb6 46. axb4 axb4 47. Rd1 d5 48. Re1 Rxc4 49. Rxc4 dxc4 
 50. Rf1 c3 51. Ba1 Rg8+ 52. Kh1 Ra8 53. Rg1 Rxa2 54. Rf1 c2 55. Rg1 Rxa1 56. Rxa1 b3 
 57. Rg1 b2 58. Rf1 c1=Q 59. Rxc1 bxc1=Q+ 60. Kg2 Nc4 61. h3 0-1
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "7"]
+[White "Needle 0.531"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1490"]
+[BlackElo "800"]
+[Time "10:40:36"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[GameDuration "00:11:12"]
+[PlyCount "55"]
+[Termination "white mates"]
+
+1. d4 a6 2. e4 a5 3. Bg5 a4 4. c4 b6 5. Nc3 a3 6. bxa3 Rxa3 7. Na4 d6 
+8. Bc1 Rxa4 9. Qxa4+ c6 10. Nf3 e6 11. Be2 d5 12. exd5 exd5 13. Bf4 Bd6 14. Bxd6 Qxd6 
+15. cxd5 Qxd5 16. O-O Qe6 17. Bc4 Qf6 18. Ne5 b5 19. Bxf7+ Ke7 20. Qa8 Nh6 21. Qxb8 Nxf7 
+22. Qc7+ Ke6 23. Rae1 Kd5 24. Nxf7 Rg8 25. Qb6 Kc4 26. Qc5+ Kd3 27. Re3+ Kd2 28. Qc3# 1-0
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "8"]
+[White "Shallow Blue 2.0.0"]
+[Black "PHILOCHESS 0.2 alpha 001"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1617"]
+[BlackElo "800"]
+[Time "11:24:27"]
+[ECO "B00"]
+[Opening "St. George Defense"]
+[GameDuration "00:12:13"]
+[PlyCount "52"]
+[Termination "white wins by adjudication"]
+
+1. e4 a6 2. d4 a5 3. Nc3 b6 4. Nf3 c6 5. e5 a4 6. Bd3 b5 7. Ng5 b4 
+8. Qf3 Nh6 9. Ne2 g6 10. Bd2 a3 11. bxa3 bxa3 12. Bc4 e6 13. Ne4 Ng8 14. Nd6+ Bxd6 
+15. exd6 g5 16. Rb1 h5 17. Bb4 Qb6 18. O-O g4 19. Qe3 h4 20. Qe5 f6 21. Qe4 g3 
+22. Qg6+ Kf8 23. Bxe6 gxh2+ 24. Kxh2 dxe6 25. d7+ c5 26. dxc8=Q+ Ke7 1-0
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "9"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Dreamer 0.3.0"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1314"]
+[Time "12:09:24"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:14:40"]
+[PlyCount "66"]
+[Termination "black mates"]
+
+1. Nc3 e6 2. Rb1 d5 3. Ra1 Nf6 4. Rb1 Be7 5. Ra1 O-O 6. Rb1 e5 7. Ra1 Nc6 
+8. Rb1 Be6 9. Ra1 Qd7 10. Nh3 d4 11. Nb1 Nb4 12. a3 Na2 13. Rg1 Nxc1 14. Qxc1 e4 
+15. Qd1 Ng4 16. Rh1 e3 17. dxe3 dxe3 18. Qxd7 exf2+ 19. Nxf2 Bxd7 20. Nxg4 Bxg4 21. Ra2 Rad8 
+22. Nc3 Rd7 23. Kf2 Rd2 24. b4 Be6 25. Ke1 Rfd8 26. Ra1 Bf6 27. Ne4 Bxa1 28. Nxd2 Bc3 
+29. Kf2 Rxd2 30. Rg1 Bd4+ 31. Ke1 Be3 32. Rh1 Rxc2 33. Kd1 Rc1# 0-1
+
+[Event "PHILOCHESS 0.2-alpha-001 Validation: No Syzygy"]
+[Site "Myracle GUI"]
+[Date "2026.07.12"]
+[Round "10"]
+[White "PHILOCHESS 0.2 alpha 001"]
+[Black "Pulse Chess 1.7.3"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1520"]
+[Time "12:22:27"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[GameDuration "00:10:24"]
+[PlyCount "54"]
+[Termination "black mates"]
+
+1. Nc3 d5 2. Rb1 d4 3. Na4 Nc6 4. Ra1 b5 5. Nc5 e5 6. Ne4 f5 7. Ng3 f4 
+8. Ne4 Bf5 9. d3 Nf6 10. Nxf6+ Qxf6 11. Rb1 Be6 12. Ra1 Qg6 13. Bd2 Be7 14. Qc1 O-O 
+15. Qd1 e4 16. dxe4 Qxe4 17. Qb1 Nb4 18. Bxb4 Bxb4+ 19. Kd1 Rf5 20. Qc1 Rh5 21. Qb1 Re8 
+22. Qc1 Bc4 23. Rb1 d3 24. cxd3 Qxd3+ 25. exd3 Bb3+ 26. axb3 Re1+ 27. Kc2 Rc5# 0-1
