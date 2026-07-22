@@ -72,8 +72,10 @@ Date: June 30, 2026
 PHILOCHESS 0.1-alpha-004 — Square conversion
 
 Technical milestone:
-Functions were added to convert algebraic squares into internal square indexes and vice versa.
-PHILOCHESS can now translate squares such as e2 and e4 into internal numbers, and also convert internal numbers back into algebraic square names.
+Functions were added to convert algebraic squares into internal square indexes
+and vice versa.
+PHILOCHESS can now translate squares such as e2 and e4 into internal numbers,
+and also convert internal numbers back into algebraic square names.
 
 Test performed:
 uci
@@ -146,11 +148,13 @@ Date: July 02, 2026
 
 PHILOCHESS 0.1-alpha-006 — Generate simple moves
 
-Implemented simple move generation for pawns and knights on the internal 64-square board.
+Implemented simple move generation for pawns and knights on the internal
+64-square board.
 
 New functionality:
 - Added basic side-to-move tracking with sideToMove.
-- Added switchSideToMove() to update the side to move after applying a simple move.
+- Added switchSideToMove() to update the side to move after applying a simple
+move.
 - Added helper functions:
   isWhitePiece()
   isBlackPiece()
@@ -198,7 +202,8 @@ PHILOCHESS 0.1-alpha-007 — Move structure and UCI move parsing
 Implemented a formal Move structure to represent moves internally.
 
 Technical milestone:
-PHILOCHESS can now convert UCI move strings into internal move data and convert internal move data back into UCI text.
+PHILOCHESS can now convert UCI move strings into internal move data and convert
+internal move data back into UCI text.
 Each move now stores:
 - origin square;
 - destination square;
@@ -210,14 +215,16 @@ New functionality:
   from
   to
   promotion
-- Added parseMove() to convert UCI move strings such as e2e4 and e7e8q into Move data.
+- Added parseMove() to convert UCI move strings such as e2e4 and e7e8q into
+Move data.
 - Added moveToString() support for Move objects.
 - Added promotion field support using '-' when there is no promotion.
 - Updated simple move application to work with Move objects.
 - Updated simple move generation to return Move objects.
 - Added the internal debug command:
   move
-- Updated go so that PHILOCHESS returns the first move generated from its internal move list instead of always returning the fixed move e2e4.
+- Updated go so that PHILOCHESS returns the first move generated from its
+internal move list instead of always returning the fixed move e2e4.
 
 Test performed:
 uci
@@ -251,14 +258,17 @@ Total: 20
 The command go returned:
 bestmove b1c3
 
-This confirms that PHILOCHESS no longer depends on a fixed bestmove. It can now select the first generated move from its internal move list.
+This confirms that PHILOCHESS no longer depends on a fixed bestmove. It can now
+select the first generated move from its internal move list.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
-- The move parser validates the UCI move format but does not validate full chess legality.
-- Promotion is now represented internally, but promotion legality is not fully validated yet.
+- The move parser validates the UCI move format but does not validate full
+chess legality.
+- Promotion is now represented internally, but promotion legality is not fully
+validated yet.
 - Move generation is still limited to pawns and knights.
 - No legal move validation yet.
 - No king safety validation.
@@ -272,7 +282,9 @@ Current limitations:
 
 Conclusion:
 PHILOCHESS 0.1-alpha-007 has been completed.
-The engine now has a cleaner internal representation of moves and is better prepared for future move generation, promotions, legal move validation, and search.
+The engine now has a cleaner internal representation of moves and is better
+prepared for future move generation, promotions, legal move validation, and
+search.
 
 Date: July 03, 2026
 
@@ -282,7 +294,9 @@ Implemented simple bishop move generation on the internal 64-square board.
 
 Technical milestone:
 PHILOCHESS can now generate diagonal sliding moves for bishops.
-This is the first step toward full sliding piece move generation, which will later be reused for rooks, queens, attack detection, legal move validation, and perft testing.
+This is the first step toward full sliding piece move generation, which will
+later be reused for rooks, queens, attack detection, legal move validation, and
+perft testing.
 
 New functionality:
 - Added generateSlidingMovesFromSquare().
@@ -308,7 +322,8 @@ Result:
 From the starting position, the command moves still generated:
 Total: 20
 
-This is correct because the bishops are blocked by their own pawns in the initial position.
+This is correct because the bishops are blocked by their own pawns in the
+initial position.
 
 After:
 position startpos moves e2e4 e7e5
@@ -344,7 +359,8 @@ Current limitations:
 Conclusion:
 PHILOCHESS 0.1-alpha-008 has been completed.
 The engine now generates simple pawn, knight, and bishop moves.
-This version marks the beginning of sliding piece move generation in PHILOCHESS.
+This version marks the beginning of sliding piece move generation in
+PHILOCHESS.
 
 Date: July 03, 2026
 
@@ -354,7 +370,9 @@ Implemented simple rook move generation on the internal 64-square board.
 
 Technical milestone:
 PHILOCHESS can now generate orthogonal sliding moves for rooks.
-This extends the sliding move generation system introduced in alpha-008 and confirms that generateSlidingMovesFromSquare() can be reused for different sliding pieces.
+This extends the sliding move generation system introduced in alpha-008 and
+confirms that generateSlidingMovesFromSquare() can be reused for different
+sliding pieces.
 
 New functionality:
 - Added generateRookMovesFromSquare().
@@ -380,7 +398,8 @@ Result:
 From the starting position, the command moves still generated:
 Total: 20
 
-This is correct because the rooks are blocked by their own pieces in the initial position.
+This is correct because the rooks are blocked by their own pieces in the
+initial position.
 
 After:
 position startpos moves a2a4 h7h5
@@ -403,7 +422,8 @@ h8h6
 The output ended with:
 Total: 21
 
-This confirms that rook move generation works for both sides and that sliding movement correctly stops before a blocking own piece.
+This confirms that rook move generation works for both sides and that sliding
+movement correctly stops before a blocking own piece.
 
 The program compiled successfully.
 The program exited successfully with code 0.
@@ -422,7 +442,8 @@ Current limitations:
 Conclusion:
 PHILOCHESS 0.1-alpha-009 has been completed.
 The engine now generates simple pawn, knight, bishop, and rook moves.
-This version confirms that the sliding piece generation system is reusable and ready for queen move generation.
+This version confirms that the sliding piece generation system is reusable and
+ready for queen move generation.
 
 Date: July 03, 2026
 
@@ -431,8 +452,10 @@ PHILOCHESS 0.1-alpha-010 — Generate queen moves
 Implemented simple queen move generation on the internal 64-square board.
 
 Technical milestone:
-PHILOCHESS can now generate queen moves by combining orthogonal and diagonal sliding directions.
-This confirms that the sliding move generation system can be reused for bishops, rooks, and queens.
+PHILOCHESS can now generate queen moves by combining orthogonal and diagonal
+sliding directions.
+This confirms that the sliding move generation system can be reused for
+bishops, rooks, and queens.
 
 New functionality:
 - Added generateQueenMovesFromSquare().
@@ -459,7 +482,8 @@ Result:
 From the starting position, the command moves still generated:
 Total: 20
 
-This is correct because the queens are blocked by their own pieces in the initial position.
+This is correct because the queens are blocked by their own pieces in the
+initial position.
 
 After:
 position startpos moves d2d4 d7d5
@@ -482,7 +506,8 @@ d8d6
 The output ended with:
 Total: 26
 
-This confirms that queen move generation works for both sides and that queen movement correctly combines orthogonal and diagonal sliding directions.
+This confirms that queen move generation works for both sides and that queen
+movement correctly combines orthogonal and diagonal sliding directions.
 
 The program compiled successfully.
 The program exited successfully with code 0.
@@ -500,8 +525,10 @@ Current limitations:
 Conclusion:
 PHILOCHESS 0.1-alpha-010 has been completed.
 The engine now generates simple pawn, knight, bishop, rook, and queen moves.
-This version confirms that the sliding piece generation system is complete for bishops, rooks, and queens.
-PHILOCHESS is now one step away from completing pseudo-legal move generation for all basic pieces.
+This version confirms that the sliding piece generation system is complete for
+bishops, rooks, and queens.
+PHILOCHESS is now one step away from completing pseudo-legal move generation
+for all basic pieces.
 
 Date: July 03, 2026
 
@@ -511,9 +538,11 @@ Implemented simple king move generation on the internal 64-square board.
 
 Technical milestone:
 PHILOCHESS can now generate pseudo-legal king moves.
-The king can move one square in any direction, as long as the destination square is inside the board and is not occupied by a friendly piece.
+The king can move one square in any direction, as long as the destination
+square is inside the board and is not occupied by a friendly piece.
 
-This completes pseudo-legal move generation for all basic chess pieces: pawns, knights, bishops, rooks, queens, and kings.
+This completes pseudo-legal move generation for all basic chess pieces: pawns,
+knights, bishops, rooks, queens, and kings.
 
 New functionality:
 - Added generateKingMovesFromSquare().
@@ -538,7 +567,8 @@ Result:
 From the starting position, the command moves still generated:
 Total: 20
 
-This is correct because the king is blocked by its own pieces in the initial position.
+This is correct because the king is blocked by its own pieces in the initial
+position.
 
 After:
 position startpos moves e2e4 e7e5
@@ -559,7 +589,8 @@ e8e7
 The output ended with:
 Total: 29
 
-This confirms that king move generation works for both sides and that the king can move one square when a legal board square is available.
+This confirms that king move generation works for both sides and that the king
+can move one square when a legal board square is available.
 
 The program compiled successfully.
 The program exited successfully with code 0.
@@ -568,7 +599,8 @@ Current limitations:
 - Move generation is still pseudo-legal.
 - No full legal move validation yet.
 - No king safety validation yet.
-- The king can still move into attacked squares because attack detection is not implemented yet.
+- The king can still move into attacked squares because attack detection is not
+implemented yet.
 - No check detection yet.
 - No castling yet.
 - No en passant.
@@ -576,8 +608,11 @@ Current limitations:
 
 Conclusion:
 PHILOCHESS 0.1-alpha-011 has been completed.
-The engine now generates simple pseudo-legal moves for all basic chess pieces: pawns, knights, bishops, rooks, queens, and kings.
-This is a major milestone in PHILOCHESS 0.1, because the engine now has a complete basic move generation foundation before legal validation, check detection, castling, en passant, promotions, and perft testing.
+The engine now generates simple pseudo-legal moves for all basic chess pieces:
+pawns, knights, bishops, rooks, queens, and kings.
+This is a major milestone in PHILOCHESS 0.1, because the engine now has a
+complete basic move generation foundation before legal validation, check
+detection, castling, en passant, promotions, and perft testing.
 
 Date: July 03, 2026
 
@@ -586,8 +621,10 @@ PHILOCHESS 0.1-alpha-012 — Pseudo-legal move generation complete
 Implemented basic pawn promotion move generation.
 
 Technical milestone:
-PHILOCHESS can now generate basic pseudo-legal moves for all standard chess pieces, including pawn promotions.
-Promotion moves are generated both for quiet pawn advances and for pawn captures on the promotion rank.
+PHILOCHESS can now generate basic pseudo-legal moves for all standard chess
+pieces, including pawn promotions.
+Promotion moves are generated both for quiet pawn advances and for pawn
+captures on the promotion rank.
 
 This completes the first basic pseudo-legal move generation foundation for:
 - pawns;
@@ -610,7 +647,8 @@ New functionality:
 - Added black pawn promotions on the first rank.
 - Added promotion by quiet pawn advance.
 - Added promotion by pawn capture.
-- Updated pawn move generation to produce promotion Move objects with the promotion field set.
+- Updated pawn move generation to produce promotion Move objects with the
+promotion field set.
 
 Test performed:
 uci
@@ -626,7 +664,8 @@ Total: 20
 The command go returned:
 bestmove b1c3
 
-This confirms that the initial position move count remains stable after adding promotion logic.
+This confirms that the initial position move count remains stable after adding
+promotion logic.
 
 Additional internal promotion test:
 position startpos moves e2e4 e8e7 e4e5 a7a6 e5e6 a6a5 e6e7 a5a4
@@ -653,31 +692,41 @@ The output ended with:
 Total: 40
 
 Important note:
-The additional promotion test used an artificial internal sequence only to verify promotion generation.
-The current applySimpleMove() function still applies manually entered moves without full legality validation.
-Therefore, this test confirms promotion generation, but it is not yet a legal-game validation test.
+The additional promotion test used an artificial internal sequence only to
+verify promotion generation.
+The current applySimpleMove() function still applies manually entered moves
+without full legality validation.
+Therefore, this test confirms promotion generation, but it is not yet a
+legal-game validation test.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
 - Move generation is still pseudo-legal.
-- Manual move application still does not validate full legality before applying moves.
+- Manual move application still does not validate full legality before applying
+moves.
 - applySimpleMove() can still apply illegal manually entered moves.
 - No full legal move validation yet.
 - No king safety validation yet.
-- The king can still move into attacked squares because attack detection is not implemented yet.
+- The king can still move into attacked squares because attack detection is not
+implemented yet.
 - No check detection yet.
 - No castling yet.
 - No en passant.
-- Promotion legality is generated for pawns, but full legal validation is still pending.
+- Promotion legality is generated for pawns, but full legal validation is still
+pending.
 - No perft testing yet.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-012 has been completed.
-The engine now generates basic pseudo-legal moves for all standard chess pieces, including basic captures and pawn promotions.
-This is a major milestone in PHILOCHESS 0.1: the first complete pseudo-legal move generation layer is now in place.
-The next development phase should focus on validating moves before applying them, preventing illegal manual move sequences, detecting attacks, checking king safety, and preparing for perft testing.
+The engine now generates basic pseudo-legal moves for all standard chess
+pieces, including basic captures and pawn promotions.
+This is a major milestone in PHILOCHESS 0.1: the first complete pseudo-legal
+move generation layer is now in place.
+The next development phase should focus on validating moves before applying
+them, preventing illegal manual move sequences, detecting attacks, checking
+king safety, and preparing for perft testing.
 
 Date: July 04, 2026
 
@@ -686,10 +735,12 @@ PHILOCHESS 0.1-alpha-013 — King detection and attack detection
 Implemented basic king detection, attack detection, and check detection.
 
 Technical milestone:
-PHILOCHESS can now find the kings on the internal 64-square board and determine whether a given square is attacked by a specific side.
+PHILOCHESS can now find the kings on the internal 64-square board and determine
+whether a given square is attacked by a specific side.
 The engine can also determine whether White or Black is currently in check.
 
-This is the first step toward full legal move validation, because PHILOCHESS can now answer the essential question:
+This is the first step toward full legal move validation, because PHILOCHESS
+can now answer the essential question:
 Is the king under attack?
 
 New functionality:
@@ -732,7 +783,8 @@ Black in check: no
 The command moves still generated:
 Total: 20
 
-This confirms that the initial position remains stable after adding king and attack detection.
+This confirms that the initial position remains stable after adding king and
+attack detection.
 
 After:
 position startpos moves e2e4 e7e5 d1h5 b8c6 f1c4 g8f6 h5f7
@@ -749,34 +801,43 @@ attacked e8 white
 returned:
 e8 attacked by white: yes
 
-This confirms that PHILOCHESS correctly detects that the black king on e8 is attacked by White.
+This confirms that PHILOCHESS correctly detects that the black king on e8 is
+attacked by White.
 
 Important note:
 The tested tactical position is checkmate in chess terms.
 However, PHILOCHESS 0.1-alpha-013 does not yet detect checkmate.
-At this stage, the engine only detects kings, attacked squares, and check status.
-Checkmate detection will require legal move filtering and counting the legal replies available to the side in check.
+At this stage, the engine only detects kings, attacked squares, and check
+status.
+Checkmate detection will require legal move filtering and counting the legal
+replies available to the side in check.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
 - Move generation is still pseudo-legal.
-- Manual move application still does not validate full legality before applying moves.
+- Manual move application still does not validate full legality before applying
+moves.
 - Full legal move filtering is not implemented yet.
-- PHILOCHESS can detect check, but it cannot yet prevent illegal moves that leave the own king in check.
+- PHILOCHESS can detect check, but it cannot yet prevent illegal moves that
+leave the own king in check.
 - PHILOCHESS cannot yet detect checkmate.
 - PHILOCHESS cannot yet detect stalemate.
 - No castling yet.
 - No en passant.
-- Promotion legality is generated for pawns, but full legal validation is still pending.
+- Promotion legality is generated for pawns, but full legal validation is still
+pending.
 - No perft testing yet.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-013 has been completed.
 The engine can now detect kings, attacked squares, and check.
-This is a major step from pseudo-legal move generation toward real chess legality.
-The next development phase should focus on filtering pseudo-legal moves, keeping only legal moves, and preventing any move that leaves the own king in check.
+This is a major step from pseudo-legal move generation toward real chess
+legality.
+The next development phase should focus on filtering pseudo-legal moves,
+keeping only legal moves, and preventing any move that leaves the own king in
+check.
 
 Date: July 05, 2026
 
@@ -785,9 +846,12 @@ PHILOCHESS 0.1-alpha-014 — Legal move filtering
 Implemented the first legal move filtering layer.
 
 Technical milestone:
-PHILOCHESS can now generate pseudo-legal moves, test each candidate move on a temporary position, and keep only the moves that do not leave the moving side's own king in check.
+PHILOCHESS can now generate pseudo-legal moves, test each candidate move on a
+temporary position, and keep only the moves that do not leave the moving side's
+own king in check.
 
-This is the first version in which the moves command no longer lists only pseudo-legal moves. It now lists legal moves according to basic king safety.
+This is the first version in which the moves command no longer lists only
+pseudo-legal moves. It now lists legal moves according to basic king safety.
 
 New functionality:
 - Added sameMove().
@@ -799,8 +863,10 @@ New functionality:
   pmoves
 - Updated moves so that it now prints legal moves.
 - Updated go so that it now selects the first legal move.
-- Updated position startpos moves ... so that entered moves are validated against the current list of legal moves.
-- Illegal moves entered through the position command are now rejected instead of being applied silently.
+- Updated position startpos moves ... so that entered moves are validated
+against the current list of legal moves.
+- Illegal moves entered through the position command are now rejected instead
+of being applied silently.
 
 Test performed:
 uci
@@ -844,10 +910,12 @@ Total: 0
 The command go returned:
 bestmove 0000
 
-This confirms that PHILOCHESS correctly filters legal moves in this critical checkmate position. Black is in check and has no legal moves available.
+This confirms that PHILOCHESS correctly filters legal moves in this critical
+checkmate position. Black is in check and has no legal moves available.
 
 Important note:
-PHILOCHESS 0.1-alpha-014 does not yet print an explicit checkmate or stalemate result.
+PHILOCHESS 0.1-alpha-014 does not yet print an explicit checkmate or stalemate
+result.
 However, the combination of:
 - side to move is in check;
 - legal move count is 0;
@@ -862,14 +930,18 @@ Current limitations:
 - Stalemate is not yet reported explicitly as stalemate.
 - Castling is not implemented yet.
 - En passant is not implemented yet.
-- Promotion generation exists, but promotion legality still needs more complete testing.
+- Promotion generation exists, but promotion legality still needs more complete
+testing.
 - No perft testing yet.
-- Full move legality is still incomplete until castling, en passant, and all special rule details are implemented.
+- Full move legality is still incomplete until castling, en passant, and all
+special rule details are implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-014 has been completed.
-The engine now performs basic legal move filtering and prevents moves that leave the own king in check.
-This is a major milestone in PHILOCHESS 0.1 because the engine has taken its first real step from pseudo-legal move generation toward actual chess legality.
+The engine now performs basic legal move filtering and prevents moves that
+leave the own king in check.
+This is a major milestone in PHILOCHESS 0.1 because the engine has taken its
+first real step from pseudo-legal move generation toward actual chess legality.
 
 Date: July 05, 2026
 
@@ -878,7 +950,8 @@ PHILOCHESS 0.1-alpha-015 — Game status detection
 Implemented basic game status detection.
 
 Technical milestone:
-PHILOCHESS can now interpret the result of legal move generation and determine the current game status for the side to move.
+PHILOCHESS can now interpret the result of legal move generation and determine
+the current game status for the side to move.
 
 The engine now checks:
 - which side is to move;
@@ -886,7 +959,10 @@ The engine now checks:
 - how many legal moves are available;
 - whether the position is normal, check, checkmate, or stalemate.
 
-This version builds directly on alpha-014. The previous version already filtered legal moves and could implicitly identify checkmate when the side to move was in check and had no legal moves. Alpha-015 now gives that condition an explicit chess meaning through a game status system.
+This version builds directly on alpha-014. The previous version already
+filtered legal moves and could implicitly identify checkmate when the side to
+move was in check and had no legal moves. Alpha-015 now gives that condition an
+explicit chess meaning through a game status system.
 
 New functionality:
 - Added the GameStatus enum:
@@ -949,30 +1025,38 @@ Total: 0
 The command go returned:
 bestmove 0000
 
-This confirms that PHILOCHESS now explicitly recognizes the tested checkmate position.
+This confirms that PHILOCHESS now explicitly recognizes the tested checkmate
+position.
 
 Important note:
 Stalemate detection logic is already present in alpha-015:
 - no legal moves and not in check means stalemate.
 
-However, stalemate has not yet been tested from the console because PHILOCHESS does not yet support loading arbitrary FEN positions. A future FEN loader will make direct stalemate testing practical.
+However, stalemate has not yet been tested from the console because PHILOCHESS
+does not yet support loading arbitrary FEN positions. A future FEN loader will
+make direct stalemate testing practical.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
-- Stalemate logic exists, but it has not yet been validated with a direct test position.
+- Stalemate logic exists, but it has not yet been validated with a direct test
+position.
 - FEN loading is not implemented yet.
 - Castling is not implemented yet.
 - En passant is not implemented yet.
-- Promotion generation exists, but promotion legality still needs more complete testing.
+- Promotion generation exists, but promotion legality still needs more complete
+testing.
 - No perft testing yet.
-- Full move legality remains incomplete until special rules and broader validation tests are implemented.
+- Full move legality remains incomplete until special rules and broader
+validation tests are implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-015 has been completed.
-The engine can now report the current game status as normal, check, checkmate, or stalemate.
-This is an important consolidation milestone: PHILOCHESS no longer only counts legal moves; it can now interpret them in chess terms.
+The engine can now report the current game status as normal, check, checkmate,
+or stalemate.
+This is an important consolidation milestone: PHILOCHESS no longer only counts
+legal moves; it can now interpret them in chess terms.
 
 Date: July 05, 2026
 
@@ -982,9 +1066,13 @@ Implemented basic FEN loading through the position command.
 
 Technical milestone:
 PHILOCHESS can now load arbitrary board positions using basic FEN notation.
-This makes it possible to test specific chess positions directly from the console, including checkmate, stalemate, unusual king positions, promotion scenarios, and future perft positions.
+This makes it possible to test specific chess positions directly from the
+console, including checkmate, stalemate, unusual king positions, promotion
+scenarios, and future perft positions.
 
-This version also allowed the first direct validation of stalemate detection, which had already been implemented logically in alpha-015 but had not yet been tested from a custom position.
+This version also allowed the first direct validation of stalemate detection,
+which had already been implemented logically in alpha-015 but had not yet been
+tested from a custom position.
 
 New functionality:
 - Added FEN-related fields to the Position structure:
@@ -1037,31 +1125,40 @@ Total: 0
 The command go returned:
 bestmove 0000
 
-This confirms that PHILOCHESS can now load a FEN position and correctly recognize stalemate from the console.
+This confirms that PHILOCHESS can now load a FEN position and correctly
+recognize stalemate from the console.
 
 Important note:
-Basic FEN loading is now available, but the engine still does not use castling rights or en passant squares for full special move generation.
+Basic FEN loading is now available, but the engine still does not use castling
+rights or en passant squares for full special move generation.
 These fields are stored, but castling and en passant move logic remain pending.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
-- Castling rights are read from FEN and stored, but castling is not implemented yet.
-- En passant square is read from FEN and stored, but en passant capture is not implemented yet.
-- Halfmove clock and fullmove number are read from FEN, but they are not yet used for game adjudication.
+- Castling rights are read from FEN and stored, but castling is not implemented
+yet.
+- En passant square is read from FEN and stored, but en passant capture is not
+implemented yet.
+- Halfmove clock and fullmove number are read from FEN, but they are not yet
+used for game adjudication.
 - No perft command yet.
-- Full move legality remains incomplete until castling, en passant, and special rule validation are implemented.
+- Full move legality remains incomplete until castling, en passant, and special
+rule validation are implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-016 has been completed.
 The engine can now load basic FEN positions and use them for direct testing.
-This is a major practical step because PHILOCHESS can now validate specific positions without needing long artificial move sequences.
-The stalemate logic introduced in alpha-015 has now been confirmed in console through a real FEN test position.
+This is a major practical step because PHILOCHESS can now validate specific
+positions without needing long artificial move sequences.
+The stalemate logic introduced in alpha-015 has now been confirmed in console
+through a real FEN test position.
 
 Additional validation tests for alpha-016:
 
-Two additional FEN-based tests were performed to validate the new FEN loading functionality together with legal move filtering and king safety.
+Two additional FEN-based tests were performed to validate the new FEN loading
+functionality together with legal move filtering and king safety.
 
 Test 1 — Normal position and illegal own-piece destination rejection
 
@@ -1090,20 +1187,23 @@ The command go returned:
 bestmove b1c3
 
 Additional illegal move test:
-position fen r1bqkb1r/p4ppp/2p2n2/nB2p1N1/8/8/PPPP1PPP/RNBQK2R w - - 0 1 moves b1d2
+position fen r1bqkb1r/p4ppp/2p2n2/nB2p1N1/8/8/PPPP1PPP/RNBQK2R w - - 0 1 moves
+b1d2
 
 Result:
 PHILOCHESS correctly rejected the move:
 info string illegal move ignored: b1d2
 
-This confirmed that the engine does not allow a piece to move onto a square occupied by a friendly piece.
+This confirmed that the engine does not allow a piece to move onto a square
+occupied by a friendly piece.
 
 Test 2 — Check position and legal replies only
 
 FEN tested:
 r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP3PPP/RNBQK2R w - - 0 1
 
-In this position, the black bishop on b4 gives check to the white king on e1 along the diagonal:
+In this position, the black bishop on b4 gives check to the white king on e1
+along the diagonal:
 b4-c3-d2-e1
 
 Commands performed:
@@ -1140,7 +1240,8 @@ f3d2
 The command go returned:
 bestmove b1c3
 
-This confirms that PHILOCHESS correctly detects check and filters the move list to keep only legal replies that resolve the check.
+This confirms that PHILOCHESS correctly detects check and filters the move list
+to keep only legal replies that resolve the check.
 
 Date: July 05, 2026
 
@@ -1150,9 +1251,12 @@ Implemented castling move generation and castling move application.
 
 Technical milestone:
 PHILOCHESS can now generate and apply basic castling moves for both sides.
-The engine uses the castling rights stored from FEN notation and validates the essential chess conditions required for castling.
+The engine uses the castling rights stored from FEN notation and validates the
+essential chess conditions required for castling.
 
-This version builds directly on alpha-016. The previous version already loaded castling rights from FEN, but did not use them for move generation. Alpha-017 now turns those stored rights into actual legal castling moves.
+This version builds directly on alpha-016. The previous version already loaded
+castling rights from FEN, but did not use them for move generation. Alpha-017
+now turns those stored rights into actual legal castling moves.
 
 New functionality:
 - Added castling move generation for:
@@ -1165,7 +1269,8 @@ New functionality:
   Q
   k
   q
-- Added verification that the king and rook are on their correct starting squares.
+- Added verification that the king and rook are on their correct starting
+squares.
 - Added verification that all squares between the king and rook are empty.
 - Added verification that the king is not currently in check.
 - Added verification that the king does not pass through an attacked square.
@@ -1176,7 +1281,9 @@ New functionality:
   - a rook move from its original square;
   - a rook capture on its original square;
   - a castling move.
-- The rule that an attacked rook alone does not make castling illegal was preserved. Only the king's starting, passing, and destination squares are relevant for attack validation.
+- The rule that an attacked rook alone does not make castling illegal was
+preserved. Only the king's starting, passing, and destination squares are
+relevant for attack validation.
 
 Test 1 — White castling availability and white kingside castling application
 
@@ -1198,7 +1305,8 @@ e1c1
 The output ended with:
 Total: 26
 
-This confirms that PHILOCHESS correctly recognizes both available white castling rights in an open castling position.
+This confirms that PHILOCHESS correctly recognizes both available white
+castling rights in an open castling position.
 
 Additional command:
 position fen r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1 moves e1g1
@@ -1216,15 +1324,18 @@ The resulting board showed:
 - Castling rights reduced to:
   kq
 
-This confirms that PHILOCHESS correctly moves both the king and rook during castling and updates the castling rights.
+This confirms that PHILOCHESS correctly moves both the king and rook during
+castling and updates the castling rights.
 
-Test 2 — Black queenside castling allowed while black kingside castling is illegal because the king would pass through check
+Test 2 — Black queenside castling allowed while black kingside castling is
+illegal because the king would pass through check
 
 FEN tested:
 r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1
 
 In this position, the white rook on f1 attacks the f-file.
-Therefore, black kingside castling is illegal because the black king would pass through f8.
+Therefore, black kingside castling is illegal because the black king would pass
+through f8.
 The same rook also makes king moves to f8 and f7 illegal.
 
 Commands performed:
@@ -1239,7 +1350,9 @@ Total: 23
 The move e8c8 was generated.
 The move e8g8 was not generated.
 
-This confirms that PHILOCHESS correctly allows black queenside castling while rejecting black kingside castling because the king would pass through an attacked square.
+This confirms that PHILOCHESS correctly allows black queenside castling while
+rejecting black kingside castling because the king would pass through an
+attacked square.
 
 Additional command:
 position fen r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1 moves e8c8
@@ -1257,23 +1370,31 @@ The resulting board showed:
 - Castling rights:
   -
 
-This confirms that PHILOCHESS correctly applies black queenside castling and removes the remaining black castling rights.
+This confirms that PHILOCHESS correctly applies black queenside castling and
+removes the remaining black castling rights.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
 - En passant is still not implemented.
-- The en passant square is read from FEN and stored, but it is not yet used for en passant capture generation.
+- The en passant square is read from FEN and stored, but it is not yet used for
+en passant capture generation.
 - No perft command yet.
-- Full move legality still needs broader validation through perft and additional special-rule tests.
-- Halfmove clock and fullmove number are updated in a basic way, but they are not yet used for game adjudication.
+- Full move legality still needs broader validation through perft and
+additional special-rule tests.
+- Halfmove clock and fullmove number are updated in a basic way, but they are
+not yet used for game adjudication.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-017 has been completed.
-The engine can now generate and apply castling moves under the essential legal conditions.
-This is a major step toward complete legal move generation, because one of the most delicate special chess rules is now implemented and validated with direct FEN-based console tests.
-The next development step should focus on en passant capture generation and application.
+The engine can now generate and apply castling moves under the essential legal
+conditions.
+This is a major step toward complete legal move generation, because one of the
+most delicate special chess rules is now implemented and validated with direct
+FEN-based console tests.
+The next development step should focus on en passant capture generation and
+application.
 
 Date: July 05, 2026
 
@@ -1283,9 +1404,15 @@ Implemented en passant capture generation and en passant capture application.
 
 Technical milestone:
 PHILOCHESS can now generate and apply en passant captures.
-The engine updates the en passant square after a double pawn advance and correctly removes the captured pawn from the square behind the destination square during an en passant capture.
+The engine updates the en passant square after a double pawn advance and
+correctly removes the captured pawn from the square behind the destination
+square during an en passant capture.
 
-This version builds directly on alpha-017. The previous version already displayed and stored the en passant square from FEN-related data, but en passant capture was not yet implemented. Alpha-018 now turns that stored and updated en passant information into actual legal move generation and move application.
+This version builds directly on alpha-017. The previous version already
+displayed and stored the en passant square from FEN-related data, but en
+passant capture was not yet implemented. Alpha-018 now turns that stored and
+updated en passant information into actual legal move generation and move
+application.
 
 New functionality:
 - Added en passant capture generation.
@@ -1294,7 +1421,8 @@ New functionality:
 - Added en passant square update after a legal double pawn advance.
 - Added en passant square clearing after ordinary moves.
 - Added halfmove clock reset after en passant capture.
-- Preserved normal legal move filtering, so en passant captures are still tested against king safety.
+- Preserved normal legal move filtering, so en passant captures are still
+tested against king safety.
 - Updated UCI identification to:
   id name PHILOCHESS 0.1-alpha-018
 
@@ -1308,7 +1436,8 @@ moves
 
 Result:
 PHILOCHESS accepted the move sequence correctly.
-After the black pawn moved from d7 to d5, the white pawn on e5 was allowed to capture en passant.
+After the black pawn moved from d7 to d5, the white pawn on e5 was allowed to
+capture en passant.
 
 The command moves generated the en passant move:
 e5d6
@@ -1316,7 +1445,8 @@ e5d6
 The output ended with:
 Total: 31
 
-This confirms that PHILOCHESS correctly recognizes the en passant opportunity after a double pawn advance.
+This confirms that PHILOCHESS correctly recognizes the en passant opportunity
+after a double pawn advance.
 
 Test 2 — White en passant capture application
 
@@ -1341,27 +1471,38 @@ The resulting board showed:
 - Fullmove number was:
   3
 
-This confirms that PHILOCHESS correctly moves the capturing pawn, removes the captured pawn from the correct square, clears the en passant square, updates the halfmove clock, and preserves the remaining position state.
+This confirms that PHILOCHESS correctly moves the capturing pawn, removes the
+captured pawn from the correct square, clears the en passant square, updates
+the halfmove clock, and preserves the remaining position state.
 
 The program compiled successfully.
 The program exited successfully with code 0.
 
 Current limitations:
 - No perft command yet.
-- Full move generation still needs broader verification through perft and divide.
-- En passant should still receive additional validation tests, including black en passant and positions where en passant would expose the own king to check.
-- Promotion generation exists, but promotion legality still needs broader validation.
-- Halfmove clock and fullmove number are updated in a basic way, but they are not yet used for game adjudication.
+- Full move generation still needs broader verification through perft and
+divide.
+- En passant should still receive additional validation tests, including black
+en passant and positions where en passant would expose the own king to check.
+- Promotion generation exists, but promotion legality still needs broader
+validation.
+- Halfmove clock and fullmove number are updated in a basic way, but they are
+not yet used for game adjudication.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-018 has been completed.
 The engine can now generate and apply en passant captures.
-This is a major step toward complete legal move generation because the second major special chess rule, after castling, is now implemented and validated with a direct console test.
-The next development step should focus on additional special-rule validation, promotion consolidation, and then perft/divide testing.
+This is a major step toward complete legal move generation because the second
+major special chess rule, after castling, is now implemented and validated with
+a direct console test.
+The next development step should focus on additional special-rule validation,
+promotion consolidation, and then perft/divide testing.
 
 Additional validation tests for alpha-018:
 
-Several additional tests were performed to validate en passant more rigorously, including king safety, the immediate-only nature of en passant, and black en passant capture.
+Several additional tests were performed to validate en passant more rigorously,
+including king safety, the immediate-only nature of en passant, and black en
+passant capture.
 
 Test 3 — En passant rejected because it would expose the own king to check
 
@@ -1381,13 +1522,17 @@ Additional FEN tested with active en passant square:
 r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq d6 0 7
 
 Command performed:
-position fen r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq d6 0 7 moves e5d6
+position fen r1b1kbnr/1pp2ppp/p1n1q3/3pP3/8/N4N2/PPPP1PPP/R1BQK2R w KQkq d6 0 7
+moves e5d6
 
 Result:
 PHILOCHESS rejected the move:
 info string illegal move ignored: e5d6
 
-This confirms that even when the en passant square is active, PHILOCHESS rejects an en passant capture if it would expose the own king to check. In this position, moving the white pawn from e5 to d6 would open the e-file and expose the white king on e1 to the black queen on e6.
+This confirms that even when the en passant square is active, PHILOCHESS
+rejects an en passant capture if it would expose the own king to check. In this
+position, moving the white pawn from e5 to d6 would open the e-file and expose
+the white king on e1 to the black queen on e6.
 
 Test 4 — White en passant right is lost if not used immediately
 
@@ -1402,13 +1547,16 @@ Result:
 The move e5d6 did not appear in the legal move list.
 
 Additional command:
-position fen r1b1kbnr/1pp1qppp/p1n5/3pP3/8/N4N2/PPPP1PPP/R1BQ1RK1 w kq - 2 8 moves e5d6
+position fen r1b1kbnr/1pp1qppp/p1n5/3pP3/8/N4N2/PPPP1PPP/R1BQ1RK1 w kq - 2 8
+moves e5d6
 
 Result:
 PHILOCHESS rejected the move:
 info string illegal move ignored: e5d6
 
-This confirms that en passant cannot be delayed. If the player does not capture en passant immediately after the opponent's double pawn advance, the right disappears on the next turn.
+This confirms that en passant cannot be delayed. If the player does not capture
+en passant immediately after the opponent's double pawn advance, the right
+disappears on the next turn.
 
 Test 5 — Black en passant capture generation and application
 
@@ -1416,7 +1564,8 @@ FEN tested:
 r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0 9
 
 Commands performed:
-position fen r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0 9
+position fen r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0
+9
 moves
 
 Result:
@@ -1424,7 +1573,8 @@ PHILOCHESS generated the black en passant capture:
 d4c3
 
 Additional command:
-position fen r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0 9 moves d4c3
+position fen r1b1kbnr/1pp1qppp/p1n5/4P3/2Pp4/N4N1P/PP1P1PP1/R1BQ1RK1 b kq c3 0
+9 moves d4c3
 d
 
 Result:
@@ -1460,16 +1610,20 @@ The output ended with:
 Total: 38
 
 Additional command:
-position fen r3kbnr/1ppbqppp/p1n5/4P3/2Pp4/N2P1N1P/PP3PP1/R1BQ1RK1 b kq - 0 10 moves d4c3
+position fen r3kbnr/1ppbqppp/p1n5/4P3/2Pp4/N2P1N1P/PP3PP1/R1BQ1RK1 b kq - 0 10
+moves d4c3
 
 Result:
 PHILOCHESS rejected the move:
 info string illegal move ignored: d4c3
 
-This confirms that Black also loses the right to capture en passant if the capture is not made immediately after the opponent's double pawn advance.
+This confirms that Black also loses the right to capture en passant if the
+capture is not made immediately after the opponent's double pawn advance.
 
 Conclusion of additional alpha-018 tests:
-The additional tests confirm that en passant is not only generated and applied, but also correctly filtered by king safety and by the immediate-only rule. Both white and black en passant behavior have now been validated more thoroughly.
+The additional tests confirm that en passant is not only generated and applied,
+but also correctly filtered by king safety and by the immediate-only rule. Both
+white and black en passant behavior have now been validated more thoroughly.
 
 Date: July 06, 2026
 
@@ -1478,8 +1632,12 @@ PHILOCHESS 0.1-alpha-019 — Promotion consolidation
 Implemented promotion consolidation.
 
 Technical milestone:
-PHILOCHESS now applies pawn promotions correctly and validates them under legal move filtering.
-Promotion generation already existed since alpha-012, but alpha-019 consolidates the rule by ensuring that promotions are applied as the correct promoted piece, invalid promotions are rejected, incomplete promotion moves are rejected, and promotions remain subject to king safety.
+PHILOCHESS now applies pawn promotions correctly and validates them under legal
+move filtering.
+Promotion generation already existed since alpha-012, but alpha-019
+consolidates the rule by ensuring that promotions are applied as the correct
+promoted piece, invalid promotions are rejected, incomplete promotion moves are
+rejected, and promotions remain subject to king safety.
 
 New functionality:
 - Consolidated promotion move application.
@@ -1499,7 +1657,8 @@ New functionality:
 - Preserved promotion generation for:
   - quiet pawn advance promotion;
   - promotion by capture.
-- Preserved normal legal move filtering, so promotions are also tested against king safety.
+- Preserved normal legal move filtering, so promotions are also tested against
+king safety.
 - Updated UCI identification to:
   id name PHILOCHESS 0.1-alpha-019
 
@@ -1657,7 +1816,8 @@ info string illegal move ignored: a7a8k
 info string illegal move ignored: a7a8p
 info string illegal move ignored: a7a8
 
-This confirms that promotion to king and promotion to pawn are rejected, and that a pawn cannot move to the last rank without specifying a promotion piece.
+This confirms that promotion to king and promotion to pawn are rejected, and
+that a pawn cannot move to the last rank without specifying a promotion piece.
 
 Test 6 — go returns a complete promotion move
 
@@ -1679,9 +1839,11 @@ a7a8n
 The command go returned:
 bestmove a7a8q
 
-This confirms that PHILOCHESS can select and return a promotion move in complete UCI format.
+This confirms that PHILOCHESS can select and return a promotion move in
+complete UCI format.
 
-Test 7 — Promotion that resolves check and rejection of promotion that does not resolve check
+Test 7 — Promotion that resolves check and rejection of promotion that does not
+resolve check
 
 FEN tested:
 4r1k1/3P4/8/8/8/8/8/4K3 w - - 0 1
@@ -1718,7 +1880,8 @@ Result:
 PHILOCHESS rejected the move:
 info string illegal move ignored: d7d8q
 
-This confirms that a promotion is rejected if it does not resolve an existing check.
+This confirms that a promotion is rejected if it does not resolve an existing
+check.
 
 Test 8 — White underpromotions applied correctly
 
@@ -1762,7 +1925,8 @@ The side to move became white after each black promotion.
 The fullmove number became:
 2
 
-Test 10 — White promotion rejected because it would expose the own king to check
+Test 10 — White promotion rejected because it would expose the own king to
+check
 
 FEN tested:
 3br1k1/4P3/8/8/8/8/4K3/8 w - - 0 1
@@ -1790,9 +1954,13 @@ Result:
 PHILOCHESS rejected the move:
 info string illegal move ignored: e7d8q
 
-This confirms that PHILOCHESS rejects a promotion if moving the pawn away from the file exposes the own king to check. In this position, moving the pawn from e7 to d8 would open the e-file and expose the white king on e2 to the black rook on e8.
+This confirms that PHILOCHESS rejects a promotion if moving the pawn away from
+the file exposes the own king to check. In this position, moving the pawn from
+e7 to d8 would open the e-file and expose the white king on e2 to the black
+rook on e8.
 
-Test 11 — Black promotion rejected because it would expose the own king to check
+Test 11 — Black promotion rejected because it would expose the own king to
+check
 
 FEN tested:
 8/4k3/8/8/8/8/4p1K1/3BR3 b - - 0 1
@@ -1820,7 +1988,10 @@ Result:
 PHILOCHESS rejected the move:
 info string illegal move ignored: e2d1q
 
-This confirms that PHILOCHESS also rejects a black promotion if moving the pawn exposes the black king to check. In this position, moving the pawn from e2 to d1 would open the e-file and expose the black king on e7 to the white rook on e1.
+This confirms that PHILOCHESS also rejects a black promotion if moving the pawn
+exposes the black king to check. In this position, moving the pawn from e2 to
+d1 would open the e-file and expose the black king on e7 to the white rook on
+e1.
 
 The program compiled successfully.
 The program exited successfully with code 0.
@@ -1828,15 +1999,20 @@ The program exited successfully with code 0.
 Current limitations:
 - No perft command yet.
 - No divide command yet.
-- Full legal move generation still needs broader verification through perft and divide.
-- Halfmove clock and fullmove number are updated in a basic way, but they are not yet used for game adjudication.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- Full legal move generation still needs broader verification through perft and
+divide.
+- Halfmove clock and fullmove number are updated in a basic way, but they are
+not yet used for game adjudication.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-019 has been completed.
 Promotion handling has now been consolidated.
-PHILOCHESS can generate, apply, validate, reject, and select promotion moves in complete UCI format.
-The three main special move rules are now implemented and validated at a basic level:
+PHILOCHESS can generate, apply, validate, reject, and select promotion moves in
+complete UCI format.
+The three main special move rules are now implemented and validated at a basic
+level:
 - castling;
 - en passant;
 - pawn promotion.
@@ -1850,10 +2026,13 @@ PHILOCHESS 0.1-alpha-020 — Basic perft
 Implemented a basic internal perft command.
 
 Technical milestone:
-PHILOCHESS can now count legal move trees from the current position using its existing legal move generator.
-This is the first version in which the engine can verify its move generation by comparing node counts against known reference values.
+PHILOCHESS can now count legal move trees from the current position using its
+existing legal move generator.
+This is the first version in which the engine can verify its move generation by
+comparing node counts against known reference values.
 
-The new perft function does not evaluate positions, does not search for the best move, and does not choose moves.
+The new perft function does not evaluate positions, does not search for the
+best move, and does not choose moves.
 It only counts the number of legal positions reachable up to a given depth.
 
 New functionality:
@@ -1898,28 +2077,37 @@ perft 3:
 Perft depth: 3
 Nodes: 8902
 
-These values match the known standard perft reference values from the initial chess position:
+These values match the known standard perft reference values from the initial
+chess position:
 perft 1 = 20
 perft 2 = 400
 perft 3 = 8902
 
-This confirms that PHILOCHESS correctly counts legal move trees from the starting position up to depth 3.
+This confirms that PHILOCHESS correctly counts legal move trees from the
+starting position up to depth 3.
 
 The program compiled successfully.
 The program exited successfully.
 
 Current limitations:
 - The divide command is not implemented yet.
-- Perft currently gives only the total node count, not the breakdown by root move.
+- Perft currently gives only the total node count, not the breakdown by root
+move.
 - Broader validation from special test positions is still pending.
-- Deeper perft tests such as perft 4 and beyond should be performed carefully because node counts grow quickly.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented and is not part of perft at this stage.
+- Deeper perft tests such as perft 4 and beyond should be performed carefully
+because node counts grow quickly.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented and is not part of perft at this stage.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-020 has been completed.
-The engine now has a basic perft command and can verify its legal move generation from the starting position.
-This is a major verification milestone because PHILOCHESS is no longer only generating legal moves; it can now count and compare them against known reference values.
-The next development step should focus on implementing divide, so that perft results can be broken down by each legal root move.
+The engine now has a basic perft command and can verify its legal move
+generation from the starting position.
+This is a major verification milestone because PHILOCHESS is no longer only
+generating legal moves; it can now count and compare them against known
+reference values.
+The next development step should focus on implementing divide, so that perft
+results can be broken down by each legal root move.
 
 Date: July 06, 2026
 
@@ -1928,11 +2116,16 @@ PHILOCHESS 0.1-alpha-021 — Divide
 Implemented a basic internal divide command.
 
 Technical milestone:
-PHILOCHESS can now break down perft results by each legal root move from the current position.
-This makes the engine's move generation much easier to debug, because the total node count can now be inspected move by move instead of only as a single global number.
+PHILOCHESS can now break down perft results by each legal root move from the
+current position.
+This makes the engine's move generation much easier to debug, because the total
+node count can now be inspected move by move instead of only as a single global
+number.
 
 The divide command reuses the existing perft function and legal move generator.
-For each legal move in the current position, PHILOCHESS makes that move, runs perft at one depth lower, prints the node count for that root move, and finally prints the total.
+For each legal move in the current position, PHILOCHESS makes that move, runs
+perft at one depth lower, prints the node count for that root move, and finally
+prints the total.
 
 New functionality:
 - Added the internal command:
@@ -2011,7 +2204,8 @@ h2h3: 380
 h2h4: 420
 Total: 8902
 
-This confirms that divide produces the same total node count as perft, while also showing how many nodes each legal root move contributes.
+This confirms that divide produces the same total node count as perft, while
+also showing how many nodes each legal root move contributes.
 
 Additional validation test:
 position startpos
@@ -2046,39 +2240,54 @@ h2h3: 8457
 h2h4: 9329
 Total: 197281
 
-The value perft 4 = 197281 matches the known standard reference value from the initial chess position.
-The divide 4 total also matches 197281, confirming that the root-move breakdown is consistent with the global perft count.
+The value perft 4 = 197281 matches the known standard reference value from the
+initial chess position.
+The divide 4 total also matches 197281, confirming that the root-move breakdown
+is consistent with the global perft count.
 
 The program compiled successfully.
 The program exited successfully.
 
 Current limitations:
-- Divide currently prints the full root-move breakdown only for the current position.
+- Divide currently prints the full root-move breakdown only for the current
+position.
 - Broader validation from special perft test positions is still pending.
-- Deeper tests such as perft 5 and divide 5 are possible, but node counts grow quickly and should be used carefully.
+- Deeper tests such as perft 5 and divide 5 are possible, but node counts grow
+quickly and should be used carefully.
 - No automated perft test suite is implemented yet.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented and is not part of perft/divide at this stage.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented and is not part of perft/divide at this stage.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-021 has been completed.
 The engine now has both perft and divide commands.
-PHILOCHESS can verify total legal move counts and also inspect the contribution of each legal root move.
-This is a major debugging and validation milestone, because future errors in move generation can now be located much more precisely.
-The next development step should focus on testing additional perft reference positions, especially positions involving castling, en passant, promotions, checks, pins, and special-rule interactions.
+PHILOCHESS can verify total legal move counts and also inspect the contribution
+of each legal root move.
+This is a major debugging and validation milestone, because future errors in
+move generation can now be located much more precisely.
+The next development step should focus on testing additional perft reference
+positions, especially positions involving castling, en passant, promotions,
+checks, pins, and special-rule interactions.
 
 Date: July 06, 2026
 
 PHILOCHESS 0.1-alpha-022 — Perft validation positions
 
-Implemented internal perft validation positions and known reference perft checks.
+Implemented internal perft validation positions and known reference perft
+checks.
 
 Technical milestone:
-PHILOCHESS can now run built-in perft validation tests from curated internal positions and from known reference positions.
-This version does not add search or evaluation. Its purpose is to strengthen confidence in the legal move generator before moving on to material evaluation and basic search.
+PHILOCHESS can now run built-in perft validation tests from curated internal
+positions and from known reference positions.
+This version does not add search or evaluation. Its purpose is to strengthen
+confidence in the legal move generator before moving on to material evaluation
+and basic search.
 
 Alpha-022 builds directly on alpha-020 and alpha-021.
 The previous versions introduced perft and divide.
-This version adds a structured validation layer around those tools, allowing PHILOCHESS to test multiple positions automatically and compare node counts against expected values.
+This version adds a structured validation layer around those tools, allowing
+PHILOCHESS to test multiple positions automatically and compare node counts
+against expected values.
 
 New functionality:
 - Added internal perft validation cases.
@@ -2098,7 +2307,8 @@ New functionality:
 - Added known reference perft positions for:
   - initial position;
   - Kiwipete reference position.
-- Added automatic comparison between computed node counts and expected node counts.
+- Added automatic comparison between computed node counts and expected node
+counts.
 - Added pass/fail reporting for each tested depth.
 - Added validation summary reporting.
 - Kept the existing perft and divide commands from alpha-021.
@@ -2106,13 +2316,16 @@ New functionality:
   id name PHILOCHESS 0.1-alpha-022
 
 Important correction during validation:
-During the first Kiwipete validation attempt, the FEN used in the source code was found to be incorrect.
-PHILOCHESS returned 43 legal moves for that altered position, while the expected value of 48 belonged to the standard Kiwipete reference position.
+During the first Kiwipete validation attempt, the FEN used in the source code
+was found to be incorrect.
+PHILOCHESS returned 43 legal moves for that altered position, while the
+expected value of 48 belonged to the standard Kiwipete reference position.
 The FEN was corrected to the standard Kiwipete reference position:
 
 r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
 
-After correcting the FEN and adding the depth 4 reference value, the Kiwipete validation passed successfully up to depth 4.
+After correcting the FEN and adding the depth 4 reference value, the Kiwipete
+validation passed successfully up to depth 4.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -2170,7 +2383,8 @@ rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 FEN:
 r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
 
-This confirmed that alpha-022 correctly exposes both the internal validation cases and the known reference cases.
+This confirmed that alpha-022 correctly exposes both the internal validation
+cases and the known reference cases.
 
 Test 2 — Internal perft validation up to depth 4
 
@@ -2178,7 +2392,8 @@ Command performed:
 perftcheck 4
 
 Result:
-PHILOCHESS ran the internal perft validation cases up to depth 4 where expected values were available.
+PHILOCHESS ran the internal perft validation cases up to depth 4 where expected
+values were available.
 
 Initial position:
 depth 1: nodes 20 expected 20 -> OK
@@ -2201,7 +2416,9 @@ depth 1: nodes 0 expected 0 -> OK
 Validation summary:
 Perft validation summary: 8/8 passed
 
-This confirms that the internal validation positions passed successfully, including basic checks for the initial position, en passant availability, castling availability, quiet promotion, and stalemate.
+This confirms that the internal validation positions passed successfully,
+including basic checks for the initial position, en passant availability,
+castling availability, quiet promotion, and stalemate.
 
 Test 3 — Known reference perft validation to depth 1
 
@@ -2289,24 +2506,36 @@ depth 4: nodes 4085603 expected 4085603 -> OK
 Validation summary:
 Perft validation summary: 8/8 passed
 
-The final depth 4 validation confirms that PHILOCHESS matches the known reference perft values for both the initial position and the Kiwipete reference position.
+The final depth 4 validation confirms that PHILOCHESS matches the known
+reference perft values for both the initial position and the Kiwipete reference
+position.
 
-The Kiwipete result is especially important because this position is much more demanding than the initial position. It includes active pieces, castling rights, captures, checks, pins, and many tactical interactions that are useful for detecting move generation and legal filtering errors.
+The Kiwipete result is especially important because this position is much more
+demanding than the initial position. It includes active pieces, castling
+rights, captures, checks, pins, and many tactical interactions that are useful
+for detecting move generation and legal filtering errors.
 
 The program compiled successfully.
 The program exited successfully.
 
 Current limitations:
-- Alpha-022 validates selected internal cases and known reference cases, but it is not yet a full automated perft suite.
+- Alpha-022 validates selected internal cases and known reference cases, but it
+is not yet a full automated perft suite.
 - Internal special-rule cases currently validate mostly depth 1 counts.
-- Deeper validation for special-rule positions should be expanded in later versions.
-- Extended perft counters for captures, en passant captures, castles, promotions, checks, discovery checks, double checks, and checkmates are not implemented yet.
-- Perft 5 and higher are possible, but node counts grow quickly and should be used carefully.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented and is not part of perft validation at this stage.
+- Deeper validation for special-rule positions should be expanded in later
+versions.
+- Extended perft counters for captures, en passant captures, castles,
+promotions, checks, discovery checks, double checks, and checkmates are not
+implemented yet.
+- Perft 5 and higher are possible, but node counts grow quickly and should be
+used carefully.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented and is not part of perft validation at this stage.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-022 has been completed.
-The engine now includes structured perft validation commands and passes all executed internal and known reference tests.
+The engine now includes structured perft validation commands and passes all
+executed internal and known reference tests.
 PHILOCHESS passed:
 - perftcheck 4 with 8/8 successful validations;
 - perftknown 1 with 2/2 successful validations;
@@ -2321,9 +2550,12 @@ perft 3 = 97862
 perft 4 = 4085603
 
 This is a major legal move generation validation milestone.
-PHILOCHESS now has stronger evidence that its legal move generator, castling logic, en passant handling, promotion handling, check detection, and king safety filtering are working coherently in demanding reference positions.
+PHILOCHESS now has stronger evidence that its legal move generator, castling
+logic, en passant handling, promotion handling, check detection, and king
+safety filtering are working coherently in demanding reference positions.
 
-The next development step should focus on material evaluation, unless an additional extended perft counter layer is deliberately added first.
+The next development step should focus on material evaluation, unless an
+additional extended perft counter layer is deliberately added first.
 
 Date: July 06, 2026
 
@@ -2332,11 +2564,15 @@ PHILOCHESS 0.1-alpha-023 — Extended perft validation positions
 Extended the known reference perft validation suite.
 
 Technical milestone:
-PHILOCHESS can now validate its legal move generator against a broader set of known perft reference positions.
-This version expands the alpha-022 validation system by adding four additional ChessProgramming reference positions to the known perft suite.
+PHILOCHESS can now validate its legal move generator against a broader set of
+known perft reference positions.
+This version expands the alpha-022 validation system by adding four additional
+ChessProgramming reference positions to the known perft suite.
 
 Alpha-023 does not add search, evaluation, or playing strength.
-Its purpose is to increase confidence in the legal move generator after the implementation of castling, en passant, promotion handling, check detection, king safety filtering, perft, divide, and basic perft validation commands.
+Its purpose is to increase confidence in the legal move generator after the
+implementation of castling, en passant, promotion handling, check detection,
+king safety filtering, perft, divide, and basic perft validation commands.
 
 New functionality:
 - Extended the known reference perft test suite.
@@ -2458,7 +2694,8 @@ PHILOCHESS also listed the expanded known reference perft cases:
 - ChessProgramming position 5
 - ChessProgramming position 6
 
-This confirmed that alpha-023 correctly exposes the expanded known reference perft suite.
+This confirmed that alpha-023 correctly exposes the expanded known reference
+perft suite.
 
 Test 2 — Internal perft validation up to depth 4
 
@@ -2466,7 +2703,8 @@ Command performed:
 perftcheck 4
 
 Result:
-PHILOCHESS ran the internal perft validation cases up to depth 4 where expected values were available.
+PHILOCHESS ran the internal perft validation cases up to depth 4 where expected
+values were available.
 
 Initial position:
 depth 1: nodes 20 expected 20 -> OK
@@ -2489,7 +2727,8 @@ depth 1: nodes 0 expected 0 -> OK
 Validation summary:
 Perft validation summary: 8/8 passed
 
-This confirms that the internal validation suite remains stable after extending the known reference positions.
+This confirms that the internal validation suite remains stable after extending
+the known reference positions.
 
 Test 3 — Known reference perft validation to depth 1
 
@@ -2643,7 +2882,8 @@ depth 4: nodes 3894594 expected 3894594 -> OK
 Validation summary:
 Perft validation summary: 24/24 passed
 
-This confirms that PHILOCHESS matches all registered known reference values up to depth 4 across all six known positions.
+This confirms that PHILOCHESS matches all registered known reference values up
+to depth 4 across all six known positions.
 
 Test 7 — Known reference perft validation to depth 5
 
@@ -2651,7 +2891,8 @@ Command performed:
 perftknown 5
 
 Result:
-PHILOCHESS tested the expanded known reference positions up to depth 5 where expected values were available.
+PHILOCHESS tested the expanded known reference positions up to depth 5 where
+expected values were available.
 
 Initial position:
 depth 1: nodes 20 expected 20 -> OK
@@ -2696,17 +2937,25 @@ Perft validation summary: 25/25 passed
 Total time:
 76195 ms
 
-This final test confirms that every registered known reference value in alpha-023 passed successfully.
-The only position with a registered depth 5 value in this version is ChessProgramming position 3, and it also passed correctly.
+This final test confirms that every registered known reference value in
+alpha-023 passed successfully.
+The only position with a registered depth 5 value in this version is
+ChessProgramming position 3, and it also passed correctly.
 
 The program exited successfully with code 0.
 
 Current limitations:
-- Alpha-023 still validates node counts only. It does not yet count captures, en passant captures, castles, promotions, checks, discovery checks, double checks, or checkmates separately.
-- The internal special-rule validation cases still mostly validate depth 1 values.
-- Deeper values for ChessProgramming positions 4, 5, and 6 were not included because their node counts grow substantially.
-- Perft 5 and higher remain possible, but they should be used carefully due to rapidly increasing computation time.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented and is not part of perft validation at this stage.
+- Alpha-023 still validates node counts only. It does not yet count captures,
+en passant captures, castles, promotions, checks, discovery checks, double
+checks, or checkmates separately.
+- The internal special-rule validation cases still mostly validate depth 1
+values.
+- Deeper values for ChessProgramming positions 4, 5, and 6 were not included
+because their node counts grow substantially.
+- Perft 5 and higher remain possible, but they should be used carefully due to
+rapidly increasing computation time.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented and is not part of perft validation at this stage.
 - No search or evaluation has been added yet.
 
 Conclusion:
@@ -2722,11 +2971,17 @@ PHILOCHESS passed:
 - perftknown 5 with 25/25 successful validations.
 
 This is a major legal move generation validation milestone.
-PHILOCHESS now passes six known reference perft positions, including the initial position, Kiwipete, and four additional ChessProgramming reference positions.
+PHILOCHESS now passes six known reference perft positions, including the
+initial position, Kiwipete, and four additional ChessProgramming reference
+positions.
 
-These tests provide strong evidence that the current legal move generator, king safety filtering, castling logic, en passant handling, promotion handling, check detection, and move application are working coherently in a wider variety of tactical, special-rule, middlegame, and endgame positions.
+These tests provide strong evidence that the current legal move generator, king
+safety filtering, castling logic, en passant handling, promotion handling,
+check detection, and move application are working coherently in a wider variety
+of tactical, special-rule, middlegame, and endgame positions.
 
-The next development step can now focus on material evaluation, unless an extended perft counter layer is deliberately added first.
+The next development step can now focus on material evaluation, unless an
+extended perft counter layer is deliberately added first.
 
 Date: July 06, 2026
 
@@ -2738,8 +2993,10 @@ Technical milestone:
 PHILOCHESS can now evaluate a chess position using a simple material balance.
 This is the first evaluation layer added to the engine.
 
-Alpha-024 builds directly on the legal move generation and perft validation work completed in alpha-023.
-The purpose of this version is not to add real search strength yet, but to give PHILOCHESS its first numerical way to assess a position.
+Alpha-024 builds directly on the legal move generation and perft validation
+work completed in alpha-023.
+The purpose of this version is not to add real search strength yet, but to give
+PHILOCHESS its first numerical way to assess a position.
 
 New functionality:
 - Added standard piece values:
@@ -2761,7 +3018,8 @@ New functionality:
   - Black material total;
   - material balance from White's perspective;
   - evaluation from the side-to-move perspective.
-- Updated go so that PHILOCHESS can choose a legal move using a simple one-ply material evaluation.
+- Updated go so that PHILOCHESS can choose a legal move using a simple one-ply
+material evaluation.
 - Kept the existing legal move generator.
 - Kept the existing perft command.
 - Kept the existing divide command.
@@ -2771,7 +3029,9 @@ New functionality:
 
 Important note:
 The evaluation added in alpha-024 is material-only.
-It does not yet include piece-square tables, mobility, king safety, pawn structure, development, activity, coordination, initiative, search depth, alpha-beta, quiescence search, or time management.
+It does not yet include piece-square tables, mobility, king safety, pawn
+structure, development, activity, coordination, initiative, search depth,
+alpha-beta, quiescence search, or time management.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -2805,30 +3065,35 @@ Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
 Evaluation: 0 cp  (positive = White is ahead)
 Side-to-move evaluation: 0 cp
 
-This confirms that PHILOCHESS correctly evaluates the initial position as materially equal.
+This confirms that PHILOCHESS correctly evaluates the initial position as
+materially equal.
 
 The moves command returned:
 Total: 20
 
-This confirms that legal move generation from the starting position remains stable.
+This confirms that legal move generation from the starting position remains
+stable.
 
 The perft command returned:
 perft 1 = 20
 perft 2 = 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
 perftknown 4
 
 Result:
-PHILOCHESS passed all registered known reference checks up to depth 4 in this alpha-024 test run.
+PHILOCHESS passed all registered known reference checks up to depth 4 in this
+alpha-024 test run.
 
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the material evaluation additions did not break the legal move generator or the known reference perft validation up to depth 4.
+This confirms that the material evaluation additions did not break the legal
+move generator or the known reference perft validation up to depth 4.
 
 Additional material imbalance test:
 
@@ -2849,7 +3114,8 @@ Black material: 3100 cp  (p=8, n=2, b=2, r=2, q=0)
 Evaluation: +900 cp  (positive = White is ahead)
 Side-to-move evaluation: +900 cp
 
-This confirms that PHILOCHESS correctly detects a one-queen material advantage for White.
+This confirms that PHILOCHESS correctly detects a one-queen material advantage
+for White.
 
 The program exited successfully with code 0.
 
@@ -2858,15 +3124,18 @@ Current limitations:
 - No real search has been added yet.
 - go uses only a very basic material-based one-ply selection.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
 - No alpha-beta search is implemented yet.
 - No quiescence search is implemented yet.
 - No time management is implemented yet.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-024 has been completed.
-The engine now has its first static evaluation function based on material balance.
+The engine now has its first static evaluation function based on material
+balance.
 
 PHILOCHESS passed:
 - successful compilation with 0 errors;
@@ -2879,9 +3148,11 @@ PHILOCHESS passed:
 - material imbalance test with a correct +900 cp evaluation for White.
 
 This is an important conceptual milestone.
-PHILOCHESS no longer only generates and validates legal moves; it can now assign a basic numerical evaluation to a chess position.
+PHILOCHESS no longer only generates and validates legal moves; it can now
+assign a basic numerical evaluation to a chess position.
 
-The next development step should focus on adding a simple search layer, most likely a basic negamax search using the new material evaluation function.
+The next development step should focus on adding a simple search layer, most
+likely a basic negamax search using the new material evaluation function.
 
 Date: July 07, 2026
 
@@ -2890,12 +3161,17 @@ PHILOCHESS 0.1-alpha-025 — Search preparation
 Implemented a conservative search preparation layer.
 
 Technical milestone:
-PHILOCHESS can now accept basic search-oriented UCI-style commands such as go depth N.
-This version does not yet implement real negamax search. Its purpose is to prepare the internal structure needed for the next development step without risking the stability already achieved in legal move generation, material evaluation, perft, divide, and known reference validation.
+PHILOCHESS can now accept basic search-oriented UCI-style commands such as go
+depth N.
+This version does not yet implement real negamax search. Its purpose is to
+prepare the internal structure needed for the next development step without
+risking the stability already achieved in legal move generation, material
+evaluation, perft, divide, and known reference validation.
 
 Alpha-025 builds directly on alpha-024.
 The previous version introduced material evaluation.
-This version reorganizes the move selection path so that a future search function can be added more cleanly.
+This version reorganizes the move selection path so that a future search
+function can be added more cleanly.
 
 New functionality:
 - Added basic search-related constants:
@@ -2925,12 +3201,15 @@ New functionality:
 
 Important note:
 Alpha-025 does not yet perform real recursive search.
-The command go depth 2 is accepted and reported, but the engine still uses the prepared material-based root selection path.
+The command go depth 2 is accepted and reported, but the engine still uses the
+prepared material-based root selection path.
 Real negamax search is reserved for the next development step.
 
 Correction during alpha-025 validation:
-During review of the known reference perft suite, one registered case was corrected.
-The previous mirrored position was replaced with the real ChessProgramming Position 5, renamed internally as:
+During review of the known reference perft suite, one registered case was
+corrected.
+The previous mirrored position was replaced with the real ChessProgramming
+Position 5, renamed internally as:
 
 Promotion bug trap
 
@@ -2943,7 +3222,9 @@ depth 2 = 1486
 depth 3 = 62379
 depth 4 = 2103487
 
-This correction makes the known reference suite more faithful to the standard ChessProgramming perft positions and improves the quality of the validation battery.
+This correction makes the known reference suite more faithful to the standard
+ChessProgramming perft positions and improves the quality of the validation
+battery.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -2979,7 +3260,8 @@ Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
 Evaluation: 0 cp  (positive = White is ahead)
 Side-to-move evaluation: 0 cp
 
-This confirms that the material evaluation introduced in alpha-024 remains stable.
+This confirms that the material evaluation introduced in alpha-024 remains
+stable.
 
 The command go returned:
 info string search preparation depth 1 legalmoves 20 score 0 cp
@@ -2993,20 +3275,23 @@ The command go depth 2 returned:
 info string search preparation depth 2 legalmoves 20 score 0 cp
 bestmove b1c3
 
-This confirms that PHILOCHESS now accepts a depth parameter through go depth N and reports the requested depth in its search preparation output.
+This confirms that PHILOCHESS now accepts a depth parameter through go depth N
+and reports the requested depth in its search preparation output.
 
 The perft command returned:
 perft 1 = 20
 perft 2 = 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
 perftknown 4
 
 Result:
-PHILOCHESS passed all registered known reference checks up to depth 4 in this alpha-025 test run.
+PHILOCHESS passed all registered known reference checks up to depth 4 in this
+alpha-025 test run.
 
 The known reference positions tested were:
 - Initial position
@@ -3025,14 +3310,17 @@ depth 4: 2103487 / 2103487 OK
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the search preparation additions and the correction of the known reference suite did not break the legal move generator or the known reference perft validation up to depth 4.
+This confirms that the search preparation additions and the correction of the
+known reference suite did not break the legal move generator or the known
+reference perft validation up to depth 4.
 
 The program exited successfully with code 0.
 
 Current limitations:
 - Alpha-025 is only a search preparation version.
 - Real negamax search is not implemented yet.
-- go depth N is parsed and reported, but deeper recursive search is not yet performed.
+- go depth N is parsed and reported, but deeper recursive search is not yet
+performed.
 - The engine still uses a simple material-based root move selection path.
 - No alpha-beta search is implemented yet.
 - No quiescence search is implemented yet.
@@ -3041,8 +3329,10 @@ Current limitations:
 - No time management is implemented yet.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-025 has been completed.
@@ -3058,12 +3348,16 @@ PHILOCHESS passed:
 - perft 1 = 20;
 - perft 2 = 400;
 - perftknown 4 with 24/24 successful validations;
-- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487 nodes up to depth 4.
+- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487
+nodes up to depth 4.
 
 This is a technical preparation milestone.
-PHILOCHESS has not become stronger yet, but the internal path for choosing a move is now better prepared for real search.
+PHILOCHESS has not become stronger yet, but the internal path for choosing a
+move is now better prepared for real search.
 
-The next development step should focus on implementing basic negamax search using the existing legal move generator, makeMove logic, and material evaluation function.
+The next development step should focus on implementing basic negamax search
+using the existing legal move generator, makeMove logic, and material
+evaluation function.
 
 Date: July 07, 2026
 
@@ -3072,23 +3366,29 @@ PHILOCHESS 0.1-alpha-026 — Basic negamax
 Implemented basic negamax search.
 
 Technical milestone:
-PHILOCHESS can now perform a real recursive search using a basic negamax algorithm.
-This is the first version in which the engine does not only generate legal moves and evaluate material, but also looks ahead through the opponent's replies according to the requested search depth.
+PHILOCHESS can now perform a real recursive search using a basic negamax
+algorithm.
+This is the first version in which the engine does not only generate legal
+moves and evaluate material, but also looks ahead through the opponent's
+replies according to the requested search depth.
 
 Alpha-026 builds directly on alpha-025.
-The previous version prepared the search path and allowed commands such as go depth N, but it did not yet perform real recursive search.
+The previous version prepared the search path and allowed commands such as go
+depth N, but it did not yet perform real recursive search.
 Alpha-026 now turns that prepared structure into a working basic search layer.
 
 New functionality:
 - Added basic recursive negamax search.
-- Updated go depth N so that it now performs real search to the requested depth.
+- Updated go depth N so that it now performs real search to the requested
+depth.
 - Added search node counting.
 - Added search output in the form:
   info depth N nodes X score cp Y pv <move>
 - Preserved material evaluation as the static evaluation function.
 - Preserved legal move generation.
 - Preserved makeMove-based position transitions.
-- Preserved checkmate and stalemate recognition through the existing game status logic.
+- Preserved checkmate and stalemate recognition through the existing game
+status logic.
 - Added terminal search handling:
   - checkmate is scored as a large negative value for the side to move;
   - stalemate is scored as 0.
@@ -3103,7 +3403,9 @@ New functionality:
 
 Important note:
 Alpha-026 implements only basic negamax.
-It does not yet include alpha-beta pruning, quiescence search, iterative deepening, move ordering, transposition tables, time management, or positional evaluation.
+It does not yet include alpha-beta pruning, quiescence search, iterative
+deepening, move ordering, transposition tables, time management, or positional
+evaluation.
 The evaluation used at the search leaves is still material-only.
 
 Compilation test:
@@ -3140,7 +3442,8 @@ Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
 Evaluation: 0 cp  (positive = White is ahead)
 Side-to-move evaluation: 0 cp
 
-This confirms that the material evaluation introduced in alpha-024 remains stable.
+This confirms that the material evaluation introduced in alpha-024 remains
+stable.
 
 The command go returned:
 info depth 1 nodes 20 score cp 0 pv b1c3
@@ -3155,30 +3458,36 @@ info depth 2 nodes 420 score cp 0 pv b1c3
 bestmove b1c3
 
 This confirms that PHILOCHESS now performs a real recursive negamax search.
-From the starting position, depth 2 searched the 20 legal root moves and the 400 legal opponent replies, producing 420 counted search nodes.
+From the starting position, depth 2 searched the 20 legal root moves and the
+400 legal opponent replies, producing 420 counted search nodes.
 
 The score remained:
 score cp 0
 
-This is expected from the starting position because the current evaluation is material-only and all normal opening moves keep the material balance equal.
+This is expected from the starting position because the current evaluation is
+material-only and all normal opening moves keep the material balance equal.
 
 The best move returned was:
 bestmove b1c3
 
-This does not yet represent a strategic preference. With material-only evaluation, many opening moves receive the same score, so the engine selects the first best move according to its internal move ordering.
+This does not yet represent a strategic preference. With material-only
+evaluation, many opening moves receive the same score, so the engine selects
+the first best move according to its internal move ordering.
 
 The perft command returned:
 perft 1 = 20
 perft 2 = 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
 perftknown 4
 
 Result:
-PHILOCHESS passed all registered known reference checks up to depth 4 in this alpha-026 test run.
+PHILOCHESS passed all registered known reference checks up to depth 4 in this
+alpha-026 test run.
 
 The known reference positions tested were:
 - Initial position
@@ -3197,7 +3506,8 @@ depth 4: 2103487 / 2103487 OK
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the basic negamax implementation did not break the legal move generator or the known reference perft validation up to depth 4.
+This confirms that the basic negamax implementation did not break the legal
+move generator or the known reference perft validation up to depth 4.
 
 The program exited successfully with code 0.
 
@@ -3212,9 +3522,11 @@ Current limitations:
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
 - Search depth must remain conservative because plain negamax grows quickly.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-026 has been completed.
@@ -3230,12 +3542,17 @@ PHILOCHESS passed:
 - perft 1 = 20;
 - perft 2 = 400;
 - perftknown 4 with 24/24 successful validations;
-- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487 nodes up to depth 4.
+- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487
+nodes up to depth 4.
 
 This is a major conceptual milestone.
-PHILOCHESS no longer only generates legal moves and evaluates positions statically. It can now look ahead recursively and choose a move through a basic search process.
+PHILOCHESS no longer only generates legal moves and evaluates positions
+statically. It can now look ahead recursively and choose a move through a basic
+search process.
 
-The next development step should focus on alpha-beta pruning, so that PHILOCHESS can search more efficiently without changing the basic negamax structure.
+The next development step should focus on alpha-beta pruning, so that
+PHILOCHESS can search more efficiently without changing the basic negamax
+structure.
 
 Date: July 07, 2026
 
@@ -3245,11 +3562,15 @@ Implemented a more useful UCI integration layer.
 
 Technical milestone:
 PHILOCHESS can now parse and report more practical UCI search commands.
-This version improves the way the engine communicates with external interfaces and test environments while preserving the basic negamax search introduced in alpha-026.
+This version improves the way the engine communicates with external interfaces
+and test environments while preserving the basic negamax search introduced in
+alpha-026.
 
 Alpha-027 builds directly on alpha-026.
 The previous version introduced real recursive negamax search.
-This version does not increase the engine's chess strength, but it improves the UCI command layer so that future search improvements can be tested in a more practical and professional way.
+This version does not increase the engine's chess strength, but it improves the
+UCI command layer so that future search improvements can be tested in a more
+practical and professional way.
 
 New functionality:
 - Improved parsing of the go command.
@@ -3283,14 +3604,17 @@ New functionality:
   id name PHILOCHESS 0.1-alpha-027
 
 Important note:
-Alpha-027 recognizes stop, but it does not yet interrupt an already running search asynchronously.
+Alpha-027 recognizes stop, but it does not yet interrupt an already running
+search asynchronously.
 The current engine loop still runs search synchronously.
-A fully asynchronous stop system will require a later search-control architecture.
+A fully asynchronous stop system will require a later search-control
+architecture.
 
 Another important note:
 nps means nodes per second.
 It is calculated from the number of searched nodes and the elapsed search time.
-At this stage, nps is useful mainly as a diagnostic value, not as a strength target.
+At this stage, nps is useful mainly as a diagnostic value, not as a strength
+target.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -3349,12 +3673,15 @@ info string go limits depth 2
 info depth 2 nodes 420 time 45 nps 9333 score cp 0 pv b1c3
 bestmove b1c3
 
-This confirms that the basic negamax search introduced in alpha-026 remains active.
-From the starting position, depth 2 searched the 20 legal root moves and the 400 legal opponent replies, producing 420 counted search nodes.
+This confirms that the basic negamax search introduced in alpha-026 remains
+active.
+From the starting position, depth 2 searched the 20 legal root moves and the
+400 legal opponent replies, producing 420 counted search nodes.
 
 The command go movetime 100 returned:
 info string go limits depth 4 movetime 100 timelimit 100
-info depth 4 nodes 851 time 100 nps 8510 score cp 0 pv b1c3 string stopped by limit
+info depth 4 nodes 851 time 100 nps 8510 score cp 0 pv b1c3 string stopped by
+limit
 bestmove b1c3
 
 This confirms that PHILOCHESS parses movetime and applies a time limit.
@@ -3364,36 +3691,44 @@ The command:
 go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
 
 returned:
-info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000 timelimit 2500
-info depth 4 nodes 21797 time 2500 nps 8718 score cp 0 pv b1c3 string stopped by limit
+info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000
+timelimit 2500
+info depth 4 nodes 21797 time 2500 nps 8718 score cp 0 pv b1c3 string stopped
+by limit
 bestmove b1c3
 
-This confirms that PHILOCHESS can now parse clock-based UCI parameters and derive a practical time limit from them.
+This confirms that PHILOCHESS can now parse clock-based UCI parameters and
+derive a practical time limit from them.
 In this run, the calculated time limit was 2500 ms.
 
 The score remained:
 score cp 0
 
-This is expected from the starting position because the current evaluation is material-only and normal opening moves preserve material equality.
+This is expected from the starting position because the current evaluation is
+material-only and normal opening moves preserve material equality.
 
 The best move returned was:
 bestmove b1c3
 
 This still does not represent a deep strategic preference.
-With material-only evaluation and no positional scoring, many opening moves receive the same score, so the engine selects the first best move according to its internal move ordering.
+With material-only evaluation and no positional scoring, many opening moves
+receive the same score, so the engine selects the first best move according to
+its internal move ordering.
 
 The perft command returned:
 perft 1 = 20
 perft 2 = 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
 perftknown 4
 
 Result:
-PHILOCHESS passed all registered known reference checks up to depth 4 in this alpha-027 test run.
+PHILOCHESS passed all registered known reference checks up to depth 4 in this
+alpha-027 test run.
 
 The known reference positions tested were:
 - Initial position
@@ -3412,7 +3747,9 @@ depth 4: 2103487 / 2103487 OK
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the UCI integration changes did not break the legal move generator, the search layer, or the known reference perft validation up to depth 4.
+This confirms that the UCI integration changes did not break the legal move
+generator, the search layer, or the known reference perft validation up to
+depth 4.
 
 The program exited successfully with code 0.
 
@@ -3425,17 +3762,21 @@ Current limitations:
 - No transposition table is implemented yet.
 - Time management is still very simple.
 - stop is recognized but does not yet interrupt search asynchronously.
-- go infinite is parsed, but the engine still needs a more advanced search-control loop for true infinite analysis mode.
+- go infinite is parsed, but the engine still needs a more advanced
+search-control loop for true infinite analysis mode.
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 - nps is reported, but the current implementation is not optimized for speed.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-027 has been completed.
-The engine now has a more useful UCI command layer for practical search testing.
+The engine now has a more useful UCI command layer for practical search
+testing.
 
 PHILOCHESS passed:
 - successful compilation with 0 errors;
@@ -3449,12 +3790,16 @@ PHILOCHESS passed:
 - perft 1 = 20;
 - perft 2 = 400;
 - perftknown 4 with 24/24 successful validations;
-- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487 nodes up to depth 4.
+- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487
+nodes up to depth 4.
 
 This is an important integration milestone.
-PHILOCHESS is now better prepared to interact with UCI-compatible interfaces and to test future search improvements under more realistic command conditions.
+PHILOCHESS is now better prepared to interact with UCI-compatible interfaces
+and to test future search improvements under more realistic command conditions.
 
-The next development step should focus on implementing basic alpha-beta pruning, so that PHILOCHESS can search more efficiently while preserving the negamax structure introduced in alpha-026.
+The next development step should focus on implementing basic alpha-beta
+pruning, so that PHILOCHESS can search more efficiently while preserving the
+negamax structure introduced in alpha-026.
 
 Date: July 07, 2026
 
@@ -3463,16 +3808,22 @@ PHILOCHESS 0.1-alpha-028 — Basic alpha-beta
 Implemented basic alpha-beta pruning on top of the existing negamax structure.
 
 Technical milestone:
-PHILOCHESS can now search more efficiently by pruning branches that cannot improve the final result.
-This version keeps the basic negamax framework introduced in alpha-026 and the useful UCI integration introduced in alpha-027, but replaces plain negamax search with negamax plus alpha-beta pruning.
+PHILOCHESS can now search more efficiently by pruning branches that cannot
+improve the final result.
+This version keeps the basic negamax framework introduced in alpha-026 and the
+useful UCI integration introduced in alpha-027, but replaces plain negamax
+search with negamax plus alpha-beta pruning.
 
 Alpha-028 builds directly on alpha-027.
-The previous version improved the UCI command layer and added more practical support for depth and time-based search commands.
-Alpha-028 now improves the internal search efficiency while preserving the same external UCI behavior.
+The previous version improved the UCI command layer and added more practical
+support for depth and time-based search commands.
+Alpha-028 now improves the internal search efficiency while preserving the same
+external UCI behavior.
 
 New functionality:
 - Added alpha-beta pruning to the existing negamax search.
-- Replaced the plain negamax search function with an alpha-beta search function.
+- Replaced the plain negamax search function with an alpha-beta search
+function.
 - Added alpha and beta bounds to the recursive search.
 - Added alpha-beta cutoff counting.
 - Added alpha-beta cutoff reporting:
@@ -3505,7 +3856,8 @@ The improvement is in search efficiency, not yet in positional understanding.
 
 Another important note:
 Alpha-beta pruning is more effective when good moves are searched first.
-PHILOCHESS does not yet have move ordering, so the current alpha-beta implementation is basic.
+PHILOCHESS does not yet have move ordering, so the current alpha-beta
+implementation is basic.
 Even so, the node reduction already appears clearly in the tests.
 
 Compilation test:
@@ -3513,7 +3865,8 @@ The program compiled successfully in Visual Studio.
 The compilation output reported:
 1 successful build, 0 errors, 0 updated, 0 skipped.
 
-Basic UCI, evaluation, alpha-beta search, time command, and perft test performed:
+Basic UCI, evaluation, alpha-beta search, time command, and perft test
+performed:
 uci
 isready
 position startpos
@@ -3554,7 +3907,8 @@ info string alpha-beta cutoffs 0
 bestmove b1c3
 
 This confirms that the default go command still searches at depth 1.
-At depth 1, there are no useful alpha-beta cutoffs from the starting position, so the cutoff count remained 0.
+At depth 1, there are no useful alpha-beta cutoffs from the starting position,
+so the cutoff count remained 0.
 
 The command go depth 1 returned:
 info string go limits depth 1
@@ -3571,7 +3925,8 @@ info string alpha-beta cutoffs 19
 bestmove b1c3
 
 This is the first clear alpha-beta result.
-In alpha-026 and alpha-027, the same depth 2 search from the starting position visited 420 nodes with plain negamax.
+In alpha-026 and alpha-027, the same depth 2 search from the starting position
+visited 420 nodes with plain negamax.
 In alpha-028, alpha-beta reduced this to 59 nodes and produced 19 cutoffs.
 
 The command go depth 3 returned:
@@ -3580,11 +3935,13 @@ info depth 3 nodes 585 time 61 nps 9590 score cp 0 pv b1c3
 info string alpha-beta cutoffs 38
 bestmove b1c3
 
-This confirms that alpha-beta search works beyond depth 2 and continues to return a valid best move.
+This confirms that alpha-beta search works beyond depth 2 and continues to
+return a valid best move.
 
 The command go movetime 100 returned:
 info string go limits depth 4 movetime 100 timelimit 100
-info depth 4 nodes 943 time 100 nps 9430 score cp 0 pv b1c3 string stopped by limit
+info depth 4 nodes 943 time 100 nps 9430 score cp 0 pv b1c3 string stopped by
+limit
 info string alpha-beta cutoffs 247
 bestmove b1c3
 
@@ -3595,37 +3952,45 @@ The command:
 go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
 
 returned:
-info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30 timelimit 2500
+info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000
+movestogo 30 timelimit 2500
 info depth 4 nodes 1416 time 152 nps 9315 score cp 0 pv b1c3
 info string alpha-beta cutoffs 482
 bestmove b1c3
 
-This confirms that PHILOCHESS still parses clock-based UCI parameters and derives a practical time limit from them.
-In this run, the engine completed the depth 4 search before reaching the 2500 ms time limit.
+This confirms that PHILOCHESS still parses clock-based UCI parameters and
+derives a practical time limit from them.
+In this run, the engine completed the depth 4 search before reaching the 2500
+ms time limit.
 
 The score remained:
 score cp 0
 
-This is expected from the starting position because the current evaluation is material-only and normal opening moves preserve material equality.
+This is expected from the starting position because the current evaluation is
+material-only and normal opening moves preserve material equality.
 
 The best move returned was:
 bestmove b1c3
 
 This still does not represent a deep strategic preference.
-With material-only evaluation and no positional scoring, many opening moves receive the same evaluation, so the engine selects the first best move according to its current internal move ordering.
+With material-only evaluation and no positional scoring, many opening moves
+receive the same evaluation, so the engine selects the first best move
+according to its current internal move ordering.
 
 The perft command returned:
 perft 1 = 20
 perft 2 = 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
 perftknown 4
 
 Result:
-PHILOCHESS passed all registered known reference checks up to depth 4 in this alpha-028 test run.
+PHILOCHESS passed all registered known reference checks up to depth 4 in this
+alpha-028 test run.
 
 The known reference positions tested were:
 - Initial position
@@ -3644,7 +4009,8 @@ depth 4: 2103487 / 2103487 OK
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the alpha-beta search changes did not break the legal move generator, move application, or known reference perft validation up to depth 4.
+This confirms that the alpha-beta search changes did not break the legal move
+generator, move application, or known reference perft validation up to depth 4.
 
 The program exited successfully with code 0.
 
@@ -3660,12 +4026,15 @@ Current limitations:
 - No quiescence search is implemented yet.
 - Time management is still simple.
 - stop is recognized, but it does not yet interrupt search asynchronously.
-- go infinite is parsed, but the engine still needs a more advanced search-control loop for true infinite analysis mode.
+- go infinite is parsed, but the engine still needs a more advanced
+search-control loop for true infinite analysis mode.
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 - nps is reported, but the current implementation is not optimized for speed.
 
 Conclusion:
@@ -3681,36 +4050,49 @@ PHILOCHESS passed:
 - go depth 2 with 59 search nodes and 19 alpha-beta cutoffs;
 - go depth 3 with 585 search nodes and 38 alpha-beta cutoffs;
 - go movetime 100 with time-limit handling and 247 cutoffs;
-- go wtime/btime/winc/binc/movestogo with calculated time-limit handling and 482 cutoffs;
+- go wtime/btime/winc/binc/movestogo with calculated time-limit handling and
+482 cutoffs;
 - perft 1 = 20;
 - perft 2 = 400;
 - perftknown 4 with 24/24 successful validations;
-- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487 nodes up to depth 4.
+- corrected Promotion bug trap validation with 44, 1486, 62379, and 2103487
+nodes up to depth 4.
 
 This is a major search-efficiency milestone.
-PHILOCHESS no longer searches every branch blindly with plain negamax. It can now prune branches that cannot improve the result and search more efficiently while preserving the existing negamax structure.
+PHILOCHESS no longer searches every branch blindly with plain negamax. It can
+now prune branches that cannot improve the result and search more efficiently
+while preserving the existing negamax structure.
 
-The next development step should focus on basic move ordering, so that alpha-beta pruning can become more effective by searching stronger candidate moves earlier.
+The next development step should focus on basic move ordering, so that
+alpha-beta pruning can become more effective by searching stronger candidate
+moves earlier.
 
 Date: July 08, 2026
 
 PHILOCHESS 0.1-alpha-029 — UCI GUI compatibility
 
-Implemented a UCI GUI compatibility patch focused on immediate output flushing and cleaner communication with external chess GUIs.
+Implemented a UCI GUI compatibility patch focused on immediate output flushing
+and cleaner communication with external chess GUIs.
 
 Technical milestone:
-PHILOCHESS can now communicate more reliably with UCI-compatible graphical interfaces.
-This version was created after PHILOCHESS 0.1-alpha-028 failed to be accepted correctly by Cute Chess.
+PHILOCHESS can now communicate more reliably with UCI-compatible graphical
+interfaces.
+This version was created after PHILOCHESS 0.1-alpha-028 failed to be accepted
+correctly by Cute Chess.
 
-Alpha-029 therefore focuses on making the engine's UCI output more immediate and GUI-friendly.
+Alpha-029 therefore focuses on making the engine's UCI output more immediate
+and GUI-friendly.
 
 Alpha-029 builds directly on alpha-028.
 The previous version introduced basic alpha-beta pruning.
-This version does not change the search algorithm, evaluation function, legal move generator, perft validation, or playing strength.
-Its purpose is to improve protocol compatibility before continuing with basic move ordering.
+This version does not change the search algorithm, evaluation function, legal
+move generator, perft validation, or playing strength.
+Its purpose is to improve protocol compatibility before continuing with basic
+move ordering.
 
 New functionality:
-- Added automatic flushing for standard output and standard error at the beginning of main:
+- Added automatic flushing for standard output and standard error at the
+beginning of main:
   cout << unitbuf;
   cerr << unitbuf;
 - Updated the UCI identification to:
@@ -3718,11 +4100,15 @@ New functionality:
 - Updated the help text to:
   PHILOCHESS 0.1-alpha-029 commands:
 - Replaced critical UCI output endings with endl for immediate flushing.
-- Updated the uci response so that id name, id author, and uciok are flushed immediately.
+- Updated the uci response so that id name, id author, and uciok are flushed
+immediately.
 - Updated the isready response so that readyok is flushed immediately.
-- Updated bestmove output so that bestmove 0000 and bestmove <move> are flushed immediately.
-- Updated search information output so that info depth and info string alpha-beta cutoffs lines are flushed immediately.
-- Updated go limits output so that info string go limits is flushed immediately.
+- Updated bestmove output so that bestmove 0000 and bestmove <move> are flushed
+immediately.
+- Updated search information output so that info depth and info string
+alpha-beta cutoffs lines are flushed immediately.
+- Updated go limits output so that info string go limits is flushed
+immediately.
 - Updated stop and ponderhit informational outputs to use immediate flushing.
 - Updated the stop informational text from alpha-028 to alpha-029.
 - Preserved the existing alpha-beta search from alpha-028.
@@ -3771,14 +4157,17 @@ info depth 1 nodes 20 time 2 nps 10000 score cp 0 pv b1c3
 info string alpha-beta cutoffs 0
 bestmove b1c3
 
-This confirms that PHILOCHESS still searches correctly from the starting position and returns a valid UCI bestmove.
+This confirms that PHILOCHESS still searches correctly from the starting
+position and returns a valid UCI bestmove.
 
 The command quit closed the program successfully.
 The program exited successfully with code 0.
 
 Initial GUI compatibility result:
-After the output flushing changes, PHILOCHESS 0.1-alpha-029 was accepted by Cute Chess as a UCI engine.
-This indicates that the previous startup issue was very likely related to UCI output buffering or delayed protocol responses.
+After the output flushing changes, PHILOCHESS 0.1-alpha-029 was accepted by
+Cute Chess as a UCI engine.
+This indicates that the previous startup issue was very likely related to UCI
+output buffering or delayed protocol responses.
 
 Additional GUI setup:
 PHILOCHESS 0.1-alpha-029 was also imported into Myracle.
@@ -3786,13 +4175,18 @@ The engine was configured with:
 Protocol: uci
 
 Preliminary opponent validation:
-Before the first PHILOCHESS practical game, Pulse Chess 1.6.1 was tested in Myracle against Ajedrez Táctico 2.73b.
+Before the first PHILOCHESS practical game, Pulse Chess 1.6.1 was tested in
+Myracle against Ajedrez Táctico 2.73b.
 
-The game ended in a draw by threefold repetition from a favorable position for Pulse.
-This was noted as a practical limitation of Pulse in endgame conversion or repetition handling, but it did not affect its validity as a first external opponent for PHILOCHESS.
+The game ended in a draw by threefold repetition from a favorable position for
+Pulse.
+This was noted as a practical limitation of Pulse in endgame conversion or
+repetition handling, but it did not affect its validity as a first external
+opponent for PHILOCHESS.
 
 First practical Myracle game test:
-PHILOCHESS 0.1-alpha-029 completed its first practical game in Myracle against an external UCI engine.
+PHILOCHESS 0.1-alpha-029 completed its first practical game in Myracle against
+an external UCI engine.
 
 Test performed:
 Pulse Chess 1.6.1 vs PHILOCHESS 0.1-alpha-029
@@ -3805,20 +4199,29 @@ Conditions:
 Result:
 Pulse Chess 1.6.1 won by adjudication after 18 moves.
 
-PHILOCHESS 0.1-alpha-029 completed its first practical game in Myracle against an external UCI engine, Pulse Chess 1.6.1.
-The engine played 18 legal moves as Black, responded correctly to time controls, did not crash, did not produce illegal moves, and lost by adjudication after a tactical collapse in the opening/middlegame.
+PHILOCHESS 0.1-alpha-029 completed its first practical game in Myracle against
+an external UCI engine, Pulse Chess 1.6.1.
+The engine played 18 legal moves as Black, responded correctly to time
+controls, did not crash, did not produce illegal moves, and lost by
+adjudication after a tactical collapse in the opening/middlegame.
 
 Important note:
 This test was not a strength validation.
-Its main purpose was to verify practical GUI compatibility, UCI communication, time-control response, and full-game stability inside Myracle.
+Its main purpose was to verify practical GUI compatibility, UCI communication,
+time-control response, and full-game stability inside Myracle.
 
 Observed chess limitation:
 The game showed expected early-engine weaknesses.
-PHILOCHESS still uses a material-only evaluation, basic alpha-beta search, no move ordering, no quiescence search, and no evaluation of development, mobility, king safety, piece activity, pawn structure, coordination, or initiative.
+PHILOCHESS still uses a material-only evaluation, basic alpha-beta search, no
+move ordering, no quiescence search, and no evaluation of development,
+mobility, king safety, piece activity, pawn structure, coordination, or
+initiative.
 
 Conclusion of practical game test:
-PHILOCHESS 0.1-alpha-029 successfully completed its first real GUI game inside Myracle.
-This confirms that the UCI GUI compatibility patch achieved its main practical goal.
+PHILOCHESS 0.1-alpha-029 successfully completed its first real GUI game inside
+Myracle.
+This confirms that the UCI GUI compatibility patch achieved its main practical
+goal.
 
 Current limitations:
 - Alpha-029 improves UCI communication but does not add playing strength.
@@ -3833,12 +4236,15 @@ Current limitations:
 - No quiescence search is implemented yet.
 - Time management is still simple.
 - stop is recognized, but it still does not interrupt search asynchronously.
-- go infinite is parsed, but the engine still needs a more advanced search-control loop for true infinite analysis mode.
+- go infinite is parsed, but the engine still needs a more advanced
+search-control loop for true infinite analysis mode.
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 - Full practical GUI game validation in Myracle is still pending.
 
 Conclusion:
@@ -3858,7 +4264,8 @@ PHILOCHESS passed:
 - successful import and practical game start in Myracle;
 - completion of a full practical game against Pulse Chess 1.6.1;
 - 18 legal moves as Black under a 900+10 time control;
-- no crash, no illegal move, no protocol failure, and no timeout during the game.
+- no crash, no illegal move, no protocol failure, and no timeout during the
+game.
 
 This is an important practical integration milestone.
 PHILOCHESS can now communicate more reliably with UCI GUIs.
@@ -3867,16 +4274,22 @@ Date: July 08, 2026
 
 PHILOCHESS 0.1-alpha-030 — Tactical regression test
 
-Implemented a tactical regression test based on the main tactical failure observed in the first practical GUI game.
+Implemented a tactical regression test based on the main tactical failure
+observed in the first practical GUI game.
 
 Technical milestone:
-PHILOCHESS can now reproduce and inspect a specific tactical failure from a real practical game.
+PHILOCHESS can now reproduce and inspect a specific tactical failure from a
+real practical game.
 This version does not improve playing strength yet.
-Its purpose is to turn a real game failure into an internal diagnostic test that can be reused after future search improvements.
+Its purpose is to turn a real game failure into an internal diagnostic test
+that can be reused after future search improvements.
 
 Alpha-030 builds directly on alpha-029.
-The previous version improved UCI GUI compatibility and allowed PHILOCHESS to complete its first practical game against an external UCI engine.
-This version keeps the same search, evaluation, legal move generation, perft validation, and GUI communication behavior, but adds an internal tactical regression command.
+The previous version improved UCI GUI compatibility and allowed PHILOCHESS to
+complete its first practical game against an external UCI engine.
+This version keeps the same search, evaluation, legal move generation, perft
+validation, and GUI communication behavior, but adds an internal tactical
+regression command.
 
 New functionality:
 - Added an internal tactical regression test.
@@ -3884,7 +4297,8 @@ New functionality:
   tactictest
 - Added the alias command:
   regression
-- Added a small set of tactical regression cases from the first practical GUI game against Pulse Chess 1.6.1.
+- Added a small set of tactical regression cases from the first practical GUI
+game against Pulse Chess 1.6.1.
 - Added reporting for:
   - move sequence;
   - side to move;
@@ -3905,7 +4319,9 @@ New functionality:
 Important note:
 Alpha-030 is a diagnostic version.
 It is not expected to solve the tactical problem yet.
-The purpose of this version is to record the failure in a reproducible way so that future improvements, especially move ordering and quiescence search, can be checked against the same test.
+The purpose of this version is to record the failure in a reproducible way so
+that future improvements, especially move ordering and quiescence search, can
+be checked against the same test.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -3940,7 +4356,8 @@ b6c6
 Status:
 KNOWN ISSUE STILL PRESENT
 
-This confirms that PHILOCHESS still chooses the move that allowed 11.Bb5, placing the black queen in a tactical net.
+This confirms that PHILOCHESS still chooses the move that allowed 11.Bb5,
+placing the black queen in a tactical net.
 
 Case 2 — after 11.Bb5
 PHILOCHESS searched the follow-up position at depth 4.
@@ -3953,7 +4370,8 @@ c6b5
 Status:
 KNOWN ISSUE STILL PRESENT
 
-This confirms that PHILOCHESS still chooses 11...Qxb5, which does not save the queen because 12.Nc7+ follows with a fork.
+This confirms that PHILOCHESS still chooses 11...Qxb5, which does not save the
+queen because 12.Nc7+ follows with a fork.
 
 Case 3 — after 11...Qxb5
 PHILOCHESS searched the tactical refutation position at depth 4.
@@ -3966,12 +4384,15 @@ d5c7
 Status:
 EXPECTED TACTICAL MOVE FOUND
 
-This confirms that once the tactical position is reached, PHILOCHESS can find 12.Nc7+, the fork that gives check to the king and attacks the queen.
+This confirms that once the tactical position is reached, PHILOCHESS can find
+12.Nc7+, the fork that gives check to the king and attacks the queen.
 
 Regression summary:
-- The tactical failure from the first practical GUI game is now recorded inside PHILOCHESS.
+- The tactical failure from the first practical GUI game is now recorded inside
+PHILOCHESS.
 - Future search improvements can be checked against this same test.
-- The target is to eventually avoid the known bad moves without breaking legal move generation.
+- The target is to eventually avoid the known bad moves without breaking legal
+move generation.
 
 Known reference perft validation:
 The command performed was:
@@ -3983,12 +4404,14 @@ PHILOCHESS passed all registered known reference checks up to depth 4.
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the tactical regression additions did not break the legal move generator or the known reference perft validation up to depth 4.
+This confirms that the tactical regression additions did not break the legal
+move generator or the known reference perft validation up to depth 4.
 
 The program exited successfully with code 0.
 
 Current limitations:
-- Alpha-030 adds a tactical regression test, but does not yet improve playing strength.
+- Alpha-030 adds a tactical regression test, but does not yet improve playing
+strength.
 - The known bad moves in the regression test are still present.
 - The search remains basic alpha-beta.
 - No move ordering system is implemented yet.
@@ -4001,15 +4424,19 @@ Current limitations:
 - No quiescence search is implemented yet.
 - Time management is still simple.
 - stop is recognized, but it still does not interrupt search asynchronously.
-- go infinite is parsed, but the engine still needs a more advanced search-control loop for true infinite analysis mode.
+- go infinite is parsed, but the engine still needs a more advanced
+search-control loop for true infinite analysis mode.
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 
 Conclusion:
-PHILOCHESS 0.1-alpha-030 has been completed as a tactical regression test version.
+PHILOCHESS 0.1-alpha-030 has been completed as a tactical regression test
+version.
 
 PHILOCHESS passed:
 - successful compilation with 0 errors;
@@ -4025,10 +4452,14 @@ PHILOCHESS passed:
 - successful program exit with code 0.
 
 This is an important diagnostic milestone.
-PHILOCHESS can now preserve a real tactical failure as an internal regression test.
-Future search improvements can be measured not only by general behavior, but also by whether the engine eventually avoids this recorded tactical trap.
+PHILOCHESS can now preserve a real tactical failure as an internal regression
+test.
+Future search improvements can be measured not only by general behavior, but
+also by whether the engine eventually avoids this recorded tactical trap.
 
-The next development step should focus on basic move ordering, so that alpha-beta pruning can become more effective by searching stronger candidate moves earlier.
+The next development step should focus on basic move ordering, so that
+alpha-beta pruning can become more effective by searching stronger candidate
+moves earlier.
 
 Date: July 08, 2026
 
@@ -4041,8 +4472,10 @@ PHILOCHESS can now score and reorder legal moves before searching them.
 This is the first move ordering layer added to the engine.
 
 Alpha-031 builds directly on alpha-030.
-The previous version added a tactical regression test based on the first practical GUI game against Pulse Chess 1.6.1.
-This version begins to improve the search process by making alpha-beta examine more promising moves first.
+The previous version added a tactical regression test based on the first
+practical GUI game against Pulse Chess 1.6.1.
+This version begins to improve the search process by making alpha-beta examine
+more promising moves first.
 
 New functionality:
 - Added basic move scoring for search ordering.
@@ -4064,7 +4497,8 @@ New functionality:
 Important note:
 Alpha-031 does not change the evaluation function.
 The engine still uses material-only evaluation.
-The purpose of this version is to improve the order in which legal moves are searched, not to add new positional understanding.
+The purpose of this version is to improve the order in which legal moves are
+searched, not to add new positional understanding.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -4098,21 +4532,25 @@ Total: 20
 All initial ordered moves received:
 score 0
 
-This is correct from the starting position because there are no captures, promotions, checks, or castling moves available.
-Therefore, the basic move ordering system has no tactical feature to prioritize in the initial position.
+This is correct from the starting position because there are no captures,
+promotions, checks, or castling moves available.
+Therefore, the basic move ordering system has no tactical feature to prioritize
+in the initial position.
 
 The perft command returned:
 perft 1 = 20
 perft 2 = 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
 perftknown 4
 
 Result:
-PHILOCHESS passed all registered known reference checks up to depth 4 in this alpha-031 test run.
+PHILOCHESS passed all registered known reference checks up to depth 4 in this
+alpha-031 test run.
 
 The known reference positions tested were:
 - Initial position
@@ -4125,7 +4563,8 @@ The known reference positions tested were:
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the move ordering changes did not break the legal move generator, move application, or known reference perft validation up to depth 4.
+This confirms that the move ordering changes did not break the legal move
+generator, move application, or known reference perft validation up to depth 4.
 
 Search tests from the starting position:
 
@@ -4161,24 +4600,29 @@ go movetime 100
 
 returned:
 info string go limits depth 4 movetime 100 timelimit 100
-info depth 4 nodes 726 time 100 nps 7260 score cp 0 pv b1c3 string stopped by limit
+info depth 4 nodes 726 time 100 nps 7260 score cp 0 pv b1c3 string stopped by
+limit
 info string alpha-beta cutoffs 125
 bestmove b1c3
 
-This confirms that alpha-beta search still works correctly after adding move ordering.
-It also confirms that the movetime limit is respected and that the search can stop after reaching the allocated time.
+This confirms that alpha-beta search still works correctly after adding move
+ordering.
+It also confirms that the movetime limit is respected and that the search can
+stop after reaching the allocated time.
 
 The score remained:
 score cp 0
 
-This is expected from the starting position because the current evaluation is material-only and normal opening moves preserve material equality.
+This is expected from the starting position because the current evaluation is
+material-only and normal opening moves preserve material equality.
 
 Tactical regression test:
 The command performed was:
 regression 4
 
 Result:
-PHILOCHESS ran the internal tactical regression test based on the first practical GUI game against Pulse Chess 1.6.1.
+PHILOCHESS ran the internal tactical regression test based on the first
+practical GUI game against Pulse Chess 1.6.1.
 
 Case 1 - before 10...Qc6?
 
@@ -4206,7 +4650,8 @@ Status:
 IMPROVED - known bad move avoided
 
 This is an important improvement over alpha-030.
-PHILOCHESS no longer chooses the known bad move 10...Qc6 in the first regression case.
+PHILOCHESS no longer chooses the known bad move 10...Qc6 in the first
+regression case.
 
 Case 2 - after 11.Bb5
 
@@ -4261,7 +4706,8 @@ d5c7
 Status:
 EXPECTED TACTICAL MOVE FOUND
 
-This confirms that PHILOCHESS still finds the tactical refutation 12.Nc7+ once the position after 11...Qxb5 is reached.
+This confirms that PHILOCHESS still finds the tactical refutation 12.Nc7+ once
+the position after 11...Qxb5 is reached.
 
 Regression summary:
 - The known Pulse game tactical failure remains recorded inside PHILOCHESS.
@@ -4285,17 +4731,21 @@ Current limitations:
 - The tactical regression Case 2 remains unsolved.
 - Time management is still simple.
 - stop is recognized, but it does not yet interrupt search asynchronously.
-- go infinite is parsed, but the engine still needs a more advanced search-control loop for true infinite analysis mode.
+- go infinite is parsed, but the engine still needs a more advanced
+search-control loop for true infinite analysis mode.
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 - nps is reported, but the current implementation is not optimized for speed.
 
 Conclusion:
 PHILOCHESS 0.1-alpha-031 has been completed.
-The engine now includes its first basic move ordering layer for alpha-beta search.
+The engine now includes its first basic move ordering layer for alpha-beta
+search.
 
 PHILOCHESS passed:
 - successful compilation with 0 errors;
@@ -4319,8 +4769,11 @@ PHILOCHESS passed:
 - successful program exit with code 0.
 
 This is a meaningful search improvement milestone.
-PHILOCHESS now begins to use move ordering to make alpha-beta pruning more effective.
-The next development step should focus on improving tactical stability, most likely through quiescence search or another search improvement capable of reducing horizon-effect problems in forcing positions.
+PHILOCHESS now begins to use move ordering to make alpha-beta pruning more
+effective.
+The next development step should focus on improving tactical stability, most
+likely through quiescence search or another search improvement capable of
+reducing horizon-effect problems in forcing positions.
 
 Date: July 09, 2026
 
@@ -4329,7 +4782,8 @@ PHILOCHESS 0.1-alpha-032 — Final 0.1 validation and closure
 Completed the final validation and closure of PHILOCHESS 0.1.
 
 Technical milestone:
-PHILOCHESS 0.1-alpha-032 closes the PHILOCHESS 0.1 development cycle as a validated minimal UCI chess engine.
+PHILOCHESS 0.1-alpha-032 closes the PHILOCHESS 0.1 development cycle as a
+validated minimal UCI chess engine.
 
 This version does not introduce new engine logic.
 It is based on the alpha-031 codebase and preserves:
@@ -4347,11 +4801,13 @@ It is based on the alpha-031 codebase and preserves:
 - tactical regression testing;
 - basic move ordering.
 
-Alpha-032 updates the visible version identity and performs a final validation battery to confirm that the PHILOCHESS 0.1 line remains stable.
+Alpha-032 updates the visible version identity and performs a final validation
+battery to confirm that the PHILOCHESS 0.1 line remains stable.
 
 New functionality:
 - No new search, evaluation, or move generation logic was added.
-- The alpha-031 source code was copied and archived as the alpha-032 source file.
+- The alpha-031 source code was copied and archived as the alpha-032 source
+file.
 - The UCI identification was updated to:
   id name PHILOCHESS 0.1-alpha-032
 - Visible diagnostic strings were updated to identify alpha-032 correctly.
@@ -4360,12 +4816,15 @@ New functionality:
 - The help text was updated to report:
   PHILOCHESS 0.1-alpha-032 commands:
 - The stop command diagnostic string was updated to identify alpha-032.
-- The tactical regression note now correctly states that alpha-032 preserves the alpha-031 move ordering improvements.
+- The tactical regression note now correctly states that alpha-032 preserves
+the alpha-031 move ordering improvements.
 
 Important note:
 Alpha-032 is a validation and closure version.
 It does not improve playing strength over alpha-031.
-Its purpose is to close PHILOCHESS 0.1 with a clean version identity, successful compilation, UCI verification, search verification, tactical regression verification, and perft validation.
+Its purpose is to close PHILOCHESS 0.1 with a clean version identity,
+successful compilation, UCI verification, search verification, tactical
+regression verification, and perft validation.
 
 Compilation test:
 The program compiled successfully in Visual Studio.
@@ -4412,7 +4871,8 @@ Black material: 4000 cp  (p=8, n=2, b=2, r=2, q=1)
 Evaluation: 0 cp  (positive = White is ahead)
 Side-to-move evaluation: 0 cp
 
-This confirms that the initial position remains materially equal and that the material evaluation system remains stable.
+This confirms that the initial position remains materially equal and that the
+material evaluation system remains stable.
 
 Search tests from the starting position:
 
@@ -4457,22 +4917,26 @@ go movetime 100
 
 returned:
 info string go limits depth 4 movetime 100 timelimit 100
-info depth 4 nodes 744 time 100 nps 7440 score cp 0 pv b1c3 string stopped by limit
+info depth 4 nodes 744 time 100 nps 7440 score cp 0 pv b1c3 string stopped by
+limit
 info string alpha-beta cutoffs 134
 bestmove b1c3
 
-This confirms that the movetime limit is respected and that the search can stop when the allocated time is reached.
+This confirms that the movetime limit is respected and that the search can stop
+when the allocated time is reached.
 
 The command:
 go wtime 60000 btime 60000 winc 1000 binc 1000 movestogo 30
 
 returned:
-info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000 timelimit 2500
+info string go limits depth 4 wtime 60000 btime 60000 winc 1000 binc 1000
+timelimit 2500
 info depth 4 nodes 1440 time 201 nps 7164 score cp 0 pv b1c3
 info string alpha-beta cutoffs 482
 bestmove b1c3
 
-This confirms that the basic time-control parser remains functional and calculates a usable search time limit.
+This confirms that the basic time-control parser remains functional and
+calculates a usable search time limit.
 
 Additional control-time test:
 The command:
@@ -4484,25 +4948,29 @@ info depth 4 nodes 1440 time 210 nps 6857 score cp 0 pv b1c3
 info string alpha-beta cutoffs 482
 bestmove b1c3
 
-This confirms that with a larger fixed movetime value, PHILOCHESS can complete its current maximum search depth before consuming the full time allocation.
+This confirms that with a larger fixed movetime value, PHILOCHESS can complete
+its current maximum search depth before consuming the full time allocation.
 
 The score remained:
 score cp 0
 
-This is expected from the starting position because the current evaluation is material-only and ordinary opening moves preserve material equality.
+This is expected from the starting position because the current evaluation is
+material-only and ordinary opening moves preserve material equality.
 
 Tactical regression test:
 The command performed was:
 tactictest
 
 Result:
-PHILOCHESS ran the internal tactical regression test based on the first practical GUI game against Pulse Chess 1.6.1.
+PHILOCHESS ran the internal tactical regression test based on the first
+practical GUI game against Pulse Chess 1.6.1.
 
 The test was correctly identified as:
 PHILOCHESS 0.1-alpha-032 - Tactical regression test
 
 The test also reported:
-Alpha-032 preserves the alpha-031 move ordering improvements, but this test remains diagnostic.
+Alpha-032 preserves the alpha-031 move ordering improvements, but this test
+remains diagnostic.
 
 Case 1 - before 10...Qc6?
 
@@ -4529,7 +4997,8 @@ b6c6
 Status:
 IMPROVED - known bad move avoided
 
-This confirms that PHILOCHESS still avoids the known bad move 10...Qc6 in the first regression case.
+This confirms that PHILOCHESS still avoids the known bad move 10...Qc6 in the
+first regression case.
 
 Case 2 - after 11.Bb5
 
@@ -4556,7 +5025,8 @@ c6b5
 Status:
 KNOWN ISSUE STILL PRESENT
 
-This confirms that alpha-032 does not yet solve the second tactical regression case.
+This confirms that alpha-032 does not yet solve the second tactical regression
+case.
 PHILOCHESS still chooses 11...Qxb5 after 11.Bb5, even though 12.Nc7+ follows.
 
 Case 3 - after 11...Qxb5
@@ -4584,11 +5054,13 @@ d5c7
 Status:
 EXPECTED TACTICAL MOVE FOUND
 
-This confirms that once the position after 11...Qxb5 is reached, PHILOCHESS still finds the tactical refutation 12.Nc7+.
+This confirms that once the position after 11...Qxb5 is reached, PHILOCHESS
+still finds the tactical refutation 12.Nc7+.
 
 Regression summary:
 - The known Pulse game tactical failure remains recorded inside PHILOCHESS.
-- Alpha-032 preserves the alpha-031 move ordering improvement that avoids 10...Qc6 in Case 1.
+- Alpha-032 preserves the alpha-031 move ordering improvement that avoids
+10...Qc6 in Case 1.
 - The second regression case remains a known issue.
 - The third regression case correctly finds the expected tactical move 12.Nc7+.
 
@@ -4606,7 +5078,8 @@ perft 2
 returned:
 400
 
-These values match the known standard perft reference values from the initial chess position.
+These values match the known standard perft reference values from the initial
+chess position.
 
 Known reference perft validation:
 The command performed was:
@@ -4654,12 +5127,15 @@ depth 4: 3894594 / 3894594 OK
 Validation summary:
 perftknown 4: 24/24 passed
 
-This confirms that the alpha-032 version identity and diagnostic text updates did not break the legal move generator, move application, special move handling, or known reference perft validation.
+This confirms that the alpha-032 version identity and diagnostic text updates
+did not break the legal move generator, move application, special move
+handling, or known reference perft validation.
 
 The program exited successfully with code 0.
 
 Current limitations:
-- Alpha-032 is a closure and validation version, not a playing-strength improvement version.
+- Alpha-032 is a closure and validation version, not a playing-strength
+improvement version.
 - Move ordering is still basic.
 - Capture ordering is limited to a simple MVV-LVA-style score.
 - No principal variation move ordering is implemented yet.
@@ -4673,12 +5149,15 @@ Current limitations:
 - The tactical regression Case 2 remains unsolved.
 - Time management is still simple.
 - stop is recognized, but it does not yet interrupt search asynchronously.
-- go infinite is parsed, but the engine still needs a more advanced search-control loop for true infinite analysis mode.
+- go infinite is parsed, but the engine still needs a more advanced
+search-control loop for true infinite analysis mode.
 - The principal variation output currently shows only the selected root move.
 - The evaluation is still material-only.
 - The engine does not yet use piece-square tables.
-- The engine does not yet evaluate mobility, king safety, pawn structure, development, activity, coordination, or initiative.
-- Draw adjudication by the fifty-move rule, repetition, or insufficient material is not implemented.
+- The engine does not yet evaluate mobility, king safety, pawn structure,
+development, activity, coordination, or initiative.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient
+material is not implemented.
 - nps is reported, but the current implementation is not optimized for speed.
 
 Conclusion:
@@ -4710,6 +5189,12 @@ PHILOCHESS passed:
 - successful program exit with code 0.
 
 This is the formal closure milestone for PHILOCHESS 0.1.
-The engine now exists as a minimal but validated UCI chess engine with legal move generation, special move handling, FEN support, game status detection, perft validation, material evaluation, basic alpha-beta search, basic time handling, tactical regression testing, and basic move ordering.
+The engine now exists as a minimal but validated UCI chess engine with legal
+move generation, special move handling, FEN support, game status detection,
+perft validation, material evaluation, basic alpha-beta search, basic time
+handling, tactical regression testing, and basic move ordering.
 
-The next development phase should build on this stable foundation and focus on improving tactical stability, most likely through quiescence search or another search improvement capable of reducing horizon-effect problems in forcing positions.
+The next development phase should build on this stable foundation and focus on
+improving tactical stability, most likely through quiescence search or another
+search improvement capable of reducing horizon-effect problems in forcing
+positions.
