@@ -8,13 +8,15 @@ Robert M. Cuadros
 
 Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
 
-Los análisis, resúmenes, conclusiones, diagnósticos y organización editorial
+Los análisis, resúmenes, conclusiones, diagnósticos y organización 
+editorial
 originales de este documento se distribuyen bajo la licencia Creative Commons
 Atribución-NoComercial-SinDerivadas 4.0 Internacional
 (CC BY-NC-ND 4.0).
 
 Este documento puede compartirse únicamente sin modificaciones, con la debida
-atribución y para fines no comerciales. Este aviso de autoría y licencia deberá
+atribución y para fines no comerciales. Este aviso de autoría y licencia 
+deberá
 conservarse en toda copia compartida.
 
 Atribución recomendada:
@@ -22,7 +24,8 @@ Atribución recomendada:
 Robert M. Cuadros»
 
 Las partidas y los datos PGN se incluyen como registro documental del torneo.
-La licencia indicada se aplica específicamente al contenido analítico original
+La licencia indicada se aplica específicamente al contenido analítico 
+original
 y a su presentación editorial.
 
 Repositorio del proyecto:
@@ -63,32 +66,70 @@ Ronda 1
 
 RESUMEN
 
-PHILOCHESS comenzó la partida con 1...a6, 2...a5 y 3...a4, invirtiendo tres tiempos consecutivos en un peón lateral sin desarrollar piezas, disputar el centro ni contribuir a la seguridad del rey. A continuación, utilizó prematuramente la dama y tuvo que moverla repetidas veces: ...Qa5+, ...Qb6, ...Qc7, ...Qb6, ...Qxc5, ...Qc6 y ...Qxe4.
+PHILOCHESS comenzó la partida con 1...a6, 2...a5 y 3...a4, invirtiendo tres 
+tiempos consecutivos en un peón lateral sin desarrollar piezas, disputar el 
+centro ni contribuir a la seguridad del rey. A continuación, utilizó 
+prematuramente la dama y tuvo que moverla repetidas veces: ...Qa5+, ...Qb6, 
+...Qc7, ...Qb6, ...Qxc5, ...Qc6 y ...Qxe4.
 
-Después de 12.Ne5, las blancas habían completado su desarrollo, enrocado y coordinado sus piezas, mientras que las negras solo habían movilizado la dama y dos peones. Ninguna pieza negra había sido desarrollada y el rey continuaba en el centro.
+Después de 12.Ne5, las blancas habían completado su desarrollo, enrocado y 
+coordinado sus piezas, mientras que las negras solo habían movilizado la dama 
+y dos peones. Ninguna pieza negra había sido desarrollada y el rey continuaba 
+en el centro.
 
-La jugada 8...c5 abandonó el control de la casilla b5 que ejercía el peón desde c6. Esto permitió 9.Nb5, atacando a la dama y preparando la entrada del caballo en c7. Cuando PHILOCHESS jugó 12...Qxe4, la dama ya no disponía de una retirada satisfactoria que mantuviera protegida la casilla c7. Por ello, 13.Nc7+ no debe interpretarse únicamente como la consecuencia de un error táctico puntual, sino como el resultado de la posición estratégicamente deteriorada creada durante las jugadas anteriores.
+La jugada 8...c5 abandonó el control de la casilla b5 que ejercía el peón 
+desde c6. Esto permitió 9.Nb5, atacando a la dama y preparando la entrada del 
+caballo en c7. Cuando PHILOCHESS jugó 12...Qxe4, la dama ya no disponía de 
+una retirada satisfactoria que mantuviera protegida la casilla c7. Por ello, 
+13.Nc7+ no debe interpretarse únicamente como la consecuencia de un error 
+táctico puntual, sino como el resultado de la posición estratégicamente 
+deteriorada creada durante las jugadas anteriores.
 
-Tras 13.Nc7+ Kd8, PHILOCHESS perdió el derecho a enrocar. La falta general de desarrollo había impedido realizar esta operación fundamental de la apertura, que habría contribuido tanto al desarrollo como a la seguridad del rey.
+Tras 13.Nc7+ Kd8, PHILOCHESS perdió el derecho a enrocar. La falta general de 
+desarrollo había impedido realizar esta operación fundamental de la 
+apertura, que habría contribuido tanto al desarrollo como a la seguridad del 
+rey.
 
-La secuencia 16...f6 17.Nf7+ Ke8 18.Nxh8 produjo un segundo ataque doble de caballo y la pérdida de la torre de h8. Sin embargo, tampoco se trató de un accidente táctico aislado. Las piezas negras permanecían sin desarrollar, las torres no estaban conectadas ni activas, el rey seguía expuesto y las piezas blancas ocupaban casillas avanzadas con gran libertad de acción. Evitar específicamente Nf7+ habría dejado sin resolver otros problemas graves de la posición.
+La secuencia 16...f6 17.Nf7+ Ke8 18.Nxh8 produjo un segundo ataque doble de 
+caballo y la pérdida de la torre de h8. Sin embargo, tampoco se trató de un 
+accidente táctico aislado. Las piezas negras permanecían sin desarrollar, 
+las torres no estaban conectadas ni activas, el rey seguía expuesto y las 
+piezas blancas ocupaban casillas avanzadas con gran libertad de acción. 
+Evitar específicamente Nf7+ habría dejado sin resolver otros problemas 
+graves de la posición.
 
-Posteriormente, el alfil de c8, que todavía no había sido desarrollado, fue capturado. PHILOCHESS quedó con una desventaja material decisiva y sin compensación suficiente, por lo que la partida fue adjudicada a favor de Zoidberg.
+Posteriormente, el alfil de c8, que todavía no había sido desarrollado, fue 
+capturado. PHILOCHESS quedó con una desventaja material decisiva y sin 
+compensación suficiente, por lo que la partida fue adjudicada a favor de 
+Zoidberg.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue la falta general de desarrollo. Los ataques dobles en c7 y f7 fueron consecuencias tácticas de una posición estratégicamente defectuosa.
+1. La causa principal de la derrota fue la falta general de desarrollo. Los 
+ataques dobles en c7 y f7 fueron consecuencias tácticas de una posición 
+estratégicamente defectuosa.
 
-2. Los movimientos repetidos del peón de la columna a y de la dama consumieron demasiados tiempos y permitieron que las blancas completaran su desarrollo con ventaja decisiva.
+2. Los movimientos repetidos del peón de la columna a y de la dama 
+consumieron demasiados tiempos y permitieron que las blancas completaran su 
+desarrollo con ventaja decisiva.
 
-3. PHILOCHESS no logró enrocar. Esto mantuvo al rey en el centro, impidió activar y conectar las torres y agravó la falta de coordinación de todo el ejército negro.
+3. PHILOCHESS no logró enrocar. Esto mantuvo al rey en el centro, impidió 
+activar y conectar las torres y agravó la falta de coordinación de todo el 
+ejército negro.
 
-4. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas.
+4. La partida no muestra fallos de legalidad, comunicación UCI, aplicación 
+de movimientos ni recapturas incorrectas.
 
-5. Tampoco se observa una pérdida material producida simplemente por dejar una pieza colgada. La pérdida de material surgió de ataques dobles y penetraciones de caballo posibilitados por la superioridad de desarrollo de las blancas.
+5. Tampoco se observa una pérdida material producida simplemente por dejar 
+una pieza colgada. La pérdida de material surgió de ataques dobles y 
+penetraciones de caballo posibilitados por la superioridad de desarrollo de 
+las blancas.
 
-6. La quiescence search básica no puede corregir por sí sola este tipo de problema. PHILOCHESS necesita una evaluación posicional capaz de distinguir entre jugadas materialmente neutras y jugadas que desarrollan piezas, controlan el centro, mejoran la coordinación y aumentan la seguridad del rey.
+6. La quiescence search básica no puede corregir por sí sola este tipo de 
+problema. PHILOCHESS necesita una evaluación posicional capaz de distinguir 
+entre jugadas materialmente neutras y jugadas que desarrollan piezas, 
+controlan el centro, mejoran la coordinación y aumentan la seguridad del rey.
 
 7. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
@@ -97,10 +138,16 @@ CONCLUSIONES
    - control del centro;
    - seguridad del rey;
    - incentivo al enroque cuando sea apropiado;
-   - penalización de movimientos repetidos e injustificados de la dama o de peones laterales;
-   - pruebas de regresión en las posiciones anteriores a 8...c5, 12...Qxe4 y 16...f6.
+   - penalización de movimientos repetidos e injustificados de la dama o de 
+peones laterales;
+   - pruebas de regresión en las posiciones anteriores a 8...c5, 12...Qxe4 y 
+16...f6.
 
-Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, pero su evaluación todavía carece de los conocimientos posicionales necesarios para conducir la apertura. La derrota fue provocada principalmente por una acumulación de decisiones estratégicas deficientes, no por un único error táctico.
+Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y 
+estable, pero su evaluación todavía carece de los conocimientos posicionales 
+necesarios para conducir la apertura. La derrota fue provocada principalmente 
+por una acumulación de decisiones estratégicas deficientes, no por un único 
+error táctico.
 
 
 Ronda 2
@@ -131,45 +178,91 @@ Ronda 2
 
 RESUMEN
 
-PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero después de 1...d5 jugó 2.Rb1 y permitió que el avance 2...d4 atacara al caballo. Este tuvo que desplazarse a a4 y posteriormente a c5, donde fue cambiado por el alfil negro. Mientras tanto, las negras establecieron un centro amplio.
+PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero 
+después de 1...d5 jugó 2.Rb1 y permitió que el avance 2...d4 atacara al 
+caballo. Este tuvo que desplazarse a a4 y posteriormente a c5, donde fue 
+cambiado por el alfil negro. Mientras tanto, las negras establecieron un 
+centro amplio.
 
-La anomalía principal de la apertura fue el movimiento reiterado de la torre de a1. La torre se movió siete veces durante las primeras quince jugadas sin conseguir movilidad ni actividad: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1 y Rb1. Estos movimientos consumieron tiempos que debieron emplearse en desarrollar las demás piezas, disputar el centro y preparar el enroque.
+La anomalía principal de la apertura fue el movimiento reiterado de la torre 
+de a1. La torre se movió siete veces durante las primeras quince jugadas sin 
+conseguir movilidad ni actividad: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1 y Rb1. Estos 
+movimientos consumieron tiempos que debieron emplearse en desarrollar las 
+demás piezas, disputar el centro y preparar el enroque.
 
-La primera pérdida de material se produjo después de 8...Nxc5, cuando el caballo negro capturó el peón de c5. El problema es que las piezas blancas todavía no estaban desarrolladas y no podían sostener ese peón ni generar contrajuego.
+La primera pérdida de material se produjo después de 8...Nxc5, cuando el 
+caballo negro capturó el peón de c5. El problema es que las piezas blancas 
+todavía no estaban desarrolladas y no podían sostener ese peón ni generar 
+contrajuego.
 
-Tras 15...Ne3!, Needle atacaba a la dama blanca. PHILOCHESS no aceptó la entrega y respondió con 16.Qc1. Esta secuencia demuestra que Needle ya podía operar tácticamente dentro de la posición blanca gracias a su superioridad de desarrollo, control central y actividad.
+Tras 15...Ne3!, Needle atacaba a la dama blanca. PHILOCHESS no aceptó la 
+entrega y respondió con 16.Qc1. Esta secuencia demuestra que Needle ya podía 
+operar tácticamente dentro de la posición blanca gracias a su superioridad 
+de desarrollo, control central y actividad.
 
-Después de 18.Rb4, las negras jugaron 18...c5 y atacaron la torre. PHILOCHESS no podía retirarla porque ello habría dejado libre la diagonal a5-e1 y permitido una secuencia de mate en dos movimientos. Por esta razón, 19.c3 fue una defensa necesaria para bloquear la diagonal, aunque después de 19...cxb4 las blancas perdieron la torre.
+Después de 18.Rb4, las negras jugaron 18...c5 y atacaron la torre. PHILOCHESS 
+no podía retirarla porque ello habría dejado libre la diagonal a5-e1 y 
+permitido una secuencia de mate en dos movimientos. Por esta razón, 19.c3 fue 
+una defensa necesaria para bloquear la diagonal, aunque después de 19...cxb4 
+las blancas perdieron la torre.
 
-La continuación 21...d3 creó nuevas amenazas contra el rey blanco. PHILOCHESS tuvo que responder con 22.Bxd3 y, después de 22...Rxd3, perdió el alfil. Posteriormente, el otro alfil blanco fue capturado mediante 23...Nxb2. Con una torre y ambos alfiles perdidos, el rey todavía en el centro y las piezas restantes sin coordinación suficiente, la posición blanca se derrumbó rápidamente y la partida fue adjudicada a favor de Needle.
+La continuación 21...d3 creó nuevas amenazas contra el rey blanco. 
+PHILOCHESS tuvo que responder con 22.Bxd3 y, después de 22...Rxd3, perdió el 
+alfil. Posteriormente, el otro alfil blanco fue capturado mediante 23...Nxb2. 
+Con una torre y ambos alfiles perdidos, el rey todavía en el centro y las 
+piezas restantes sin coordinación suficiente, la posición blanca se 
+derrumbó rápidamente y la partida fue adjudicada a favor de Needle.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue la gestión deficiente de los tiempos de apertura. PHILOCHESS movió repetidamente una torre mientras las demás piezas permanecían sin desarrollar.
+1. La causa principal de la derrota fue la gestión deficiente de los tiempos 
+de apertura. PHILOCHESS movió repetidamente una torre mientras las demás 
+piezas permanecían sin desarrollar.
 
-2. Los siete movimientos de torre realizados durante las primeras quince jugadas no produjeron movilidad ni actividad. Mientras tanto, Needle desarrolló sus piezas, ocupó el centro y preparó el ataque contra el rey blanco.
+2. Los siete movimientos de torre realizados durante las primeras quince 
+jugadas no produjeron movilidad ni actividad. Mientras tanto, Needle 
+desarrolló sus piezas, ocupó el centro y preparó el ataque contra el rey 
+blanco.
 
-3. La captura 8...Nxc5 fue la primera pérdida material. El peón de c5 no pudo ser sostenido porque las piezas blancas todavía no habían sido desarrolladas.
+3. La captura 8...Nxc5 fue la primera pérdida material. El peón de c5 no 
+pudo ser sostenido porque las piezas blancas todavía no habían sido 
+desarrolladas.
 
-4. La secuencia iniciada por 15...Ne3! mostró que las negras ya podían realizar operaciones tácticas dentro de la posición blanca debido a su superioridad de desarrollo y coordinación.
+4. La secuencia iniciada por 15...Ne3! mostró que las negras ya podían 
+realizar operaciones tácticas dentro de la posición blanca debido a su 
+superioridad de desarrollo y coordinación.
 
-5. La pérdida de la torre después de 18...c5 no fue consecuencia de haber dejado simplemente una pieza atacada. PHILOCHESS jugó 19.c3 porque retirar la torre habría permitido una secuencia de mate en dos movimientos.
+5. La pérdida de la torre después de 18...c5 no fue consecuencia de haber 
+dejado simplemente una pieza atacada. PHILOCHESS jugó 19.c3 porque retirar la 
+torre habría permitido una secuencia de mate en dos movimientos.
 
-6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas. PHILOCHESS identificó una amenaza inmediata contra su rey, pero solo pudo evitarla mediante una concesión material decisiva.
+6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación 
+de movimientos ni recapturas incorrectas. PHILOCHESS identificó una amenaza 
+inmediata contra su rey, pero solo pudo evitarla mediante una concesión 
+material decisiva.
 
 7. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización de movimientos repetidos de una misma pieza durante la apertura;
-   - penalización específica de movimientos prematuros de las torres cuando todavía existen piezas sin desarrollar;
+   - penalización de movimientos repetidos de una misma pieza durante la 
+apertura;
+   - penalización específica de movimientos prematuros de las torres cuando 
+todavía existen piezas sin desarrollar;
    - tablas pieza-casilla;
    - valoración del control central y del espacio;
    - evaluación de movilidad y actividad;
    - distinción entre mover una pieza y crear amenazas;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
-   - pruebas de regresión en las posiciones anteriores a 2.Rb1, 8...Nxc5, 15...Ne3 y 18...c5.
+   - pruebas de regresión en las posiciones anteriores a 2.Rb1, 8...Nxc5, 
+15...Ne3 y 18...c5.
 
-Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, e incluso reconoció la amenaza de mate existente después de 18...c5. Sin embargo, su evaluación todavía no distingue adecuadamente entre movimientos útiles y movimientos que solo consumen tiempos. La derrota fue provocada principalmente por los movimientos repetidos de la torre, la falta de desarrollo, la pérdida del control central y la permanencia del rey en el centro.
+Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y 
+estable, e incluso reconoció la amenaza de mate existente después de 
+18...c5. Sin embargo, su evaluación todavía no distingue adecuadamente entre 
+movimientos útiles y movimientos que solo consumen tiempos. La derrota fue 
+provocada principalmente por los movimientos repetidos de la torre, la falta 
+de desarrollo, la pérdida del control central y la permanencia del rey en el 
+centro.
 
 
 Ronda 3
@@ -200,52 +293,105 @@ Ronda 3
 
 RESUMEN
 
-PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero volvió a mover prematuramente la torre con 2.Rb1. Shallow Blue ocupó el centro y avanzó el peón de d5 a d4, atacando al caballo blanco y obligándolo a desplazarse primero a b5 y luego a a3. Mientras tanto, las negras establecieron un centro amplio y desarrollaron sus piezas.
+PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero 
+volvió a mover prematuramente la torre con 2.Rb1. Shallow Blue ocupó el 
+centro y avanzó el peón de d5 a d4, atacando al caballo blanco y 
+obligándolo a desplazarse primero a b5 y luego a a3. Mientras tanto, las 
+negras establecieron un centro amplio y desarrollaron sus piezas.
 
-La anomalía principal de la apertura fue el movimiento reiterado de la torre de a1. La torre se movió ocho veces durante las primeras trece jugadas sin conseguir movilidad ni actividad: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1, Rb1 y Ra1. Estos movimientos consumieron tiempos que debieron emplearse en desarrollar las demás piezas, disputar el centro y preparar el enroque.
+La anomalía principal de la apertura fue el movimiento reiterado de la torre 
+de a1. La torre se movió ocho veces durante las primeras trece jugadas sin 
+conseguir movilidad ni actividad: Rb1, Ra1, Rb1, Ra1, Rb1, Ra1, Rb1 y Ra1. 
+Estos movimientos consumieron tiempos que debieron emplearse en desarrollar 
+las demás piezas, disputar el centro y preparar el enroque.
 
-Cuando PHILOCHESS desarrolló el segundo caballo mediante 10.Nf3, las negras ya poseían una considerable ventaja de espacio. El avance 10...e4 atacó al caballo y lo obligó a regresar a su casilla de origen. De esta manera, el desarrollo de esa pieza fue anulado inmediatamente por la presión ejercida desde el centro negro.
+Cuando PHILOCHESS desarrolló el segundo caballo mediante 10.Nf3, las negras 
+ya poseían una considerable ventaja de espacio. El avance 10...e4 atacó al 
+caballo y lo obligó a regresar a su casilla de origen. De esta manera, el 
+desarrollo de esa pieza fue anulado inmediatamente por la presión ejercida 
+desde el centro negro.
 
-Después de 14...Bxa3, PHILOCHESS no recapturó inmediatamente, ya que 15...Bxc2 habría atacado a la dama blanca y la habría dejado sin una casilla satisfactoria de retirada. La decisión de jugar 15.dxe3 evitó la pérdida inmediata de la dama.
+Después de 14...Bxa3, PHILOCHESS no recapturó inmediatamente, ya que 
+15...Bxc2 habría atacado a la dama blanca y la habría dejado sin una casilla 
+satisfactoria de retirada. La decisión de jugar 15.dxe3 evitó la pérdida 
+inmediata de la dama.
 
-Tras 15...Bxc2, la dama blanca quedó atacada. Su única retirada viable era 16.Qd2, pero entonces 16...Bb4 habría clavado la dama y mantenido la amenaza de capturarla. La retirada 16.Qd3 tampoco era posible, porque la casilla d3 estaba controlada por el alfil de c2.
+Tras 15...Bxc2, la dama blanca quedó atacada. Su única retirada viable era 
+16.Qd2, pero entonces 16...Bb4 habría clavado la dama y mantenido la amenaza 
+de capturarla. La retirada 16.Qd3 tampoco era posible, porque la casilla d3 
+estaba controlada por el alfil de c2.
 
-La jugada 16.exd4 tuvo sentido como contraataque, porque el peón blanco capturó en d4 y dejó amenazada a la dama negra de c5. Si Shallow Blue hubiera respondido con 16...Bxd1, se habrían eliminado ambas damas mediante 17.dxc5. Aunque la variante 17...Ba4 18.bxa3 Nd4! habría conservado una ventaja decisiva para las negras, PHILOCHESS todavía habría continuado en la lucha.
+La jugada 16.exd4 tuvo sentido como contraataque, porque el peón blanco 
+capturó en d4 y dejó amenazada a la dama negra de c5. Si Shallow Blue 
+hubiera respondido con 16...Bxd1, se habrían eliminado ambas damas mediante 
+17.dxc5. Aunque la variante 17...Ba4 18.bxa3 Nd4! habría conservado una 
+ventaja decisiva para las negras, PHILOCHESS todavía habría continuado en la 
+lucha.
 
-Sin embargo, Shallow Blue encontró la respuesta más fuerte: el caballo capturó el peón que atacaba a la dama negra y mantuvo la amenaza contra la dama blanca. Después de 17.bxa3 Bxd1, PHILOCHESS acabó perdiendo la dama. La continuación 19...Qa5+ 20.Kf1 Qxa6+ mantuvo expuesto al rey blanco y dejó a las blancas con una desventaja material decisiva, por lo que la partida fue adjudicada a favor de Shallow Blue. Además, en la posición final, las negras disponían de una secuencia forzada que les habría permitido dar mate en tres.
+Sin embargo, Shallow Blue encontró la respuesta más fuerte: el caballo 
+capturó el peón que atacaba a la dama negra y mantuvo la amenaza contra la 
+dama blanca. Después de 17.bxa3 Bxd1, PHILOCHESS acabó perdiendo la dama. La 
+continuación 19...Qa5+ 20.Kf1 Qxa6+ mantuvo expuesto al rey blanco y dejó a 
+las blancas con una desventaja material decisiva, por lo que la partida fue 
+adjudicada a favor de Shallow Blue. Además, en la posición final, las negras 
+disponían de una secuencia forzada que les habría permitido dar mate en tres.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue nuevamente la gestión deficiente de los tiempos de apertura. PHILOCHESS movió ocho veces la torre mientras las demás piezas permanecían sin desarrollar.
+1. La causa principal de la derrota fue nuevamente la gestión deficiente de 
+los tiempos de apertura. PHILOCHESS movió ocho veces la torre mientras las 
+demás piezas permanecían sin desarrollar.
 
-2. Los movimientos repetidos de la torre no produjeron movilidad ni actividad. Mientras tanto, Shallow Blue ocupó el centro, ganó espacio, desarrolló sus piezas y atacó a los caballos blancos.
+2. Los movimientos repetidos de la torre no produjeron movilidad ni actividad. 
+Mientras tanto, Shallow Blue ocupó el centro, ganó espacio, desarrolló sus 
+piezas y atacó a los caballos blancos.
 
-3. El desarrollo del caballo mediante 10.Nf3 llegó demasiado tarde. La ventaja de espacio de las negras permitió atacarlo inmediatamente con 10...e4 y obligarlo a regresar a g1.
+3. El desarrollo del caballo mediante 10.Nf3 llegó demasiado tarde. La 
+ventaja de espacio de las negras permitió atacarlo inmediatamente con 10...e4 
+y obligarlo a regresar a g1.
 
-4. PHILOCHESS evitó correctamente la recaptura inmediata 15.bxa3, que habría permitido 15...Bxc2 y habría dejado a la dama blanca atrapada.
+4. PHILOCHESS evitó correctamente la recaptura inmediata 15.bxa3, que habría 
+permitido 15...Bxc2 y habría dejado a la dama blanca atrapada.
 
-5. La jugada 16.exd4 fue un contraataque lógico contra la dama negra. No obstante, 16...Nxd4! eliminó al peón atacante, salvó la dama negra y mantuvo la amenaza de capturar la dama blanca.
+5. La jugada 16.exd4 fue un contraataque lógico contra la dama negra. No 
+obstante, 16...Nxd4! eliminó al peón atacante, salvó la dama negra y 
+mantuvo la amenaza de capturar la dama blanca.
 
-6. La pérdida de la dama no fue consecuencia de haber ignorado una retirada claramente segura. Después de 15...Bxc2, incluso 16.Qd2 habría permitido 16...Bb4, clavando la dama.
+6. La pérdida de la dama no fue consecuencia de haber ignorado una retirada 
+claramente segura. Después de 15...Bxc2, incluso 16.Qd2 habría permitido 
+16...Bb4, clavando la dama.
 
-7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación de movimientos. También muestra que PHILOCHESS pudo reconocer algunos peligros tácticos.
+7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación 
+de movimientos. También muestra que PHILOCHESS pudo reconocer algunos 
+peligros tácticos.
 
 8. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización de movimientos repetidos de una misma pieza durante la apertura;
+   - penalización de movimientos repetidos de una misma pieza durante la 
+apertura;
    - penalización específica de movimientos prematuros de las torres;
    - tablas pieza-casilla;
    - valoración del centro y del espacio;
    - evaluación de movilidad y actividad;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
-   - prueba de regresión en la posición anterior a 15.bxa3, verificando la secuencia ...Bxc2 y el atrapamiento de la dama;
-   - prueba de regresión después de 15...Bxc2, comprobando las retiradas de la dama y el recurso ...Bb4;
+   - prueba de regresión en la posición anterior a 15.bxa3, verificando la 
+secuencia ...Bxc2 y el atrapamiento de la dama;
+   - prueba de regresión después de 15...Bxc2, comprobando las retiradas de 
+la dama y el recurso ...Bb4;
    - prueba de regresión para la secuencia 16.exd4 Nxd4 17.bxa3 Bxd1;
-   - comprobación de que la quiescence evalúe correctamente capturas encadenadas, contraataques y pérdidas inevitables de material;
-   - comprobación de todas las evasiones legales en las posiciones con jaque posteriores a 19...Qa5+.
+   - comprobación de que la quiescence evalúe correctamente capturas 
+encadenadas, contraataques y pérdidas inevitables de material;
+   - comprobación de todas las evasiones legales en las posiciones con jaque 
+posteriores a 19...Qa5+.
 
-Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y estable, y evitó una recaptura que habría atrapado inmediatamente su dama. Sin embargo, los ocho movimientos de torre, la falta de desarrollo y el dominio central de Shallow Blue condujeron a una posición en la que la pérdida de la dama resultó inevitable. La secuencia 16.exd4 Nxd4 17.bxa3 Bxd1 constituye una prueba especialmente valiosa para la corrección de la quiescence y la regresión táctica de PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: PHILOCHESS funcionó correctamente como motor legal y 
+estable, y evitó una recaptura que habría atrapado inmediatamente su dama. 
+Sin embargo, los ocho movimientos de torre, la falta de desarrollo y el 
+dominio central de Shallow Blue condujeron a una posición en la que la 
+pérdida de la dama resultó inevitable. La secuencia 16.exd4 Nxd4 17.bxa3 
+Bxd1 constituye una prueba especialmente valiosa para la corrección de la 
+quiescence y la regresión táctica de PHILOCHESS 0.2-alpha-002.
 
 
 Ronda 4
@@ -277,49 +423,94 @@ Ronda 4
 
 RESUMEN
 
-Durante sus primeras ocho jugadas, PHILOCHESS movió únicamente peones del flanco de dama. El peón de la columna a avanzó posteriormente hasta a3 mediante ...a6, ...a5, ...a4 y ...a3. Estos movimientos consumieron varios tiempos sin contribuir al desarrollo de las piezas, al control del centro ni a la seguridad del rey.
+Durante sus primeras ocho jugadas, PHILOCHESS movió únicamente peones del 
+flanco de dama. El peón de la columna a avanzó posteriormente hasta a3 
+mediante ...a6, ...a5, ...a4 y ...a3. Estos movimientos consumieron varios 
+tiempos sin contribuir al desarrollo de las piezas, al control del centro ni a 
+la seguridad del rey.
 
-Hasta 16...dxc5, PHILOCHESS había movido solamente peones y la dama. Ningún caballo, alfil o torre había sido desarrollado. Dreamer, por el contrario, había desarrollado sus piezas, enrocado y conseguido una clara superioridad de actividad y coordinación.
+Hasta 16...dxc5, PHILOCHESS había movido solamente peones y la dama. Ningún 
+caballo, alfil o torre había sido desarrollado. Dreamer, por el contrario, 
+había desarrollado sus piezas, enrocado y conseguido una clara superioridad 
+de actividad y coordinación.
 
-Después de 17.Qxd8+ Kxd8, PHILOCHESS perdió definitivamente el derecho a enrocar y el rey quedó expuesto en el centro. Tras 18.Bxc5, el alfil blanco atacó al alfil de f8, que todavía no había sido desarrollado. Después de 18...Rxa2 19.Bxf8, PHILOCHESS había ejecutado la ganancia de la calidad.
+Después de 17.Qxd8+ Kxd8, PHILOCHESS perdió definitivamente el derecho a 
+enrocar y el rey quedó expuesto en el centro. Tras 18.Bxc5, el alfil blanco 
+atacó al alfil de f8, que todavía no había sido desarrollado. Después de 
+18...Rxa2 19.Bxf8, PHILOCHESS había ejecutado la ganancia de la calidad.
 
-La ventaja material no pudo ser consolidada debido a la falta de desarrollo y coordinación. Después de 19...g6 20.Bg7, la torre de h8 quedó atacada y sin casillas de retirada. PHILOCHESS continuó con 20...Rxc2, activando la otra torre y capturando un peón.
+La ventaja material no pudo ser consolidada debido a la falta de desarrollo y 
+coordinación. Después de 19...g6 20.Bg7, la torre de h8 quedó atacada y sin 
+casillas de retirada. PHILOCHESS continuó con 20...Rxc2, activando la otra 
+torre y capturando un peón.
 
-Tras 21.Bc4, PHILOCHESS jugó 21...Rb2 y entregó la torre activa para desviar al alfil de g7 y salvar momentáneamente la torre inactiva de h8. La torre fue capturada mediante 22.Bxb2. Esta decisión debe considerarse un error posicional: PHILOCHESS conservó una torre que todavía no había entrado en juego a costa de una torre que ya poseía movilidad y actividad.
+Tras 21.Bc4, PHILOCHESS jugó 21...Rb2 y entregó la torre activa para desviar 
+al alfil de g7 y salvar momentáneamente la torre inactiva de h8. La torre fue 
+capturada mediante 22.Bxb2. Esta decisión debe considerarse un error 
+posicional: PHILOCHESS conservó una torre que todavía no había entrado en 
+juego a costa de una torre que ya poseía movilidad y actividad.
 
-La jugada 22...f6 bloqueó la diagonal del alfil blanco hacia h8. Sin embargo, 23.Nd6 creó nuevas amenazas, entre ellas el ataque doble de caballo en f7, y restringió todavía más a las piezas negras del flanco de dama. La respuesta 23...Nh6 defendió f7 y trató de atender varios problemas simultáneos; no debe interpretarse como un error táctico aislado, pues las negras ya carecían de una solución satisfactoria.
+La jugada 22...f6 bloqueó la diagonal del alfil blanco hacia h8. Sin embargo, 
+23.Nd6 creó nuevas amenazas, entre ellas el ataque doble de caballo en f7, y 
+restringió todavía más a las piezas negras del flanco de dama. La respuesta 
+23...Nh6 defendió f7 y trató de atender varios problemas simultáneos; no 
+debe interpretarse como un error táctico aislado, pues las negras ya 
+carecían de una solución satisfactoria.
 
-Dreamer continuó con 24.Bxf6+, un ataque doble que permitió capturar la torre de h8. En la jugada 27, las blancas eliminaron también el caballo de b8, que aún no había sido desarrollado. La desventaja material y la vulnerabilidad del rey negro se volvieron decisivas, por lo que la partida fue adjudicada a favor de Dreamer.
+Dreamer continuó con 24.Bxf6+, un ataque doble que permitió capturar la 
+torre de h8. En la jugada 27, las blancas eliminaron también el caballo de 
+b8, que aún no había sido desarrollado. La desventaja material y la 
+vulnerabilidad del rey negro se volvieron decisivas, por lo que la partida fue 
+adjudicada a favor de Dreamer.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue la falta general de desarrollo. Hasta la decimosexta jugada, PHILOCHESS solo había movido peones y la dama.
+1. La causa principal de la derrota fue la falta general de desarrollo. Hasta 
+la decimosexta jugada, PHILOCHESS solo había movido peones y la dama.
 
-2. Los movimientos reiterados de los peones del flanco de dama consumieron demasiados tiempos sin producir ninguna ventaja. Mientras tanto, Dreamer desarrolló sus piezas, enrocó y consiguió mayor actividad y coordinación.
+2. Los movimientos reiterados de los peones del flanco de dama consumieron 
+demasiados tiempos sin producir ninguna ventaja. Mientras tanto, Dreamer 
+desarrolló sus piezas, enrocó y consiguió mayor actividad y coordinación.
 
-3. El cambio de damas obligó al rey negro a capturar en d8. La imposibilidad de enrocar agravó la vulnerabilidad del rey y dificultó todavía más la conexión y activación de las torres.
+3. El cambio de damas obligó al rey negro a capturar en d8. La imposibilidad 
+de enrocar agravó la vulnerabilidad del rey y dificultó todavía más la 
+conexión y activación de las torres.
 
-4. La jugada 21...Rb2 fue un error posicional. PHILOCHESS entregó una torre activa para conservar momentáneamente una torre inactiva que estaba atacada y sin casillas de retirada.
+4. La jugada 21...Rb2 fue un error posicional. PHILOCHESS entregó una torre 
+activa para conservar momentáneamente una torre inactiva que estaba atacada y 
+sin casillas de retirada.
 
-5. La jugada 23...Nh6 no constituye un error táctico aislado. Las negras debían responder a la amenaza de Nf7+ y a otros problemas derivados de la falta de desarrollo, la restricción de sus piezas y la exposición del rey.
+5. La jugada 23...Nh6 no constituye un error táctico aislado. Las negras 
+debían responder a la amenaza de Nf7+ y a otros problemas derivados de la 
+falta de desarrollo, la restricción de sus piezas y la exposición del rey.
 
-6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas. La derrota fue causada principalmente por deficiencias posicionales acumuladas.
+6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación 
+de movimientos ni recapturas incorrectas. La derrota fue causada 
+principalmente por deficiencias posicionales acumuladas.
 
 7. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización de movimientos repetidos de peones laterales durante la apertura;
+   - penalización de movimientos repetidos de peones laterales durante la 
+apertura;
    - tablas pieza-casilla;
    - valoración del centro y del espacio;
    - evaluación de movilidad, actividad y coordinación;
-   - distinción entre una torre activa y una torre que todavía no ha entrado en juego;
+   - distinción entre una torre activa y una torre que todavía no ha entrado 
+en juego;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
-   - prueba de regresión después de 17...Kxd8, verificando la secuencia 18.Bxc5 Rxa2 19.Bxf8 y su resultado material;
+   - prueba de regresión después de 17...Kxd8, verificando la secuencia 
+18.Bxc5 Rxa2 19.Bxf8 y su resultado material;
    - prueba de regresión después de 21...Rb2, comprobando la captura 22.Bxb2;
-   - prueba de regresión después de 23...Nh6, verificando 24.Bxf6+ y la continuación hasta 25.Bxh8;
-   - comprobación de que la quiescence examine todas las evasiones legales después de 24.Bxf6+ y continúe correctamente las capturas forzadas.
+   - prueba de regresión después de 23...Nh6, verificando 24.Bxf6+ y la 
+continuación hasta 25.Bxh8;
+   - comprobación de que la quiescence examine todas las evasiones legales 
+después de 24.Bxf6+ y continúe correctamente las capturas forzadas.
 
-Diagnóstico general: PHILOCHESS consiguió ganar la calidad, pero no pudo consolidar la ventaja. La falta de desarrollo, la permanencia del rey en el centro y la ausencia de coordinación llevaron a una posición que ya no ofrecía una defensa satisfactoria.
+Diagnóstico general: PHILOCHESS consiguió ganar la calidad, pero no pudo 
+consolidar la ventaja. La falta de desarrollo, la permanencia del rey en el 
+centro y la ausencia de coordinación llevaron a una posición que ya no 
+ofrecía una defensa satisfactoria.
 
 
 Ronda 5
@@ -349,52 +540,95 @@ Ronda 5
 
 RESUMEN
 
-Durante sus primeras siete jugadas, PHILOCHESS movió únicamente peones del flanco de dama: ...a6, ...a5, ...b6, ...c6, ...b5, ...a4 y ...axb3. Estos movimientos consumieron numerosos tiempos sin contribuir al desarrollo de las piezas, al control del centro ni a la seguridad del rey.
+Durante sus primeras siete jugadas, PHILOCHESS movió únicamente peones del 
+flanco de dama: ...a6, ...a5, ...b6, ...c6, ...b5, ...a4 y ...axb3. Estos 
+movimientos consumieron numerosos tiempos sin contribuir al desarrollo de las 
+piezas, al control del centro ni a la seguridad del rey.
 
-Después del cambio de torres en la columna a, PHILOCHESS continuó con movimientos de peones y no desarrolló una pieza menor hasta 11...Nd7. Mientras tanto, Pulse Chess desarrolló ambos caballos y alfiles, ocupó el centro y consiguió una clara superioridad de actividad y coordinación.
+Después del cambio de torres en la columna a, PHILOCHESS continuó con 
+movimientos de peones y no desarrolló una pieza menor hasta 11...Nd7. 
+Mientras tanto, Pulse Chess desarrolló ambos caballos y alfiles, ocupó el 
+centro y consiguió una clara superioridad de actividad y coordinación.
 
-La entrada 12.Qa8 permitió a la dama blanca penetrar profundamente en el campo negro. Tras 12...b4 13.Qxc6, las blancas mantuvieron una fuerte presión sobre la posición negra.
+La entrada 12.Qa8 permitió a la dama blanca penetrar profundamente en el 
+campo negro. Tras 12...b4 13.Qxc6, las blancas mantuvieron una fuerte presión 
+sobre la posición negra.
 
-La jugada 14.Nb5 creó una amenaza inmediata: 15.Nc7+, con consecuencias decisivas para la seguridad del rey negro.
+La jugada 14.Nb5 creó una amenaza inmediata: 15.Nc7+, con consecuencias 
+decisivas para la seguridad del rey negro.
 
-PHILOCHESS respondió con 14...Qb6, desocupando d8 para proporcionar al rey una posible casilla de escape después de Nc7+. Sin embargo, al abandonar d8, la dama dejó de proteger al alfil de c8.
+PHILOCHESS respondió con 14...Qb6, desocupando d8 para proporcionar al rey 
+una posible casilla de escape después de Nc7+. Sin embargo, al abandonar d8, 
+la dama dejó de proteger al alfil de c8.
 
-La posición ya no ofrecía una defensa satisfactoria. Si PHILOCHESS hubiera desocupado f8 mediante 14...Be7, las blancas habrían respondido con 15.Bc7, atacando a la dama de d8 y dejándola sin una retirada adecuada.
+La posición ya no ofrecía una defensa satisfactoria. Si PHILOCHESS hubiera 
+desocupado f8 mediante 14...Be7, las blancas habrían respondido con 15.Bc7, 
+atacando a la dama de d8 y dejándola sin una retirada adecuada.
 
-Después de 15.Qxc8+, PHILOCHESS bloqueó el jaque mediante 15...Qd8. Pulse Chess continuó con una secuencia de jugadas forzadas: 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8. El jaque del alfil obligó al rey negro a desplazarse hasta d6, tras lo cual la dama de d8 fue capturada.
+Después de 15.Qxc8+, PHILOCHESS bloqueó el jaque mediante 15...Qd8. Pulse 
+Chess continuó con una secuencia de jugadas forzadas: 16.Nc7+ Ke7 17.Bd6+ 
+Kxd6 18.Qxd8. El jaque del alfil obligó al rey negro a desplazarse hasta d6, 
+tras lo cual la dama de d8 fue capturada.
 
-Con la pérdida del alfil de c8 y posteriormente de la dama, PHILOCHESS quedó con una desventaja material decisiva. La partida fue adjudicada a favor de Pulse Chess.
+Con la pérdida del alfil de c8 y posteriormente de la dama, PHILOCHESS quedó 
+con una desventaja material decisiva. La partida fue adjudicada a favor de 
+Pulse Chess.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue nuevamente la falta general de desarrollo. Durante las primeras siete jugadas, PHILOCHESS movió solamente peones del flanco de dama.
+1. La causa principal de la derrota fue nuevamente la falta general de 
+desarrollo. Durante las primeras siete jugadas, PHILOCHESS movió solamente 
+peones del flanco de dama.
 
-2. La primera pieza menor negra no fue desarrollada hasta 11...Nd7. Para entonces, Pulse Chess ya había desarrollado todas sus piezas menores y había conseguido mayor actividad y coordinación.
+2. La primera pieza menor negra no fue desarrollada hasta 11...Nd7. Para 
+entonces, Pulse Chess ya había desarrollado todas sus piezas menores y había 
+conseguido mayor actividad y coordinación.
 
-3. La jugada 14...Qb6 intentó crear una casilla de escape en d8 para el rey, pero dejó indefenso al alfil de c8. La alternativa 14...Be7 tampoco solucionaba la posición debido a 15.Bc7, que habría dejado atrapada a la dama negra.
+3. La jugada 14...Qb6 intentó crear una casilla de escape en d8 para el rey, 
+pero dejó indefenso al alfil de c8. La alternativa 14...Be7 tampoco 
+solucionaba la posición debido a 15.Bc7, que habría dejado atrapada a la 
+dama negra.
 
-4. La secuencia 15.Qxc8+ Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8 estuvo compuesta por jaques forzados que culminaron con la pérdida de la dama negra.
+4. La secuencia 15.Qxc8+ Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8 estuvo compuesta 
+por jaques forzados que culminaron con la pérdida de la dama negra.
 
-5. La pérdida del alfil y de la dama no fue consecuencia de dos errores independientes. Ambas fueron manifestaciones tácticas de una posición deteriorada por la falta de desarrollo, la exposición del rey y la ausencia de coordinación.
+5. La pérdida del alfil y de la dama no fue consecuencia de dos errores 
+independientes. Ambas fueron manifestaciones tácticas de una posición 
+deteriorada por la falta de desarrollo, la exposición del rey y la ausencia 
+de coordinación.
 
-6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos ni recapturas incorrectas.
+6. La partida no muestra fallos de legalidad, comunicación UCI, aplicación 
+de movimientos ni recapturas incorrectas.
 
 7. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización de movimientos repetidos de peones laterales durante la apertura;
+   - penalización de movimientos repetidos de peones laterales durante la 
+apertura;
    - tablas pieza-casilla;
    - valoración del centro y del espacio;
    - evaluación de movilidad, actividad y coordinación;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
-   - prueba de regresión después de 14.Nb5, verificando que la amenaza inmediata sea Nc7+;
-   - comparación de 14...Qb6 con 14...Be7 15.Bc7, comprobando el atrapamiento de la dama;
-   - prueba de regresión después de 15.Qxc8+, verificando todas las evasiones legales del jaque;
-   - prueba de regresión para la secuencia 15...Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 18.Qxd8;
-   - comprobación de que la quiescence no aplique stand pat cuando el rey está en jaque;
-   - comprobación de que la búsqueda continúe correctamente las secuencias de jaques forzados hasta reconocer una pérdida inevitable de material.
+   - prueba de regresión después de 14.Nb5, verificando que la amenaza 
+inmediata sea Nc7+;
+   - comparación de 14...Qb6 con 14...Be7 15.Bc7, comprobando el atrapamiento 
+de la dama;
+   - prueba de regresión después de 15.Qxc8+, verificando todas las 
+evasiones legales del jaque;
+   - prueba de regresión para la secuencia 15...Qd8 16.Nc7+ Ke7 17.Bd6+ Kxd6 
+18.Qxd8;
+   - comprobación de que la quiescence no aplique stand pat cuando el rey 
+está en jaque;
+   - comprobación de que la búsqueda continúe correctamente las secuencias 
+de jaques forzados hasta reconocer una pérdida inevitable de material.
 
-Diagnóstico general: PHILOCHESS no perdió por una equivocación aislada después de 14.Nb5. Los movimientos reiterados de los peones del flanco de dama, el desarrollo tardío y la permanencia del rey en el centro condujeron a una posición sin una defensa satisfactoria. La secuencia final proporciona una prueba especialmente útil de jaques forzados, evasiones legales, atrapamiento de la dama y pérdida inevitable de material para PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: PHILOCHESS no perdió por una equivocación aislada 
+después de 14.Nb5. Los movimientos reiterados de los peones del flanco de 
+dama, el desarrollo tardío y la permanencia del rey en el centro condujeron a 
+una posición sin una defensa satisfactoria. La secuencia final proporciona 
+una prueba especialmente útil de jaques forzados, evasiones legales, 
+atrapamiento de la dama y pérdida inevitable de material para PHILOCHESS 
+0.2-alpha-002.
 
 
 Ronda 6
@@ -435,58 +669,116 @@ Ronda 6
 
 RESUMEN
 
-PHILOCHESS comenzó nuevamente con 1.Nc3, pero durante sus primeras siete jugadas movió cuatro veces la torre de a1 y tres veces el caballo de b1. Los avances 4...d4 y 5...a6 atacaron sucesivamente al caballo, que tuvo que desplazarse a b5 y después a a3. Finalmente, 7...Bxa3 8.bxa3 eliminó esa pieza y deterioró la estructura de peones blanca en el flanco de dama.
+PHILOCHESS comenzó nuevamente con 1.Nc3, pero durante sus primeras siete 
+jugadas movió cuatro veces la torre de a1 y tres veces el caballo de b1. Los 
+avances 4...d4 y 5...a6 atacaron sucesivamente al caballo, que tuvo que 
+desplazarse a b5 y después a a3. Finalmente, 7...Bxa3 8.bxa3 eliminó esa 
+pieza y deterioró la estructura de peones blanca en el flanco de dama.
 
-Zoidberg desarrolló sus piezas, ocupó el centro y consiguió una ventaja posicional importante. La secuencia 14...Bxf3 15.exf3 eliminó el segundo caballo blanco y produjo peones doblados en la columna f. Las blancas conservaron ambos alfiles, pero quedaron con una estructura debilitada y menor coordinación.
+Zoidberg desarrolló sus piezas, ocupó el centro y consiguió una ventaja 
+posicional importante. La secuencia 14...Bxf3 15.exf3 eliminó el segundo 
+caballo blanco y produjo peones doblados en la columna f. Las blancas 
+conservaron ambos alfiles, pero quedaron con una estructura debilitada y menor 
+coordinación.
 
-La jugada 15...Qd6 fue estratégicamente imprecisa porque permitió el cambio de damas. Una continuación como 15...O-O habría completado la seguridad del rey negro y conservado la posibilidad de aumentar la presión sobre la columna d. La desaparición de las damas redujo las amenazas contra el rey blanco y permitió que PHILOCHESS prolongara considerablemente la resistencia.
+La jugada 15...Qd6 fue estratégicamente imprecisa porque permitió el cambio 
+de damas. Una continuación como 15...O-O habría completado la seguridad del 
+rey negro y conservado la posibilidad de aumentar la presión sobre la columna 
+d. La desaparición de las damas redujo las amenazas contra el rey blanco y 
+permitió que PHILOCHESS prolongara considerablemente la resistencia.
 
-Después del cambio de damas apareció la principal anomalía de la partida. Entre 17.Rb1 y 36.Rc1, PHILOCHESS empleó diecisiete de sus veinte turnos en movimientos de torre, principalmente entre las casillas b1, c1, d1 y e1. Estos desplazamientos no produjeron una mejora proporcional de la movilidad, la actividad ni la creación de amenazas.
+Después del cambio de damas apareció la principal anomalía de la partida. 
+Entre 17.Rb1 y 36.Rc1, PHILOCHESS empleó diecisiete de sus veinte turnos en 
+movimientos de torre, principalmente entre las casillas b1, c1, d1 y e1. Estos 
+desplazamientos no produjeron una mejora proporcional de la movilidad, la 
+actividad ni la creación de amenazas.
 
-Durante esta secuencia, PHILOCHESS consiguió completar su desarrollo. Sin embargo, Zoidberg aprovechó los numerosos tiempos disponibles para coordinar los caballos y las torres, mejorar la posición del rey y preparar el avance de sus peones del flanco de dama.
+Durante esta secuencia, PHILOCHESS consiguió completar su desarrollo. Sin 
+embargo, Zoidberg aprovechó los numerosos tiempos disponibles para coordinar 
+los caballos y las torres, mejorar la posición del rey y preparar el avance 
+de sus peones del flanco de dama.
 
-El momento técnico más importante llegó con 47...d5. El peón de c4 estaba clavado por la torre de c6. Después de 48.Re1 Rxc4 49.Rxc4 dxc4, las negras obtuvieron un peón pasado en c4 y conservaron un peón avanzado en b4.
+El momento técnico más importante llegó con 47...d5. El peón de c4 estaba 
+clavado por la torre de c6. Después de 48.Re1 Rxc4 49.Rxc4 dxc4, las negras 
+obtuvieron un peón pasado en c4 y conservaron un peón avanzado en b4.
 
-Tras 50...c3, el peón de c continuó acercándose a la promoción. La captura 53...Rxa2 convirtió también al peón de b4 en un peón pasado. Desde ese momento, las negras dispusieron de dos peones pasados conectados en el flanco de dama.
+Tras 50...c3, el peón de c continuó acercándose a la promoción. La captura 
+53...Rxa2 convirtió también al peón de b4 en un peón pasado. Desde ese 
+momento, las negras dispusieron de dos peones pasados conectados en el flanco 
+de dama.
 
-La conversión final fue precisa. Después de 55...Rxa1 56.Rxa1, el peón de b avanzó mientras el peón de c obligaba a la torre blanca a permanecer en tareas defensivas. La secuencia 58...c1=Q 59.Rxc1 bxc1=Q+ permitió que el primer peón promoviera y forzara la captura de la nueva dama, tras lo cual el segundo peón capturó la torre y promovió con jaque. La ventaja resultante era decisiva y la partida fue adjudicada a favor de Zoidberg.
+La conversión final fue precisa. Después de 55...Rxa1 56.Rxa1, el peón de b 
+avanzó mientras el peón de c obligaba a la torre blanca a permanecer en 
+tareas defensivas. La secuencia 58...c1=Q 59.Rxc1 bxc1=Q+ permitió que el 
+primer peón promoviera y forzara la captura de la nueva dama, tras lo cual el 
+segundo peón capturó la torre y promovió con jaque. La ventaja resultante 
+era decisiva y la partida fue adjudicada a favor de Zoidberg.
 
 
 CONCLUSIONES
 
-1. PHILOCHESS volvió a gestionar deficientemente los tiempos de apertura. Durante sus primeras siete jugadas, movió únicamente el caballo de b1 y la torre de a1, mientras Zoidberg ocupaba el centro y desarrollaba sus piezas.
+1. PHILOCHESS volvió a gestionar deficientemente los tiempos de apertura. 
+Durante sus primeras siete jugadas, movió únicamente el caballo de b1 y la 
+torre de a1, mientras Zoidberg ocupaba el centro y desarrollaba sus piezas.
 
-2. Las capturas 7...Bxa3 y 14...Bxf3 eliminaron ambos caballos blancos y produjeron debilidades estructurales en los flancos de dama y de rey.
+2. Las capturas 7...Bxa3 y 14...Bxf3 eliminaron ambos caballos blancos y 
+produjeron debilidades estructurales en los flancos de dama y de rey.
 
-3. La jugada 15...Qd6 permitió un cambio de damas favorable para la defensa blanca. La ausencia de las damas redujo las posibilidades de ataque de Zoidberg y ayudó a PHILOCHESS a prolongar la partida hasta la jugada 61.
+3. La jugada 15...Qd6 permitió un cambio de damas favorable para la defensa 
+blanca. La ausencia de las damas redujo las posibilidades de ataque de 
+Zoidberg y ayudó a PHILOCHESS a prolongar la partida hasta la jugada 61.
 
-4. Entre las jugadas 17 y 36, PHILOCHESS empleó diecisiete de veinte turnos en movimientos de torre. Aunque durante ese periodo terminó su desarrollo, la mayoría de esos desplazamientos no generaron movilidad útil, actividad real ni amenazas.
+4. Entre las jugadas 17 y 36, PHILOCHESS empleó diecisiete de veinte turnos 
+en movimientos de torre. Aunque durante ese periodo terminó su desarrollo, la 
+mayoría de esos desplazamientos no generaron movilidad útil, actividad real 
+ni amenazas.
 
-5. La ruptura 47...d5 explotó la clavada del peón de c4. La secuencia 48.Re1 Rxc4 49.Rxc4 dxc4 permitió a las negras crear un peón pasado en c4.
+5. La ruptura 47...d5 explotó la clavada del peón de c4. La secuencia 48.Re1 
+Rxc4 49.Rxc4 dxc4 permitió a las negras crear un peón pasado en c4.
 
-6. El peón negro de b4 no era todavía un peón pasado después de 49...dxc4. Adquirió esa condición tras 53...Rxa2, cuando desapareció el último peón blanco capaz de detenerlo desde una columna adyacente.
+6. El peón negro de b4 no era todavía un peón pasado después de 49...dxc4. 
+Adquirió esa condición tras 53...Rxa2, cuando desapareció el último peón 
+blanco capaz de detenerlo desde una columna adyacente.
 
-7. La secuencia 58...c1=Q 59.Rxc1 bxc1=Q+ constituye una conversión táctica especialmente importante: combina una promoción sin captura, una captura de la nueva dama y una segunda promoción mediante captura con jaque.
+7. La secuencia 58...c1=Q 59.Rxc1 bxc1=Q+ constituye una conversión táctica 
+especialmente importante: combina una promoción sin captura, una captura de 
+la nueva dama y una segunda promoción mediante captura con jaque.
 
-8. La partida no muestra fallos de legalidad, comunicación UCI, aplicación de movimientos, enroque ni promociones. PHILOCHESS funcionó de manera estable durante una partida de 121 medios movimientos.
+8. La partida no muestra fallos de legalidad, comunicación UCI, aplicación 
+de movimientos, enroque ni promociones. PHILOCHESS funcionó de manera estable 
+durante una partida de 121 medios movimientos.
 
 9. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
    - penalización de movimientos repetidos e improductivos de una torre;
-   - distinción entre movimiento, movilidad, actividad y creación de amenazas;
+   - distinción entre movimiento, movilidad, actividad y creación de 
+amenazas;
    - valoración de columnas abiertas y coordinación de torres;
    - evaluación de peones doblados y otras debilidades estructurales;
-   - valoración de peones pasados, peones pasados conectados y cercanía a la promoción;
+   - valoración de peones pasados, peones pasados conectados y cercanía a la 
+promoción;
    - evaluación contextual de los cambios de damas;
-   - prueba de regresión después de 47...d5, verificando la clavada del peón de c4 y la secuencia ...Rxc4, Rxc4 y ...dxc4;
-   - prueba de regresión después de 49...dxc4, distinguiendo correctamente entre el peón pasado de c4 y el peón todavía no pasado de b4;
-   - prueba de regresión después de 53...Rxa2, actualizando la condición del peón de b4;
+   - prueba de regresión después de 47...d5, verificando la clavada del 
+peón de c4 y la secuencia ...Rxc4, Rxc4 y ...dxc4;
+   - prueba de regresión después de 49...dxc4, distinguiendo correctamente 
+entre el peón pasado de c4 y el peón todavía no pasado de b4;
+   - prueba de regresión después de 53...Rxa2, actualizando la condición 
+del peón de b4;
    - prueba de regresión para la secuencia 55...Rxa1 56.Rxa1 b3;
    - prueba de regresión para 58...c1=Q 59.Rxc1 bxc1=Q+;
-   - comprobación de que la quiescence examine promociones sin captura y promociones mediante captura;
-   - comprobación de todas las evasiones legales después de 51...Rg8+ y 59...bxc1=Q+.
+   - comprobación de que la quiescence examine promociones sin captura y 
+promociones mediante captura;
+   - comprobación de todas las evasiones legales después de 51...Rg8+ y 
+59...bxc1=Q+.
 
-Diagnóstico general: El cambio de damas permitió que PHILOCHESS prolongara la resistencia y completara finalmente su desarrollo, pero la repetición improductiva de movimientos de torre concedió a Zoidberg el tiempo necesario para coordinar sus fuerzas. La ruptura 47...d5 y la posterior creación de dos peones pasados conectados decidieron la partida. La secuencia final constituye una prueba especialmente valiosa para la corrección de la quiescence, el tratamiento de capturas encadenadas y la evaluación de promociones en PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: El cambio de damas permitió que PHILOCHESS prolongara 
+la resistencia y completara finalmente su desarrollo, pero la repetición 
+improductiva de movimientos de torre concedió a Zoidberg el tiempo necesario 
+para coordinar sus fuerzas. La ruptura 47...d5 y la posterior creación de dos 
+peones pasados conectados decidieron la partida. La secuencia final constituye 
+una prueba especialmente valiosa para la corrección de la quiescence, el 
+tratamiento de capturas encadenadas y la evaluación de promociones en 
+PHILOCHESS 0.2-alpha-002.
 
 
 Ronda 7
@@ -519,55 +811,107 @@ Ronda 7
 
 RESUMEN
 
-Durante sus primeras cinco jugadas, PHILOCHESS movió únicamente peones del flanco de dama: ...a6, ...a5, ...a4, ...b6 y ...a3. Estos movimientos consumieron varios tiempos sin desarrollar piezas, disputar suficientemente el centro ni contribuir a la seguridad del rey. El peón de a3 fue finalmente capturado.
+Durante sus primeras cinco jugadas, PHILOCHESS movió únicamente peones del 
+flanco de dama: ...a6, ...a5, ...a4, ...b6 y ...a3. Estos movimientos 
+consumieron varios tiempos sin desarrollar piezas, disputar suficientemente el 
+centro ni contribuir a la seguridad del rey. El peón de a3 fue finalmente 
+capturado.
 
-La decisión crítica fue 6...Rxa3. La torre penetró en el campo blanco antes de que las demás piezas negras hubieran sido desarrolladas. Después de 7.Na4, su movilidad quedó severamente restringida, y 8.Bc1 la atacó. La continuación 8...Rxa4 fue la mejor liquidación práctica disponible.
+La decisión crítica fue 6...Rxa3. La torre penetró en el campo blanco antes 
+de que las demás piezas negras hubieran sido desarrolladas. Después de 
+7.Na4, su movilidad quedó severamente restringida, y 8.Bc1 la atacó. La 
+continuación 8...Rxa4 fue la mejor liquidación práctica disponible.
 
-PHILOCHESS comenzó posteriormente a disputar el centro y desarrolló el alfil de f8, pero esta pieza fue cambiada inmediatamente. Después de 16.O-O, Needle había desarrollado sus piezas restantes, enrocado y coordinado sus fuerzas, mientras que el rey negro permanecía en el centro, el alfil de c8 y ambos caballos todavía no habían sido desarrollados.
+PHILOCHESS comenzó posteriormente a disputar el centro y desarrolló el alfil 
+de f8, pero esta pieza fue cambiada inmediatamente. Después de 16.O-O, Needle 
+había desarrollado sus piezas restantes, enrocado y coordinado sus fuerzas, 
+mientras que el rey negro permanecía en el centro, el alfil de c8 y ambos 
+caballos todavía no habían sido desarrollados.
 
-La jugada 18...b5 no resolvió los problemas de la posición negra. Needle respondió con 19.Bxf7+, iniciando una secuencia táctica que desplazó al rey y permitió penetrar a la dama blanca. Después de 19...Ke7 20.Qa8 Nh6 21.Qxb8 Nxf7, las blancas habían cambiado el alfil por un caballo y un peón.
+La jugada 18...b5 no resolvió los problemas de la posición negra. Needle 
+respondió con 19.Bxf7+, iniciando una secuencia táctica que desplazó al rey 
+y permitió penetrar a la dama blanca. Después de 19...Ke7 20.Qa8 Nh6 21.Qxb8 
+Nxf7, las blancas habían cambiado el alfil por un caballo y un peón.
 
-La entrada 22.Qc7+ mantuvo al rey negro expuesto. Tras 23.Rae1, las blancas crearon peligrosas posibilidades de jaque a la descubierta sobre la columna e, por lo que 23...Kd5 apartó al rey de esa línea.
+La entrada 22.Qc7+ mantuvo al rey negro expuesto. Tras 23.Rae1, las blancas 
+crearon peligrosas posibilidades de jaque a la descubierta sobre la columna e, 
+por lo que 23...Kd5 apartó al rey de esa línea.
 
-Después de 24.Nxf7 Rg8 25.Qb6, Needle amenazaba Qc5#. La jugada 25...Kc4 llevó al rey aún más cerca de las piezas blancas, pero era necesaria para evitar esa amenaza inmediata. Por tanto, estos desplazamientos del rey no deben considerarse simples avances voluntarios e injustificados, sino respuestas defensivas a problemas concretos de una posición ya muy deteriorada.
+Después de 24.Nxf7 Rg8 25.Qb6, Needle amenazaba Qc5#. La jugada 25...Kc4 
+llevó al rey aún más cerca de las piezas blancas, pero era necesaria para 
+evitar esa amenaza inmediata. Por tanto, estos desplazamientos del rey no 
+deben considerarse simples avances voluntarios e injustificados, sino 
+respuestas defensivas a problemas concretos de una posición ya muy 
+deteriorada.
 
-Desde 26.Qc5+, Needle convirtió la exposición del rey en una secuencia forzada de mate: 26...Kd3 27.Re3+ Kd2 28.Qc3#. PHILOCHESS fue derrotado.
+Desde 26.Qc5+, Needle convirtió la exposición del rey en una secuencia 
+forzada de mate: 26...Kd3 27.Re3+ Kd2 28.Qc3#. PHILOCHESS fue derrotado.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue nuevamente la gestión deficiente de los tiempos de apertura. PHILOCHESS movió cinco veces peones del flanco de dama antes de desarrollar una sola pieza.
+1. La causa principal de la derrota fue nuevamente la gestión deficiente de 
+los tiempos de apertura. PHILOCHESS movió cinco veces peones del flanco de 
+dama antes de desarrollar una sola pieza.
 
-2. La jugada 6...Rxa3 fue la decisión crítica. La torre penetró prematuramente y quedó con una movilidad muy limitada después de 7.Na4 y 8.Bc1.
+2. La jugada 6...Rxa3 fue la decisión crítica. La torre penetró 
+prematuramente y quedó con una movilidad muy limitada después de 7.Na4 y 
+8.Bc1.
 
-3. La continuación 8...Rxa4 no debe interpretarse como una pérdida gratuita independiente. Fue una liquidación práctica que permitió obtener el caballo antes de entregar la torre, aunque dejó a PHILOCHESS con desventaja material.
+3. La continuación 8...Rxa4 no debe interpretarse como una pérdida gratuita 
+independiente. Fue una liquidación práctica que permitió obtener el caballo 
+antes de entregar la torre, aunque dejó a PHILOCHESS con desventaja material.
 
-4. La secuencia iniciada por 19.Bxf7+ explotó la falta de desarrollo y la permanencia del rey en el centro. Las blancas eliminaron al caballo de b8, ganaron material adicional y conservaron la iniciativa.
+4. La secuencia iniciada por 19.Bxf7+ explotó la falta de desarrollo y la 
+permanencia del rey en el centro. Las blancas eliminaron al caballo de b8, 
+ganaron material adicional y conservaron la iniciativa.
 
-5. Las jugadas 23...Kd5 y 25...Kc4 respondieron a amenazas concretas. La primera apartó al rey de la columna e y la segunda evitó la amenaza inmediata de Qc5#.
+5. Las jugadas 23...Kd5 y 25...Kc4 respondieron a amenazas concretas. La 
+primera apartó al rey de la columna e y la segunda evitó la amenaza 
+inmediata de Qc5#.
 
-6. La secuencia 26.Qc5+ Kd3 27.Re3+ Kd2 28.Qc3# constituye una prueba especialmente útil para verificar evasiones de jaque, propagación de puntuaciones de mate y reconocimiento de secuencias forzadas.
+6. La secuencia 26.Qc5+ Kd3 27.Re3+ Kd2 28.Qc3# constituye una prueba 
+especialmente útil para verificar evasiones de jaque, propagación de 
+puntuaciones de mate y reconocimiento de secuencias forzadas.
 
-7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación de movimientos. PHILOCHESS ejecutó legalmente todas las evasiones de jaque, y la partida terminó mediante un jaque mate válido sobre el tablero.
+7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación 
+de movimientos. PHILOCHESS ejecutó legalmente todas las evasiones de jaque, y 
+la partida terminó mediante un jaque mate válido sobre el tablero.
 
 8. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización contextual de movimientos repetidos de peones laterales durante la apertura;
+   - penalización contextual de movimientos repetidos de peones laterales 
+durante la apertura;
    - evaluación de la movilidad segura de las torres;
    - valoración del centro, del espacio y de la coordinación;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
    - tablas pieza-casilla;
-   - prueba de regresión después de 6.bxa3, evaluando correctamente la incursión 6...Rxa3;
-   - prueba de regresión después de 7.Na4 y 8.Bc1, reconociendo la movilidad restringida de la torre y la secuencia 8...Rxa4 9.Qxa4+;
-   - prueba de regresión después de 18.Ne5, verificando 18...b5 19.Bxf7+ y la continuación hasta 21...Nxf7;
-   - prueba de regresión después de 22.Qc7+, comprobando todas las evasiones legales;
-   - prueba de regresión después de 23.Rae1, identificando las posibilidades de jaque a la descubierta sobre la columna e;
+   - prueba de regresión después de 6.bxa3, evaluando correctamente la 
+incursión 6...Rxa3;
+   - prueba de regresión después de 7.Na4 y 8.Bc1, reconociendo la movilidad 
+restringida de la torre y la secuencia 8...Rxa4 9.Qxa4+;
+   - prueba de regresión después de 18.Ne5, verificando 18...b5 19.Bxf7+ y 
+la continuación hasta 21...Nxf7;
+   - prueba de regresión después de 22.Qc7+, comprobando todas las evasiones 
+legales;
+   - prueba de regresión después de 23.Rae1, identificando las posibilidades 
+de jaque a la descubierta sobre la columna e;
    - prueba de regresión después de 25.Qb6, detectando la amenaza Qc5#;
    - prueba de regresión para 26.Qc5+ Kd3 27.Re3+ Kd2 28.Qc3#;
-   - comprobación de que la quiescence no aplique stand pat cuando el rey está en jaque y examine todas las evasiones legales;
-   - propagación correcta de las puntuaciones de mate, teniendo en cuenta la distancia hasta el mate.
+   - comprobación de que la quiescence no aplique stand pat cuando el rey 
+está en jaque y examine todas las evasiones legales;
+   - propagación correcta de las puntuaciones de mate, teniendo en cuenta la 
+distancia hasta el mate.
 
-Diagnóstico general: PHILOCHESS quedó estratégicamente comprometido por los movimientos reiterados de peones del flanco de dama y la incursión prematura de la torre. La liquidación 8...Rxa4 redujo parcialmente el daño, pero Needle conservó una ventaja material y una iniciativa persistente. Los desplazamientos posteriores del rey respondieron a amenazas concretas; la causa decisiva se encontraba en la falta de desarrollo y seguridad del rey que permitió construir la red de mate. La secuencia final proporciona una valiosa prueba de regresión para la movilidad segura, las evasiones de jaque y el reconocimiento de mates forzados en PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: PHILOCHESS quedó estratégicamente comprometido por los 
+movimientos reiterados de peones del flanco de dama y la incursión prematura 
+de la torre. La liquidación 8...Rxa4 redujo parcialmente el daño, pero 
+Needle conservó una ventaja material y una iniciativa persistente. Los 
+desplazamientos posteriores del rey respondieron a amenazas concretas; la 
+causa decisiva se encontraba en la falta de desarrollo y seguridad del rey que 
+permitió construir la red de mate. La secuencia final proporciona una valiosa 
+prueba de regresión para la movilidad segura, las evasiones de jaque y el 
+reconocimiento de mates forzados en PHILOCHESS 0.2-alpha-002.
 
 
 Ronda 8
@@ -600,53 +944,109 @@ Ronda 8
 
 RESUMEN
 
-Durante sus primeras siete jugadas, PHILOCHESS movió exclusivamente peones: ...a6, ...a5, ...b6, ...c6, ...a4, ...b5 y ...b4. Estos movimientos ganaron espacio en el flanco de dama, pero consumieron todos los tiempos iniciales sin desarrollar piezas, disputar suficientemente el centro ni contribuir a la seguridad del rey.
+Durante sus primeras siete jugadas, PHILOCHESS movió exclusivamente peones: 
+...a6, ...a5, ...b6, ...c6, ...a4, ...b5 y ...b4. Estos movimientos ganaron 
+espacio en el flanco de dama, pero consumieron todos los tiempos iniciales sin 
+desarrollar piezas, disputar suficientemente el centro ni contribuir a la 
+seguridad del rey.
 
-La jugada 7...b4 atacó al caballo de c3, pero Shallow Blue respondió con 8.Qf3 y creó la amenaza Qxf7#. PHILOCHESS identificó correctamente el peligro y defendió f7 mediante 8...Nh6. Las blancas retiraron entonces el caballo atacado y continuaron su desarrollo.
+La jugada 7...b4 atacó al caballo de c3, pero Shallow Blue respondió con 
+8.Qf3 y creó la amenaza Qxf7#. PHILOCHESS identificó correctamente el 
+peligro y defendió f7 mediante 8...Nh6. Las blancas retiraron entonces el 
+caballo atacado y continuaron su desarrollo.
 
-Después de 12.Bc4, las blancas prepararon una nueva amenaza de mate: Qxf7+ Nxf7 Bxf7#. PHILOCHESS volvió a encontrar la defensa necesaria con 12...e6, bloqueando la diagonal del alfil de c4. Sin embargo, tras 13.Ne4, el caballo negro regresó a su casilla inicial, anulando el único desarrollo de pieza que las negras habían conseguido hasta ese momento.
+Después de 12.Bc4, las blancas prepararon una nueva amenaza de mate: Qxf7+ 
+Nxf7 Bxf7#. PHILOCHESS volvió a encontrar la defensa necesaria con 12...e6, 
+bloqueando la diagonal del alfil de c4. Sin embargo, tras 13.Ne4, el caballo 
+negro regresó a su casilla inicial, anulando el único desarrollo de pieza 
+que las negras habían conseguido hasta ese momento.
 
-La continuación 14.Nd6+ Bxd6 15.exd6 dejó un peón blanco avanzado en d6. Cuando Shallow Blue jugó 18.O-O, ya había completado su desarrollo, enrocado, conectado las torres y coordinado sus piezas. PHILOCHESS había movilizado la dama hasta b6, pero ambos caballos, el alfil de c8 y las torres se encontraban en sus casillas iniciales, mientras el rey permanecía en el centro.
+La continuación 14.Nd6+ Bxd6 15.exd6 dejó un peón blanco avanzado en d6. 
+Cuando Shallow Blue jugó 18.O-O, ya había completado su desarrollo, 
+enrocado, conectado las torres y coordinado sus piezas. PHILOCHESS había 
+movilizado la dama hasta b6, pero ambos caballos, el alfil de c8 y las torres 
+se encontraban en sus casillas iniciales, mientras el rey permanecía en el 
+centro.
 
-La jugada 20.Qe5 atacó la torre de h8. PHILOCHESS respondió correctamente con 20...f6, bloqueando la diagonal y atacando simultáneamente a la dama. Esta defensa resolvió la amenaza inmediata, aunque debilitó todavía más el entorno del rey negro.
+La jugada 20.Qe5 atacó la torre de h8. PHILOCHESS respondió correctamente 
+con 20...f6, bloqueando la diagonal y atacando simultáneamente a la dama. 
+Esta defensa resolvió la amenaza inmediata, aunque debilitó todavía más el 
+entorno del rey negro.
 
-Después de 22.Qg6+ Kf8, Shallow Blue inició la combinación decisiva con 23.Bxe6. PHILOCHESS insertó correctamente el jaque intermedio 23...gxh2+, pero después de 24.Kxh2 dxe6 la casilla d7 quedó libre para el peón blanco. El avance 25.d7+ descubrió el ataque del alfil de b4 contra el rey. PHILOCHESS respondió con 25...c5, bloqueando la diagonal. Sin embargo, tras 26.dxc8=Q+ Ke7, las negras habían perdido el alfil que aún no había sido desarrollado, mientras que las blancas disponían de dos damas y una ventaja decisiva. Por ello, la partida fue adjudicada a favor de Shallow Blue.
+Después de 22.Qg6+ Kf8, Shallow Blue inició la combinación decisiva con 
+23.Bxe6. PHILOCHESS insertó correctamente el jaque intermedio 23...gxh2+, 
+pero después de 24.Kxh2 dxe6 la casilla d7 quedó libre para el peón blanco. 
+El avance 25.d7+ descubrió el ataque del alfil de b4 contra el rey. 
+PHILOCHESS respondió con 25...c5, bloqueando la diagonal. Sin embargo, tras 
+26.dxc8=Q+ Ke7, las negras habían perdido el alfil que aún no había sido 
+desarrollado, mientras que las blancas disponían de dos damas y una ventaja 
+decisiva. Por ello, la partida fue adjudicada a favor de Shallow Blue.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue nuevamente la gestión deficiente de los tiempos de apertura. PHILOCHESS realizó siete movimientos consecutivos de peón antes de desarrollar una sola pieza.
+1. La causa principal de la derrota fue nuevamente la gestión deficiente de 
+los tiempos de apertura. PHILOCHESS realizó siete movimientos consecutivos de 
+peón antes de desarrollar una sola pieza.
 
-2. La partida muestra avances tácticos positivos. PHILOCHESS identificó la amenaza Qxf7# después de 8.Qf3, el mate en dos preparado por 12.Bc4 y el ataque contra la torre de h8 después de 20.Qe5.
+2. La partida muestra avances tácticos positivos. PHILOCHESS identificó la 
+amenaza Qxf7# después de 8.Qf3, el mate en dos preparado por 12.Bc4 y el 
+ataque contra la torre de h8 después de 20.Qe5.
 
-3. Las defensas 8...Nh6, 12...e6 y 20...f6 resolvieron correctamente amenazas inmediatas, pero no corrigieron la falta general de desarrollo, coordinación y seguridad del rey.
+3. Las defensas 8...Nh6, 12...e6 y 20...f6 resolvieron correctamente amenazas 
+inmediatas, pero no corrigieron la falta general de desarrollo, coordinación 
+y seguridad del rey.
 
-4. El movimiento 13...Ng8 anuló el desarrollo previo del caballo. Posteriormente, el caballo de b8, el alfil de c8 y ambas torres permanecieron sin desarrollar.
+4. El movimiento 13...Ng8 anuló el desarrollo previo del caballo. 
+Posteriormente, el caballo de b8, el alfil de c8 y ambas torres permanecieron 
+sin desarrollar.
 
-5. La combinación iniciada por 23.Bxe6 explotó la coordinación de las piezas blancas y la posición avanzada del peón de d6. La secuencia condujo a un jaque descubierto, la captura del alfil de c8 y la promoción del peón.
+5. La combinación iniciada por 23.Bxe6 explotó la coordinación de las 
+piezas blancas y la posición avanzada del peón de d6. La secuencia condujo a 
+un jaque descubierto, la captura del alfil de c8 y la promoción del peón.
 
-6. El jaque intermedio 23...gxh2+ fue un recurso táctico coherente, pero no pudo impedir el avance y la promoción del peón blanco.
+6. El jaque intermedio 23...gxh2+ fue un recurso táctico coherente, pero no 
+pudo impedir el avance y la promoción del peón blanco.
 
-7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación de movimientos. PHILOCHESS procesó correctamente la promoción blanca y respondió legalmente al jaque producido por 26.dxc8=Q+.
+7. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación 
+de movimientos. PHILOCHESS procesó correctamente la promoción blanca y 
+respondió legalmente al jaque producido por 26.dxc8=Q+.
 
 8. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización contextual de movimientos reiterados de peones laterales durante la apertura;
+   - penalización contextual de movimientos reiterados de peones laterales 
+durante la apertura;
    - valoración del regreso injustificado de una pieza a su casilla inicial;
    - tablas pieza-casilla;
-   - valoración del centro, del espacio, de la movilidad, de la actividad y de la coordinación;
+   - valoración del centro, del espacio, de la movilidad, de la actividad y 
+de la coordinación;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
    - evaluación de peones avanzados y amenazas de promoción;
    - iterative deepening y registro de la variante principal;
-   - prueba de regresión después de 7...b4 8.Qf3, verificando la amenaza Qxf7#;
-   - prueba de regresión después de 12.Bc4, reconociendo la secuencia Qxf7+ Nxf7 Bxf7# y la defensa 12...e6;
-   - prueba de regresión después de 20.Qe5, verificando el ataque contra la torre de h8 y la respuesta 20...f6;
+   - prueba de regresión después de 7...b4 8.Qf3, verificando la amenaza 
+Qxf7#;
+   - prueba de regresión después de 12.Bc4, reconociendo la secuencia Qxf7+ 
+Nxf7 Bxf7# y la defensa 12...e6;
+   - prueba de regresión después de 20.Qe5, verificando el ataque contra la 
+torre de h8 y la respuesta 20...f6;
    - prueba de regresión para 23.Bxe6 gxh2+ 24.Kxh2 dxe6;
-   - prueba de regresión después de 25.d7+, comprobando el jaque descubierto y todas las evasiones legales;
-   - prueba de regresión para 25...c5 26.dxc8=Q+, verificando el bloqueo, la captura con promoción y la evasión del jaque;
-   - comprobación de que la quiescence no aplique stand pat cuando el rey está en jaque y examine correctamente capturas, promociones y evasiones legales.
+   - prueba de regresión después de 25.d7+, comprobando el jaque descubierto 
+y todas las evasiones legales;
+   - prueba de regresión para 25...c5 26.dxc8=Q+, verificando el bloqueo, la 
+captura con promoción y la evasión del jaque;
+   - comprobación de que la quiescence no aplique stand pat cuando el rey 
+está en jaque y examine correctamente capturas, promociones y evasiones 
+legales.
 
-Diagnóstico general: PHILOCHESS mostró una capacidad táctica defensiva alentadora al reconocer varias amenazas inmediatas y encontrar respuestas correctas. Sin embargo, su funcionamiento continuó siendo principalmente reactivo. Los movimientos reiterados de peones, el desarrollo anulado del caballo, la permanencia del rey en el centro y la falta de coordinación permitieron que Shallow Blue combinara sus piezas con el peón avanzado de d6. La secuencia final proporciona una prueba especialmente valiosa de amenazas de mate, jaques descubiertos, bloqueos, promociones y evasiones legales para PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: PHILOCHESS mostró una capacidad táctica defensiva 
+alentadora al reconocer varias amenazas inmediatas y encontrar respuestas 
+correctas. Sin embargo, su funcionamiento continuó siendo principalmente 
+reactivo. Los movimientos reiterados de peones, el desarrollo anulado del 
+caballo, la permanencia del rey en el centro y la falta de coordinación 
+permitieron que Shallow Blue combinara sus piezas con el peón avanzado de d6. 
+La secuencia final proporciona una prueba especialmente valiosa de amenazas de 
+mate, jaques descubiertos, bloqueos, promociones y evasiones legales para 
+PHILOCHESS 0.2-alpha-002.
 
 
 Ronda 9
@@ -680,60 +1080,123 @@ Ronda 9
 
 RESUMEN
 
-PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero después movió ocho veces la torre entre a1 y b1 durante las jugadas 2–9. Mientras tanto, Dreamer ocupó el centro, desarrolló ambos caballos y alfiles, enrocó y movilizó la dama. Después de 9...Qd7, las negras habían completado su desarrollo y conectado las torres, mientras que la torre blanca había regresado a su casilla inicial sin conseguir movilidad ni actividad.
+PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero 
+después movió ocho veces la torre entre a1 y b1 durante las jugadas 2–9. 
+Mientras tanto, Dreamer ocupó el centro, desarrolló ambos caballos y 
+alfiles, enrocó y movilizó la dama. Después de 9...Qd7, las negras habían 
+completado su desarrollo y conectado las torres, mientras que la torre blanca 
+había regresado a su casilla inicial sin conseguir movilidad ni actividad.
 
-Tras 10.Nh3, Dreamer jugó 10...d4 y atacó al caballo de c3. La respuesta 11.Nb1 anuló el desarrollo de esa pieza. A continuación, la maniobra ...Nb4–a2–xc1 permitió cambiar el caballo negro por el alfil blanco de c1. Además, 2.Rb1 había eliminado el derecho de las blancas al enroque largo, y 13.Rg1 eliminó posteriormente el derecho al enroque corto. El regreso de ambas torres a sus casillas iniciales no restauraba esos derechos.
+Tras 10.Nh3, Dreamer jugó 10...d4 y atacó al caballo de c3. La respuesta 
+11.Nb1 anuló el desarrollo de esa pieza. A continuación, la maniobra 
+...Nb4–a2–xc1 permitió cambiar el caballo negro por el alfil blanco de 
+c1. Además, 2.Rb1 había eliminado el derecho de las blancas al enroque 
+largo, y 13.Rg1 eliminó posteriormente el derecho al enroque corto. El 
+regreso de ambas torres a sus casillas iniciales no restauraba esos derechos.
 
-Los avances 14...e4 y 16...e3 aumentaron la presión sobre la posición blanca. La secuencia 17.dxe3 dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7 incluyó un jaque intermedio. Después de 20.Nxg4 Bxg4, Dreamer conservó la pareja de alfiles y una posición más activa.
+Los avances 14...e4 y 16...e3 aumentaron la presión sobre la posición 
+blanca. La secuencia 17.dxe3 dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7 incluyó un jaque 
+intermedio. Después de 20.Nxg4 Bxg4, Dreamer conservó la pareja de alfiles y 
+una posición más activa.
 
-Tras el cambio de damas, Dreamer coordinó las torres sobre la columna d mediante ...Rad8, ...Rd7, ...Rd2 y ...Rfd8. PHILOCHESS volvió a desarrollar el caballo con 22.Nc3, pero su rey permanecía en el centro y sus piezas carecían de coordinación. La jugada 24...Be6 atacó la torre de a2. Antes de retirarla, PHILOCHESS encontró la intermedia 25.Ke1, atacando la torre indefensa de d2. Dreamer respondió con 25...Rfd8, protegiendo esa torre y duplicando las torres sobre la columna.
+Tras el cambio de damas, Dreamer coordinó las torres sobre la columna d 
+mediante ...Rad8, ...Rd7, ...Rd2 y ...Rfd8. PHILOCHESS volvió a desarrollar 
+el caballo con 22.Nc3, pero su rey permanecía en el centro y sus piezas 
+carecían de coordinación. La jugada 24...Be6 atacó la torre de a2. Antes de 
+retirarla, PHILOCHESS encontró la intermedia 25.Ke1, atacando la torre 
+indefensa de d2. Dreamer respondió con 25...Rfd8, protegiendo esa torre y 
+duplicando las torres sobre la columna.
 
-Después de 26.Ra1, la jugada 26...Bf6 produjo una clavada relativa del caballo de c3. PHILOCHESS encontró el recurso 27.Ne4, creando un ataque contra el alfil de f6 y la torre de d2. La continuación 27...Bxa1 28.Nxd2 permitió cambiar una torre por otra y evitó una pérdida material inmediata.
+Después de 26.Ra1, la jugada 26...Bf6 produjo una clavada relativa del 
+caballo de c3. PHILOCHESS encontró el recurso 27.Ne4, creando un ataque 
+contra el alfil de f6 y la torre de d2. La continuación 27...Bxa1 28.Nxd2 
+permitió cambiar una torre por otra y evitó una pérdida material inmediata.
 
-Sin embargo, 28...Bc3 creó una clavada absoluta del caballo de d2. Después de 29.Kf2 Rxd2, las negras obtuvieron una ventaja material decisiva. Dreamer coordinó posteriormente el alfil y la torre para construir la red final: 30...Bd4+ 31.Ke1 Be3 32.Rh1 Rxc2 33.Kd1 Rc1#. Dreamer se impuso a PHILOCHESS.
+Sin embargo, 28...Bc3 creó una clavada absoluta del caballo de d2. Después 
+de 29.Kf2 Rxd2, las negras obtuvieron una ventaja material decisiva. Dreamer 
+coordinó posteriormente el alfil y la torre para construir la red final: 
+30...Bd4+ 31.Ke1 Be3 32.Rh1 Rxc2 33.Kd1 Rc1#. Dreamer se impuso a PHILOCHESS.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue nuevamente la gestión deficiente de los tiempos de apertura. PHILOCHESS movió ocho veces la torre de a1 durante sus primeras nueve jugadas, mientras Dreamer completaba su desarrollo.
+1. La causa principal de la derrota fue nuevamente la gestión deficiente de 
+los tiempos de apertura. PHILOCHESS movió ocho veces la torre de a1 durante 
+sus primeras nueve jugadas, mientras Dreamer completaba su desarrollo.
 
-2. Los movimientos Rb1–Ra1 no produjeron movilidad, actividad ni amenazas. Dreamer utilizó esos tiempos para ocupar el centro, desarrollar todas sus piezas, enrocar y conectar las torres.
+2. Los movimientos Rb1–Ra1 no produjeron movilidad, actividad ni amenazas. 
+Dreamer utilizó esos tiempos para ocupar el centro, desarrollar todas sus 
+piezas, enrocar y conectar las torres.
 
-3. Las jugadas 2.Rb1 y 13.Rg1 eliminaron respectivamente los derechos al enroque largo y corto. Aunque las torres regresaron a sus casillas iniciales, el rey blanco ya no podía enrocar.
+3. Las jugadas 2.Rb1 y 13.Rg1 eliminaron respectivamente los derechos al 
+enroque largo y corto. Aunque las torres regresaron a sus casillas iniciales, 
+el rey blanco ya no podía enrocar.
 
-4. La secuencia 17...dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7 muestra el uso correcto de un jaque intermedio antes de completar el cambio de damas.
+4. La secuencia 17...dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7 muestra el uso correcto 
+de un jaque intermedio antes de completar el cambio de damas.
 
-5. Después del cambio de damas, la actividad y coordinación de las torres negras sobre la columna d fueron decisivas. La penetración ...Rd2 y la posterior duplicación mediante ...Rfd8 crearon una presión que las piezas blancas no pudieron neutralizar.
+5. Después del cambio de damas, la actividad y coordinación de las torres 
+negras sobre la columna d fueron decisivas. La penetración ...Rd2 y la 
+posterior duplicación mediante ...Rfd8 crearon una presión que las piezas 
+blancas no pudieron neutralizar.
 
-6. PHILOCHESS encontró recursos tácticos valiosos con 25.Ke1 y 27.Ne4. La primera jugada atacó la torre de d2 antes de retirar la torre blanca, y la segunda creó un ataque que evitó una pérdida material inmediata.
+6. PHILOCHESS encontró recursos tácticos valiosos con 25.Ke1 y 27.Ne4. La 
+primera jugada atacó la torre de d2 antes de retirar la torre blanca, y la 
+segunda creó un ataque que evitó una pérdida material inmediata.
 
-7. Las jugadas 26...Bf6 y 28...Bc3 muestran la diferencia entre una clavada relativa y una clavada absoluta. La segunda dejó al caballo de d2 sin una defensa satisfactoria.
+7. Las jugadas 26...Bf6 y 28...Bc3 muestran la diferencia entre una clavada 
+relativa y una clavada absoluta. La segunda dejó al caballo de d2 sin una 
+defensa satisfactoria.
 
-8. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación de movimientos. PHILOCHESS procesó correctamente el cambio de damas, las capturas encadenadas y todas las evasiones de jaque, y la partida terminó mediante un jaque mate válido sobre el tablero.
+8. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación 
+de movimientos. PHILOCHESS procesó correctamente el cambio de damas, las 
+capturas encadenadas y todas las evasiones de jaque, y la partida terminó 
+mediante un jaque mate válido sobre el tablero.
 
 9. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización contextual de movimientos repetidos e improductivos de una torre durante la apertura;
+   - penalización contextual de movimientos repetidos e improductivos de una 
+torre durante la apertura;
    - valoración de la pérdida de los derechos de enroque;
-   - distinción entre movimiento, movilidad, actividad y creación de amenazas;
+   - distinción entre movimiento, movilidad, actividad y creación de 
+amenazas;
    - tablas pieza-casilla;
    - valoración del centro y del espacio;
    - evaluación de columnas abiertas y coordinación de torres;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
-   - reconocimiento y valoración diferenciada de clavadas relativas y absolutas;
+   - reconocimiento y valoración diferenciada de clavadas relativas y 
+absolutas;
    - iterative deepening y registro de la variante principal;
-   - prueba de regresión después de 10.Nh3, verificando 10...d4 y el retroceso 11.Nb1;
+   - prueba de regresión después de 10.Nh3, verificando 10...d4 y el 
+retroceso 11.Nb1;
    - prueba de regresión para 11...Nb4 12.a3 Na2 13.Rg1 Nxc1 14.Qxc1;
-   - prueba de regresión para 17.dxe3 dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7 20.Nxg4 Bxg4;
-   - prueba de regresión después de 24.b4, reconociendo 24...Be6 y la intermedia 25.Ke1;
-   - prueba de regresión para 25...Rfd8 26.Ra1 Bf6, identificando la clavada relativa del caballo;
-   - prueba de regresión para 27.Ne4 Bxa1 28.Nxd2, reconociendo el ataque y la liquidación material;
-   - prueba de regresión después de 28...Bc3, identificando la clavada absoluta y la pérdida del caballo mediante 29...Rxd2;
+   - prueba de regresión para 17.dxe3 dxe3 18.Qxd7 exf2+ 19.Nxf2 Bxd7 20.Nxg4 
+Bxg4;
+   - prueba de regresión después de 24.b4, reconociendo 24...Be6 y la 
+intermedia 25.Ke1;
+   - prueba de regresión para 25...Rfd8 26.Ra1 Bf6, identificando la clavada 
+relativa del caballo;
+   - prueba de regresión para 27.Ne4 Bxa1 28.Nxd2, reconociendo el ataque y 
+la liquidación material;
+   - prueba de regresión después de 28...Bc3, identificando la clavada 
+absoluta y la pérdida del caballo mediante 29...Rxd2;
    - prueba de regresión para 30...Bd4+ 31.Ke1 Be3 32.Rh1 Rxc2 33.Kd1 Rc1#;
-   - comprobación de que la quiescence no aplique stand pat cuando el rey está en jaque y examine correctamente capturas encadenadas y evasiones legales;
-   - propagación correcta de las puntuaciones de mate, teniendo en cuenta la distancia hasta el mate.
+   - comprobación de que la quiescence no aplique stand pat cuando el rey 
+está en jaque y examine correctamente capturas encadenadas y evasiones 
+legales;
+   - propagación correcta de las puntuaciones de mate, teniendo en cuenta la 
+distancia hasta el mate.
 
-Diagnóstico general: PHILOCHESS quedó estratégicamente comprometido por los ocho movimientos iniciales de la torre, la anulación del desarrollo del caballo y la pérdida de ambos derechos de enroque. Dreamer aprovechó esos tiempos para completar su desarrollo, controlar el centro y coordinar las torres sobre la columna d. PHILOCHESS encontró recursos tácticos que evitaron pérdidas inmediatas, pero la clavada absoluta creada por 28...Bc3 decidió la lucha material. La secuencia final proporciona una prueba especialmente valiosa de ataques, clavadas relativas y absolutas, capturas encadenadas, evasiones de jaque y reconocimiento de mates forzados para PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: PHILOCHESS quedó estratégicamente comprometido por los 
+ocho movimientos iniciales de la torre, la anulación del desarrollo del 
+caballo y la pérdida de ambos derechos de enroque. Dreamer aprovechó esos 
+tiempos para completar su desarrollo, controlar el centro y coordinar las 
+torres sobre la columna d. PHILOCHESS encontró recursos tácticos que 
+evitaron pérdidas inmediatas, pero la clavada absoluta creada por 28...Bc3 
+decidió la lucha material. La secuencia final proporciona una prueba 
+especialmente valiosa de ataques, clavadas relativas y absolutas, capturas 
+encadenadas, evasiones de jaque y reconocimiento de mates forzados para 
+PHILOCHESS 0.2-alpha-002.
 
 
 Ronda 10
@@ -766,57 +1229,121 @@ Ronda 10
 
 RESUMEN
 
-PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero Pulse Chess ocupó inmediatamente el centro con 1...d5 y lo atacó mediante 2...d4. Posteriormente, el caballo recorrió las casillas a4, c5, e4, g3 y nuevamente e4, mientras era atacado por los peones de d, b y f, y después por el alfil y el caballo. La liquidación 10.Nxf6+ Qxf6 fue una respuesta razonable a esa presión, pero dejó a PHILOCHESS sin piezas menores desarrolladas.
+PHILOCHESS comenzó la partida desarrollando el caballo mediante 1.Nc3, pero 
+Pulse Chess ocupó inmediatamente el centro con 1...d5 y lo atacó mediante 
+2...d4. Posteriormente, el caballo recorrió las casillas a4, c5, e4, g3 y 
+nuevamente e4, mientras era atacado por los peones de d, b y f, y después por 
+el alfil y el caballo. La liquidación 10.Nxf6+ Qxf6 fue una respuesta 
+razonable a esa presión, pero dejó a PHILOCHESS sin piezas menores 
+desarrolladas.
 
-Mientras el caballo era desplazado repetidamente, la torre blanca comenzó a moverse entre a1 y b1. Las maniobras Rb1–Ra1 se repitieron dos veces durante las primeras doce jugadas sin producir movilidad, actividad ni amenazas. Pulse Chess, en cambio, continuó desarrollando sus piezas y enrocó. En ese momento, las negras habían completado su desarrollo y conectado las torres, mientras el caballo de g1 y el alfil de f1 permanecían en sus casillas iniciales.
+Mientras el caballo era desplazado repetidamente, la torre blanca comenzó a 
+moverse entre a1 y b1. Las maniobras Rb1–Ra1 se repitieron dos veces durante 
+las primeras doce jugadas sin producir movilidad, actividad ni amenazas. Pulse 
+Chess, en cambio, continuó desarrollando sus piezas y enrocó. En ese 
+momento, las negras habían completado su desarrollo y conectado las torres, 
+mientras el caballo de g1 y el alfil de f1 permanecían en sus casillas 
+iniciales.
 
-PHILOCHESS también movió la dama seis veces entre las jugadas 14 y 22: Qc1, Qd1, Qb1, Qc1, Qb1 y Qc1. Estos desplazamientos tampoco consiguieron actividad suficiente. Después de 17...Nb4 18.Bxb4 Bxb4+ 19.Kd1, las blancas perdieron definitivamente el derecho a enrocar y su rey quedó expuesto en el centro.
+PHILOCHESS también movió la dama seis veces entre las jugadas 14 y 22: Qc1, 
+Qd1, Qb1, Qc1, Qb1 y Qc1. Estos desplazamientos tampoco consiguieron actividad 
+suficiente. Después de 17...Nb4 18.Bxb4 Bxb4+ 19.Kd1, las blancas perdieron 
+definitivamente el derecho a enrocar y su rey quedó expuesto en el centro.
 
-La jugada 19...Rf5 inició una notable maniobra de torre por la quinta fila. Tras 20...Rh5, Pulse Chess activó la otra torre con 21...Re8 y completó la coordinación de sus piezas mediante 22...Bc4. La torre de h5, el alfil de b4, el alfil de c4, la dama de e4 y la torre de e8 participaron en el ataque contra el rey blanco.
+La jugada 19...Rf5 inició una notable maniobra de torre por la quinta fila. 
+Tras 20...Rh5, Pulse Chess activó la otra torre con 21...Re8 y completó la 
+coordinación de sus piezas mediante 22...Bc4. La torre de h5, el alfil de b4, 
+el alfil de c4, la dama de e4 y la torre de e8 participaron en el ataque 
+contra el rey blanco.
 
-Después de 23.Rb1, la ruptura 23...d3 estableció una secuencia forzada de mate. En la partida, 24.cxd3 apartó al peón blanco de c2 y abrió la columna c. Pulse Chess continuó con 24...Qxd3+, entregando la dama. Tras 25.exd3, la columna e quedó despejada, lo que permitió la posterior entrada de la torre.
+Después de 23.Rb1, la ruptura 23...d3 estableció una secuencia forzada de 
+mate. En la partida, 24.cxd3 apartó al peón blanco de c2 y abrió la columna 
+c. Pulse Chess continuó con 24...Qxd3+, entregando la dama. Tras 25.exd3, la 
+columna e quedó despejada, lo que permitió la posterior entrada de la torre.
 
-La continuación 25...Bb3+ supuso una segunda entrega de material. Después de 26.axb3, el peón blanco ocupó b3 y anuló esa casilla de escape, mientras que la salida del alfil de c4 terminó de despejar la columna c. La torre penetró hasta e1 y fue sostenida por el alfil de b4. Tras 27.Kc2, la torre que había realizado la maniobra Rf5–h5 culminó el ataque con 27...Rc5#. De este modo, Pulse Chess concluyó la partida con jaque mate.
+La continuación 25...Bb3+ supuso una segunda entrega de material. Después de 
+26.axb3, el peón blanco ocupó b3 y anuló esa casilla de escape, mientras 
+que la salida del alfil de c4 terminó de despejar la columna c. La torre 
+penetró hasta e1 y fue sostenida por el alfil de b4. Tras 27.Kc2, la torre 
+que había realizado la maniobra Rf5–h5 culminó el ataque con 27...Rc5#. De 
+este modo, Pulse Chess concluyó la partida con jaque mate.
 
 
 CONCLUSIONES
 
-1. La causa principal de la derrota fue nuevamente la gestión deficiente de los tiempos de apertura. El caballo blanco fue desplazado repetidamente, mientras la torre y posteriormente la dama realizaron varios movimientos sin obtener actividad suficiente.
+1. La causa principal de la derrota fue nuevamente la gestión deficiente de 
+los tiempos de apertura. El caballo blanco fue desplazado repetidamente, 
+mientras la torre y posteriormente la dama realizaron varios movimientos sin 
+obtener actividad suficiente.
 
-2. La liquidación 10.Nxf6+ Qxf6 evitó que el caballo continuara siendo acosado, pero dejó a PHILOCHESS sin piezas menores desarrolladas. Pulse Chess conservó una considerable ventaja de desarrollo y espacio.
+2. La liquidación 10.Nxf6+ Qxf6 evitó que el caballo continuara siendo 
+acosado, pero dejó a PHILOCHESS sin piezas menores desarrolladas. Pulse Chess 
+conservó una considerable ventaja de desarrollo y espacio.
 
-3. Los movimientos repetidos de la torre y de la dama no crearon amenazas ni mejoraron la coordinación. Pulse Chess utilizó esos tiempos para completar su desarrollo, enrocar y conectar las torres.
+3. Los movimientos repetidos de la torre y de la dama no crearon amenazas ni 
+mejoraron la coordinación. Pulse Chess utilizó esos tiempos para completar 
+su desarrollo, enrocar y conectar las torres.
 
-4. La maniobra 19...Rf5–h5 constituye un ejemplo de verdadera actividad de torre. La pieza cambió de frente, participó en el ataque contra el rey y finalmente dio mate mediante 27...Rc5#.
+4. La maniobra 19...Rf5–h5 constituye un ejemplo de verdadera actividad de 
+torre. La pieza cambió de frente, participó en el ataque contra el rey y 
+finalmente dio mate mediante 27...Rc5#.
 
-5. La jugada 23...d3 no debe considerarse un accidente táctico aislado. Fue la consecuencia de la superioridad de desarrollo, actividad y coordinación de las negras, y estableció una secuencia forzada de mate.
+5. La jugada 23...d3 no debe considerarse un accidente táctico aislado. Fue 
+la consecuencia de la superioridad de desarrollo, actividad y coordinación de 
+las negras, y estableció una secuencia forzada de mate.
 
-6. Las entregas 24...Qxd3+ y 25...Bb3+ cumplieron funciones concretas. La primera despejó la columna e; la segunda bloqueó la casilla b3 y contribuyó a abrir la columna c.
+6. Las entregas 24...Qxd3+ y 25...Bb3+ cumplieron funciones concretas. La 
+primera despejó la columna e; la segunda bloqueó la casilla b3 y contribuyó 
+a abrir la columna c.
 
-7. La combinación final integró desviaciones de peones, despejes de columnas, bloqueo de una casilla de escape, coordinación de torres y alfiles, y una maniobra de torre por la quinta fila.
+7. La combinación final integró desviaciones de peones, despejes de 
+columnas, bloqueo de una casilla de escape, coordinación de torres y alfiles, 
+y una maniobra de torre por la quinta fila.
 
-8. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación de movimientos. PHILOCHESS ejecutó legalmente las capturas de la dama y del alfil, respondió correctamente a todos los jaques y la partida terminó mediante un mate válido.
+8. La partida no muestra fallos de legalidad, comunicación UCI ni aplicación 
+de movimientos. PHILOCHESS ejecutó legalmente las capturas de la dama y del 
+alfil, respondió correctamente a todos los jaques y la partida terminó 
+mediante un mate válido.
 
 9. Las mejoras prioritarias deben incluir:
    - evaluación básica del desarrollo;
-   - penalización contextual de movimientos repetidos e improductivos de torres y dama durante la apertura;
-   - valoración de la pérdida de tiempos provocada por ataques sucesivos contra una misma pieza;
-   - evaluación de la movilidad segura y de la calidad de las casillas de retirada;
+   - penalización contextual de movimientos repetidos e improductivos de 
+torres y dama durante la apertura;
+   - valoración de la pérdida de tiempos provocada por ataques sucesivos 
+contra una misma pieza;
+   - evaluación de la movilidad segura y de la calidad de las casillas de 
+retirada;
    - tablas pieza-casilla;
-   - valoración del centro, del espacio, de la actividad y de la coordinación;
+   - valoración del centro, del espacio, de la actividad y de la 
+coordinación;
    - seguridad del rey e incentivo al enroque cuando sea apropiado;
    - evaluación de columnas y filas abiertas;
    - valoración de maniobras de torre que permitan cambiar de frente;
    - reconocimiento de desviaciones, despejes y bloqueos de casillas de escape;
    - iterative deepening y registro de la variante principal;
-   - extensiones moderadas de jaque y propagación correcta de las puntuaciones de mate;
+   - extensiones moderadas de jaque y propagación correcta de las 
+puntuaciones de mate;
    - prueba de regresión para 1.Nc3 d5 2.Rb1 d4;
-   - prueba de regresión para la secuencia ...f5, ...f4, ...Bf5 y ...Nf6 contra el caballo blanco;
-   - prueba de regresión en la posición posterior a 14...O-O, comparando el desarrollo y la coordinación de ambos ejércitos;
+   - prueba de regresión para la secuencia ...f5, ...f4, ...Bf5 y ...Nf6 
+contra el caballo blanco;
+   - prueba de regresión en la posición posterior a 14...O-O, comparando el 
+desarrollo y la coordinación de ambos ejércitos;
    - prueba de regresión para 19...Rf5 20.Qc1 Rh5 21.Qb1 Re8 22.Qc1 Bc4;
-   - prueba de regresión después de 23.Rb1, detectando 23...d3 y la secuencia forzada de mate;
-   - prueba de regresión para 24.cxd3 Qxd3+ 25.exd3 Bb3+ 26.axb3 Re1+ 27.Kc2 Rc5#;
-   - comprobación de que la quiescence no aplique stand pat cuando el rey está en jaque y examine todas las evasiones legales;
-   - comprobación de secuencias que contienen entregas de material seguidas de jugadas sin captura.
+   - prueba de regresión después de 23.Rb1, detectando 23...d3 y la 
+secuencia forzada de mate;
+   - prueba de regresión para 24.cxd3 Qxd3+ 25.exd3 Bb3+ 26.axb3 Re1+ 27.Kc2 
+Rc5#;
+   - comprobación de que la quiescence no aplique stand pat cuando el rey 
+está en jaque y examine todas las evasiones legales;
+   - comprobación de secuencias que contienen entregas de material seguidas 
+de jugadas sin captura.
 
-Diagnóstico general: PHILOCHESS quedó estratégicamente comprometido por los tiempos invertidos en el caballo, los movimientos repetidos de la torre y de la dama, la falta de desarrollo y la permanencia del rey en el centro. Pulse Chess transformó esas ventajas en actividad y coordinación, culminando el ataque mediante una combinación forzada de gran precisión. La secuencia final proporciona una prueba especialmente valiosa de entregas de material, desviaciones, despejes, bloqueo de una casilla de escape, maniobras de torre, evasiones de jaque y reconocimiento de mates forzados para PHILOCHESS 0.2-alpha-002.
+Diagnóstico general: PHILOCHESS quedó estratégicamente comprometido por los 
+tiempos invertidos en el caballo, los movimientos repetidos de la torre y de 
+la dama, la falta de desarrollo y la permanencia del rey en el centro. Pulse 
+Chess transformó esas ventajas en actividad y coordinación, culminando el 
+ataque mediante una combinación forzada de gran precisión. La secuencia 
+final proporciona una prueba especialmente valiosa de entregas de material, 
+desviaciones, despejes, bloqueo de una casilla de escape, maniobras de torre, 
+evasiones de jaque y reconocimiento de mates forzados para PHILOCHESS 
+0.2-alpha-002.
