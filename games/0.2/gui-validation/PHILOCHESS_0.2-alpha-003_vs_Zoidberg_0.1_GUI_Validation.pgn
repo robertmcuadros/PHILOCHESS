@@ -1,0 +1,39 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.07.22"]
+[Round "1"]
+[White "PHILOCHESS 0.2 alpha 003"]
+[Black "Zoidberg 0.1"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1665"]
+[Time "00:22:48"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[Termination "black mates"]
+
+1. Nc3 Nc6 2. Rb1 d5 3. Ra1 e5 4. Rb1 d4 5. Nb5 a6 6. Na3 Bxa3 7. bxa3 Nge7 
+8. Ra1 Qd5 9. Bb2 Be6 10. Qc1 O-O-O 11. Qd1 e4 12. Qc1 Rhg8 13. Qd1 Qa5 14. Qc1 Nd5 
+15. Rb1 Nb6 16. Ra1 Na4 17. Qb1 Rd5 18. c4 dxc3 19. Bxc3 Nxc3 20. Qc2 Rxd2 21. Kxd2 Rd8+ 
+22. Kc1 Qxa3+ 23. Qb2 Rd1+ 24. Kc2 Nd4# 0-1
+
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.07.22"]
+[Round "2"]
+[White "Zoidberg 0.1"]
+[Black "PHILOCHESS 0.2 alpha 003"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1665"]
+[BlackElo "800"]
+[Time "00:37:04"]
+[ECO "B00"]
+[Opening "St. George Defense"]
+[Termination "white mates"]
+
+1. e4 a6 2. Nf3 a5 3. Bb5 b6 4. O-O a4 5. c4 Bb7 6. d3 Bc6 7. a3 Bxb5 
+8. cxb5 c6 9. bxc6 dxc6 10. Nc3 b5 11. Rb1 e6 12. Bf4 f6 13. Be3 e5 14. d4 exd4 
+15. Nxd4 g6 16. Qg4 b4 17. Qe6+ Qe7 18. Qc8+ Qd8 19. Qb7 Qa5 20. Ne6 Bd6 21. Rfd1 bxc3 
+22. Ng7+ Kf8 23. Rxd6 c2 24. Ne6+ Ke8 25. Qc8+ Qd8 26. Qxd8+ Kf7 27. Qf8# 1-0
