@@ -148,9 +148,6 @@ The program compiled successfully in Visual Studio.
 The compilation output reported:
 1 successful build, 0 errors, 0 updated, 0 skipped.
 
-The executable was generated in:
-D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
-
 Basic UCI test performed:
 uci
 isready
@@ -872,9 +869,6 @@ The program compiled successfully in Visual Studio using Release | x64.
 The compilation output reported:
 1 successful build, 0 errors.
 
-The executable was generated in:
-D:\PHILOCHESS\PHILOCHESS\x64\Release\PHILOCHESS.exe
-
 Test 1 — Complete executable inventory in Release
 
 Command performed:
@@ -1134,9 +1128,6 @@ The program compiled successfully in Visual Studio using Debug | x64.
 The compilation output reported:
 1 successful build, 0 errors.
 
-The executable was generated in:
-D:\PHILOCHESS\PHILOCHESS\x64\Debug\PHILOCHESS.exe
-
 Command performed:
 inventorytest
 
@@ -1221,3 +1212,383 @@ measure later positional progress against the ten recorded baselines.
 The next internal development step should focus on iterative deepening and
 principal variation reporting while preserving the complete alpha-002
 regression battery.
+
+===============================================================================
+
+Date: July 22, 2026
+
+PHILOCHESS 0.2-alpha-003 — Iterative Deepening
+
+Implemented the first iterative-deepening search in PHILOCHESS.
+
+Technical milestone:
+PHILOCHESS can now search successively from depth 1 to the requested depth,
+preserve the result of the last fully completed iteration, and use the previous
+iteration's best root move to guide the next iteration.
+
+This is the third version of the PHILOCHESS 0.2 development cycle.
+It builds directly on the validated PHILOCHESS 0.2-alpha-002 code without
+modifying that closed version.
+
+Alpha-003 preserves:
+- legal move generation and move application;
+- FEN loading;
+- castling;
+- en passant;
+- pawn promotion;
+- check, checkmate, and stalemate detection;
+- perft, divide, and known reference perft validation;
+- material evaluation;
+- alpha-beta search;
+- quiescence search;
+- refined MVV-LVA move ordering;
+- UCI mate-score output;
+- basic UCI time-control parsing;
+- the four-case quiescence correctness suite;
+- the inherited three-position tactical regression test;
+- the complete 64-case tactical regression and quiescence inventory;
+- all diagnostic commands inherited from alpha-002.
+
+New functionality:
+- Replaced the normal single fixed-depth playing search with iterative
+  deepening.
+- Added successive completed searches at depths 1, 2, 3, and 4 when depth 4 is
+  requested.
+- Added requested-depth and completed-iteration tracking to the search result.
+- Preserved the best move and score only after an iteration has been completed
+  in full.
+- Added a legal fallback root move before the first iteration begins.
+- If a time limit interrupts an iteration, the engine now returns the best move
+  from the last fully completed iteration instead of committing a partial
+  result.
+- The best move from the previous completed iteration is searched first at the
+  root of the next iteration.
+- Search statistics accumulate across all iterations executed by one go
+  command.
+- All iterations share the same search start time and time limit.
+- Added final search reporting of the number of completed iterations compared
+  with the requested number.
+- Preserved a dedicated fixed-depth path for the diagnostic regression
+  inventory, maintaining controlled comparison with alpha-002.
+- Updated UCI identification to:
+  id name PHILOCHESS 0.2-alpha-003
+
+New internal diagnostic commands:
+- idtest [depth]
+- iterativetest [depth]
+
+Both command names execute the same iterative-deepening test suite.
+
+The suite runs controlled searches from the initial position and verifies for
+each requested depth that:
+- the engine has a legal best move;
+- the search is not stopped;
+- the requested depth is recorded correctly;
+- every iteration from depth 1 through the requested depth is completed;
+- the final completed depth equals the requested depth.
+
+Version boundary:
+Alpha-003 reports one final UCI search-information block and an iteration
+summary. It does not yet emit a complete principal variation or a separate UCI
+information line after every completed iteration.
+
+Complete principal variation tracking and the fuller presentation of iterative
+UCI reports belong mainly to alpha-004.
+
+Important note:
+Alpha-003 does not change the static evaluation function.
+PHILOCHESS still uses material-only evaluation.
+
+Iterative deepening reorganises the search and provides a stable completed
+result under time pressure. By itself, it does not add positional knowledge or
+guarantee a major immediate increase in playing strength.
+
+Release compilation test:
+The program compiled successfully in Visual Studio using Release | x64.
+
+The compilation output reported:
+1 successful build, 0 errors.
+
+Test 1 — UCI identification
+
+Command performed:
+uci
+
+Result:
+id name PHILOCHESS 0.2-alpha-003
+id author Robert M. Cuadros
+uciok
+
+The version identity and author were reported correctly.
+
+Test 2 — UCI readiness
+
+Command performed:
+isready
+
+Result:
+readyok
+
+The engine responded immediately and remained available for commands.
+
+Test 3 — Integrated iterative-deepening suite
+
+Command performed:
+idtest 4
+
+Result:
+The searches for requested depths 1, 2, 3, and 4 all returned PASS.
+
+Final result:
+Iterative deepening tests: 4/4 passed
+
+This confirms that PHILOCHESS completed every required depth step and retained
+the final result at the requested depth.
+
+Test 4 — Preserved quiescence correctness suite
+
+Command performed:
+qtest
+
+Result:
+- horizon recapture avoidance: PASS;
+- capture chain: PASS;
+- non-capturing promotion: PASS;
+- check evasion without stand pat: PASS.
+
+Final result:
+Quiescence tests: 4/4 passed
+
+This confirms that iterative deepening did not damage the quiescence behaviour
+validated in the previous versions.
+
+Test 5 — Known reference perft validation
+
+Command performed:
+perftknown 4
+
+Result:
+PHILOCHESS passed the registered values for all six reference positions from
+depth 1 through depth 4.
+
+Final result:
+perftknown 4: 24/24 passed
+
+This confirms the preservation of legal move generation, move application,
+castling, en passant, promotions, check detection, and king-safety filtering.
+
+Test 6 — Preserved tactical regression test
+
+Command performed:
+tactictest 4
+
+Case 1 — Before 10...Qc6?
+
+PHILOCHESS selected 10...Qe6 and avoided the known bad move 10...Qc6?.
+
+Status:
+IMPROVED - known bad move avoided
+
+Case 2 — After 11.Bb5
+
+PHILOCHESS selected 11...Qxb5, the same legal defensive attempt recorded in
+alpha-002 in a position where the queen is already tactically lost.
+
+Case 3 — After 11...Qxb5
+
+PHILOCHESS found 12.Nc7+, the expected knight fork, checking the black king 
+while simultaneously attacking the queen.
+
+Status:
+EXPECTED TACTICAL MOVE FOUND
+
+All three cases completed 4 of 4 iterative-deepening iterations, and no setup
+failure occurred.
+
+Test 7 — Complete 64-case inventory
+
+Command performed:
+inventorytest 4
+
+Final result:
+PASS 46  FAIL 0  OPEN 8  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+The eight open cases remained exactly:
+- R02-T03;
+- R09-T02;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+This reproduced the complete alpha-002 classification without introducing any
+failure or incorrectly reporting an open objective as passed.
+
+Test 8 — UCI search with fixed depth
+
+Command performed:
+go depth 4
+
+Result:
+depth 4
+iterative deepening completed 4 of 4 iterations
+bestmove b1c3
+
+PHILOCHESS reached the requested final depth, completed all four iterations,
+and returned a legal move.
+
+Test 9 — Fixed movetime and stable completed result
+
+Command performed:
+go movetime 5
+
+Result:
+PHILOCHESS recognised movetime 5 and timelimit 5.
+
+The engine fully completed depths 1, 2, and 3, began the next iteration, and
+then reported:
+stopped by limit
+
+It preserved the completed depth-3 result and returned:
+bestmove b1c3
+
+This confirms the central time-safety behaviour of alpha-003: an incomplete
+iteration does not overwrite the last stable result.
+
+Test 10 — Basic UCI clock administration
+
+Commands performed:
+position startpos
+go wtime 300 btime 600 winc 20 binc 40 movestogo 30
+
+Because White was to move, PHILOCHESS calculated:
+300 / 30 + 20 / 2 = 20 ms
+
+Result:
+timelimit 20
+depth 4
+iterative deepening completed 4 of 4 iterations
+bestmove b1c3
+
+PHILOCHESS selected the correct clock and increment, completed the four
+iterations within the calculated budget, and returned a legal move.
+
+Test 11 — Debug compilation
+
+The program compiled successfully in Visual Studio using Debug | x64.
+
+The compilation output reported:
+1 successful build, 0 errors, 0 skipped.
+
+The full console battery did not need to be repeated in Debug after the complete
+Release validation. The Debug build confirmed that the source remained valid in
+both established Visual Studio configurations.
+
+Test 12 — Practical UCI GUI validation
+
+PHILOCHESS 0.2-alpha-003 Release was loaded in Myracle and tested in two games
+against Zoidberg 0.1 with colours reversed.
+
+Conditions:
+- time control: 15 minutes plus 10 seconds per move;
+- normal initial position;
+- no opening book;
+- no Syzygy tablebases;
+- pondering disabled;
+- full balanced adjudication without tablebases.
+
+Game 1:
+PHILOCHESS 0.2-alpha-003 — Zoidberg 0.1
+Result: 0-1
+Termination: 24...Nd4#
+
+PHILOCHESS played White, made legal moves throughout the game, did not lose on
+time, and retained 19:08 when the game ended by checkmate.
+
+Game 2:
+Zoidberg 0.1 — PHILOCHESS 0.2-alpha-003
+Result: 1-0
+Termination: 27.Qf8#
+
+PHILOCHESS played Black, made legal moves throughout the game, did not lose on
+time, and retained 19:26 when the game ended by checkmate.
+
+The Myracle output showed 4 of 4 completed iterative-deepening iterations during
+both practical tests.
+
+Practical validation result:
+- 2/2 games completed normally;
+- legal play in both games;
+- no timeout;
+- no engine crash or unexpected closure;
+- no visible UCI communication failure;
+- normal termination by checkmate in both games.
+
+The sporting result was Zoidberg 0.1 2-0 PHILOCHESS 0.2-alpha-003. This result
+does not represent a technical failure: Zoidberg is substantially stronger than
+the current material-only PHILOCHESS, and the purpose of these games was to
+verify integration, legality, time handling, and stability in real GUI play.
+
+Current limitations:
+- The static evaluation remains material-only.
+- Eight category [B] tactical objectives remain OPEN at the tested diagnostic
+  depth.
+- Ten category [C] positions remain positional baselines.
+- Maximum normal search depth remains 4.
+- The best move from the previous iteration is prioritised only at the root.
+- The complete principal variation is not yet tracked or reported.
+- UCI search information is not yet emitted after every completed iteration.
+- The final pv field still contains only the selected root move.
+- No transposition table is implemented.
+- No hash move ordering is implemented.
+- No killer move heuristic is implemented.
+- No history heuristic is implemented.
+- No aspiration windows are implemented.
+- Time management remains basic.
+- stop is recognised, but search remains synchronous and cannot yet be
+  interrupted asynchronously.
+- go infinite is parsed, but true infinite analysis is not implemented.
+- Non-capturing checking moves remain outside direct quiescence.
+- No static exchange evaluation, SEE pruning, or delta pruning is implemented.
+- Draw adjudication by the fifty-move rule, repetition, or insufficient material
+  is not implemented.
+- The practical GUI validation consisted of two stability games, not a large
+  competitive tournament.
+
+Conclusion:
+The development, console validation, and practical GUI validation of
+PHILOCHESS 0.2-alpha-003 have been completed successfully.
+
+PHILOCHESS passed:
+- successful Visual Studio Release | x64 compilation with 0 errors;
+- successful Visual Studio Debug | x64 compilation with 0 errors;
+- correct UCI identification as PHILOCHESS 0.2-alpha-003;
+- immediate uciok output;
+- immediate readyok output;
+- idtest 4 with 4/4 successful iterative-deepening tests;
+- qtest with 4/4 successful quiescence tests;
+- perftknown 4 with 24/24 successful validations;
+- preserved tactictest execution at depth 4;
+- complete execution of the 64-case inventory;
+- 46 PASS, 0 FAIL, 8 OPEN, and 10 BASELINE results;
+- preserved inventory distribution of 21 [A], 33 [B], and 10 [C] cases;
+- go depth 4 with 4/4 completed iterations and a legal bestmove;
+- go movetime 5 with safe retention of the last completed iteration;
+- correct 20 ms budget calculation from UCI clock data;
+- legal bestmove output under fixed depth, movetime, and clock control;
+- two complete Myracle games at 15+10, one with each colour;
+- legal moves, stable UCI communication, and correct time handling in both
+  practical games;
+- normal checkmate termination without crash or timeout in both games.
+
+Alpha-003 establishes the iterative framework required for stronger search and
+future time management. PHILOCHESS now deepens step by step and retains a stable
+answer whenever a time limit prevents the next iteration from finishing.
+
+The next internal development step should focus on complete principal variation
+tracking and fuller UCI reporting by completed iteration while preserving the
+entire alpha-003 functionality and alpha-002 regression battery.
