@@ -2034,6 +2034,90 @@ inventory structure remained valid.
 This confirms that alpha-004 preserves the established tactical and quiescence
 regression baseline without incorrectly reporting an open objective as passed.
 
+Test 11 — Practical UCI GUI validation
+
+PHILOCHESS 0.2-alpha-004 Release was loaded in Myracle and tested in two
+games against Shallow Blue 2.0.0 with colours reversed.
+
+Conditions:
+- time control: 15 minutes plus 10 seconds per move;
+- normal initial position;
+- no opening book;
+- no Syzygy tablebases;
+- full balanced adjudication without tablebases.
+
+Game 1:
+PHILOCHESS 0.2-alpha-004 — Shallow Blue 2.0.0
+Result: 0-1
+Termination: 17...Nf4#
+
+PHILOCHESS played White, made legal moves throughout the game, did not lose
+on time, and retained 17:58 when the game ended by checkmate.
+
+Before the final move, PHILOCHESS reported a mate-in-one score and the
+principal variation:
+
+Nf3 Nf4#
+
+The continuation corresponded exactly to the moves subsequently played:
+17.Nf3 Nf4#.
+
+Game 2:
+Shallow Blue 2.0.0 — PHILOCHESS 0.2-alpha-004
+Result: 1-0
+Termination: 22.Qxg8#
+
+PHILOCHESS played Black, made legal moves throughout the game, did not lose
+on time, and retained 18:37 when the game ended by checkmate.
+
+Before the final move, PHILOCHESS completed 4 of 4 iterative-deepening
+iterations and reported a mate-in-one score with the principal variation:
+
+cxd5 Qxg8#
+
+The continuation corresponded exactly to the moves subsequently played:
+21...cxd5 22.Qxg8#.
+
+During both games, Myracle correctly received and displayed:
+- normal and selective search depth;
+- evaluation in centipawns or UCI mate notation;
+- elapsed search time;
+- node count;
+- nodes per second;
+- the principal variation;
+- the number of completed iterative-deepening iterations.
+
+The first move of the displayed principal variation corresponded to the move
+played by PHILOCHESS. The GUI accepted the engine's UCI output without any
+visible compatibility problem.
+
+Practical validation result:
+- 2/2 games completed normally;
+- legal play in both games;
+- no timeout;
+- no engine crash or unexpected closure;
+- no visible UCI communication failure;
+- iterative UCI information displayed correctly by Myracle;
+- principal variations displayed correctly;
+- UCI mate scores displayed correctly;
+- both final mates identified one move in advance;
+- normal termination by checkmate in both games.
+
+The sporting result was:
+Shallow Blue 2.0.0 2-0 PHILOCHESS 0.2-alpha-004.
+
+This result does not represent a technical failure:
+Shallow Blue is substantially stronger than the current material-only
+PHILOCHESS, and alpha-004 does not modify the engine's chess evaluation or
+maximum normal search depth.
+
+The purpose of these games was to verify GUI integration, legal play, time
+handling, stability, iterative UCI reporting, principal-variation display,
+and mate-score presentation under practical playing conditions.
+
+The practical UCI GUI validation of PHILOCHESS 0.2-alpha-004 was completed
+successfully.
+
 Current limitations:
 - The static evaluation remains material-only.
 - Eight category [B] tactical objectives remain OPEN at the tested diagnostic
@@ -2057,7 +2141,6 @@ material
   is not implemented.
 - Principal-variation reporting reflects the current depth-4, material-only
   search and therefore does not yet provide strategically sophisticated lines.
-- Practical UCI GUI validation of alpha-004 remains pending.
 
 Conclusion:
 The development and technical console validation of
@@ -2092,6 +2175,3 @@ Alpha-004 completes the first full presentation of PHILOCHESS's iterative
 search. The engine now exposes the line it considers best at every completed
 depth and keeps its public UCI output tied exclusively to stable, fully
 completed results.
-
-The next step should be practical validation in a UCI GUI while preserving the
-entire alpha-004 technical baseline.
