@@ -2,7 +2,7 @@
 REGISTRO DE DESARROLLO DE PHILOCHESS 0.1
 ===============================================================================
 
-Autor y titular de los derechos de autor: Robert M. Cuadro
+Autor y titular de los derechos de autor: Robert M. Cuadros
 Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
 
 Este documento se distribuye bajo la licencia Creative Commons
