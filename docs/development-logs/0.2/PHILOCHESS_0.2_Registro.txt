@@ -2172,6 +2172,95 @@ Esto confirma que alpha-004 conserva la línea base establecida de regresión
 táctica y búsqueda de quietud, sin presentar incorrectamente como aprobado un
 objetivo abierto.
 
+Prueba 11 — Validación práctica en una GUI UCI
+
+PHILOCHESS 0.2-alpha-004 Release fue cargado en Myracle y probado en dos
+partidas contra Shallow Blue 2.0.0 con los colores invertidos.
+
+Condiciones:
+- control de tiempo: 15 minutos más 10 segundos por jugada;
+- posición inicial normal;
+- sin libro de aperturas;
+- sin tablebases Syzygy;
+- adjudicación full balanced sin tablebases.
+
+Partida 1:
+PHILOCHESS 0.2-alpha-004 — Shallow Blue 2.0.0
+Resultado: 0-1
+Final: 17...Cf4#
+
+PHILOCHESS jugó con blancas, realizó jugadas legales durante toda la partida,
+no perdió por tiempo y conservaba 17:58 cuando la partida terminó por jaque
+mate.
+
+Antes de la jugada final, PHILOCHESS presentó una evaluación de mate en una
+y la variante principal:
+
+Cf3 Cf4#
+
+La continuación coincidió exactamente con las jugadas realizadas a
+continuación: 17.Cf3 Cf4#.
+
+Partida 2:
+Shallow Blue 2.0.0 — PHILOCHESS 0.2-alpha-004
+Resultado: 1-0
+Final: 22.Dxg8#
+
+PHILOCHESS jugó con negras, realizó jugadas legales durante toda la partida,
+no perdió por tiempo y conservaba 18:37 cuando la partida terminó por jaque
+mate.
+
+Antes de la jugada final, PHILOCHESS completó 4 de 4 iteraciones de
+profundización y presentó una evaluación de mate en una con la variante
+principal:
+
+cxd5 Dxg8#
+
+La continuación coincidió exactamente con las jugadas realizadas a
+continuación: 21...cxd5 22.Dxg8#.
+
+Durante ambas partidas, Myracle recibió y mostró correctamente:
+- la profundidad normal y la profundidad selectiva;
+- la evaluación en centipeones o en notación UCI de mate;
+- el tiempo de búsqueda transcurrido;
+- el número de nodos;
+- los nodos por segundo;
+- la variante principal;
+- el número de iteraciones de profundización terminadas.
+
+La primera jugada de la variante principal presentada correspondió con la
+jugada realizada por PHILOCHESS. La GUI aceptó la salida UCI del motor sin
+ningún problema visible de compatibilidad.
+
+Resultado de la validación práctica:
+- 2/2 partidas terminadas normalmente;
+- juego legal en ambas partidas;
+- ninguna pérdida por tiempo;
+- ningún bloqueo o cierre inesperado del motor;
+- ningún fallo visible de comunicación UCI;
+- información UCI iterativa mostrada correctamente por Myracle;
+- variantes principales mostradas correctamente;
+- evaluaciones UCI de mate mostradas correctamente;
+- ambos mates finales identificados con una jugada de anticipación;
+- final normal por jaque mate en ambas partidas.
+
+El resultado deportivo fue:
+Shallow Blue 2.0.0 2-0 PHILOCHESS 0.2-alpha-004.
+
+Este resultado no representa un fallo técnico:
+Shallow Blue es considerablemente más fuerte que el PHILOCHESS actual, que
+todavía utiliza evaluación solamente material, y alpha-004 no modifica la
+evaluación ajedrecística del motor ni su profundidad máxima de búsqueda
+normal.
+
+El objetivo de estas partidas fue verificar la integración con la GUI, el
+juego legal, el manejo del tiempo, la estabilidad, los informes UCI
+iterativos, la presentación de la variante principal y la notación de las
+evaluaciones de mate en condiciones prácticas de juego.
+
+La validación práctica de PHILOCHESS 0.2-alpha-004 en una GUI UCI quedó
+completada satisfactoriamente.
+
 Limitaciones actuales:
 - La evaluación estática continúa siendo solamente material.
 - Ocho objetivos tácticos de categoría [B] permanecen OPEN a la profundidad
@@ -2200,7 +2289,6 @@ movimientos,
 - La presentación de la variante principal refleja la búsqueda actual a
   profundidad 4 y con evaluación solamente material, por lo que todavía no
   proporciona líneas estratégicamente sofisticadas.
-- La validación práctica de alpha-004 en una GUI UCI permanece pendiente.
 
 Conclusión:
 El desarrollo y la validación técnica por consola de
@@ -2233,11 +2321,6 @@ PHILOCHESS pasó:
 - resultados funcionales y de regresión coincidentes en Release y Debug.
 
 Alpha-004 completa la primera presentación integral de la búsqueda iterativa 
-de
-PHILOCHESS. El motor ahora muestra la línea que considera mejor en cada
+de PHILOCHESS. El motor ahora muestra la línea que considera mejor en cada
 profundidad terminada y mantiene su salida UCI pública vinculada 
-exclusivamente
-a resultados estables y completamente finalizados.
-
-El siguiente paso debe ser la validación práctica en una GUI UCI, conservando
-toda la línea base técnica de alpha-004.
+exclusivamente a resultados estables y completamente finalizados.
