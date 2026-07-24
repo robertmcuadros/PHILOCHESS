@@ -28,7 +28,7 @@ The published C++ samples are self-contained and can be compiled independently w
 
 ## Current status
 
-The latest version, PHILOCHESS 0.2-alpha-006, passed its complete console regression suite and practical GUI validation in Myracle. It converts larger time budgets into greater completed search depths, preserves the last fully completed iteration when a search is interrupted, and maintains legal and stable UCI operation without time losses or crashes. Its static evaluation remains material-only. Development will now continue with piece-square tables, basic mobility evaluation, basic pawn structure, basic king safety, a consolidated search and evaluation regression suite, and external match validation leading to the closure of PHILOCHESS 0.2.
+The latest version, PHILOCHESS 0.2-alpha-006, passed its complete console regression suite and practical GUI validation. It converts larger time budgets into greater completed search depths, preserves the last fully completed iteration when a search is interrupted, and maintains legal and stable UCI operation without time losses or crashes. Its static evaluation remains material-only. Development will now continue with piece-square tables, basic mobility evaluation, basic pawn structure, basic king safety, a consolidated search and evaluation regression suite, and external match validation leading to the closure of PHILOCHESS 0.2.
 
 ## PHILOCHESS 0.1 development milestones
 
