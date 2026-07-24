@@ -55,6 +55,8 @@ PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Devel
 | 0.2-alpha-002 | Tactical regression and quiescence correctness |
 | 0.2-alpha-003 | Iterative deepening with preservation of the last completed iteration |
 | 0.2-alpha-004 | Principal variation tracking and iterative UCI reporting |
+| 0.2-alpha-005 | Improved move ordering with PV-move priority and MVV-LVA |
+| 0.2-alpha-006 | Time-controlled iterative deepening with soft and hard time limits |
 
 ## Licensing
 
