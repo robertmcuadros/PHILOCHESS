@@ -28,7 +28,7 @@ The published C++ samples are self-contained and can be compiled independently w
 
 ## Current status
 
-PHILOCHESS 0.1 has been completed as a validated minimal UCI chess engine. Development has now entered the PHILOCHESS 0.2 phase. Its first alpha introduced basic quiescence search and refined MVV-LVA capture ordering, passed its internal validation, and has now been tested in a controlled external validation tournament without Syzygy tablebases; analysis of the tournament games is currently in progress. Development of PHILOCHESS 0.2 will continue with iterative deepening, principal variation reporting, improved move ordering, basic time management, and the first positional evaluation layers.
+The latest version, PHILOCHESS 0.2-alpha-006, passed its complete console regression suite and practical GUI validation in Myracle. It converts larger time budgets into greater completed search depths, preserves the last fully completed iteration when a search is interrupted, and maintains legal and stable UCI operation without time losses or crashes. Its static evaluation remains material-only. Development will now continue with piece-square tables, basic mobility evaluation, basic pawn structure, basic king safety, a consolidated search and evaluation regression suite, and external match validation leading to the closure of PHILOCHESS 0.2.
 
 ## PHILOCHESS 0.1 development milestones
 
