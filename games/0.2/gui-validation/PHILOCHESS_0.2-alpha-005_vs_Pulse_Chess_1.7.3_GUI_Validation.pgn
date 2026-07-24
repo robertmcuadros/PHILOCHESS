@@ -1,0 +1,39 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.07.23"]
+[Round "1"]
+[White "PHILOCHESS 0.2 alpha 005"]
+[Black "Pulse Chess 1.7.3"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "800"]
+[BlackElo "1520"]
+[Time "01:54:39"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[Termination "black mates"]
+
+1. Nc3 d5 2. Rb1 d4 3. Na4 Nc6 4. Ra1 b5 5. Nc5 e5 6. Ne4 f5 7. Ng3 f4 
+8. Ne4 Bf5 9. d3 Nf6 10. Nxf6+ Qxf6 11. Rb1 Be6 12. Ra1 Qg6 13. Bd2 Be7 14. Qc1 O-O 
+15. Qd1 e4 16. dxe4 Qxe4 17. Qb1 Nb4 18. Kd1 Bf5 19. Bxb4 Bxb4 20. Qc1 Be6 21. Qb1 Rf5 
+22. Qc1 Rh5 23. Qb1 Re8 24. Qc1 Bc4 25. Qb1 Rg5 26. Kc1 Rxg2 27. Nh3 Rxf2 28. c3 Qe3+ 
+29. Kd1 Bxe2+ 30. Bxe2 Qxe2+ 31. Kc1 Qd2# 0-1
+
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.07.23"]
+[Round "2"]
+[White "Pulse Chess 1.7.3"]
+[Black "PHILOCHESS 0.2 alpha 005"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1520"]
+[BlackElo "800"]
+[Time "02:25:21"]
+[ECO "A40"]
+[Opening "Queen's Pawn Game"]
+[Termination "white wins by adjudication"]
+
+1. d4 a6 2. e4 a5 3. Nc3 b6 4. Nf3 c6 5. Bf4 b5 6. Bd3 a4 7. b3 axb3 
+8. axb3 Rxa1 9. Qxa1 d6 10. e5 dxe5 11. Bxe5 Nd7 12. Qa8 b4 13. Qxc6 e6 14. Nb5 Qb6 
+15. Qxc8+ Qd8 16. Nc7+ Ke7 17. Bd6+ Kxd6 18. Qxd8 Nf6 1-0
