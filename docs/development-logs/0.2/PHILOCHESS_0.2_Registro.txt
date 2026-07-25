@@ -3558,3 +3558,888 @@ Esta es una base funcional y segura para la futura evaluación posicional, las
 mejoras de eficiencia de búsqueda y un manejo temporal más dinámico. Todavía
 no constituye la forma final ni teóricamente óptima del manejo del tiempo de
 PHILOCHESS.
+
+Fecha: 24 de julio de 2026
+
+PHILOCHESS 0.2-alpha-007 — Tablas pieza-casilla
+
+Se implementó la primera capa de evaluación posicional de PHILOCHESS mediante
+tablas pieza-casilla conservadoras.
+
+Hito técnico:
+PHILOCHESS ya no evalúa las posiciones exclusivamente por el material.
+
+La evaluación estática ahora combina el balance material establecido con
+valores pieza-casilla que premian o penalizan cada pieza según su ubicación
+sobre el tablero.
+
+Esta es la séptima versión del ciclo de desarrollo de PHILOCHESS 0.2.
+Se apoya directamente en el código validado de PHILOCHESS 0.2-alpha-006, sin
+modificar esa versión cerrada.
+
+Alpha-007 conserva:
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque, jaque mate y ahogado;
+- perft y la validación perft con referencias conocidas;
+- los valores materiales establecidos;
+- la búsqueda alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción completa de la variante principal;
+- los informes UCI iterativos;
+- los informes UCI de mate;
+- la conservación de la última iteración completamente terminada;
+- la prioridad de la jugada PV en la raíz y debajo de ella;
+- la prioridad de promociones y el ordenamiento MVV-LVA de capturas;
+- los límites temporales blando y duro;
+- la profundización iterativa controlada por tiempo;
+- el rechazo seguro de iteraciones interrumpidas;
+- las baterías establecidas de regresión táctica y búsqueda de quietud;
+- el inventario diagnóstico completo de 64 casos;
+- todos los comandos de diagnóstico heredados de alpha-006.
+
+Nueva funcionalidad:
+- Se añadió PHILOCHESS PST v1.
+- Se añadió una tabla pieza-casilla para los peones.
+- Se añadió una tabla pieza-casilla para los caballos.
+- Se añadió una tabla pieza-casilla para los alfiles.
+- Se añadió una tabla pieza-casilla para las torres.
+- Se añadió una tabla pieza-casilla para las damas.
+- Se añadieron tablas separadas de medio juego y final para el rey.
+- Se añadió un valor global de fase de la partida desde 0 hasta 24.
+- Se añadió interpolación lineal entre las tablas de medio juego y final del
+  rey.
+- Se añadió reflexión vertical de las tablas para las piezas negras.
+- Se añadió una evaluación pieza-casilla independiente.
+- Se reemplazó la evaluación estática solamente material por material más PST.
+- Se conservó la convención de signo para el bando al turno requerida por
+  negamax.
+- Se amplió el comando eval con informes de material, fase, PST, evaluación
+  total y evaluación para el bando al turno.
+- Se añadió el comando de diagnóstico psttest.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.2-alpha-007
+
+Diseño de soporte:
+Los valores implementados siguen el diseño aprobado PHILOCHESS PST v1: una
+primera propuesta propia, deliberadamente conservadora y expresada en
+centipeones.
+
+El diseño contiene seis tipos de tablas pieza-casilla y siete matrices
+numéricas:
+- peón;
+- caballo;
+- alfil;
+- torre;
+- dama;
+- rey en el medio juego;
+- rey en el final.
+
+Orientación del tablero:
+PHILOCHESS representa:
+- a1 como board[0];
+- h1 como board[7];
+- a8 como board[56];
+- h8 como board[63].
+
+Por tanto, las siete matrices están almacenadas desde la primera hasta la
+octava fila.
+
+Las piezas blancas utilizan directamente la casilla de la tabla.
+
+Las piezas negras utilizan una reflexión vertical:
+
+casilla orientada = casilla ^ 56
+
+Esto conserva las columnas y concede a ambos colores los mismos valores
+relativos sin intercambiar los flancos de rey y dama.
+
+Cálculo de la fase:
+La fase global utiliza los siguientes pesos:
+- caballo: 1;
+- alfil: 1;
+- torre: 2;
+- dama: 4;
+- peón: 0;
+- rey: 0.
+
+El material inicial completo produce fase 24.
+Una posición con solamente los reyes produce fase 0.
+
+En PST v1, solamente el rey utiliza dos tablas dependientes de la fase.
+
+El valor interpolado del rey es:
+
+PST del rey =
+(valor de medio juego × fase
++ valor de final × (24 - fase)) / 24
+
+Los otros cinco tipos de piezas emplean una sola tabla conservadora durante
+toda la partida.
+
+Composición de la evaluación estática:
+
+evaluación estática =
+evaluación material + evaluación pieza-casilla
+
+Los valores materiales permanecen sin cambios:
+- peón: 100;
+- caballo: 320;
+- alfil: 330;
+- torre: 500;
+- dama: 900;
+- rey: 0.
+
+Primero se calcula la evaluación completa desde la perspectiva de las blancas.
+Su signo se ajusta una sola vez según el bando al turno, conservando la
+convención requerida por negamax.
+
+Límite de la versión:
+Alpha-007 modifica la evaluación estática y, por consiguiente, puede cambiar
+la jugada seleccionada, la evaluación numérica, la variante principal, el
+número de nodos y el estado diagnóstico de casos de regresión que exigen una
+jugada exacta.
+
+No modifica:
+- el generador de jugadas legales;
+- la aplicación de jugadas;
+- los valores materiales;
+- las reglas de la búsqueda alpha-beta;
+- las reglas de selección de jugadas de la búsqueda de quietud;
+- la jerarquía de ordenamiento de jugadas;
+- la construcción de la variante principal;
+- la fórmula de asignación temporal;
+- la interrupción de la búsqueda;
+- los objetivos o la estructura del inventario de 64 casos.
+
+Los valores PST son reemplazables de forma deliberada. Las versiones futuras
+podrán ajustarlos o sustituirlos sin cambiar el generador de jugadas legales
+ni la arquitectura básica de búsqueda.
+
+Prueba de compilación Release:
+El programa compiló correctamente en Visual Studio mediante Release | x64 e
+ISO C++17.
+
+La compilación informó:
+1 compilación correcta y 0 errores.
+
+Prueba de compilación Debug:
+El programa compiló correctamente en Visual Studio mediante Debug | x64 e
+ISO C++17.
+
+La compilación informó:
+1 compilación correcta y 0 errores.
+
+Las siguientes pruebas por consola fueron ejecutadas con el programa 
+Release | x64.
+
+Prueba 1 — Batería de tablas pieza-casilla
+
+Comando realizado:
+psttest
+
+Resultado:
+
+PHILOCHESS 0.2-alpha-007 - Piece-square table tests
+PASS - White-table orientation: d2 pawn -5, e4 pawn +15,
+g1 knight -20, f3 knight +10
+PASS - Black vertical reflection: e4/e5, c7/c2, c1/c8 and g1/g8 match
+PASS - Initial-position symmetry: phase 24, PST 0, total 0
+PASS - Game-phase weights: initial 24, queens-plus-rooks 12,
+kings-only 0
+PASS - King phase interpolation: e1 0/-5/-10 and d4 -20/0/+20
+at phases 24/12/0
+PASS - Representative PST changes: e2-e4 +20 cp,
+e7-e5 White perspective -20 cp, Ng1-f3 +30 cp
+PASS - Kingside-castling placement: king plus rook delta +20 cp
+PASS - Static-evaluation composition: material +100, PST +15,
+total +115, side-to-move sign preserved
+Piece-square table tests: 8/8 passed
+
+El primer caso confirmó la orientación desde la primera fila y los valores de
+referencia seleccionados para las piezas blancas.
+
+El segundo caso confirmó que square ^ 56 refleja verticalmente las piezas
+negras sin intercambiar las columnas.
+
+El tercer caso confirmó que la posición inicial simétrica produce fase 24 y
+contribuciones PST que se cancelan exactamente.
+
+El cuarto caso confirmó los puntos de referencia de la fase:
+- material inicial completo: 24;
+- damas y torres: 12;
+- solamente los reyes: 0.
+
+El quinto caso confirmó la interpolación gradual de la tabla del rey entre los
+valores de medio juego y final.
+
+El sexto caso confirmó los cambios representativos aprobados:
+- e2-e4: +20 cp para las blancas;
+- e7-e5: -20 cp desde la perspectiva de las blancas;
+- Cg1-f3: +30 cp para las blancas.
+
+El séptimo caso confirmó un incremento de colocación de +20 cp por el enroque
+corto durante la fase completa de medio juego.
+
+El octavo caso confirmó que material y PST se suman exactamente una vez y que
+solo cambia el signo final correspondiente al bando al turno.
+
+Resultado final:
+Piece-square table tests: 8/8 passed
+
+Prueba 2 — Batería conservada de corrección de la búsqueda de quietud
+
+Comando realizado:
+qtest
+
+Resultado:
+
+PHILOCHESS 0.2-alpha-007 - Quiescence correctness tests
+PASS - Horizon recapture avoidance: bestmove d1f3, score 400
+PASS - Capture chain: qscore 495, qnodes 4
+PASS - Quiet promotion included: qscore 885, qnodes 9
+PASS - Check evasion without stand pat: checknodes 1, qnodes 5
+Quiescence tests: 4/4 passed
+
+El caso de recaptura situada después del horizonte continuó evitando
+1.Dxd8+?? y eligió la retirada segura Df3. Su evaluación final fue:
+
++400 de material + 0 de PST neta = +400 cp
+
+El caso de la secuencia de capturas conservó la conclusión táctica correcta.
+La evaluación final cambió del balance material nominal de +500 a +495 debido
+a una contribución pieza-casilla neta de -5 cp.
+
+El caso de promoción sin captura permaneció dentro de la búsqueda de quietud.
+Su evaluación final fue +885, formada por +900 de material y una contribución
+PST neta de -15 cp después de la promoción y la evasión del rey.
+
+El caso con el rey en jaque continuó prohibiendo stand pat y examinó todas las
+evasiones legales.
+
+Los cambios numéricos son consecuencias esperadas de la nueva evaluación
+estática y no representan fallos de la búsqueda de quietud.
+
+Resultado final:
+Quiescence tests: 4/4 passed
+
+Prueba 3 — Batería de profundización iterativa
+
+Comando realizado:
+idtest
+
+Resultado:
+
+PHILOCHESS 0.2-alpha-007 - Iterative deepening tests
+PASS - depths 1..1 completed: 1/1, final depth 1,
+bestmove b1c3, nodes 20
+PASS - depths 1..2 completed: 2/2, final depth 2,
+bestmove b1c3, nodes 164
+PASS - depths 1..3 completed: 3/3, final depth 3,
+bestmove b1c3, nodes 1545
+PASS - depths 1..4 completed: 4/4, final depth 4,
+bestmove b1c3, nodes 13265
+Iterative deepening tests: 4/4 passed
+
+Todas las iteraciones solicitadas terminaron normalmente.
+
+A diferencia de la evaluación solamente material, la nueva evaluación PST
+proporciona al motor una razón posicional para elegir 1.Cc3 desde la posición
+inicial.
+
+Resultado final:
+Iterative deepening tests: 4/4 passed
+
+Prueba 4 — Batería de variante principal
+
+Comando realizado:
+pvtest
+
+Resultado:
+
+PHILOCHESS 0.2-alpha-007 - Principal variation tests
+PASS - depth 1, pv length 1, pv b1c3
+PASS - depth 2, pv length 2, pv b1c3 b8c6
+PASS - depth 3, pv length 3, pv b1c3 b8c6 g1f3
+PASS - depth 4, pv length 4, pv b1c3 b8c6 g1f3 g8f6
+Principal variation tests: 4/4 passed
+
+Todas las variantes principales fueron legales, su primera jugada coincidió
+con bestmove y su longitud creció junto con la profundidad terminada.
+
+La línea de profundidad 4 mostró un desarrollo simétrico de las piezas
+menores:
+
+1.Cc3 Cc6 2.Cf3 Cf6
+
+Resultado final:
+Principal variation tests: 4/4 passed
+
+Prueba 5 — Batería conservada de profundización iterativa controlada por tiempo
+
+Comando realizado:
+timetest
+
+Resultado:
+
+PHILOCHESS 0.2-alpha-007 - Time-controlled iterative-deepening tests
+PASS - 15+10 clock allocation: soft 18158 ms, hard 21363 ms,
+depth ceiling 64
+PASS - explicit depth 5: completed 5, final depth 5
+PASS - one-millisecond emergency result: completed depth 2,
+interrupted depth 3, elapsed 1 ms
+PASS - more time produces non-decreasing depth: 50 ms depth 3,
+1000 ms depth 5, elapsed 1000 ms
+Time-controlled iterative-deepening tests: 4/4 passed
+
+La asignación para 15+10 permaneció sin cambios.
+
+Una búsqueda explícita a profundidad 5 completó las cinco iteraciones.
+
+El caso de un milisegundo devolvió un resultado legal de la profundidad 2 y
+descartó de forma segura la iteración interrumpida de profundidad 3.
+
+La muestra más larga completó una profundidad superior a la muestra de 50 ms
+y continuó superando el antiguo límite normal de profundidad 4.
+
+Resultado final:
+Time-controlled iterative-deepening tests: 4/4 passed
+
+Prueba 6 — Batería conservada de ordenamiento de jugadas mejorado
+
+Comando realizado:
+ordertest
+
+Resultado:
+
+PHILOCHESS 0.2-alpha-007 - Improved move-ordering tests
+PASS - PV move searched first: first a1b1
+PASS - MVV-LVA capture order: d5c7 e5f6 d5f6 d5b4 d5f4
+PASS - Promotion priority: a7a8q a7a8r a7a8b a7a8n
+PASS - PV priority below root: hits 6, below root 3
+Move-ordering tests: 4/4 passed
+
+La prioridad de la jugada PV, el ordenamiento MVV-LVA de capturas, la prioridad
+de promociones y la prioridad de la PV debajo de la raíz permanecieron
+intactos.
+
+Resultado final:
+Move-ordering tests: 4/4 passed
+
+Prueba 7 — Validación perft con posiciones conocidas
+
+Comando realizado:
+perftknown 4
+
+Resultado:
+PHILOCHESS procesó las seis posiciones de referencia desde profundidad 1
+hasta profundidad 4.
+
+Todos los números de nodos obtenidos coincidieron con los valores registrados.
+
+Los resultados de referencia incluyeron:
+- posición inicial, profundidad 4: 197281;
+- Kiwipete, profundidad 4: 4085603;
+- posición de final y captura al paso, profundidad 4: 43238;
+- posición de referencia de enroques, profundidad 4: 422333;
+- posición representativa de medio juego, profundidad 4: 2103487;
+- posición representativa de promociones y táctica, profundidad 4: 3894594.
+
+Resultado final:
+perftknown 4: 24/24 passed
+
+Esto confirma que la nueva evaluación no alteró la generación y aplicación de
+jugadas, el filtrado legal, los enroques, la captura al paso ni las
+promociones.
+
+Prueba 8 — Prueba conservada de regresión táctica
+
+Comando realizado:
+tactictest 4
+
+Caso 1 — Antes de 10...Dc6?
+
+PHILOCHESS eligió 10...De6:
+
+bestmove b6e6
+
+El motor evitó la jugada mala conocida 10...Dc6?.
+
+Estado:
+IMPROVED - known bad move avoided
+
+Caso 2 — Después de 11.Ab5
+
+PHILOCHESS eligió:
+
+11...Axf3
+bestmove h5f3
+
+El alfil capturó el caballo de f3 y atacó a la dama blanca mediante la diagonal
+f3-e2-d1.
+
+Se trata de un contraataque intermedio legal. Cambia la primera jugada elegida
+en la posición, pero no modifica la conclusión táctica subyacente: la dama
+negra continúa perdida después de que las blancas neutralicen el
+contraataque.
+
+Este caso sigue siendo diagnóstico y no representa un resultado fallido.
+
+Caso 3 — Después de la continuación histórica 11...Dxb5
+
+PHILOCHESS encontró:
+
+12.Cc7+
+bestmove d5c7
+
+El caballo dio jaque al rey y atacó a la dama.
+
+Estado:
+EXPECTED TACTICAL MOVE FOUND
+
+Los tres casos completaron 4 de 4 iteraciones de profundización.
+
+No se alcanzó el límite de plies de quietud ni se produjo ningún fallo en la
+preparación de las posiciones.
+
+Prueba 9 — Inventario diagnóstico completo de 64 casos
+
+Comando realizado:
+inventorytest 4
+
+Resultado final:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+Los nueve casos OPEN fueron:
+- R02-T02;
+- R03-T01;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Los 64 casos registrados fueron procesados.
+Ningún caso obtuvo FAIL.
+
+Comparación con alpha-006:
+
+OPEN a PASS:
+- R02-T03;
+- R09-T02.
+
+PASS a OPEN:
+- R02-T02;
+- R03-T01;
+- R07-T03.
+
+Permanecieron OPEN:
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Por tanto:
+
+8 OPEN anteriores
+- 2 nuevos casos superados
++ 3 nuevos casos abiertos
+= 9 casos OPEN
+
+R02-T03 produjo una mejora clara. PHILOCHESS encontró ahora:
+
+15...Ce3
+bestmove g4e3
+
+Esta jugada ataca a la dama blanca y coincide con la jugada documentada y
+aprobada por Stockfish.
+
+R09-T02 también cambió de OPEN a PASS. PHILOCHESS encontró:
+
+...Cb4
+bestmove c6b4
+
+Esta jugada inicia la maniobra de caballo registrada.
+
+Los tres nuevos casos OPEN reflejan cambios en la selección exacta de la mejor
+jugada después de incorporar los valores PST. Un resultado OPEN significa que
+el objetivo táctico registrado no fue demostrado como la jugada elegida por el
+motor a la profundidad examinada. No demuestra automáticamente que la jugada
+alternativa sea una regresión táctica.
+
+R10-T05 y R10-T06 permanecieron OPEN.
+
+En R10-T05, la combinación completa de mate se extiende más allá de la
+profundidad diagnóstica 4 e incluye un jaque sin captura que se encuentra fuera
+del conjunto actual de jugadas examinadas directamente por la búsqueda de
+quietud.
+
+En R10-T06, la línea de profundidad 7 alcanza la posición inmediatamente
+anterior a la jugada final y tranquila de mate 27...Tc5#. Ese mate se encuentra
+un ply más allá de la búsqueda normal terminada y no es extendido por las
+reglas actuales de quietud.
+
+El inventario registra así correctamente el cambio de comportamiento sin
+presentar falsamente como cerrados los objetivos todavía no resueltos.
+
+Resultado final:
+- 45 PASS;
+- 0 FAIL;
+- 9 OPEN;
+- 10 BASELINE;
+- 64 casos totales;
+- cobertura completa de categorías;
+- estructura del inventario PASS.
+
+Prueba 10 — Evaluación detallada de la posición inicial
+
+Comandos realizados:
+position startpos
+eval
+
+Resultado:
+
+Material evaluation: 0 cp
+Game phase: 24/24
+Piece-square evaluation: 0 cp
+Total evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+La posición inicial completa produjo fase total de medio juego y una simetría
+exacta de material y PST.
+
+Prueba 11 — Evaluación detallada después de 1.e4
+
+Comandos realizados:
+position startpos moves e2e4
+eval
+
+Resultado:
+
+Material evaluation: 0 cp
+Game phase: 24/24
+Piece-square evaluation: +20 cp
+Total evaluation: +20 cp  (positive = White is ahead)
+Side-to-move evaluation: -20 cp
+
+El avance e2-e4 mejoró en 20 cp la evaluación pieza-casilla de las blancas.
+
+Como correspondía mover a las negras, la evaluación utilizada por negamax
+cambió correctamente de signo a -20 cp.
+
+Prueba 12 — Evaluación simétrica después de 1.e4 e5
+
+Comandos realizados:
+position startpos moves e2e4 e7e5
+eval
+
+Resultado:
+
+Material evaluation: 0 cp
+Game phase: 24/24
+Piece-square evaluation: 0 cp
+Total evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+El avance simétrico e7-e5 de las negras canceló exactamente la contribución
+PST del avance e2-e4 de las blancas.
+
+Esto confirmó la reflexión por color, la simetría y los signos de evaluación
+en una posición normal de apertura.
+
+Prueba 13 — Influencia posicional en una búsqueda a profundidad 4
+
+Comandos realizados:
+position startpos
+go depth 4
+
+Resultado:
+
+info depth 1 seldepth 1 score cp 30 nodes 20
+pv b1c3
+info depth 2 seldepth 4 score cp 0 nodes 164
+pv b1c3 b8c6
+info depth 3 seldepth 7 score cp 30 nodes 1545
+pv b1c3 b8c6 g1f3
+info depth 4 seldepth 16 score cp 0 nodes 13265
+pv b1c3 b8c6 g1f3 g8f6
+info string main nodes 1559 quiescence nodes 11706
+info string quiescence check nodes 392 stand-pat nodes 11310
+ply-limit hits 0
+info string iterative deepening completed 4 of 4 iterations
+bestmove b1c3
+
+PHILOCHESS completó las cuatro iteraciones y eligió:
+
+1.Cc3
+
+La variante principal final fue:
+
+1.Cc3 Cc6 2.Cf3 Cf6
+
+Esto confirmó que la contribución PST estaba activa dentro de la búsqueda
+normal y no solamente dentro del comando diagnóstico eval.
+
+Prueba 14 — Cierre normal del programa
+
+Comando realizado:
+quit
+
+Resultado:
+PHILOCHESS cerró normalmente con el código de salida 0 (0x0).
+
+No se produjo ningún bloqueo, mensaje de error ni cierre inesperado.
+
+Validación práctica en GUI
+
+PHILOCHESS 0.2-alpha-007 Release fue cargado en Myracle y probado en dos
+partidas contra Zoidberg 0.1.
+
+Condiciones:
+- control de tiempo: 15 minutos más 10 segundos por jugada;
+- posición inicial normal;
+- programa Release | x64;
+- sin libro de aperturas proporcionado por la GUI;
+- sin tablebases Syzygy;
+- ponderación desactivada;
+- adjudicación full balanced sin tablebases;
+- umbral de abandono: cuatro evaluaciones de 900, con acuerdo obligatorio de
+  ambos motores;
+- PHILOCHESS jugó una partida con cada color.
+
+Archivo de validación:
+PHILOCHESS_0.2-alpha-007_vs_Zoidberg_0.1_GUI_Validation.pgn
+
+Resultado del duelo:
+- Zoidberg 0.1 ganó 2-0.
+
+Primera partida
+
+PHILOCHESS jugó con blancas.
+
+Apertura:
+A00 — Apertura Van Geet
+
+PHILOCHESS mostró un juego de apertura visiblemente más coherente que las
+versiones anteriores con evaluación solamente material:
+- desarrolló ambos caballos;
+- ocupó el centro;
+- desarrolló su alfil;
+- enrocó en la jugada 9;
+- evitó repeticiones tempranas de piezas sin propósito;
+- mantuvo contrajuego activo durante el medio juego.
+
+Posteriormente, PHILOCHESS obtuvo actividad mediante incursiones de las torres
+en la séptima fila, pero no evaluó con suficiente precisión el peligro
+creciente contra su rey.
+
+La partida terminó por jaque mate:
+
+44.Te3 Th1+
+45.Rf2 Th2+
+46.Re1 Dh4+
+47.Rd1 Dg4+
+48.Tf3 Txf3+
+49.Rc1 Df1#
+
+Resultado:
+0-1
+
+PHILOCHESS:
+- realizó 49 jugadas;
+- terminó con 8:53;
+- utilizó aproximadamente 14:17 de tiempo efectivo de cálculo, considerando
+  los incrementos;
+- promedió aproximadamente 17,5 segundos por jugada;
+- alcanzó normalmente profundidades principales de 5 a 8;
+- completó profundidad 8 en su búsqueda final;
+- reconoció sucesivamente el mate forzado como mate en tres, mate en dos y
+  mate en uno.
+
+La búsqueda final registró:
+- 383440 nodos de búsqueda principal;
+- 2290075 nodos de quietud;
+- 2673515 nodos totales.
+
+El motor completó 8 de las 64 iteraciones posibles y conservó el último
+resultado completamente terminado.
+
+Segunda partida
+
+PHILOCHESS jugó con negras.
+
+Apertura:
+B00 — Defensa Nimzowitsch
+
+PHILOCHESS perdió la calidad después de:
+
+22.Cd6 Ad7
+23.Cxe8 Txe8
+
+A pesar de la desventaja material, el motor conservó recursos defensivos
+activos y resistencia práctica hasta la jugada 60.
+
+La secuencia forzada final incluyó:
+
+58.Rd2 Td1+
+59.Rxd1 Ad7
+60.Tg5+ Rh8
+
+Myracle adjudicó la partida inmediatamente antes de la continuación forzada:
+
+61.Tf8#
+
+Resultado:
+1-0 por adjudicación
+
+PHILOCHESS:
+- realizó 60 jugadas;
+- terminó con 8:11;
+- utilizó aproximadamente 16:49 de tiempo efectivo de cálculo, considerando
+  los incrementos;
+- promedió aproximadamente 16,8 segundos por jugada;
+- alcanzó normalmente profundidades de 5 a 7 y llegó a profundidad 10 en su
+  búsqueda final;
+- reconoció sucesivamente el mate forzado como mate en tres, mate en dos y
+  mate en uno.
+
+La búsqueda final registró:
+- 1227821 nodos de búsqueda principal;
+- 3939255 nodos de quietud;
+- 5167076 nodos totales.
+
+El motor completó 10 de las 64 iteraciones posibles y conservó el último
+resultado completamente terminado.
+
+Resultado de la validación práctica:
+- 2/2 partidas terminadas normalmente;
+- juego legal en ambas partidas;
+- ninguna pérdida por tiempo;
+- ningún bloqueo o cierre inesperado del motor;
+- ningún fallo visible de comunicación UCI;
+- funcionamiento estable con ambos colores;
+- la información UCI iterativa fue aceptada por Myracle;
+- se conservó la última iteración completamente terminada;
+- los mates forzados fueron informados correctamente;
+- PHILOCHESS terminó con reservas de reloj de 8:53 y 8:11.
+
+El resultado deportivo no representa un fallo técnico.
+
+Zoidberg 0.1 continúa siendo más fuerte y alcanzó profundidades nominales
+considerablemente superiores, incluida profundidad 32 en las posiciones
+finales. Las profundidades de motores diferentes no son directamente
+equivalentes, pero la diferencia confirma que PHILOCHESS todavía presenta una
+brecha importante de eficiencia de búsqueda y profundidad táctica.
+
+Sin embargo, las partidas prácticas ofrecieron la primera evidencia visible de
+la nueva capa posicional. PHILOCHESS desarrolló sus piezas de forma más
+coherente, enrocó temprano, ocupó casillas centrales útiles y mantuvo
+resistencia activa durante 49 y 60 jugadas.
+
+Dos partidas no son suficientes para medir la ganancia de fuerza producida por
+los valores PST. No obstante, confirman que la nueva evaluación está activa,
+es estable y puede modificar el estilo práctico de juego del motor.
+
+La primera partida también expuso la ausencia de una evaluación específica de
+seguridad del rey. La segunda confirmó que el motor puede continuar
+defendiéndose después de perder la calidad, aunque todavía carece de la
+precisión posicional y táctica del rival más fuerte.
+
+La elevada cantidad de nodos de quietud continuó siendo visible:
+- primera búsqueda final: 2290075 nodos de quietud;
+- segunda búsqueda final: 3939255 nodos de quietud.
+
+Por tanto, la búsqueda de quietud continúa siendo una candidata importante
+para futuras mejoras de eficiencia.
+
+Limitaciones actuales:
+- PHILOCHESS PST v1 es una propuesta inicial conservadora y no ha sido ajustada
+  mediante autojuego, optimización automatizada o grandes conjuntos de
+  posiciones.
+- Solamente el rey utiliza tablas distintas para el medio juego y el final.
+- El valor de fase depende únicamente de los caballos, alfiles, torres y damas
+  restantes.
+- El motor no posee evaluación explícita de movilidad.
+- El motor no posee evaluación de estructura de peones.
+- El motor no posee evaluación específica de seguridad del rey.
+- La actividad, coordinación, espacio e iniciativa solo están representados
+  indirectamente por los valores PST.
+- La fórmula de asignación temporal continúa siendo estática.
+- El uso del tiempo todavía no se adapta a la complejidad de la posición.
+- La estabilidad de la mejor jugada y de la evaluación no modifica el
+  presupuesto temporal.
+- No se predice el coste de la siguiente iteración.
+- No se ha implementado un margen configurable para la comunicación con la
+  GUI.
+- No se ha implementado ponderación.
+- Nueve objetivos de categoría [B] permanecen OPEN en sus profundidades
+  diagnósticas.
+- Diez posiciones de categoría [C] continúan como líneas base posicionales.
+- No se ha implementado una tabla de transposición.
+- No se ha implementado el ordenamiento mediante hash move.
+- No se ha implementado la heurística killer move.
+- No se ha implementado la history heuristic.
+- No se han implementado ventanas de aspiración.
+- stop es reconocido, pero la búsqueda continúa siendo sincrónica.
+- go infinite es interpretado, pero no se ha implementado un verdadero
+  análisis infinito.
+- Los jaques sin captura continúan fuera de la búsqueda directa de quietud.
+- No se han implementado evaluación estática de intercambios, SEE pruning ni
+  delta pruning.
+- No se ha implementado la detección de tablas por repetición, regla de los
+  cincuenta movimientos o material insuficiente.
+- El ordenamiento de la PV está limitado a la variante principal anterior
+  terminada.
+- El conocimiento específico de finales permanece limitado a la tabla del rey
+  dependiente de la fase.
+
+Conclusión:
+El desarrollo, la validación por consola, la validación práctica en GUI y las
+compilaciones Release y Debug de PHILOCHESS 0.2-alpha-007 quedaron completados
+satisfactoriamente.
+
+PHILOCHESS superó:
+- la compilación Release | x64 bajo ISO C++17 con 0 errores;
+- la compilación Debug | x64 bajo ISO C++17 con 0 errores;
+- psttest con 8/8 pruebas correctas de tablas pieza-casilla;
+- qtest con 4/4 pruebas correctas de búsqueda de quietud;
+- idtest con 4/4 pruebas correctas de profundización iterativa;
+- pvtest con 4/4 pruebas correctas de variante principal;
+- timetest con 4/4 pruebas correctas de manejo temporal;
+- ordertest con 4/4 pruebas correctas de ordenamiento de jugadas;
+- perftknown 4 con 24/24 validaciones correctas;
+- la prueba conservada de regresión táctica a profundidad 4;
+- la ejecución completa del inventario de 64 casos;
+- los resultados 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
+- las evaluaciones correctas de material, fase, PST, total y bando al turno en
+  la posición inicial;
+- el resultado PST esperado de +20 cp después de 1.e4;
+- la simetría completa después de 1.e4 e5;
+- una búsqueda de la posición inicial a profundidad 4 con 4/4 iteraciones
+  terminadas y bestmove b1c3;
+- el cierre normal con código de salida 0;
+- dos partidas prácticas terminadas en Myracle;
+- el funcionamiento UCI legal y estable durante toda la validación práctica;
+- los informes correctos de distancia al mate;
+- reservas finales seguras de 8:53 y 8:11.
+
+Alpha-007 establece la primera capa de evaluación posicional de PHILOCHESS.
+
+El motor ahora evalúa no solamente qué piezas permanecen sobre el tablero,
+sino también dónde están colocadas. Esto produce un desarrollo más coherente,
+incentivos de centralización y enroque, y una colocación del rey dependiente
+de la fase, mientras conserva íntegramente la base de legalidad, búsqueda,
+manejo temporal y diagnóstico de alpha-006.
+
+PHILOCHESS PST v1 es un punto de partida funcional y deliberadamente
+conservador. No constituye una evaluación final ni ajustada de forma óptima.
+
+La siguiente versión planificada es PHILOCHESS 0.2-alpha-008 — Evaluación
+básica de movilidad.
