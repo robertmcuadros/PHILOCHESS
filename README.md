@@ -57,6 +57,7 @@ The latest version, PHILOCHESS 0.2-alpha-006, passed its complete console regres
 | 0.2-alpha-004 | Principal variation tracking and iterative UCI reporting |
 | 0.2-alpha-005 | Improved move ordering with PV-move priority and MVV-LVA |
 | 0.2-alpha-006 | Time-controlled iterative deepening with soft and hard time limits |
+| 0.2-alpha-007 | Piece-square tables with phase-dependent king evaluation |
 
 ## Licensing
 
