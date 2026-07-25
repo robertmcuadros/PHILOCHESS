@@ -28,7 +28,7 @@ The published C++ samples are self-contained and can be compiled independently w
 
 ## Current status
 
-The latest version, PHILOCHESS 0.2-alpha-006, passed its complete console regression suite and practical GUI validation. It converts larger time budgets into greater completed search depths, preserves the last fully completed iteration when a search is interrupted, and maintains legal and stable UCI operation without time losses or crashes. Its static evaluation remains material-only. Development will now continue with piece-square tables, basic mobility evaluation, basic pawn structure, basic king safety, a consolidated search and evaluation regression suite, and external match validation leading to the closure of PHILOCHESS 0.2.
+The latest version, PHILOCHESS 0.2-alpha-007, was successfully compiled in both Release and Debug configurations, passed its full console regression suite, and completed practical GUI validation. It introduces PHILOCHESS PST v1, the engine’s first positional evaluation layer, combining the established material evaluation with conservative piece-square tables and phase-dependent king evaluation. In practical play, the new evaluation produced more coherent development and centralisation, timely castling, and more purposeful piece placement, while the engine completed both validation games without time forfeits, crashes, or communication failures.
 
 ## PHILOCHESS 0.1 development milestones
 
