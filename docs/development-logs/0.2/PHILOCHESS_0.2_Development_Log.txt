@@ -3357,3 +3357,865 @@ placing its remaining clock at risk.
 This is a functional and safe foundation for future positional evaluation,
 search-efficiency improvements, and more dynamic time management. It is not
 yet the final or theoretically optimal form of PHILOCHESS time management.
+
+Date: July 24, 2026
+
+PHILOCHESS 0.2-alpha-007 — Piece-Square Tables
+
+Implemented the first positional evaluation layer in PHILOCHESS through
+conservative piece-square tables.
+
+Technical milestone:
+PHILOCHESS no longer evaluates positions exclusively by material.
+
+The static evaluation now combines the established material balance with
+piece-square values that reward or penalise each piece according to its
+location on the board.
+
+This is the seventh version of the PHILOCHESS 0.2 development cycle.
+It builds directly on the validated PHILOCHESS 0.2-alpha-006 code without
+modifying that closed version.
+
+Alpha-007 preserves:
+- legal move generation and move application;
+- FEN loading and all special chess moves;
+- check, checkmate, and stalemate detection;
+- perft and known reference perft validation;
+- the established material values;
+- alpha-beta and quiescence search;
+- iterative deepening;
+- complete principal-variation construction;
+- iterative UCI information reporting;
+- UCI mate-score reporting;
+- retention of the last fully completed iteration;
+- PV-move priority at the root and below the root;
+- promotion priority and MVV-LVA capture ordering;
+- soft and hard time limits;
+- time-controlled iterative deepening;
+- safe rejection of interrupted iterations;
+- the established tactical and quiescence regression suites;
+- the complete 64-case diagnostic inventory;
+- all diagnostic commands inherited from alpha-006.
+
+New functionality:
+- Added PHILOCHESS PST v1.
+- Added one piece-square table for pawns.
+- Added one piece-square table for knights.
+- Added one piece-square table for bishops.
+- Added one piece-square table for rooks.
+- Added one piece-square table for queens.
+- Added separate middlegame and endgame king tables.
+- Added a global game-phase value from 0 to 24.
+- Added linear interpolation between the king middlegame and endgame tables.
+- Added vertical table reflection for Black pieces.
+- Added a separate piece-square evaluation.
+- Replaced the material-only static evaluation with material plus PST.
+- Preserved the negamax side-to-move sign convention.
+- Expanded the eval command with material, game phase, PST, total, and
+  side-to-move evaluation reporting.
+- Added the dedicated psttest diagnostic command.
+- Updated UCI identification to:
+  id name PHILOCHESS 0.2-alpha-007
+
+Supporting design:
+The implemented values follow the approved PHILOCHESS PST v1 design: an
+original, deliberately conservative first proposal expressed in centipawns.
+
+The design contains six types of piece-square tables and seven numerical
+matrices:
+- pawn;
+- knight;
+- bishop;
+- rook;
+- queen;
+- king in the middlegame;
+- king in the endgame.
+
+Board orientation:
+PHILOCHESS maps:
+- a1 to board[0];
+- h1 to board[7];
+- a8 to board[56];
+- h8 to board[63].
+
+The seven matrices are therefore stored rank 1 first and rank 8 last.
+
+White pieces use the table square directly.
+
+Black pieces use a vertical reflection:
+
+oriented square = square ^ 56
+
+This preserves the files and gives both colours the same relative values
+without exchanging the king and queen flanks.
+
+Game-phase calculation:
+The global phase uses the following piece weights:
+- knight: 1;
+- bishop: 1;
+- rook: 2;
+- queen: 4;
+- pawn: 0;
+- king: 0.
+
+The complete initial material produces phase 24.
+Kings alone produce phase 0.
+
+Only the king uses two phase-dependent tables in PST v1.
+
+The interpolated king value is:
+
+king PST =
+(middlegame value × phase
++ endgame value × (24 - phase)) / 24
+
+The other five piece types use a single conservative table throughout the
+game.
+
+Static-evaluation composition:
+
+static evaluation =
+material evaluation + piece-square evaluation
+
+The material values remain unchanged:
+- pawn: 100;
+- knight: 320;
+- bishop: 330;
+- rook: 500;
+- queen: 900;
+- king: 0.
+
+The complete White-perspective evaluation is calculated first. Its sign is
+then adjusted only once according to the side to move, preserving the
+convention required by negamax.
+
+Version boundary:
+Alpha-007 changes the static evaluation and, consequently, may change the
+selected move, numerical score, principal variation, node count, and
+diagnostic status of exact-move regression cases.
+
+It does not modify:
+- the legal-move generator;
+- move application;
+- the material values;
+- alpha-beta search rules;
+- quiescence move-selection rules;
+- the move-ordering hierarchy;
+- principal-variation construction;
+- the time-allocation formula;
+- search interruption;
+- the objectives or structure of the 64-case inventory.
+
+The PST values are intentionally replaceable. Future versions may tune or
+replace them without changing the legal-move generator or the basic search
+architecture.
+
+Release compilation test:
+The program compiled successfully in Visual Studio using Release | x64 and
+ISO C++17.
+
+The compilation reported:
+1 successful build and 0 errors.
+
+Debug compilation test:
+The program compiled successfully in Visual Studio using Debug | x64 and
+ISO C++17.
+
+The compilation reported:
+1 successful build and 0 errors.
+
+The following console tests were executed with the Release | x64 program.
+
+Test 1 — Piece-square table suite
+
+Command performed:
+psttest
+
+Result:
+
+PHILOCHESS 0.2-alpha-007 - Piece-square table tests
+PASS - White-table orientation: d2 pawn -5, e4 pawn +15,
+g1 knight -20, f3 knight +10
+PASS - Black vertical reflection: e4/e5, c7/c2, c1/c8 and g1/g8 match
+PASS - Initial-position symmetry: phase 24, PST 0, total 0
+PASS - Game-phase weights: initial 24, queens-plus-rooks 12,
+kings-only 0
+PASS - King phase interpolation: e1 0/-5/-10 and d4 -20/0/+20
+at phases 24/12/0
+PASS - Representative PST changes: e2-e4 +20 cp,
+e7-e5 White perspective -20 cp, Ng1-f3 +30 cp
+PASS - Kingside-castling placement: king plus rook delta +20 cp
+PASS - Static-evaluation composition: material +100, PST +15,
+total +115, side-to-move sign preserved
+Piece-square table tests: 8/8 passed
+
+The first case confirmed the rank-1-first orientation and the selected
+reference values for White pieces.
+
+The second case confirmed that square ^ 56 reflects Black pieces vertically
+without exchanging files.
+
+The third case confirmed that the symmetric initial position produces phase
+24 and exactly cancelling PST contributions.
+
+The fourth case confirmed the game-phase checkpoints:
+- complete initial material: 24;
+- queens plus rooks: 12;
+- kings only: 0.
+
+The fifth case confirmed gradual king-table interpolation between middlegame
+and endgame values.
+
+The sixth case confirmed the approved representative placement changes:
+- e2-e4: +20 cp for White;
+- e7-e5: -20 cp from White's perspective;
+- Ng1-f3: +30 cp for White.
+
+The seventh case confirmed a +20 cp placement increment for kingside castling
+at full middlegame phase.
+
+The eighth case confirmed that material and PST are added exactly once and
+that only the final side-to-move sign changes.
+
+Final result:
+Piece-square table tests: 8/8 passed
+
+Test 2 — Preserved quiescence correctness suite
+
+Command performed:
+qtest
+
+Result:
+
+PHILOCHESS 0.2-alpha-007 - Quiescence correctness tests
+PASS - Horizon recapture avoidance: bestmove d1f3, score 400
+PASS - Capture chain: qscore 495, qnodes 4
+PASS - Quiet promotion included: qscore 885, qnodes 9
+PASS - Check evasion without stand pat: checknodes 1, qnodes 5
+Quiescence tests: 4/4 passed
+
+The horizon-recapture case continued to avoid 1.Qxd8+?? and selected the safe
+move Qf3. Its final evaluation was:
+
++400 material + 0 net PST = +400 cp
+
+The capture-chain case retained the correct tactical conclusion. The final
+score changed from the nominal +500 material balance to +495 because of a
+-5 cp net piece-square contribution.
+
+The non-capturing-promotion case remained inside quiescence. Its final score
+was +885, consisting of +900 material and a -15 cp net PST contribution after
+the promotion and king evasion.
+
+The in-check case continued to prohibit stand pat and searched all legal
+evasions.
+
+The numerical changes are expected consequences of the new static evaluation
+and do not represent quiescence failures.
+
+Final result:
+Quiescence tests: 4/4 passed
+
+Test 3 — Iterative-deepening suite
+
+Command performed:
+idtest
+
+Result:
+
+PHILOCHESS 0.2-alpha-007 - Iterative deepening tests
+PASS - depths 1..1 completed: 1/1, final depth 1,
+bestmove b1c3, nodes 20
+PASS - depths 1..2 completed: 2/2, final depth 2,
+bestmove b1c3, nodes 164
+PASS - depths 1..3 completed: 3/3, final depth 3,
+bestmove b1c3, nodes 1545
+PASS - depths 1..4 completed: 4/4, final depth 4,
+bestmove b1c3, nodes 13265
+Iterative deepening tests: 4/4 passed
+
+All requested iterations completed normally.
+
+Unlike the material-only evaluation, the new PST evaluation gives the engine
+a positional reason to select 1.Nc3 from the initial position.
+
+Final result:
+Iterative deepening tests: 4/4 passed
+
+Test 4 — Principal-variation suite
+
+Command performed:
+pvtest
+
+Result:
+
+PHILOCHESS 0.2-alpha-007 - Principal variation tests
+PASS - depth 1, pv length 1, pv b1c3
+PASS - depth 2, pv length 2, pv b1c3 b8c6
+PASS - depth 3, pv length 3, pv b1c3 b8c6 g1f3
+PASS - depth 4, pv length 4, pv b1c3 b8c6 g1f3 g8f6
+Principal variation tests: 4/4 passed
+
+Every principal variation was legal, its first move matched bestmove, and its
+length grew with the completed depth.
+
+The depth-4 line showed symmetric minor-piece development:
+
+1.Nc3 Nc6 2.Nf3 Nf6
+
+Final result:
+Principal variation tests: 4/4 passed
+
+Test 5 — Preserved time-controlled iterative-deepening suite
+
+Command performed:
+timetest
+
+Result:
+
+PHILOCHESS 0.2-alpha-007 - Time-controlled iterative-deepening tests
+PASS - 15+10 clock allocation: soft 18158 ms, hard 21363 ms,
+depth ceiling 64
+PASS - explicit depth 5: completed 5, final depth 5
+PASS - one-millisecond emergency result: completed depth 2,
+interrupted depth 3, elapsed 1 ms
+PASS - more time produces non-decreasing depth: 50 ms depth 3,
+1000 ms depth 5, elapsed 1000 ms
+Time-controlled iterative-deepening tests: 4/4 passed
+
+The 15+10 allocation remained unchanged.
+
+An explicit depth-5 search completed all five iterations.
+
+The one-millisecond case returned a legal result from completed depth 2 and
+safely discarded the interrupted depth-3 iteration.
+
+The longer sample completed a greater depth than the 50 ms sample and
+continued to exceed the former normal depth ceiling of 4.
+
+Final result:
+Time-controlled iterative-deepening tests: 4/4 passed
+
+Test 6 — Preserved improved move-ordering suite
+
+Command performed:
+ordertest
+
+Result:
+
+PHILOCHESS 0.2-alpha-007 - Improved move-ordering tests
+PASS - PV move searched first: first a1b1
+PASS - MVV-LVA capture order: d5c7 e5f6 d5f6 d5b4 d5f4
+PASS - Promotion priority: a7a8q a7a8r a7a8b a7a8n
+PASS - PV priority below root: hits 6, below root 3
+Move-ordering tests: 4/4 passed
+
+PV-move priority, MVV-LVA capture ordering, promotion priority, and PV
+priority below the root remained intact.
+
+Final result:
+Move-ordering tests: 4/4 passed
+
+Test 7 — Known reference perft validation
+
+Command performed:
+perftknown 4
+
+Result:
+PHILOCHESS processed all six reference positions from depth 1 through
+depth 4.
+
+All obtained node counts matched the registered values.
+
+The reference results included:
+- initial position, depth 4: 197281;
+- Kiwipete, depth 4: 4085603;
+- en-passant and endgame position, depth 4: 43238;
+- castling reference position, depth 4: 422333;
+- representative middlegame position, depth 4: 2103487;
+- representative promotion and tactical position, depth 4: 3894594.
+
+Final result:
+perftknown 4: 24/24 passed
+
+This confirms that the new evaluation did not alter move generation, move
+application, legal filtering, castling, en passant, or promotions.
+
+Test 8 — Preserved tactical regression test
+
+Command performed:
+tactictest 4
+
+Case 1 — Before 10...Qc6?
+
+PHILOCHESS selected 10...Qe6:
+
+bestmove b6e6
+
+The engine avoided the known bad move 10...Qc6?.
+
+Status:
+IMPROVED - known bad move avoided
+
+Case 2 — After 11.Bb5
+
+PHILOCHESS selected:
+
+11...Bxf3
+bestmove h5f3
+
+The bishop captured the knight on f3 and attacked the White queen along the
+f3-e2-d1 diagonal.
+
+This is a legal intermediate counterattack. It changes the first move selected
+in the position but does not alter the underlying tactical conclusion: the
+Black queen remains lost after White neutralises the counterattack.
+
+This case remains diagnostic and does not represent a failed result.
+
+Case 3 — After the historical 11...Qxb5
+
+PHILOCHESS found:
+
+12.Nc7+
+bestmove d5c7
+
+The knight checked the king and attacked the queen.
+
+Status:
+EXPECTED TACTICAL MOVE FOUND
+
+All three cases completed 4 of 4 iterative-deepening iterations.
+
+No quiescence ply-limit hit or position-setup failure occurred.
+
+Test 9 — Complete 64-case diagnostic inventory
+
+Command performed:
+inventorytest 4
+
+Final result:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+The nine OPEN cases were:
+- R02-T02;
+- R03-T01;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+All 64 registered cases were processed.
+No case returned FAIL.
+
+Comparison with alpha-006:
+
+OPEN to PASS:
+- R02-T03;
+- R09-T02.
+
+PASS to OPEN:
+- R02-T02;
+- R03-T01;
+- R07-T03.
+
+Unchanged OPEN:
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Therefore:
+
+8 previous OPEN
+- 2 newly passed
++ 3 newly open
+= 9 OPEN cases
+
+R02-T03 produced a clear improvement. PHILOCHESS now found:
+
+15...Ne3
+bestmove g4e3
+
+This move attacks the White queen and matches the documented move approved by
+Stockfish.
+
+R09-T02 also changed from OPEN to PASS. PHILOCHESS found:
+
+...Nb4
+bestmove c6b4
+
+This begins the registered knight manoeuvre.
+
+The three newly OPEN cases reflect changes in exact best-move selection after
+adding PST values. An OPEN result means that the registered tactical target
+was not proved as the engine's selected move at the tested depth. It does not
+automatically prove that the alternative move is a tactical regression.
+
+R10-T05 and R10-T06 remained OPEN.
+
+In R10-T05, the complete mating combination extends beyond diagnostic depth 4
+and includes a non-capturing check outside the current direct quiescence move
+set.
+
+In R10-T06, the depth-7 line reaches the position immediately before the final
+quiet mating move 27...Rc5#. That mate lies one ply beyond the completed normal
+search and is not extended by the present quiescence rules.
+
+The inventory therefore records the changed search behaviour accurately
+without reporting unresolved objectives as closed regressions.
+
+Final result:
+- 45 PASS;
+- 0 FAIL;
+- 9 OPEN;
+- 10 BASELINE;
+- 64 total cases;
+- complete category coverage;
+- inventory structure PASS.
+
+Test 10 — Detailed initial-position evaluation
+
+Commands performed:
+position startpos
+eval
+
+Result:
+
+Material evaluation: 0 cp
+Game phase: 24/24
+Piece-square evaluation: 0 cp
+Total evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+The complete initial position produced full middlegame phase and exact
+material and PST symmetry.
+
+Test 11 — Detailed evaluation after 1.e4
+
+Commands performed:
+position startpos moves e2e4
+eval
+
+Result:
+
+Material evaluation: 0 cp
+Game phase: 24/24
+Piece-square evaluation: +20 cp
+Total evaluation: +20 cp  (positive = White is ahead)
+Side-to-move evaluation: -20 cp
+
+The e2-e4 advance improved White's piece-square evaluation by 20 cp.
+
+Because Black was the side to move, the negamax-facing evaluation correctly
+changed sign to -20 cp.
+
+Test 12 — Detailed symmetric evaluation after 1.e4 e5
+
+Commands performed:
+position startpos moves e2e4 e7e5
+eval
+
+Result:
+
+Material evaluation: 0 cp
+Game phase: 24/24
+Piece-square evaluation: 0 cp
+Total evaluation: 0 cp  (positive = White is ahead)
+Side-to-move evaluation: 0 cp
+
+Black's symmetric e7-e5 advance exactly cancelled White's e2-e4 PST
+contribution.
+
+This confirmed colour reflection, symmetry, and evaluation signs in a normal
+opening position.
+
+Test 13 — Positional influence on a depth-4 search
+
+Commands performed:
+position startpos
+go depth 4
+
+Result:
+
+info depth 1 seldepth 1 score cp 30 nodes 20
+pv b1c3
+info depth 2 seldepth 4 score cp 0 nodes 164
+pv b1c3 b8c6
+info depth 3 seldepth 7 score cp 30 nodes 1545
+pv b1c3 b8c6 g1f3
+info depth 4 seldepth 16 score cp 0 nodes 13265
+pv b1c3 b8c6 g1f3 g8f6
+info string main nodes 1559 quiescence nodes 11706
+info string quiescence check nodes 392 stand-pat nodes 11310
+ply-limit hits 0
+info string iterative deepening completed 4 of 4 iterations
+bestmove b1c3
+
+PHILOCHESS completed all four iterations and selected:
+
+1.Nc3
+
+The final principal variation was:
+
+1.Nc3 Nc6 2.Nf3 Nf6
+
+This confirmed that the PST contribution was active inside the normal search,
+not only inside the diagnostic evaluation command.
+
+Test 14 — Normal program closure
+
+Command performed:
+quit
+
+Result:
+PHILOCHESS closed normally with exit code 0 (0x0).
+
+No crash, blocking condition, error message, or unexpected closure occurred.
+
+Practical GUI validation
+
+PHILOCHESS 0.2-alpha-007 Release was loaded in Myracle and tested in two games
+against Zoidberg 0.1.
+
+Conditions:
+- time control: 15 minutes plus 10 seconds per move;
+- normal initial position;
+- Release | x64 program;
+- no opening book supplied by the GUI;
+- no Syzygy tablebases;
+- pondering disabled;
+- full balanced adjudication without tablebases;
+- resignation threshold: four evaluations of 900, with both engines required
+  to agree;
+- PHILOCHESS played one game with each colour.
+
+Validation file:
+PHILOCHESS_0.2-alpha-007_vs_Zoidberg_0.1_GUI_Validation.pgn
+
+Match result:
+- Zoidberg 0.1 won 2-0.
+
+First game
+
+PHILOCHESS played White.
+
+Opening:
+A00 — Van Geet Opening
+
+PHILOCHESS displayed visibly more coherent opening play than in previous
+material-only versions:
+- developed both knights;
+- occupied the centre;
+- developed its bishop;
+- castled on move 9;
+- avoided purposeless early piece repetition;
+- maintained active counterplay into the middlegame.
+
+PHILOCHESS later obtained activity with rook incursions on the seventh rank,
+but it did not evaluate the growing danger to its king with sufficient
+precision.
+
+The game ended by checkmate:
+
+44.Re3 Rh1+
+45.Kf2 Rh2+
+46.Ke1 Qh4+
+47.Kd1 Qg4+
+48.Rf3 Rxf3+
+49.Kc1 Qf1#
+
+Result:
+0-1
+
+PHILOCHESS:
+- played 49 moves;
+- finished with 8:53;
+- used approximately 14:17 of effective thinking time after accounting for
+  the increments;
+- averaged approximately 17.5 seconds per move;
+- normally reached main-search depths from 5 to 8;
+- completed depth 8 in its final search;
+- recognised the forced mate successively as mate in three, mate in two, and
+  mate in one.
+
+The final search recorded:
+- 383440 main-search nodes;
+- 2290075 quiescence nodes;
+- 2673515 total nodes.
+
+The engine completed 8 of the possible 64 iterations and preserved the last
+fully completed result.
+
+Second game
+
+PHILOCHESS played Black.
+
+Opening:
+B00 — Nimzowitsch Defence
+
+PHILOCHESS lost the exchange after:
+
+22.Nd6 Bd7
+23.Nxe8 Rxe8
+
+Despite the material disadvantage, the engine maintained practical resistance
+and active defensive resources until move 60.
+
+The final forced sequence included:
+
+58.Kd2 Rd1+
+59.Kxd1 Bd7
+60.Rg5+ Kh8
+
+Myracle adjudicated the game immediately before the forced continuation:
+
+61.Rf8#
+
+Result:
+1-0 by adjudication
+
+PHILOCHESS:
+- played 60 moves;
+- finished with 8:11;
+- used approximately 16:49 of effective thinking time after accounting for
+  the increments;
+- averaged approximately 16.8 seconds per move;
+- normally reached depths from 5 to 7 and reached depth 10 in its final
+  search;
+- recognised the forced mate successively as mate in three, mate in two, and
+  mate in one.
+
+The final search recorded:
+- 1227821 main-search nodes;
+- 3939255 quiescence nodes;
+- 5167076 total nodes.
+
+The engine completed 10 of the possible 64 iterations and preserved the last
+fully completed result.
+
+Practical validation result:
+- 2/2 games completed normally;
+- legal play in both games;
+- no timeout;
+- no engine crash or unexpected closure;
+- no visible UCI communication failure;
+- stable handling with both colours;
+- iterative UCI information was accepted by Myracle;
+- the last fully completed iteration was preserved;
+- forced mates were reported correctly;
+- PHILOCHESS finished with clock reserves of 8:53 and 8:11.
+
+The sporting result does not represent a technical failure.
+
+Zoidberg 0.1 remains stronger and reached substantially greater nominal search
+depths, including depth 32 in the final positions. Search depths from different
+engines are not directly equivalent, but the difference confirms that
+PHILOCHESS still has an important search-efficiency and tactical-depth gap.
+
+The practical games nevertheless produced the first visible evidence of the
+new positional layer. PHILOCHESS developed its pieces more coherently, castled
+early, occupied useful central squares, and maintained active resistance for
+49 and 60 moves.
+
+Two games are not sufficient to measure the strength gain produced by the PST
+values. They do, however, confirm that the new evaluation is active, stable,
+and capable of changing the engine's practical playing style.
+
+The first game also exposed the absence of a dedicated king-safety evaluation.
+The second game confirmed that the engine can continue defending after losing
+the exchange, but it still lacks the positional and tactical precision of the
+stronger opponent.
+
+The high number of quiescence nodes remained visible:
+- first final search: 2290075 quiescence nodes;
+- second final search: 3939255 quiescence nodes.
+
+Quiescence therefore remains an important candidate for future efficiency
+improvements.
+
+Current limitations:
+- PHILOCHESS PST v1 is an initial conservative proposal and has not been tuned
+  through self-play, automated optimisation, or large position sets.
+- Only the king uses separate middlegame and endgame tables.
+- The game-phase value depends only on remaining knights, bishops, rooks, and
+  queens.
+- The engine has no explicit mobility evaluation.
+- The engine has no pawn-structure evaluation.
+- The engine has no dedicated king-safety evaluation.
+- Piece activity, coordination, space, and initiative are represented only
+  indirectly by the PST values.
+- The time-allocation formula remains static.
+- Time usage does not yet adapt to position complexity.
+- Best-move and evaluation stability do not modify the time budget.
+- The cost of the next iteration is not predicted.
+- No configurable GUI communication-overhead margin is implemented.
+- Pondering is not implemented.
+- Nine category [B] objectives remain OPEN at their diagnostic depths.
+- Ten category [C] positions remain positional baselines.
+- No transposition table is implemented.
+- No hash move ordering is implemented.
+- No killer move heuristic is implemented.
+- No history heuristic is implemented.
+- No aspiration windows are implemented.
+- stop is recognised, but search remains synchronous.
+- go infinite is parsed, but true infinite analysis is not implemented.
+- Non-capturing checking moves remain outside direct quiescence.
+- No static exchange evaluation, SEE pruning, or delta pruning is
+  implemented.
+- Draw detection by repetition, the fifty-move rule, or insufficient material
+  is not implemented.
+- PV ordering is limited to the previous completed principal variation.
+- Endgame knowledge remains limited to the phase-dependent king table.
+
+Conclusion:
+The development, console validation, practical GUI validation, and Release and
+Debug compilation of PHILOCHESS 0.2-alpha-007 have been completed
+successfully.
+
+PHILOCHESS passed:
+- Release | x64 compilation under ISO C++17 with 0 errors;
+- Debug | x64 compilation under ISO C++17 with 0 errors;
+- psttest with 8/8 successful piece-square table tests;
+- qtest with 4/4 successful quiescence tests;
+- idtest with 4/4 successful iterative-deepening tests;
+- pvtest with 4/4 successful principal-variation tests;
+- timetest with 4/4 successful time-management tests;
+- ordertest with 4/4 successful move-ordering tests;
+- perftknown 4 with 24/24 successful validations;
+- the preserved tactical regression test at depth 4;
+- complete execution of the 64-case inventory;
+- 45 PASS, 0 FAIL, 9 OPEN, and 10 BASELINE results;
+- correct material, game-phase, PST, total, and side-to-move evaluations in
+  the initial position;
+- the expected +20 cp PST result after 1.e4;
+- complete symmetry after 1.e4 e5;
+- a depth-4 initial-position search with 4/4 completed iterations and
+  bestmove b1c3;
+- normal closure with exit code 0;
+- two practical games completed in Myracle;
+- legal and stable UCI operation throughout the practical validation;
+- correct mate-distance reporting;
+- safe final clock reserves of 8:53 and 8:11.
+
+Alpha-007 establishes the first positional evaluation layer in PHILOCHESS.
+
+The engine now evaluates not only which pieces remain on the board, but also
+where those pieces are placed. This produces more coherent development,
+centralisation, castling incentives, and phase-dependent king placement while
+preserving the complete legal, search, time-management, and diagnostic
+foundation of alpha-006.
+
+PHILOCHESS PST v1 is a functional and deliberately conservative starting
+point. It is not a final or optimally tuned evaluation.
+
+The next planned version is PHILOCHESS 0.2-alpha-008 — Basic Mobility
+Evaluation.
