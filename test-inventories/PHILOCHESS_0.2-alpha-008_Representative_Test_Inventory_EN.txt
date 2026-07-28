@@ -1,0 +1,1048 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-008
+REPRESENTATIVE TEST INVENTORY
+BASIC MOBILITY EVALUATION — MOBILITY V1
+PUBLIC SUBSET — 16 VERIFIED POSITIONS FROM THE 64-POSITION INTERNAL INVENTORY
+==============================================================================
+
+Author and copyright holder: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is distributed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International license
+(CC BY-NC-ND 4.0).
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en
+
+Date: July 28, 2026
+
+This document publishes a representative subset selected from the complete
+internal test inventory for:
+
+    PHILOCHESS 0.2-alpha-008 — Basic Mobility Evaluation.
+
+The complete internal inventory contains 64 individually reviewed and verified
+positions: 44 controlled positions, 10 transversal positions, and 10 integrated
+positions. This public subset contains 16 of them:
+
+    Controlled positions:   12
+    Transversal positions:   2
+    Integrated positions:    2
+    Total:                  16
+
+The selection is intended to document the Mobility v1 definition, demonstrate
+representative coverage, and provide reproducible expected calculations without
+publishing the complete internal regression inventory. Original test
+identifiers and original inventory position numbers are preserved.
+
+==============================================================================
+1. OBJECTIVE AND SCOPE
+==============================================================================
+
+Mobility v1 is the first explicit evaluation of piece mobility in PHILOCHESS
+and the third independent static-evaluation layer:
+
+    Static evaluation = Material + PST v1 + Mobility v1
+
+The selected controlled positions isolate geometry, board occupancy, blockers,
+enemy captures, the enemy-king exception, absolute pins, and attacked
+destinations. The transversal positions verify bilateral cancellation and the
+composition of material, PHILOCHESS PST v1, and Mobility v1. The integrated
+positions verify all eligible pieces in the initial position and the occupancy
+changes produced by 1.e4.
+
+This representative subset does not replace the complete internal 64-position
+inventory or reduce the scope of the validation performed for alpha-008.
+
+==============================================================================
+2. APPROVED MOBILITY V1 RULES
+==============================================================================
+
+2.1 Evaluated pieces
+
+Mobility v1 evaluates:
+- knights;
+- bishops;
+- rooks;
+- queens.
+
+Mobility v1 excludes:
+- pawns;
+- kings.
+
+2.2 Counting model
+
+Mobility v1 counts occupancy-based pseudo-legal destinations:
+
+- Every reachable empty square counts.
+- A square occupied by a friendly piece does not count.
+- A friendly piece stops a sliding piece's ray.
+- The first square occupied by an enemy knight, bishop, rook, queen, or pawn
+  counts as a capture destination.
+- The first square occupied by the enemy king does not count.
+- An enemy piece stops a sliding piece's ray.
+- No square beyond any blocker counts.
+- A knight jumps directly to its destination; therefore, it has no intervening
+  ray that can be stopped.
+- Squares attacked by the opponent still count.
+- Absolute pins do not reduce the count.
+- Destination safety is not examined.
+- The result is independent of the side to move.
+
+Mobility v1 deliberately measures piece geometry and board occupancy. It does
+not assess full move legality, king exposure, destination quality, pawn
+structure, or king safety.
+
+2.3 Centered linear scale
+
+For each evaluated piece:
+
+    Piece adjustment = weight x (destinations - reference)
+
+Approved parameters:
+
+    Piece    Geometric maximum    Reference    Weight
+    Knight           8                4         4 cp
+    Bishop          13                7         3 cp
+    Rook            14                7         2 cp
+    Queen           27               14         1 cp
+
+The bilateral Mobility v1 score is:
+
+    Mobility v1 =
+        Sum of White piece adjustments
+        minus
+        Sum of Black piece adjustments
+
+All expected scores in this inventory are expressed from White's perspective.
+
+==============================================================================
+3. REPRESENTATIVE-SELECTION ORGANIZATION
+==============================================================================
+
+The 16 selected positions provide the following coverage:
+
+    Geometry and piece-specific coverage:                6 positions
+    Occupancy and special counting rules:                6 positions
+    Bilateral and layer-composition invariants:          2 positions
+    Integrated opening positions:                        2 positions
+                                                        ------------
+    Total:                                              16 positions
+
+Selected original inventory positions:
+
+    1, 4, 6, 7, 8, 10, 12, 20, 27, 34, 40, 41, 48, 51, 55, 56
+
+For every recorded test:
+
+    Design verification status: VERIFIED
+
+==============================================================================
+4. CONTROLLED TESTS — GEOMETRY AND PIECE-SPECIFIC COVERAGE
+REPRESENTATIVE POSITIONS 1–6 OF 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-N01 — Maximum knight mobility on an open board
+Representative position 1 of 16
+Original inventory position 1 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/3N4/8/8/7K w - - 0 1
+
+Evaluated piece:
+White knight on d4.
+
+Counted destinations:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Raw destination count:
+d = 8
+
+Expected calculation:
+White: 4 x (8 - 4) = +16 cp
+Black: 0 cp
+
+Expected Mobility v1:
++16 cp
+
+Technical objective:
+Verify that the counter recognizes all eight geometric destinations of a
+centrally placed knight and applies the knight's reference and weight.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-B01 — Maximum bishop mobility on an open board
+Representative position 2 of 16
+Original inventory position 4 of 64
+------------------------------------------------------------------------------
+
+FEN:
+4k3/8/8/8/3B4/8/8/4K3 w - - 0 1
+
+Evaluated piece:
+White bishop on d4.
+
+Counted destinations by direction:
+- Northwest: c5, b6, a7
+- Northeast: e5, f6, g7, h8
+- Southwest: c3, b2, a1
+- Southeast: e3, f2, g1
+
+Raw destination count:
+d = 3 + 4 + 3 + 3 = 13
+
+Expected calculation:
+White: 3 x (13 - 7) = +18 cp
+Black: 0 cp
+
+Expected Mobility v1:
++18 cp
+
+Technical objective:
+Verify that the counter scans all four diagonals to the board limits and
+recognizes the bishop's geometric maximum of 13 destinations.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-B03 — Bishop in the corner
+Representative position 3 of 16
+Original inventory position 6 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/8/8/8/8/8/8/B6K w - - 0 1
+
+Evaluated piece:
+White bishop on a1.
+
+Counted destinations:
+b2, c3, d4, e5, f6, g7, h8
+
+Raw destination count:
+d = 7
+
+Expected calculation:
+White: 3 x (7 - 7) = 0 cp
+Black: 0 cp
+
+Expected Mobility v1:
+0 cp
+
+Technical objective:
+Verify that the counter scans one complete diagonal from a corner, recognizes
+all seven destinations, and stops at the board limit.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-R01 — Maximum rook mobility on an open board
+Representative position 4 of 16
+Original inventory position 7 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/3R4/8/8/7K w - - 0 1
+
+Evaluated piece:
+White rook on d4.
+
+Counted destinations by direction:
+- Up: d5, d6, d7, d8
+- Down: d3, d2, d1
+- Left: c4, b4, a4
+- Right: e4, f4, g4, h4
+
+Raw destination count:
+d = 4 + 3 + 3 + 4 = 14
+
+Expected calculation:
+White: 2 x (14 - 7) = +14 cp
+Black: 0 cp
+
+Expected Mobility v1:
++14 cp
+
+Technical objective:
+Verify that the counter recognizes all 14 rook destinations on an open board,
+scans the four orthogonal directions, and applies the rook's reference and
+weight.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-Q01 — Maximum queen mobility on an open board
+Representative position 5 of 16
+Original inventory position 8 of 64
+------------------------------------------------------------------------------
+
+FEN:
+4k3/8/8/8/3Q4/8/8/4K3 w - - 0 1
+
+Evaluated piece:
+White queen on d4.
+
+Counted orthogonal destinations:
+- Up: d5, d6, d7, d8
+- Down: d3, d2, d1
+- Left: c4, b4, a4
+- Right: e4, f4, g4, h4
+
+Orthogonal subtotal:
+14
+
+Counted diagonal destinations:
+- Northwest: c5, b6, a7
+- Northeast: e5, f6, g7, h8
+- Southwest: c3, b2, a1
+- Southeast: e3, f2, g1
+
+Diagonal subtotal:
+13
+
+Raw destination count:
+d = 14 + 13 = 27
+
+Expected calculation:
+White: 1 x (27 - 14) = +13 cp
+Black: 0 cp
+
+Expected Mobility v1:
++13 cp
+
+Technical objective:
+Verify that the counter correctly combines rook and bishop geometry and
+recognizes the queen's geometric maximum of 27 destinations.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-Q03 — Queen in the corner
+Representative position 6 of 16
+Original inventory position 10 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/7k/8/8/8/8/7K/Q7 w - - 0 1
+
+Evaluated piece:
+White queen on a1.
+
+Counted orthogonal destinations:
+- Rank 1: b1, c1, d1, e1, f1, g1, h1
+- File a: a2, a3, a4, a5, a6, a7, a8
+
+Orthogonal subtotal:
+14
+
+Counted diagonal destinations:
+b2, c3, d4, e5, f6, g7, h8
+
+Diagonal subtotal:
+7
+
+Raw destination count:
+d = 14 + 7 = 21
+
+Expected calculation:
+White: 1 x (21 - 14) = +7 cp
+Black: 0 cp
+
+Expected Mobility v1:
++7 cp
+
+Technical objective:
+Verify the three complete lines available to a queen in a corner: one rank,
+one file, and one diagonal.
+
+Status:
+VERIFIED
+
+==============================================================================
+5. CONTROLLED TESTS — OCCUPANCY AND SPECIAL COUNTING RULES
+REPRESENTATIVE POSITIONS 7–12 OF 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-N05 — Knight completely blocked by friendly pieces
+Representative position 7 of 16
+Original inventory position 12 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/2P1P3/1P3P2/3N4/1P3P2/2P1P3/7K w - - 0 1
+
+Evaluated piece:
+White knight on d4.
+
+Friendly-occupied destinations:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Counted destinations:
+None.
+
+Raw destination count:
+d = 0
+
+Expected calculation:
+White: 4 x (0 - 4) = -16 cp
+Black: 0 cp
+
+Expected Mobility v1:
+-16 cp
+
+Technical objective:
+Verify that friendly occupation removes every knight destination. With all
+eight destinations occupied, the knight reaches its minimum Mobility v1
+adjustment.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-B06 — Bishop versus enemy pieces: capture and ray termination
+Representative position 8 of 16
+Original inventory position 20 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/6p1/1p6/8/3B4/2p5/5p2/7K w - - 0 1
+
+Evaluated piece:
+White bishop on d4.
+
+Ray classification:
+- Northwest: c5 counts; b6 is enemy and counts; a7 is excluded
+- Northeast: e5 and f6 count; g7 is enemy and counts; h8 is excluded
+- Southwest: c3 is enemy and counts; b2 and a1 are excluded
+- Southeast: e3 counts; f2 is enemy and counts; g1 is excluded
+
+Counted destinations:
+c5, b6, e5, f6, g7, c3, e3, f2
+
+Raw destination count:
+d = 2 + 3 + 1 + 2 = 8
+
+Expected calculation:
+White: 3 x (8 - 7) = +3 cp
+Black: 0 cp
+
+Expected Mobility v1:
++3 cp
+
+Technical objective:
+Verify simultaneously that the first enemy piece on a bishop ray counts as a
+capture destination, stops the ray, and excludes every square behind it.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-R06 — Rook surrounded by adjacent enemy pieces
+Representative position 9 of 16
+Original inventory position 27 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/3p4/2pRp3/3p4/8/7K w - - 0 1
+
+Evaluated piece:
+White rook on d4.
+
+Adjacent enemy pieces:
+- Up: d5
+- Down: d3
+- Left: c4
+- Right: e4
+
+Counted destinations:
+d5, d3, c4, e4
+
+Raw destination count:
+d = 4
+
+Expected calculation:
+White: 2 x (4 - 7) = -6 cp
+Black: 0 cp
+
+Expected Mobility v1:
+-6 cp
+
+Technical objective:
+Verify that each adjacent enemy piece counts as a capture destination and
+immediately terminates its orthogonal ray.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-R08 — Enemy king blocks, but its square does not count
+Representative position 10 of 16
+Original inventory position 34 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/1k1R4/8/8/7K b - - 0 1
+
+Evaluated piece:
+White rook on d4.
+
+Ray classification:
+- Up: d5, d6, d7, d8 count
+- Down: d3, d2, d1 count
+- Left: c4 counts; the Black king on b4 does not count; a4 is excluded
+- Right: e4, f4, g4, h4 count
+
+Counted destinations:
+d5, d6, d7, d8, d3, d2, d1, c4, e4, f4, g4, h4
+
+Enemy-king blocker square not counted:
+b4
+
+Raw destination count:
+d = 4 + 3 + 1 + 4 = 12
+
+Expected calculation:
+White: 2 x (12 - 7) = +10 cp
+Black: 0 cp
+
+Expected Mobility v1:
++10 cp
+
+Technical objective:
+Verify that the enemy king terminates an orthogonal rook ray, does not count
+as a capture destination, and excludes the square behind it.
+
+Legality note:
+Black is to move because the Black king is in check and must respond.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-Q11 — Absolute pin preserves pseudo-legal mobility
+Representative position 11 of 16
+Original inventory position 40 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/2pr3p/8/8/3Q4/3K4/8/8 w - - 0 1
+
+Evaluated White piece:
+White queen on d4.
+
+The Black rook on d7 absolutely pins the queen to the White king on d3.
+Mobility v1 must preserve every pseudo-legal destination although leaving the
+d-file would expose the king.
+
+White-queen ray classification:
+- Up: d5, d6, d7 count and are legal
+- Down: blocked by the White king on d3; no destination counts
+- Left: c4, b4, a4 count but are illegal
+- Right: e4, f4, g4, h4 count but are illegal
+- Northwest: c5, b6, a7 count but are illegal
+- Northeast: e5, f6, g7, h8 count but are illegal
+- Southwest: c3, b2, a1 count but are illegal
+- Southeast: e3, f2, g1 count but are illegal
+
+Counted White-queen destinations:
+d5, d6, d7, c4, b4, a4, e4, f4, g4, h4,
+c5, b6, a7, e5, f6, g7, h8, c3, b2, a1, e3, f2, g1
+
+White raw destination count:
+d = 3 + 0 + 3 + 4 + 3 + 4 + 3 + 3 = 23
+
+White calculation:
+1 x (23 - 14) = +9 cp
+
+Evaluated Black piece:
+Black rook on d7.
+
+Counted Black-rook destinations:
+d8, d6, d5, d4, e7, f7, g7
+
+Black raw destination count:
+d = 7
+
+Black calculation:
+2 x (7 - 7) = 0 cp
+
+Expected Mobility v1:
++9 - 0 = +9 cp
+
+Technical objective:
+Verify that an absolute pin does not reduce the queen's pseudo-legal mobility.
+Although its 20 moves outside the d-file would expose the White king and be
+illegal, every destination must count.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-N10 — Attacked destinations still count
+Representative position 12 of 16
+Original inventory position 41 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/3p4/p5p1/8/2pN2p1/3p4/8/7K w - - 0 1
+
+Evaluated piece:
+White knight on d4.
+
+Attacked destinations:
+- b3: attacked by the Black pawn on c4
+- b5: attacked by the Black pawn on a6
+- c2: attacked by the Black pawn on d3
+- c6: attacked by the Black pawn on d7
+- e2: attacked by the Black pawn on d3
+- e6: attacked by the Black pawn on d7
+- f3: attacked by the Black pawn on g4
+- f5: attacked by the Black pawn on g6
+
+Counted destinations:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Raw destination count:
+d = 8
+
+Expected calculation:
+White: 4 x (8 - 4) = +16 cp
+Black: 0 cp
+
+Expected Mobility v1:
++16 cp
+
+Technical objective:
+Verify that enemy attacks on destination squares do not reduce the knight's
+pseudo-legal mobility. All eight empty destinations must count even though a
+Black pawn attacks every one of them.
+
+Status:
+VERIFIED
+
+==============================================================================
+6. TRANSVERSAL TESTS
+REPRESENTATIVE POSITIONS 13–14 OF 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-Q13 — Bilateral symmetry: equal queen mobility cancels
+Representative position 13 of 16
+Original inventory position 48 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/8/8/5q2/2Q5/8/8/7K w - - 0 1
+
+Evaluated pieces:
+- White queen on c4
+- Black queen on f5
+
+Symmetry:
+The White queen on c4 and the Black queen on f5 are corresponding squares under
+a 180-degree rotation of the board.
+
+White counted destinations by direction:
+
+Orthogonal rays:
+- West: b4, a4
+- East: d4, e4, f4, g4, h4
+- North: c5, c6, c7, c8
+- South: c3, c2, c1
+
+Diagonal rays:
+- Northwest: b5, a6
+- Northeast: d5, e6, f7, g8
+- Southwest: b3, a2
+- Southeast: d3, e2, f1
+
+Black counted destinations by direction:
+
+Orthogonal rays:
+- West: e5, d5, c5, b5, a5
+- East: g5, h5
+- North: f6, f7, f8
+- South: f4, f3, f2, f1
+
+Diagonal rays:
+- Northwest: e6, d7, c8
+- Northeast: g6, h7
+- Southwest: e4, d3, c2, b1
+- Southeast: g4, h3
+
+Raw destination counts:
+
+White queen:
+- Orthogonal destinations: 2 + 5 + 4 + 3 = 14
+- Diagonal destinations: 2 + 4 + 2 + 3 = 11
+- Total: d = 25
+
+Black queen:
+- Orthogonal destinations: 5 + 2 + 3 + 4 = 14
+- Diagonal destinations: 3 + 2 + 4 + 2 = 11
+- Total: d = 25
+
+Expected calculation:
+White: 1 x (25 - 14) = +11 cp
+Black: 1 x (25 - 14) = +11 cp
+
+Expected Mobility v1:
++11 - (+11) = 0 cp
+
+Technical objective:
+Verify bilateral counting and color symmetry for queens. Both the orthogonal
+and diagonal ray lengths of one queen are reproduced in rotated order for the
+other queen. Their mobility adjustments must therefore cancel exactly.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-N14 — Static-evaluation composition: material, PST, and knight mobility
+Representative position 14 of 16
+Original inventory position 51 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/3N4/8/8/7K w - - 0 1
+
+Evaluated piece:
+- White knight on d4
+
+Controlled-position reference:
+The piece placement intentionally matches MOB-N01. That controlled test
+isolates the knight's Mobility v1 adjustment; this transversal test verifies
+that the same adjustment is added correctly to material and PHILOCHESS PST v1.
+
+Layer 1 — Material:
+White knight: +320 cp
+Black material: 0 cp
+
+Expected material score:
++320 cp
+
+Layer 2 — PHILOCHESS PST v1:
+White knight on d4: +20 cp
+
+The White king on h1 and the Black king on h8 occupy vertically corresponding
+squares. After the required reflection for Black, their blended king-PST values
+are identical and cancel exactly.
+
+Expected PST v1 score:
++20 cp
+
+Layer 3 — Mobility v1:
+
+White counted destinations:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Raw destination count:
+White knight: d = 8
+
+Mobility calculation:
+White: 4 x (8 - 4) = +16 cp
+Black: 0 cp
+
+Expected Mobility v1:
++16 cp
+
+Expected static evaluation:
+Material + PST v1 + Mobility v1
++320 + (+20) + (+16) = +356 cp
+
+Technical objective:
+Verify the exact composition of the three approved static-evaluation layers for
+a knight. Mobility v1 must be added once, after material and PST v1, without
+replacing, rescaling, or changing either preceding component. The final score
+is expressed from White's perspective.
+
+Status:
+VERIFIED
+
+==============================================================================
+7. INTEGRATED TESTS
+REPRESENTATIVE POSITIONS 15–16 OF 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-I01 — Integrated initial-position symmetry
+Representative position 15 of 16
+Original inventory position 55 of 64
+------------------------------------------------------------------------------
+
+FEN:
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+Position origin:
+Initial chess position.
+
+Integrated features:
+- All fourteen eligible pieces evaluated
+- Multiple friendly blockers
+- Bilateral counting
+- Exact White–Black reflection
+- Composition with material and PHILOCHESS PST v1
+- Baseline for the remaining integrated positions
+
+White counted destinations:
+- Knight b1: a3, c3
+- Knight g1: f3, h3
+- Bishop c1: none
+- Bishop f1: none
+- Rook a1: none
+- Rook h1: none
+- Queen d1: none
+
+White raw destination counts:
+- Knight b1: d = 2
+- Knight g1: d = 2
+- Bishop c1: d = 0
+- Bishop f1: d = 0
+- Rook a1: d = 0
+- Rook h1: d = 0
+- Queen d1: d = 0
+
+White piece adjustments:
+- Knight b1: 4 x (2 - 4) = -8 cp
+- Knight g1: 4 x (2 - 4) = -8 cp
+- Bishop c1: 3 x (0 - 7) = -21 cp
+- Bishop f1: 3 x (0 - 7) = -21 cp
+- Rook a1: 2 x (0 - 7) = -14 cp
+- Rook h1: 2 x (0 - 7) = -14 cp
+- Queen d1: 1 x (0 - 14) = -14 cp
+
+White mobility subtotal:
+-8 - 8 - 21 - 21 - 14 - 14 - 14 = -100 cp
+
+Black counted destinations:
+- Knight b8: a6, c6
+- Knight g8: f6, h6
+- Bishop c8: none
+- Bishop f8: none
+- Rook a8: none
+- Rook h8: none
+- Queen d8: none
+
+Black raw destination counts:
+- Knight b8: d = 2
+- Knight g8: d = 2
+- Bishop c8: d = 0
+- Bishop f8: d = 0
+- Rook a8: d = 0
+- Rook h8: d = 0
+- Queen d8: d = 0
+
+Black piece adjustments:
+- Knight b8: 4 x (2 - 4) = -8 cp
+- Knight g8: 4 x (2 - 4) = -8 cp
+- Bishop c8: 3 x (0 - 7) = -21 cp
+- Bishop f8: 3 x (0 - 7) = -21 cp
+- Rook a8: 2 x (0 - 7) = -14 cp
+- Rook h8: 2 x (0 - 7) = -14 cp
+- Queen d8: 1 x (0 - 14) = -14 cp
+
+Black mobility subtotal:
+-8 - 8 - 21 - 21 - 14 - 14 - 14 = -100 cp
+
+Expected Mobility v1:
+White subtotal - Black subtotal
+-100 - (-100) = 0 cp
+
+Expected static-evaluation layers:
+- Material: 0 cp
+- PHILOCHESS PST v1: 0 cp
+- Mobility v1: 0 cp
+
+Expected static evaluation:
+Material + PST v1 + Mobility v1
+0 + 0 + 0 = 0 cp
+
+Technical objective:
+Establish the integrated baseline in the initial position. Every eligible piece
+must be evaluated even when it has no countable destination. The seven White
+adjustments and the seven reflected Black adjustments must each total -100 cp
+and cancel exactly. Material and PST v1 must also cancel by color symmetry.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+MOB-I02 — Integrated opening-position change after 1.e4
+Representative position 16 of 16
+Original inventory position 56 of 64
+------------------------------------------------------------------------------
+
+FEN:
+rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
+
+Position origin:
+Initial position after:
+
+1. e4
+
+Integrated features:
+- All fourteen eligible pieces evaluated
+- Multiple friendly blockers
+- Bilateral counting
+- Black to move
+- A non-evaluated pawn changing the mobility of three evaluated pieces
+- A knight gaining a destination vacated by a friendly pawn
+- A bishop and queen gaining sliding rays through the vacated square e2
+- Correct en-passant target in the FEN
+- Composition with material and PHILOCHESS PST v1
+- Comparison with MOB-I01
+
+White counted destinations:
+- Knight b1: a3, c3
+- Knight g1: e2, f3, h3
+- Bishop c1: none
+- Bishop f1: e2, d3, c4, b5, a6
+- Rook a1: none
+- Rook h1: none
+- Queen d1: e2, f3, g4, h5
+
+White raw destination counts:
+- Knight b1: d = 2
+- Knight g1: d = 3
+- Bishop c1: d = 0
+- Bishop f1: d = 5
+- Rook a1: d = 0
+- Rook h1: d = 0
+- Queen d1: d = 4
+
+White piece adjustments:
+- Knight b1: 4 x (2 - 4) = -8 cp
+- Knight g1: 4 x (3 - 4) = -4 cp
+- Bishop c1: 3 x (0 - 7) = -21 cp
+- Bishop f1: 3 x (5 - 7) = -6 cp
+- Rook a1: 2 x (0 - 7) = -14 cp
+- Rook h1: 2 x (0 - 7) = -14 cp
+- Queen d1: 1 x (4 - 14) = -10 cp
+
+White mobility subtotal:
+-8 - 4 - 21 - 6 - 14 - 14 - 10 = -77 cp
+
+Black counted destinations:
+- Knight b8: a6, c6
+- Knight g8: f6, h6
+- Bishop c8: none
+- Bishop f8: none
+- Rook a8: none
+- Rook h8: none
+- Queen d8: none
+
+Black raw destination counts:
+- Knight b8: d = 2
+- Knight g8: d = 2
+- Bishop c8: d = 0
+- Bishop f8: d = 0
+- Rook a8: d = 0
+- Rook h8: d = 0
+- Queen d8: d = 0
+
+Black piece adjustments:
+- Knight b8: 4 x (2 - 4) = -8 cp
+- Knight g8: 4 x (2 - 4) = -8 cp
+- Bishop c8: 3 x (0 - 7) = -21 cp
+- Bishop f8: 3 x (0 - 7) = -21 cp
+- Rook a8: 2 x (0 - 7) = -14 cp
+- Rook h8: 2 x (0 - 7) = -14 cp
+- Queen d8: 1 x (0 - 14) = -14 cp
+
+Black mobility subtotal:
+-8 - 8 - 21 - 21 - 14 - 14 - 14 = -100 cp
+
+Expected Mobility v1:
+White subtotal - Black subtotal
+-77 - (-100) = +23 cp
+
+Mobility change from MOB-I01:
+
+White knight g1:
+- Previous adjustment: 4 x (2 - 4) = -8 cp
+- New adjustment: 4 x (3 - 4) = -4 cp
+- Change: +4 cp
+
+White bishop f1:
+- Previous adjustment: 3 x (0 - 7) = -21 cp
+- New adjustment: 3 x (5 - 7) = -6 cp
+- Change: +15 cp
+
+White queen d1:
+- Previous adjustment: 1 x (0 - 14) = -14 cp
+- New adjustment: 1 x (4 - 14) = -10 cp
+- Change: +4 cp
+
+Total mobility change:
++4 + (+15) + (+4) = +23 cp
+
+Expected static-evaluation layers:
+- Material: 0 cp
+- PHILOCHESS PST v1: +20 cp
+- Mobility v1: +23 cp
+
+PST explanation:
+- White pawn on e2 in MOB-I01: -20 cp
+- White pawn on e4 in MOB-I02: 0 cp
+- Pawn PST change: 0 - (-20) = +20 cp
+- All other White–Black PST contributions remain unchanged.
+
+Expected static evaluation:
+Material + PST v1 + Mobility v1
+0 + (+20) + (+23) = +43 cp
+
+Technical objective:
+Verify that moving a pawn, although pawns are excluded from Mobility v1, changes
+the occupancy-based mobility of the knight on g1, bishop on f1, and queen on d1.
+The vacated square e2 must count independently for all three pieces. The
+resulting mobility improvement must be +4 + 15 + 4 = +23 cp and must combine
+with the +20 cp pawn-PST change without any material change.
+
+Status:
+VERIFIED
+
+==============================================================================
+8. FINAL QUANTITATIVE SUMMARY
+==============================================================================
+
+    Controlled representative positions:   12/12 VERIFIED
+    Transversal representative positions:    2/2 VERIFIED
+    Integrated representative positions:     2/2 VERIFIED
+                                             -------------
+    Total:                                 16/16 VERIFIED
+
+The representative subset covers all four piece types evaluated by Mobility v1
+and records positive, neutral, and negative adjustments. It includes friendly
+and enemy blockers, capture and ray termination, the enemy-king exception,
+absolute pins, attacked destinations, bilateral cancellation, exact
+composition of the three static-evaluation layers, and integrated opening
+occupancy.
+
+==============================================================================
+9. CONCLUSION
+==============================================================================
+
+This 16-position subset provides a compact, reproducible public account of the
+rules and expected calculations used by PHILOCHESS Mobility v1. It demonstrates
+representative coverage while preserving the complete 64-position regression
+inventory as an internal development asset.
+
+The public subset supplements the development record for
+PHILOCHESS 0.2-alpha-008. It does not replace the full validation suite.
+
+==============================================================================
+END OF DOCUMENT
+==============================================================================
