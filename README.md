@@ -28,7 +28,7 @@ The published C++ samples are self-contained and can be compiled independently w
 
 ## Current status
 
-The latest version, PHILOCHESS 0.2-alpha-007, was successfully compiled in both Release and Debug configurations, passed its full console regression suite, and completed practical GUI validation. It introduces PHILOCHESS PST v1, the engine’s first positional evaluation layer, combining the established material evaluation with conservative piece-square tables and phase-dependent king evaluation. In practical play, the new evaluation produced more coherent development and centralisation, timely castling, and more purposeful piece placement, while the engine completed both validation games without time forfeits, crashes, or communication failures.
+The latest version, PHILOCHESS 0.2-alpha-008, introduces PHILOCHESS Mobility v1, a conservative evaluation layer that measures the pseudolegal mobility of knights, bishops, rooks, and queens. The engine’s static evaluation now combines material, PHILOCHESS PST v1, and PHILOCHESS Mobility v1, providing a broader positional basis for its assessments. In practical play, alpha-008 showed clear progress, but testing also confirmed that PHILOCHESS does not yet recognize draws by repetition within the search and may therefore enter a drawing cycle even from a winning position. This limitation will be addressed in PHILOCHESS 0.2-alpha-009: Draw-Rule Implementation in Search.
 
 ## PHILOCHESS 0.1 development milestones
 
