@@ -1,0 +1,1064 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-008
+INVENTARIO REPRESENTATIVO DE PRUEBAS
+EVALUACIÓN BÁSICA DE MOVILIDAD — MOBILITY V1
+SELECCIÓN PÚBLICA — 16 POSICIONES VERIFICADAS DEL INVENTARIO INTERNO DE 64
+==============================================================================
+
+Autor y titular de los derechos de autor: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Este documento se distribuye bajo la licencia internacional Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0
+(CC BY-NC-ND 4.0).
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
+
+Fecha: 28 de julio de 2026
+
+Este documento publica una selección representativa extraída del inventario
+interno completo de pruebas de:
+
+    PHILOCHESS 0.2-alpha-008 — Evaluación básica de movilidad.
+
+El inventario interno completo contiene 64 posiciones revisadas y verificadas
+individualmente: 44 posiciones controladas, 10 posiciones transversales y
+10 posiciones integradas. Esta selección pública contiene 16:
+
+    Posiciones controladas:   12
+    Posiciones transversales:  2
+    Posiciones integradas:     2
+    Total:                    16
+
+La selección tiene por finalidad documentar la definición de Mobility v1,
+mostrar una cobertura representativa y proporcionar cálculos esperados
+reproducibles sin publicar el inventario interno completo de regresión. Se
+conservan los identificadores originales de las pruebas y los números de las
+posiciones dentro del inventario original.
+
+==============================================================================
+1. OBJETIVO Y ALCANCE
+==============================================================================
+
+Mobility v1 es la primera evaluación explícita de la movilidad de las piezas
+en PHILOCHESS y la tercera capa independiente de evaluación estática:
+
+    Evaluación estática = Material + PST v1 + Mobility v1
+
+Las posiciones controladas seleccionadas aíslan la geometría, la ocupación del
+tablero, los bloqueadores, las capturas de piezas rivales, la excepción del rey
+rival, las clavadas absolutas y los destinos atacados. Las posiciones
+transversales verifican la cancelación bilateral y la composición del material,
+PHILOCHESS PST v1 y Mobility v1. Las posiciones integradas comprueban todas las
+piezas elegibles en la posición inicial y los cambios de ocupación producidos
+por 1.e4.
+
+Esta selección representativa no sustituye el inventario interno completo de
+64 posiciones ni reduce el alcance de la validación realizada para alpha-008.
+
+==============================================================================
+2. REGLAS APROBADAS DE MOBILITY V1
+==============================================================================
+
+2.1 Piezas evaluadas
+
+Mobility v1 evalúa:
+- caballos;
+- alfiles;
+- torres;
+- damas.
+
+Mobility v1 excluye:
+- peones;
+- reyes.
+
+2.2 Modelo de conteo
+
+Mobility v1 contabiliza destinos seudolegales basados en la ocupación:
+
+- Toda casilla vacía alcanzable cuenta.
+- Una casilla ocupada por una pieza propia no cuenta.
+- Una pieza propia detiene el recorrido de una pieza deslizante.
+- La primera casilla ocupada por un caballo, alfil, torre, dama o peón rival
+  cuenta como destino de captura.
+- La primera casilla ocupada por el rey rival no cuenta.
+- Una pieza rival detiene el recorrido de una pieza deslizante.
+- Ninguna casilla situada más allá de un bloqueador cuenta.
+- Un caballo salta directamente a su destino; por tanto, no posee un recorrido
+  intermedio que pueda ser detenido.
+- Las casillas atacadas por el adversario continúan contando.
+- Las clavadas absolutas no reducen el conteo.
+- No se examina la seguridad del destino.
+- El resultado es independiente del bando al turno.
+
+Mobility v1 mide deliberadamente la geometría de las piezas y la ocupación del
+tablero. No evalúa la legalidad plena de las jugadas, la exposición del rey,
+la calidad del destino, la estructura de peones ni la seguridad del rey.
+
+2.3 Escala lineal centrada
+
+Para cada pieza evaluada:
+
+    Ajuste de la pieza = peso x (destinos - referencia)
+
+Parámetros aprobados:
+
+    Pieza      Máximo geométrico    Referencia    Peso
+    Caballo           8                 4         4 cp
+    Alfil            13                 7         3 cp
+    Torre            14                 7         2 cp
+    Dama             27                14         1 cp
+
+La puntuación bilateral de Mobility v1 es:
+
+    Mobility v1 =
+        Suma de los ajustes de las piezas blancas
+        menos
+        Suma de los ajustes de las piezas negras
+
+Todas las puntuaciones esperadas de este inventario se expresan desde la
+perspectiva de las blancas.
+
+==============================================================================
+3. ORGANIZACIÓN DE LA SELECCIÓN REPRESENTATIVA
+==============================================================================
+
+Las 16 posiciones seleccionadas ofrecen la siguiente cobertura:
+
+    Geometría y cobertura específica por pieza:           6 posiciones
+    Ocupación y reglas especiales de conteo:              6 posiciones
+    Invariantes bilaterales y composición de capas:       2 posiciones
+    Posiciones integradas de apertura:                    2 posiciones
+                                                         -------------
+    Total:                                               16 posiciones
+
+Posiciones seleccionadas del inventario original:
+
+    1, 4, 6, 7, 8, 10, 12, 20, 27, 34, 40, 41, 48, 51, 55, 56
+
+Para cada prueba registrada:
+
+    Estado de verificación del diseño: VERIFICADA
+
+==============================================================================
+4. PRUEBAS CONTROLADAS — GEOMETRÍA Y COBERTURA POR PIEZA
+POSICIONES REPRESENTATIVAS 1–6 DE 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-N01 — Movilidad máxima del caballo en tablero abierto
+Posición representativa 1 de 16
+Posición 1 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/3N4/8/8/7K w - - 0 1
+
+Pieza evaluada:
+Caballo blanco en d4.
+
+Destinos contabilizados:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Conteo bruto de destinos:
+d = 8
+
+Cálculo esperado:
+Blancas: 4 x (8 - 4) = +16 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++16 cp
+
+Objetivo técnico:
+Verificar que el contador reconoce los ocho destinos geométricos de un
+caballo situado en el centro y aplica la referencia y el peso del caballo.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-B01 — Movilidad máxima del alfil en tablero abierto
+Posición representativa 2 de 16
+Posición 4 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+4k3/8/8/8/3B4/8/8/4K3 w - - 0 1
+
+Pieza evaluada:
+Alfil blanco en d4.
+
+Destinos contabilizados por dirección:
+- Noroeste: c5, b6, a7
+- Noreste: e5, f6, g7, h8
+- Suroeste: c3, b2, a1
+- Sureste: e3, f2, g1
+
+Conteo bruto de destinos:
+d = 3 + 4 + 3 + 3 = 13
+
+Cálculo esperado:
+Blancas: 3 x (13 - 7) = +18 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++18 cp
+
+Objetivo técnico:
+Verificar que el contador recorre las cuatro diagonales hasta los límites del
+tablero y reconoce el máximo geométrico de 13 destinos del alfil.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-B03 — Alfil en la esquina
+Posición representativa 3 de 16
+Posición 6 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+k7/8/8/8/8/8/8/B6K w - - 0 1
+
+Pieza evaluada:
+Alfil blanco en a1.
+
+Destinos contabilizados:
+b2, c3, d4, e5, f6, g7, h8
+
+Conteo bruto de destinos:
+d = 7
+
+Cálculo esperado:
+Blancas: 3 x (7 - 7) = 0 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
+0 cp
+
+Objetivo técnico:
+Verificar que el contador recorre una diagonal completa desde una esquina,
+reconoce sus siete destinos y se detiene en el límite del tablero.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-R01 — Movilidad máxima de la torre en tablero abierto
+Posición representativa 4 de 16
+Posición 7 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/3R4/8/8/7K w - - 0 1
+
+Pieza evaluada:
+Torre blanca en d4.
+
+Destinos contabilizados por dirección:
+- Arriba: d5, d6, d7, d8
+- Abajo: d3, d2, d1
+- Izquierda: c4, b4, a4
+- Derecha: e4, f4, g4, h4
+
+Conteo bruto de destinos:
+d = 4 + 3 + 3 + 4 = 14
+
+Cálculo esperado:
+Blancas: 2 x (14 - 7) = +14 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++14 cp
+
+Objetivo técnico:
+Verificar que el contador reconoce los 14 destinos de la torre en un tablero
+abierto, recorre las cuatro direcciones ortogonales y aplica la referencia y
+el peso de la torre.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-Q01 — Movilidad máxima de la dama en tablero abierto
+Posición representativa 5 de 16
+Posición 8 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+4k3/8/8/8/3Q4/8/8/4K3 w - - 0 1
+
+Pieza evaluada:
+Dama blanca en d4.
+
+Destinos ortogonales contabilizados:
+- Arriba: d5, d6, d7, d8
+- Abajo: d3, d2, d1
+- Izquierda: c4, b4, a4
+- Derecha: e4, f4, g4, h4
+
+Subtotal ortogonal:
+14
+
+Destinos diagonales contabilizados:
+- Noroeste: c5, b6, a7
+- Noreste: e5, f6, g7, h8
+- Suroeste: c3, b2, a1
+- Sureste: e3, f2, g1
+
+Subtotal diagonal:
+13
+
+Conteo bruto de destinos:
+d = 14 + 13 = 27
+
+Cálculo esperado:
+Blancas: 1 x (27 - 14) = +13 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++13 cp
+
+Objetivo técnico:
+Verificar que el contador combina correctamente las geometrías de la torre y
+del alfil y reconoce el máximo geométrico de 27 destinos de la dama.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-Q03 — Dama en la esquina
+Posición representativa 6 de 16
+Posición 10 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+8/7k/8/8/8/8/7K/Q7 w - - 0 1
+
+Pieza evaluada:
+Dama blanca en a1.
+
+Destinos ortogonales contabilizados:
+- Fila 1: b1, c1, d1, e1, f1, g1, h1
+- Columna a: a2, a3, a4, a5, a6, a7, a8
+
+Subtotal ortogonal:
+14
+
+Destinos diagonales contabilizados:
+b2, c3, d4, e5, f6, g7, h8
+
+Subtotal diagonal:
+7
+
+Conteo bruto de destinos:
+d = 14 + 7 = 21
+
+Cálculo esperado:
+Blancas: 1 x (21 - 14) = +7 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++7 cp
+
+Objetivo técnico:
+Verificar las tres líneas completas disponibles para una dama situada en una
+esquina: una fila, una columna y una diagonal.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+5. PRUEBAS CONTROLADAS — OCUPACIÓN Y REGLAS ESPECIALES DE CONTEO
+POSICIONES REPRESENTATIVAS 7–12 DE 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-N05 — Caballo completamente bloqueado por piezas propias
+Posición representativa 7 de 16
+Posición 12 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/2P1P3/1P3P2/3N4/1P3P2/2P1P3/7K w - - 0 1
+
+Pieza evaluada:
+Caballo blanco en d4.
+
+Destinos ocupados por piezas propias:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Destinos contabilizados:
+Ninguno.
+
+Conteo bruto de destinos:
+d = 0
+
+Cálculo esperado:
+Blancas: 4 x (0 - 4) = -16 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
+-16 cp
+
+Objetivo técnico:
+Verificar que la ocupación propia elimina todos los destinos del caballo. Con
+los ocho destinos ocupados, el caballo alcanza su ajuste mínimo de Mobility
+v1.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-B06 — Alfil frente a piezas rivales: captura y fin del recorrido
+Posición representativa 8 de 16
+Posición 20 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+k7/6p1/1p6/8/3B4/2p5/5p2/7K w - - 0 1
+
+Pieza evaluada:
+Alfil blanco en d4.
+
+Clasificación de recorridos:
+- Noroeste: c5 cuenta; b6 está ocupada por una pieza rival y cuenta; a7 queda
+  excluida
+- Noreste: e5 y f6 cuentan; g7 está ocupada por una pieza rival y cuenta; h8
+  queda excluida
+- Suroeste: c3 está ocupada por una pieza rival y cuenta; b2 y a1 quedan
+  excluidas
+- Sureste: e3 cuenta; f2 está ocupada por una pieza rival y cuenta; g1 queda
+  excluida
+
+Destinos contabilizados:
+c5, b6, e5, f6, g7, c3, e3, f2
+
+Conteo bruto de destinos:
+d = 2 + 3 + 1 + 2 = 8
+
+Cálculo esperado:
+Blancas: 3 x (8 - 7) = +3 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++3 cp
+
+Objetivo técnico:
+Verificar simultáneamente que la primera pieza rival en un recorrido del alfil
+cuenta como destino de captura, detiene el recorrido y excluye todas las
+casillas situadas detrás.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-R06 — Torre rodeada por piezas rivales adyacentes
+Posición representativa 9 de 16
+Posición 27 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/3p4/2pRp3/3p4/8/7K w - - 0 1
+
+Pieza evaluada:
+Torre blanca en d4.
+
+Piezas rivales adyacentes:
+- Arriba: d5
+- Abajo: d3
+- Izquierda: c4
+- Derecha: e4
+
+Destinos contabilizados:
+d5, d3, c4, e4
+
+Conteo bruto de destinos:
+d = 4
+
+Cálculo esperado:
+Blancas: 2 x (4 - 7) = -6 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
+-6 cp
+
+Objetivo técnico:
+Verificar que cada pieza rival adyacente cuenta como destino de captura y
+detiene inmediatamente su recorrido ortogonal.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-R08 — El rey rival bloquea, pero su casilla no cuenta
+Posición representativa 10 de 16
+Posición 34 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/1k1R4/8/8/7K b - - 0 1
+
+Pieza evaluada:
+Torre blanca en d4.
+
+Clasificación de recorridos:
+- Arriba: d5, d6, d7, d8 cuentan
+- Abajo: d3, d2, d1 cuentan
+- Izquierda: c4 cuenta; el rey negro en b4 no cuenta; a4 queda excluida
+- Derecha: e4, f4, g4, h4 cuentan
+
+Destinos contabilizados:
+d5, d6, d7, d8, d3, d2, d1, c4, e4, f4, g4, h4
+
+Casilla bloqueadora del rey rival no contabilizada:
+b4
+
+Conteo bruto de destinos:
+d = 4 + 3 + 1 + 4 = 12
+
+Cálculo esperado:
+Blancas: 2 x (12 - 7) = +10 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++10 cp
+
+Objetivo técnico:
+Verificar que el rey rival detiene un recorrido ortogonal de la torre, no
+cuenta como destino de captura y excluye la casilla situada detrás.
+
+Nota de legalidad:
+Juegan las negras porque el rey negro está en jaque y debe responder.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-Q11 — La clavada absoluta conserva la movilidad seudolegal
+Posición representativa 11 de 16
+Posición 40 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+k7/2pr3p/8/8/3Q4/3K4/8/8 w - - 0 1
+
+Pieza blanca evaluada:
+Dama blanca en d4.
+
+La torre negra de d7 clava absolutamente la dama contra el rey blanco de d3.
+Mobility v1 debe conservar todos los destinos seudolegales, aunque abandonar
+la columna d expondría al rey.
+
+Clasificación de recorridos de la dama blanca:
+- Arriba: d5, d6, d7 cuentan y son legales
+- Abajo: bloqueada por el rey blanco en d3; no cuenta ningún destino
+- Izquierda: c4, b4, a4 cuentan, pero son ilegales
+- Derecha: e4, f4, g4, h4 cuentan, pero son ilegales
+- Noroeste: c5, b6, a7 cuentan, pero son ilegales
+- Noreste: e5, f6, g7, h8 cuentan, pero son ilegales
+- Suroeste: c3, b2, a1 cuentan, pero son ilegales
+- Sureste: e3, f2, g1 cuentan, pero son ilegales
+
+Destinos de la dama blanca contabilizados:
+d5, d6, d7, c4, b4, a4, e4, f4, g4, h4,
+c5, b6, a7, e5, f6, g7, h8, c3, b2, a1, e3, f2, g1
+
+Conteo bruto de destinos de las blancas:
+d = 3 + 0 + 3 + 4 + 3 + 4 + 3 + 3 = 23
+
+Cálculo de las blancas:
+1 x (23 - 14) = +9 cp
+
+Pieza negra evaluada:
+Torre negra en d7.
+
+Destinos de la torre negra contabilizados:
+d8, d6, d5, d4, e7, f7, g7
+
+Conteo bruto de destinos de las negras:
+d = 7
+
+Cálculo de las negras:
+2 x (7 - 7) = 0 cp
+
+Mobility v1 esperada:
++9 - 0 = +9 cp
+
+Objetivo técnico:
+Verificar que una clavada absoluta no reduce la movilidad seudolegal de la
+dama. Aunque sus 20 jugadas fuera de la columna d expondrían al rey blanco y
+serían ilegales, todos los destinos deben contar.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-N10 — Los destinos atacados continúan contando
+Posición representativa 12 de 16
+Posición 41 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+k7/3p4/p5p1/8/2pN2p1/3p4/8/7K w - - 0 1
+
+Pieza evaluada:
+Caballo blanco en d4.
+
+Destinos atacados:
+- b3: atacada por el peón negro en c4
+- b5: atacada por el peón negro en a6
+- c2: atacada por el peón negro en d3
+- c6: atacada por el peón negro en d7
+- e2: atacada por el peón negro en d3
+- e6: atacada por el peón negro en d7
+- f3: atacada por el peón negro en g4
+- f5: atacada por el peón negro en g6
+
+Destinos contabilizados:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Conteo bruto de destinos:
+d = 8
+
+Cálculo esperado:
+Blancas: 4 x (8 - 4) = +16 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++16 cp
+
+Objetivo técnico:
+Verificar que los ataques rivales sobre las casillas de destino no reducen la
+movilidad seudolegal del caballo. Los ocho destinos vacíos deben contar aunque
+un peón negro ataque cada uno de ellos.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+6. PRUEBAS TRANSVERSALES
+POSICIONES REPRESENTATIVAS 13–14 DE 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-Q13 — Simetría bilateral: la misma movilidad de las damas se cancela
+Posición representativa 13 de 16
+Posición 48 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+k7/8/8/5q2/2Q5/8/8/7K w - - 0 1
+
+Piezas evaluadas:
+- Dama blanca en c4
+- Dama negra en f5
+
+Simetría:
+La dama blanca de c4 y la dama negra de f5 ocupan casillas correspondientes
+bajo una rotación de 180 grados del tablero.
+
+Destinos de las blancas contabilizados por dirección:
+
+Recorridos ortogonales:
+- Oeste: b4, a4
+- Este: d4, e4, f4, g4, h4
+- Norte: c5, c6, c7, c8
+- Sur: c3, c2, c1
+
+Recorridos diagonales:
+- Noroeste: b5, a6
+- Noreste: d5, e6, f7, g8
+- Suroeste: b3, a2
+- Sureste: d3, e2, f1
+
+Destinos de las negras contabilizados por dirección:
+
+Recorridos ortogonales:
+- Oeste: e5, d5, c5, b5, a5
+- Este: g5, h5
+- Norte: f6, f7, f8
+- Sur: f4, f3, f2, f1
+
+Recorridos diagonales:
+- Noroeste: e6, d7, c8
+- Noreste: g6, h7
+- Suroeste: e4, d3, c2, b1
+- Sureste: g4, h3
+
+Conteos brutos de destinos:
+
+Dama blanca:
+- Destinos ortogonales: 2 + 5 + 4 + 3 = 14
+- Destinos diagonales: 2 + 4 + 2 + 3 = 11
+- Total: d = 25
+
+Dama negra:
+- Destinos ortogonales: 5 + 2 + 3 + 4 = 14
+- Destinos diagonales: 3 + 2 + 4 + 2 = 11
+- Total: d = 25
+
+Cálculo esperado:
+Blancas: 1 x (25 - 14) = +11 cp
+Negras: 1 x (25 - 14) = +11 cp
+
+Mobility v1 esperada:
++11 - (+11) = 0 cp
+
+Objetivo técnico:
+Verificar el conteo bilateral y la simetría de color para las damas. Las
+longitudes de sus recorridos ortogonales y diagonales se reproducen en orden
+rotado para la otra dama. Por tanto, sus ajustes de movilidad deben cancelarse
+exactamente.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-N14 — Composición de la evaluación estática: material, PST y movilidad del caballo
+Posición representativa 14 de 16
+Posición 51 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/3N4/8/8/7K w - - 0 1
+
+Pieza evaluada:
+- Caballo blanco en d4
+
+Referencia de la posición controlada:
+La colocación de las piezas coincide intencionalmente con MOB-N01. Aquella
+prueba controlada aísla el ajuste de Mobility v1 del caballo; esta prueba
+transversal verifica que el mismo ajuste se sume correctamente al material y
+a PHILOCHESS PST v1.
+
+Capa 1 — Material:
+Caballo blanco: +320 cp
+Material negro: 0 cp
+
+Puntuación material esperada:
++320 cp
+
+Capa 2 — PHILOCHESS PST v1:
+Caballo blanco en d4: +20 cp
+
+El rey blanco de h1 y el rey negro de h8 ocupan casillas correspondientes en
+sentido vertical. Tras la reflexión requerida para las negras, sus valores
+combinados de PST del rey son idénticos y se cancelan exactamente.
+
+Puntuación PST v1 esperada:
++20 cp
+
+Capa 3 — Mobility v1:
+
+Destinos de las blancas contabilizados:
+b3, b5, c2, c6, e2, e6, f3, f5
+
+Conteo bruto de destinos:
+Caballo blanco: d = 8
+
+Cálculo de movilidad:
+Blancas: 4 x (8 - 4) = +16 cp
+Negras: 0 cp
+
+Mobility v1 esperada:
++16 cp
+
+Evaluación estática esperada:
+Material + PST v1 + Mobility v1
++320 + (+20) + (+16) = +356 cp
+
+Objetivo técnico:
+Verificar la composición exacta de las tres capas aprobadas de evaluación
+estática para un caballo. Mobility v1 debe sumarse una sola vez, después del
+material y PST v1, sin sustituir, reescalar ni modificar ninguno de los
+componentes anteriores. La puntuación final se expresa desde la perspectiva
+de las blancas.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+7. PRUEBAS INTEGRADAS
+POSICIONES REPRESENTATIVAS 15–16 DE 16
+==============================================================================
+
+------------------------------------------------------------------------------
+MOB-I01 — Simetría integrada de la posición inicial
+Posición representativa 15 de 16
+Posición 55 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+Origen de la posición:
+Posición inicial del ajedrez.
+
+Características integradas:
+- Se evaluaron las catorce piezas aptas
+- Múltiples bloqueadores propios
+- Conteo bilateral
+- Reflexión exacta entre blancas y negras
+- Composición con el material y PHILOCHESS PST v1
+- Base de referencia para las demás posiciones integradas
+
+Destinos de las blancas contabilizados:
+- Caballo b1: a3, c3
+- Caballo g1: f3, h3
+- Alfil c1: ninguno
+- Alfil f1: ninguno
+- Torre a1: ninguno
+- Torre h1: ninguno
+- Dama d1: ninguno
+
+Conteos brutos de destinos de las blancas:
+- Caballo b1: d = 2
+- Caballo g1: d = 2
+- Alfil c1: d = 0
+- Alfil f1: d = 0
+- Torre a1: d = 0
+- Torre h1: d = 0
+- Dama d1: d = 0
+
+Ajustes de las piezas blancas:
+- Caballo b1: 4 x (2 - 4) = -8 cp
+- Caballo g1: 4 x (2 - 4) = -8 cp
+- Alfil c1: 3 x (0 - 7) = -21 cp
+- Alfil f1: 3 x (0 - 7) = -21 cp
+- Torre a1: 2 x (0 - 7) = -14 cp
+- Torre h1: 2 x (0 - 7) = -14 cp
+- Dama d1: 1 x (0 - 14) = -14 cp
+
+Subtotal de movilidad de las blancas:
+-8 - 8 - 21 - 21 - 14 - 14 - 14 = -100 cp
+
+Destinos de las negras contabilizados:
+- Caballo b8: a6, c6
+- Caballo g8: f6, h6
+- Alfil c8: ninguno
+- Alfil f8: ninguno
+- Torre a8: ninguno
+- Torre h8: ninguno
+- Dama d8: ninguno
+
+Conteos brutos de destinos de las negras:
+- Caballo b8: d = 2
+- Caballo g8: d = 2
+- Alfil c8: d = 0
+- Alfil f8: d = 0
+- Torre a8: d = 0
+- Torre h8: d = 0
+- Dama d8: d = 0
+
+Ajustes de las piezas negras:
+- Caballo b8: 4 x (2 - 4) = -8 cp
+- Caballo g8: 4 x (2 - 4) = -8 cp
+- Alfil c8: 3 x (0 - 7) = -21 cp
+- Alfil f8: 3 x (0 - 7) = -21 cp
+- Torre a8: 2 x (0 - 7) = -14 cp
+- Torre h8: 2 x (0 - 7) = -14 cp
+- Dama d8: 1 x (0 - 14) = -14 cp
+
+Subtotal de movilidad de las negras:
+-8 - 8 - 21 - 21 - 14 - 14 - 14 = -100 cp
+
+Mobility v1 esperada:
+Subtotal de las blancas - subtotal de las negras
+-100 - (-100) = 0 cp
+
+Capas esperadas de la evaluación estática:
+- Material: 0 cp
+- PHILOCHESS PST v1: 0 cp
+- Mobility v1: 0 cp
+
+Evaluación estática esperada:
+Material + PST v1 + Mobility v1
+0 + 0 + 0 = 0 cp
+
+Objetivo técnico:
+Establecer la base integrada en la posición inicial. Debe evaluarse cada pieza
+apta incluso cuando no tenga ningún destino contabilizable. Los siete ajustes
+blancos y los siete ajustes negros reflejados deben sumar -100 cp por bando y
+cancelarse exactamente. El material y PST v1 también deben cancelarse por
+simetría de color.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+MOB-I02 — Cambio integrado de la posición de apertura tras 1.e4
+Posición representativa 16 de 16
+Posición 56 de 64 del inventario original
+------------------------------------------------------------------------------
+
+FEN:
+rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
+
+Origen de la posición:
+Posición inicial después de:
+
+1. e4
+
+Características integradas:
+- Se evaluaron las catorce piezas aptas
+- Múltiples bloqueadores propios
+- Conteo bilateral
+- Juegan las negras
+- Un peón no evaluado cambia la movilidad de tres piezas evaluadas
+- Un caballo gana un destino desocupado por un peón propio
+- Un alfil y una dama obtienen recorridos deslizantes por la casilla e2
+  desocupada
+- Objetivo de captura al paso correcto en la FEN
+- Composición con el material y PHILOCHESS PST v1
+- Comparación con MOB-I01
+
+Destinos de las blancas contabilizados:
+- Caballo b1: a3, c3
+- Caballo g1: e2, f3, h3
+- Alfil c1: ninguno
+- Alfil f1: e2, d3, c4, b5, a6
+- Torre a1: ninguno
+- Torre h1: ninguno
+- Dama d1: e2, f3, g4, h5
+
+Conteos brutos de destinos de las blancas:
+- Caballo b1: d = 2
+- Caballo g1: d = 3
+- Alfil c1: d = 0
+- Alfil f1: d = 5
+- Torre a1: d = 0
+- Torre h1: d = 0
+- Dama d1: d = 4
+
+Ajustes de las piezas blancas:
+- Caballo b1: 4 x (2 - 4) = -8 cp
+- Caballo g1: 4 x (3 - 4) = -4 cp
+- Alfil c1: 3 x (0 - 7) = -21 cp
+- Alfil f1: 3 x (5 - 7) = -6 cp
+- Torre a1: 2 x (0 - 7) = -14 cp
+- Torre h1: 2 x (0 - 7) = -14 cp
+- Dama d1: 1 x (4 - 14) = -10 cp
+
+Subtotal de movilidad de las blancas:
+-8 - 4 - 21 - 6 - 14 - 14 - 10 = -77 cp
+
+Destinos de las negras contabilizados:
+- Caballo b8: a6, c6
+- Caballo g8: f6, h6
+- Alfil c8: ninguno
+- Alfil f8: ninguno
+- Torre a8: ninguno
+- Torre h8: ninguno
+- Dama d8: ninguno
+
+Conteos brutos de destinos de las negras:
+- Caballo b8: d = 2
+- Caballo g8: d = 2
+- Alfil c8: d = 0
+- Alfil f8: d = 0
+- Torre a8: d = 0
+- Torre h8: d = 0
+- Dama d8: d = 0
+
+Ajustes de las piezas negras:
+- Caballo b8: 4 x (2 - 4) = -8 cp
+- Caballo g8: 4 x (2 - 4) = -8 cp
+- Alfil c8: 3 x (0 - 7) = -21 cp
+- Alfil f8: 3 x (0 - 7) = -21 cp
+- Torre a8: 2 x (0 - 7) = -14 cp
+- Torre h8: 2 x (0 - 7) = -14 cp
+- Dama d8: 1 x (0 - 14) = -14 cp
+
+Subtotal de movilidad de las negras:
+-8 - 8 - 21 - 21 - 14 - 14 - 14 = -100 cp
+
+Mobility v1 esperada:
+Subtotal de las blancas - subtotal de las negras
+-77 - (-100) = +23 cp
+
+Cambio de movilidad respecto de MOB-I01:
+
+Caballo blanco en g1:
+- Ajuste anterior: 4 x (2 - 4) = -8 cp
+- Nuevo ajuste: 4 x (3 - 4) = -4 cp
+- Cambio: +4 cp
+
+Alfil blanco en f1:
+- Ajuste anterior: 3 x (0 - 7) = -21 cp
+- Nuevo ajuste: 3 x (5 - 7) = -6 cp
+- Cambio: +15 cp
+
+Dama blanca en d1:
+- Ajuste anterior: 1 x (0 - 14) = -14 cp
+- Nuevo ajuste: 1 x (4 - 14) = -10 cp
+- Cambio: +4 cp
+
+Cambio total de movilidad:
++4 + (+15) + (+4) = +23 cp
+
+Capas esperadas de la evaluación estática:
+- Material: 0 cp
+- PHILOCHESS PST v1: +20 cp
+- Mobility v1: +23 cp
+
+Explicación de PST:
+- Peón blanco en e2 en MOB-I01: -20 cp
+- Peón blanco en e4 en MOB-I02: 0 cp
+- Cambio de PST del peón: 0 - (-20) = +20 cp
+- Todas las demás contribuciones PST de blancas y negras permanecen sin
+  cambios.
+
+Evaluación estática esperada:
+Material + PST v1 + Mobility v1
+0 + (+20) + (+23) = +43 cp
+
+Objetivo técnico:
+Verificar que mover un peón, aunque los peones estén excluidos de Mobility v1,
+cambia la movilidad basada en la ocupación del caballo de g1, el alfil de f1 y
+la dama de d1. La casilla e2 desocupada debe contar de manera independiente
+para las tres piezas. La mejora de movilidad resultante debe ser
++4 + 15 + 4 = +23 cp y combinarse con el cambio de +20 cp en la PST del peón,
+sin ningún cambio material.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+8. RESUMEN CUANTITATIVO FINAL
+==============================================================================
+
+    Posiciones controladas representativas:   12/12 VERIFICADAS
+    Posiciones transversales representativas:   2/2 VERIFICADAS
+    Posiciones integradas representativas:      2/2 VERIFICADAS
+                                              -----------------
+    Total:                                    16/16 VERIFICADAS
+
+La selección representativa abarca los cuatro tipos de piezas evaluados por
+Mobility v1 y registra ajustes positivos, neutros y negativos. Incluye
+bloqueadores propios y rivales, captura y fin del recorrido, la excepción del
+rey rival, clavadas absolutas, destinos atacados, cancelación bilateral,
+composición exacta de las tres capas de evaluación estática y ocupación
+integrada de apertura.
+
+==============================================================================
+9. CONCLUSIÓN
+==============================================================================
+
+Esta selección de 16 posiciones ofrece una exposición pública compacta y
+reproducible de las reglas y los cálculos esperados empleados por PHILOCHESS
+Mobility v1. Demuestra una cobertura representativa y, al mismo tiempo,
+conserva el inventario completo de regresión de 64 posiciones como un activo
+interno de desarrollo.
+
+La selección pública complementa el registro de desarrollo de
+PHILOCHESS 0.2-alpha-008. No sustituye la suite completa de validación.
+
+==============================================================================
+FIN DEL DOCUMENTO
+==============================================================================
