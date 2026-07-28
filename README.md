@@ -58,7 +58,7 @@ The latest version, PHILOCHESS 0.2-alpha-007, was successfully compiled in both 
 | 0.2-alpha-005 | Improved move ordering with PV-move priority and MVV-LVA |
 | 0.2-alpha-006 | Time-controlled iterative deepening with soft and hard time limits |
 | 0.2-alpha-007 | Piece-square tables with phase-dependent king evaluation |
-| 0.2-alpha-008 | Basic mobility evaluation for knights, bishops, rooks, and queens |
+| 0.2-alpha-008 | Basic knight, bishop, rook and queen mobility evaluation |
 
 ## Licensing
 
