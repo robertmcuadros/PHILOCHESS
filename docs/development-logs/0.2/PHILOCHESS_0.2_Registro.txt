@@ -4443,3 +4443,804 @@ conservador. No constituye una evaluación final ni ajustada de forma óptima.
 
 La siguiente versión planificada es PHILOCHESS 0.2-alpha-008 — Evaluación
 básica de movilidad.
+
+Fecha: 27 de julio de 2026
+
+PHILOCHESS 0.2-alpha-008 — Evaluación básica de movilidad
+
+Se implementó la primera evaluación explícita de actividad de piezas en
+PHILOCHESS mediante un término de movilidad conservador basado en la ocupación.
+
+Hito técnico:
+PHILOCHESS ahora evalúa no solamente qué material permanece y dónde está
+colocada cada pieza, sino también cuántos destinos geométricos poseen sus
+caballos, alfiles, torres y damas.
+
+La evaluación estática ahora combina tres componentes independientes:
+
+evaluación estática =
+evaluación material + evaluación pieza-casilla + evaluación de movilidad
+
+Esta es la octava versión del ciclo de desarrollo de PHILOCHESS 0.2.
+Se apoya directamente en el código validado de PHILOCHESS 0.2-alpha-007, sin
+modificar esa versión cerrada.
+
+Alpha-008 conserva:
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque, jaque mate y ahogado;
+- perft y la validación perft con referencias conocidas;
+- los valores materiales establecidos;
+- PHILOCHESS PST v1;
+- el cálculo de la fase y la interpolación de las tablas del rey;
+- la búsqueda alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción completa de la variante principal;
+- los informes UCI iterativos;
+- los informes UCI de mate;
+- la conservación de la última iteración completamente terminada;
+- la prioridad de la jugada PV en la raíz y debajo de ella;
+- la prioridad de promociones y el ordenamiento MVV-LVA de capturas;
+- los límites temporales blando y duro;
+- la profundización iterativa controlada por tiempo;
+- el rechazo seguro de iteraciones interrumpidas;
+- las baterías establecidas de regresión táctica y búsqueda de quietud;
+- el inventario táctico y de búsqueda de quietud completo de 64 casos;
+- todos los comandos de diagnóstico heredados de alpha-007.
+
+Nueva funcionalidad:
+- Se añadió PHILOCHESS Mobility v1.
+- Se añadió el conteo de destinos basado en la ocupación para los caballos.
+- Se añadió el conteo de destinos por rayos para alfiles, torres y damas.
+- Se añadieron conteos de movilidad separados para las blancas y las negras.
+- Se añadieron subtotales ponderados por tipo de pieza y color.
+- Se añadió una evaluación bilateral de movilidad.
+- Se integró Mobility v1 en la evaluación estática existente.
+- Se conservó la convención de signo para el bando al turno requerida por
+  negamax.
+- Se amplió el diagnóstico eval con la contribución de movilidad.
+- Se añadió un diagnóstico detallado de movilidad.
+- Se añadió el comando de diagnóstico mobilitytest.
+- Se añadió un inventario completo de 64 posiciones para Mobility v1.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.2-alpha-008
+
+Diseño de soporte:
+Las reglas implementadas siguen el diseño aprobado PHILOCHESS Mobility v1: una
+primera aproximación propia y deliberadamente conservadora a la actividad de
+las piezas, expresada en centipeones.
+
+Mobility v1 cuenta destinos seudolegales basados en la ocupación para:
+- caballos;
+- alfiles;
+- torres;
+- damas.
+
+Los peones y los reyes no están incluidos.
+
+Los pesos aprobados son:
+- destino de caballo: 4 centipeones;
+- destino de alfil: 3 centipeones;
+- destino de torre: 2 centipeones;
+- destino de dama: 1 centipeón.
+
+El término final es bilateral:
+
+Mobility v1 =
+movilidad blanca ponderada - movilidad negra ponderada
+
+Reglas de conteo:
+- un destino ocupado por una pieza propia no cuenta;
+- un destino ocupado por una pieza rival sí cuenta;
+- una pieza deslizante se detiene en la primera casilla ocupada;
+- un caballo puede saltar sobre casillas ocupadas;
+- los destinos atacados por el rival continúan contando;
+- las clavadas absolutas no reducen el conteo;
+- el cálculo no comprueba si mover una pieza dejaría al propio rey en jaque.
+
+Estas reglas mantienen Mobility v1 determinista e independiente del generador
+de jugadas legales. También permiten que su resultado exacto sea comprobado
+mediante un inventario de regresión específico.
+
+Composición de la evaluación estática:
+
+evaluación estática =
+evaluación material + evaluación pieza-casilla + evaluación de movilidad
+
+Los valores materiales permanecen sin cambios:
+- peón: 100;
+- caballo: 320;
+- alfil: 330;
+- torre: 500;
+- dama: 900;
+- rey: 0.
+
+Los valores PST, el cálculo de la fase y la interpolación de las tablas del rey
+permanecen sin cambios con respecto a PHILOCHESS PST v1.
+
+Primero se calcula la evaluación completa desde la perspectiva de las blancas.
+Su signo se ajusta una sola vez según el bando al turno, conservando la
+convención requerida por negamax.
+
+Inventario de pruebas de soporte:
+Antes de programar, se elaboró, revisó y verificó un inventario completo de 64
+posiciones para Mobility v1:
+- 44 posiciones controladas;
+- 10 posiciones transversales;
+- 10 posiciones integradas.
+
+Las posiciones controladas aíslan las reglas de conteo para piezas
+individuales, bloqueadores propios y rivales, capturas, bordes del tablero y
+simetría por color.
+
+Las posiciones transversales verifican que los mismos principios se mantengan
+en distintos tipos de piezas y configuraciones del tablero.
+
+Las posiciones integradas combinan varias piezas y efectos de ocupación en una
+misma posición, y comprueban el resultado bilateral final de Mobility v1.
+
+Límite de la versión:
+Alpha-008 modifica la evaluación estática y, por consiguiente, puede cambiar
+la jugada seleccionada, la evaluación numérica, la variante principal, el
+número de nodos y el estado diagnóstico de los casos de regresión que exigen
+una jugada exacta.
+
+No modifica:
+- el generador de jugadas legales;
+- la aplicación de jugadas;
+- los valores materiales;
+- los valores PST ni el cálculo de la fase;
+- las reglas de la búsqueda alpha-beta;
+- las reglas de selección de jugadas de la búsqueda de quietud;
+- la jerarquía de ordenamiento de jugadas;
+- la construcción de la variante principal;
+- la fórmula de asignación temporal;
+- la interrupción de la búsqueda;
+- los objetivos o la estructura del inventario táctico y de búsqueda de
+  quietud.
+
+Mobility v1 es reemplazable de forma deliberada. Las versiones futuras podrán
+ajustar sus pesos o refinar sus reglas de conteo sin cambiar el generador de
+jugadas legales ni la arquitectura básica de búsqueda.
+
+No se introdujo un término de movilidad de peones ni de reyes. Tampoco se
+añadieron interpolación por fases, filtrado de clavadas, filtrado de seguridad
+ni procedimientos de ajuste.
+
+Prueba de compilación Release:
+El programa compiló correctamente en Visual Studio mediante Release | x64 e
+ISO C++17.
+
+La compilación informó:
+1 compilación correcta y 0 errores.
+
+Prueba de compilación Debug:
+El programa compiló correctamente en Visual Studio mediante Debug | x64 e
+ISO C++17.
+
+La compilación informó:
+1 compilación correcta y 0 errores.
+
+Ambos ejecutables iniciaron y respondieron normalmente.
+
+Las siguientes pruebas por consola fueron ejecutadas con el programa
+Release | x64.
+
+Prueba 1 — Inventario completo de Mobility v1
+
+Comando ejecutado:
+
+mobilitytest
+
+Resultado:
+
+PASS 64  FAIL 0  TOTAL 64
+
+Estructura del inventario:
+
+- controladas: 44/44;
+- transversales: 10/10;
+- integradas: 10/10;
+- estructura: PASS.
+
+Todos los conteos esperados por pieza, subtotales por color, valores ponderados
+y resultados bilaterales coincidieron con el inventario aprobado.
+
+Prueba 2 — Regresión de PHILOCHESS PST v1
+
+Comando ejecutado:
+
+psttest
+
+Resultado:
+
+PASS 8  FAIL 0  TOTAL 8
+
+La integración de Mobility v1 no alteró la orientación aprobada de las PST, la
+simetría por color, el tratamiento de las fases ni los puntajes PST esperados.
+
+Prueba 3 — Regresión de la búsqueda de quietud
+
+Comando ejecutado:
+
+qtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Los cuatro casos de búsqueda de quietud conservaron sus resultados esperados.
+No se
+alcanzó el límite de plies ni se produjo un fallo en la preparación de las
+posiciones.
+
+Prueba 4 — Regresión del ordenamiento de jugadas
+
+Comando ejecutado:
+
+ordertest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La prioridad de la jugada PV y el ordenamiento MVV-LVA continuaron funcionando
+después del cambio de evaluación.
+
+Prueba 5 — Regresión de la profundización iterativa
+
+Comando ejecutado:
+
+idtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Se completaron todas las iteraciones requeridas y se conservó la última
+iteración finalizada por completo.
+
+Prueba 6 — Regresión de la variante principal
+
+Comando ejecutado:
+
+pvtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La variante principal permaneció legal y coherente en todas las profundidades
+probadas.
+
+Prueba 7 — Regresión de la gestión del tiempo
+
+Comando ejecutado en Release:
+
+timetest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La muestra Release de 2000 ms demostró una búsqueda efectiva más allá de la
+profundidad 4. Los límites soft y hard, el descarte de la iteración interrumpida
+y la conservación de la última iteración completa siguieron funcionando.
+
+Prueba 8 — Regresión perft conocida
+
+Comando ejecutado:
+
+perftknown 4
+
+Resultado:
+
+PASS 24  FAIL 0  TOTAL 24
+
+Las seis posiciones conocidas fueron validadas en las profundidades 1 a 4. La
+generación de jugadas legales permaneció inalterada por Mobility v1.
+
+Prueba 9 — Regresión táctica conservada
+
+Comando ejecutado:
+
+tactictest 4
+
+Resultado:
+
+Se encontraron las tres jugadas tácticas esperadas.
+
+Los tres casos completaron 4 de 4 iteraciones. No se alcanzó el límite de plies
+ni se produjo un fallo en la preparación de las posiciones.
+
+Prueba 10 — Inventario táctico y de búsqueda de quietud completo de 64 casos
+
+Comando ejecutado:
+
+inventorytest 4
+
+Resultado final:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categorías: [A] 21/21  [B] 33/33  [C] 10/10
+Estructura del inventario: PASS
+
+Los nueve casos OPEN fueron:
+
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Los 64 casos fueron procesados. Ningún caso devolvió FAIL.
+
+Comparación con alpha-007:
+
+De OPEN a PASS:
+
+- R02-T02.
+
+De PASS a OPEN:
+
+- R07-T02.
+
+OPEN sin cambios:
+
+- R03-T01;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Por tanto:
+
+9 OPEN anteriores
+- 1 nuevo PASS
++ 1 nuevo OPEN
+= 9 casos OPEN
+
+R02-T02 cambió a PASS porque PHILOCHESS encontró:
+
+8...Nxc5
+bestmove a6c5
+
+R07-T02 cambió a OPEN porque PHILOCHESS eligió:
+
+8...Bg4
+bestmove c8g4
+
+La jugada contiene una idea táctica válida. El alfil ataca la dama blanca y, si
+las blancas responden 9.Qxg4, la dama deja de defender el caballo de a4 y las
+negras pueden jugar 9...Rxa4.
+
+La combinación no es forzada. Las blancas pueden responder 9.f3 sin mover la
+dama y conservar la posibilidad de contestar ...Rxa4 con Qxa4+.
+
+Es comprensible que Mobility v1 favorezca 8...Bg4 porque aumenta la actividad
+del alfil y modifica favorablemente los efectos de ocupación de otras piezas.
+El estado OPEN significa únicamente que el objetivo exacto registrado,
+8...Rxa4, no fue seleccionado a profundidad 4. No establece una regresión
+táctica.
+
+Prueba 11 — Límites explícitos de 100 y 500 ms
+
+Primeros comandos:
+
+position startpos
+go movetime 100
+
+Resultado:
+
+- límite soft: 85 ms;
+- límite hard: 100 ms;
+- profundidad 4 completada en aproximadamente 73 ms;
+- profundidad 5 interrumpida a los 100 ms;
+- iteración incompleta descartada;
+- bestmove b1c3;
+- impactos en el límite de plies: 0.
+
+Segundos comandos:
+
+position startpos
+go movetime 500
+
+Resultado:
+
+- límite soft: 425 ms;
+- límite hard: 500 ms;
+- profundidad 4 completada en aproximadamente 74 ms;
+- la profundidad 5 comenzó, pero no terminó;
+- iteración incompleta descartada a los 500 ms;
+- bestmove b1c3;
+- impactos en el límite de plies: 0.
+
+En ambos casos, PHILOCHESS respetó exactamente el límite hard y conservó el
+resultado de la última iteración completada por entero.
+
+Prueba 12 — Control de tiempo 15+10
+
+Comandos ejecutados:
+
+position startpos
+go wtime 900000 btime 900000 winc 10000 binc 10000
+
+Resultado:
+
+- límite soft: 18158 ms;
+- límite hard: 21363 ms;
+- profundidad 6 completada en 5339 ms;
+- profundidad 7 interrumpida y descartada a los 21363 ms;
+- bestmove b1c3;
+- impactos en el límite de plies: 0.
+
+La búsqueda final registró:
+
+- 432911 nodos de búsqueda principal;
+- 4101039 nodos de quietud;
+- aproximadamente 4533950 nodos totales.
+
+La búsqueda de quietud representó aproximadamente el 90,4 % de los nodos.
+
+La comprobación equivalente con las negras después de 1.e4 utilizó los mismos
+límites correctos de 18158/21363 ms, conservó la profundidad 6 y devolvió:
+
+bestmove b8c6
+
+Prueba 13 — Selección discriminatoria del reloj según el color
+
+Prueba con las negras al turno:
+
+position startpos moves e2e4
+go wtime 600000 btime 900000 winc 1000 binc 10000
+
+PHILOCHESS debía ignorar el reloj de las blancas y utilizar:
+
+- btime 900000;
+- binc 10000.
+
+La salida informó:
+
+- límite soft: 18158 ms;
+- límite hard: 21363 ms;
+- profundidad 6 completada en 2794 ms;
+- profundidad 7 interrumpida a los 21363 ms;
+- bestmove b8c6.
+
+La búsqueda registró:
+
+- 318724 nodos de búsqueda principal;
+- 3831493 nodos de quietud;
+- 4150217 nodos totales.
+
+Prueba inversa con las blancas al turno:
+
+position startpos
+go wtime 900000 btime 600000 winc 10000 binc 1000
+
+PHILOCHESS seleccionó correctamente:
+
+- wtime 900000;
+- winc 10000.
+
+La salida informó:
+
+- límite soft: 18158 ms;
+- límite hard: 21363 ms;
+- profundidad 6 completada en 5355 ms;
+- profundidad 7 interrumpida a los 21363 ms;
+- bestmove b1c3.
+
+La búsqueda registró:
+
+- 430239 nodos de búsqueda principal;
+- 4072497 nodos de quietud;
+- 4502736 nodos totales.
+
+La búsqueda de quietud representó el 90,44 % del conteo total de nodos.
+
+Estas pruebas demostraron inequívocamente que PHILOCHESS selecciona el reloj y
+el incremento correspondientes al color que tiene el turno.
+
+Prueba 14 — Diagnóstico de la búsqueda de quietud, protocolo UCI y
+profundidades explícitas
+
+Comandos ejecutados:
+
+qprobe
+uci
+isready
+position startpos
+go depth 1
+go depth 2
+go depth 3
+go depth 4
+
+Resultados:
+
+qprobe:
+
+- qscore: 0;
+- qnodes: 1;
+- nodos stand-pat: 1;
+- impactos en el límite de plies: 0.
+
+uci:
+
+- id name PHILOCHESS 0.2-alpha-008;
+- id author Robert M. Cuadros;
+- uciok.
+
+isready:
+
+- readyok.
+
+Las cuatro búsquedas explícitas completaron exactamente las profundidades
+solicitadas:
+
+Profundidad 1:
+b1c3
+
+Profundidad 2:
+b1c3 b8c6
+
+Profundidad 3:
+b1c3 b8c6 g1f3
+
+Profundidad 4:
+b1c3 b8c6 g1f3 g8f6
+
+En los cuatro casos:
+
+bestmove b1c3
+
+La búsqueda a profundidad 4 procesó 17122 nodos en aproximadamente 72 ms y no
+alcanzó el límite de plies.
+
+Esto confirmó que la interfaz UCI, el diagnóstico de la búsqueda de quietud, la
+profundización iterativa, la construcción de la PV y el comando go depth
+continuaron funcionando.
+
+Prueba 15 — Cierre normal del programa
+
+Comando ejecutado:
+
+quit
+
+Resultado:
+
+PHILOCHESS cerró normalmente con el código de salida:
+
+0 (0x0)
+
+No se produjo ningún fallo del motor, error, bloqueo ni cierre inesperado.
+
+Observación de rendimiento:
+
+Las pruebas 15+10 mostraron que la búsqueda de quietud todavía representaba
+aproximadamente entre el 90 % y el 92 % de los nodos en las posiciones
+examinadas.
+
+Esta proporción no constituye un fallo funcional, pero confirma que la 
+búsqueda de quietud continúa siendo la principal candidata para futuras
+eficiencia.
+
+Mobility v1 también añade recorridos de ocupación a cada evaluación estática.
+Por ello, la prueba automática de tiempo utiliza una muestra Release de 2000 ms
+para demostrar una profundidad efectiva superior a 4.
+
+Los límites actuales de 18158 ms y 21363 ms son seguros para esta versión. La
+asignación de tiempo sigue siendo estática: PHILOCHESS todavía no ahorra tiempo
+según la estabilidad de la mejor jugada ni amplía selectivamente el presupuesto
+en posiciones críticas.
+
+Validación práctica en GUI
+
+La validación práctica se realizó en Myracle GUI mediante dos partidas contra
+Zoidberg 0.1, alternando los colores.
+
+Condiciones:
+
+- control de tiempo: 15 minutos + 10 segundos por jugada;
+- libro de aperturas: desactivado;
+- tablas Syzygy: desactivadas;
+- ponder: desactivado;
+- adjudicación: full balanced, sin tablebases;
+- primera partida: PHILOCHESS con blancas;
+- segunda partida: PHILOCHESS con negras.
+
+El propósito fue comprobar el funcionamiento legal y estable bajo una GUI con
+ambos colores, el uso correcto del reloj, la comunicación UCI estable y el
+comportamiento práctico de Mobility v1.
+
+Partida 1 — PHILOCHESS 0.2-alpha-008 vs. Zoidberg 0.1
+
+Resultado: 1/2-1/2
+Terminación: tablas por triple repetición
+
+PHILOCHESS jugó una partida enérgica y activa. Mantuvo al rey negro bajo presión
+persistente, incorporó todas las piezas al ataque y transformó la iniciativa en una
+ventaja material técnicamente ganadora.
+
+Después del cambio de damas, PHILOCHESS alcanzó un final favorable con calidad
+y varios peones de ventaja. Sus torres activas también restringieron la
+movilidad práctica de las piezas rivales. Cerca del desenlace, PHILOCHESS
+todavía evaluaba su posición en aproximadamente +4,87.
+
+Sin embargo, el motor aún no detectaba la triple repetición. Repitió jaques en
+una posición ganadora hasta que Myracle declaró las tablas. Zoidberg reconoció
+correctamente el resultado terminal como 0,00, mientras PHILOCHESS continuó
+evaluando la ventaja material y posicional sin comprender que la partida había
+terminado.
+
+Las tablas no fueron causadas por una jugada ilegal, un colapso táctico, una
+pérdida por tiempo, un fallo del motor ni un problema de comunicación.
+Expusieron una regla terminal ausente: un motor ganador debe rechazar una 
+repetición de tablas cuando dispone de una continuación superior.
+
+Partida 2 — Zoidberg 0.1 vs. PHILOCHESS 0.2-alpha-008
+
+Resultado: 1-0
+Terminación: victoria de las blancas por adjudicación
+
+El cambio de damas condujo a un final en el que Zoidberg obtuvo gradualmente la
+posición más cómoda. PHILOCHESS llegó a un final de caballos e intentó contener
+un peligroso peón pasado de la columna h trasladando su caballo al flanco de
+rey.
+
+El plan defensivo atendió el peligro inmediato, pero dejó el flanco de dama
+insuficientemente protegido. El rey blanco penetró y capturó los peones negros
+de ese sector. Posteriormente, Zoidberg entregó su caballo para simplificar la 
+posición y creó peones pasados decisivos. Uno de ellos coronó, y la nueva dama, 
+apoyada por el rey, condujo a una secuencia de mate forzado. PHILOCHESS anunció 
+el mate próximo, tras lo cual Myracle adjudicó la victoria a las blancas antes de 
+que el jaque mate se ejecutara en el tablero.
+
+PHILOCHESS continuó jugando legalmente y reconoció el mate forzado que se
+aproximaba antes del jaque mate final. La partida puso de relieve la ausencia
+actual de una evaluación específica de peones pasados y la dificultad para
+coordinar rey y caballo frente a amenazas en ambos flancos.
+
+Resultado del encuentro
+
+Zoidberg 0.1 ganó la validación de dos partidas por:
+
+1,5-0,5
+
+PHILOCHESS obtuvo:
+
+- 1 empate;
+- 1 derrota;
+- 0 victorias.
+
+Este resultado mejoró el 0-2 obtenido por PHILOCHESS 0.2-alpha-007 contra el
+mismo rival.
+
+La comparación debe interpretarse con prudencia. Una muestra de dos partidas no
+permite aislar el efecto Elo de Mobility v1, y el comportamiento práctico de
+alpha-008 procede del motor completo: material, PST v1, Mobility v1, búsqueda,
+ordenamiento de jugadas, búsqueda de quietud y gestión del tiempo.
+
+No obstante, alpha-008 demostró que podía superar a Zoidberg durante una parte
+considerable de la primera partida, obtener una ventaja ganadora y conseguir
+medio punto contra un rival que había derrotado dos veces a alpha-007.
+
+Limitaciones actuales:
+
+- Mobility v1 utiliza destinos seudolegales basados en la ocupación.
+- No comprueba si mover una pieza deja al propio rey en jaque.
+- Las clavadas absolutas no reducen el conteo.
+- Las casillas atacadas por el rival continúan contando.
+- No distingue entre destinos seguros, peligrosos, útiles o irrelevantes.
+- No evalúa peones ni reyes.
+- No incluye un término explícito para la pareja de alfiles ni para el espacio.
+- Los pesos y referencias no han sido ajustados mediante juego contra sí mismo,
+  optimización automatizada ni grandes conjuntos de posiciones.
+- Mobility v1 no depende de la fase de la partida.
+- PHILOCHESS PST v1 continúa siendo una propuesta conservadora sin ajuste
+  automatizado.
+- El motor no posee evaluación de estructura de peones.
+- El motor no posee evaluación específica de seguridad del rey.
+- Los peones pasados no son evaluados mediante un término específico.
+- La coordinación, el espacio y la iniciativa solo están representados
+  parcialmente.
+- La proporción de nodos de quietud continúa siendo alta.
+- La fórmula de asignación de tiempo permanece estática.
+- El uso del tiempo no se adapta a la complejidad de la posición.
+- No se utiliza la estabilidad de la mejor jugada ni de la evaluación.
+- No se predice el coste de la siguiente iteración.
+- No se ha implementado una tabla de transposición.
+- No se ha implementado ordenamiento por hash move.
+- No se han implementado killer moves ni history heuristic.
+- No se han implementado aspiration windows.
+- stop es reconocido, pero la búsqueda continúa siendo síncrona.
+- go infinite todavía no constituye un análisis verdaderamente infinito.
+- Los jaques sin captura permanecen fuera de la búsqueda directa de quietud.
+- No se han implementado SEE, SEE pruning ni delta pruning.
+- No se ha implementado la detección de tablas por repetición.
+- No se ha implementado la regla de las cincuenta jugadas.
+- No se ha implementado la detección de material insuficiente.
+- El conocimiento específico de finales continúa siendo limitado.
+
+Conclusión:
+
+El desarrollo, la compilación Release y Debug, la validación en consola y la
+validación práctica en Myracle de PHILOCHESS 0.2-alpha-008 han sido completados.
+
+PHILOCHESS superó:
+
+- compilación Release | x64 bajo ISO C++17 con 0 errores;
+- compilación Debug | x64 bajo ISO C++17 con 0 errores;
+- mobilitytest con 64/64 posiciones correctas;
+- la estructura del inventario Mobility v1 con 44 posiciones controladas, 10
+  transversales y 10 integradas;
+- psttest con 8/8 pruebas correctas;
+- qtest con 4/4 pruebas correctas;
+- ordertest con 4/4 pruebas correctas;
+- idtest con 4/4 pruebas correctas;
+- pvtest con 4/4 pruebas correctas;
+- timetest con 4/4 pruebas Release correctas;
+- perftknown 4 con 24/24 validaciones correctas;
+- la regresión táctica conservada a profundidad 4;
+- la ejecución completa del inventario táctico de 64 casos;
+- 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
+- las búsquedas movetime de 100 y 500 ms;
+- la asignación de tiempo 15+10;
+- la selección correcta del reloj para ambos colores;
+- la comunicación UCI mediante uci e isready;
+- las búsquedas explícitas de profundidad 1 a profundidad 4;
+- la conservación de la última iteración completada por entero;
+- el descarte seguro de las iteraciones interrumpidas;
+- el cierre normal con código de salida 0;
+- dos partidas GUI completas a 15+10 con colores alternados;
+- juego completamente legal en ambas partidas;
+- funcionamiento UCI estable, sin fallos del motor ni pérdidas por tiempo;
+- reconocimiento del mate forzado que se aproximaba en la segunda partida.
+
+Alpha-008 establece la primera evaluación explícita de la movilidad de las piezas 
+en PHILOCHESS.
+
+El motor ahora evalúa:
+
+- qué material permanece en el tablero;
+- dónde está ubicada cada pieza;
+- cuántos destinos geométricos posee cada caballo, alfil, torre y dama de
+  acuerdo con la ocupación del tablero.
+
+Mobility v1 es una primera aproximación conservadora. Todavía no equivale a una
+comprensión completa de la actividad, coordinación, restricción o libertad
+estratégica, pero introduce una señal posicional independiente y verificable,
+compatible con las capas de material y PST.
+
+La generación de jugadas legales, la búsqueda, el ordenamiento de jugadas, la
+variante principal, la gestión del tiempo y la comunicación UCI permanecieron
+estables durante la validación interna y práctica.
+
+El resultado deportivo fue una derrota por 0,5-1,5 contra Zoidberg 0.1, que
+mejoró el 0-2 de alpha-007. La primera partida fue especialmente significativa:
+PHILOCHESS alcanzó una posición ganadora contra Zoidberg, pero no pudo
+convertirla porque no reconocía la triple repetición.
+
+Este no es un defecto de Mobility v1. Es una regla de ajedrez ausente cuya
+importancia práctica resultó decisiva. Por ello, la validación estableció la
+siguiente prioridad de desarrollo:
+
+PHILOCHESS 0.2-alpha-009 — Implementación de las reglas de tablas en la búsqueda
+
+Alpha-009 integrará en la búsqueda la repetición, la regla de las cincuenta
+jugadas y la detección de material insuficiente, de modo que PHILOCHESS pueda:
+
+- rechazar una continuación de tablas cuando se encuentre ganando;
+- aceptar o buscar las tablas cuando constituyan el mejor resultado disponible;
+- evaluar correctamente como 0,00 las posiciones terminales de tablas.
+
+Por tanto, PHILOCHESS 0.2-alpha-008 — Evaluación básica de movilidad se
+considera desarrollado, validado internamente, validado en la práctica y
+cerrado satisfactoriamente.
