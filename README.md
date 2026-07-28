@@ -19,9 +19,10 @@ The complete engine source code is maintained in a private development repositor
 
 ## Repository contents
 
-- [`docs/`](docs/) — Development logs and project documentation
-- [`games/`](games/) — External tests, validation tournaments and game analyses
-- [`code-samples/`](code-samples/) — Selected educational code samples from completed phases
+- [`development-logs/`](development-logs/) — Versioned development logs and project documentation
+- [`games/`](games/) — External tests, validation tournaments, and game analyses
+- [`test-inventories/`](test-inventories/) — Structured test inventories for implemented engine features
+- [`code-samples/`](code-samples/) — Selected educational code samples from completed development phases
 - [`assets/`](assets/) — PHILOCHESS visual resources
 
 The published C++ samples are self-contained and can be compiled independently with a C++17-compatible compiler.
