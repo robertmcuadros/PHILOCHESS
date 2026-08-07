@@ -1,0 +1,996 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-009
+REPRESENTATIVE TEST INVENTORY
+STALEMATE RECOGNITION IN SEARCH
+PUBLIC REPRESENTATIVE SAMPLE — 16 OF 64 VERIFIED POSITIONS
+==============================================================================
+
+Author and copyright holder: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is distributed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International license
+(CC BY-NC-ND 4.0).
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Date: August 6, 2026
+
+==============================================================================
+1. OBJECTIVE AND SCOPE
+==============================================================================
+
+This document presents a representative public sample of 16 positions taken
+from the complete private inventory of 64 verified tests prepared for:
+
+    PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search.
+
+The sample makes it possible to document publicly the principles, diversity,
+and rigor of the inventory without publishing the complete private suite. It
+does not replace the 64-test inventory and is not an independent reduced test
+suite.
+
+The original identifiers and numbering of the selected positions are
+preserved, together with their FENs, analyses, rules-based results, technical
+oracles, objectives, and VERIFIED statuses.
+
+==============================================================================
+2. SELECTION CRITERIA
+==============================================================================
+
+The 16 positions form eight color-reversed pairs. The selection remains
+balanced by side to move and represents all seven blocks of the complete
+inventory:
+
+    Block 1 — Direct stalemate recognition                           2 tests
+    Block 2 — Boundary cases, legality, and false positives          2 tests
+    Block 3 — Checkmate versus stalemate                             2 tests
+    Block 4 — Preserving the advantage against stalemate             2 tests
+    Block 5 — Stalemate as a defensive resource                      2 tests
+    Block 6 — Propagation and equivalence among stalemates           2 tests
+    Block 7 — Integrated positions and UCI output                    4 tests
+                                                                    --------
+    Total                                                           16 tests
+
+The sample covers:
+- elementary terminal stalemate from the root;
+- a pseudolegal en passant capture that is illegal because it exposes the
+  moving side's own king;
+- a unique mate-in-two choice versus immediate stalemate;
+- a quiet move that preserves the win versus a stalemating capture;
+- a defensive stalemate forced in exactly four plies;
+- stability of score 0 at different depths;
+- recognition and propagation within the main search;
+- recognition at the horizon with possible quiescence intervention;
+- correct UCI output and symmetry between White and Black.
+
+Distribution by side to move:
+
+    White to move:  8 positions
+    Black to move:  8 positions
+                   ------------
+    Total:         16 positions
+
+Selected identifiers:
+
+    STA-D01–STA-D02
+    STA-D19–STA-D20
+    STA-D27–STA-D28
+    STA-D37–STA-D38
+    STA-D45–STA-D46
+    STA-D53–STA-D54
+    STA-D61–STA-D64
+
+The VERIFIED status confirms that the FEN and the chess and documentary oracle
+of each test have been reviewed individually.
+
+==============================================================================
+3. REPRESENTATIVE TESTS
+==============================================================================
+
+==============================================================================
+3.1 BLOCK 1 — DIRECT STALEMATE RECOGNITION
+2 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D01 — Elementary stalemate of the white king in a corner
+Position 1 of 64
+------------------------------------------------------------------------------
+
+FEN:
+K7/2q5/2k5/8/8/8/8/8 w - - 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on a8.
+- Black: king on c6 and queen on c7.
+
+State of the white king:
+The white king on a8 is not in check.
+
+Legal-move analysis:
+- Ka7 is not legal: a7 is attacked by the black queen on c7.
+- Kb7 is not legal: b7 is attacked by the black queen on c7 and the black
+  king on c6.
+- Kb8 is not legal: b8 is attacked by the black queen on c7.
+- White has no other piece that can move.
+
+Expected rules-based result:
+Stalemate.
+
+Expected technical results:
+- Legal moves: 0.
+- King of the side to move in check: no.
+- Terminal state: stalemate or internal equivalent.
+- Search score: 0.
+- Subsequent static evaluation: must not be run.
+- UCI response from the root: bestmove 0000.
+
+Technical objective:
+Verify the most elementary recognition of stalemate with White to move: the
+lone king is not in check, but all three of its geometric destinations are
+attacked.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D02 — Elementary stalemate of the black king in a corner
+Position 2 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/8/2K5/2Q5/k7 b - - 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on c3 and queen on c2.
+- Black: king on a1.
+
+State of the black king:
+The black king on a1 is not in check.
+
+Legal-move analysis:
+- Ka2 is not legal: a2 is attacked by the white queen on c2.
+- Kb1 is not legal: b1 is attacked by the white queen on c2.
+- Kb2 is not legal: b2 is attacked by the white queen on c2 and the white
+  king on c3.
+- Black has no other piece that can move.
+
+Expected rules-based result:
+Stalemate.
+
+Expected technical results:
+- Legal moves: 0.
+- King of the side to move in check: no.
+- Terminal state: stalemate or internal equivalent.
+- Search score: 0.
+- Subsequent static evaluation: must not be run.
+- UCI response from the root: bestmove 0000.
+
+Technical objective:
+Verify elementary stalemate recognition with Black to move and protect the
+detection against possible color-dependent handling.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+==============================================================================
+3.2 BLOCK 2 — BOUNDARY CASES, LEGALITY, AND FALSE POSITIVES
+2 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D19 — White en passant capture illegal because it exposes the king
+Position 19 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/6k1/6r1/r4pPK/8/6q1/8/8 w - f6 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on h5 and pawn on g5.
+- Black: king on g7, rooks on a5 and g6, queen on g3, and pawn on f5.
+
+State of the white king:
+The white king on h5 is not in check. On the fifth rank, the black pawn on f5
+and the white pawn on g5 interrupt the line of the black rook on a5.
+
+En passant data:
+The f6 field in the FEN records that the black pawn has just advanced from f7
+to f5.
+
+Legal-move analysis:
+- Kg4 and Kh4 are attacked by the black pieces.
+- Kg5 is occupied by the white pawn.
+- Kg6 is occupied by the black rook on g6 and protected by the black king on
+  g7; Kh6 is also attacked.
+- g6 is not legal: g6 is occupied by a black rook.
+- gxh6 does not exist: h6 is empty.
+- gxf6 en passant is pseudolegal but not legal: removing the pawns from g5
+  and f5 simultaneously opens the fifth rank, and the black rook on a5 checks
+  the white king on h5.
+
+Expected rules-based result:
+Stalemate.
+
+Expected technical results:
+- Legal moves: 0.
+- King of the side to move in check: no.
+- Legal en passant capture: no.
+- Terminal state: stalemate or internal equivalent.
+- Search score: 0.
+- Subsequent static evaluation: must not be run.
+- UCI response from the root: bestmove 0000.
+
+Technical objective:
+Verify that the en passant field in a FEN is not automatically interpreted as
+a legal move. Legality must be checked after both pawns are removed and the
+safety of the moving side's own king is confirmed.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D20 — Black en passant capture illegal because it exposes the king
+Position 20 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/1Q6/8/kpP4R/1R6/1K6/8 b - c3 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on b2, queen on b6, rooks on h4 and b3, and pawn on c4.
+- Black: king on a4 and pawn on b4.
+
+State of the black king:
+The black king on a4 is not in check. On the fourth rank, the black pawn on b4
+and the white pawn on c4 interrupt the line of the white rook on h4.
+
+En passant data:
+The c3 field in the FEN records that the white pawn has just advanced from c2
+to c4.
+
+Legal-move analysis:
+- Ka3, Ka5, and Kb5 are attacked by the white pieces.
+- Kb4 is occupied by the black pawn.
+- Kxb3 is not legal: the white rook on b3 is protected by the white king on
+  b2.
+- b3 is not legal: b3 is occupied by a white rook.
+- bxa3 does not exist: a3 is empty.
+- bxc3 en passant is pseudolegal but not legal: removing the pawns from b4
+  and c4 simultaneously opens the fourth rank, and the white rook on h4 checks
+  the black king on a4.
+
+Expected rules-based result:
+Stalemate.
+
+Expected technical results:
+- Legal moves: 0.
+- King of the side to move in check: no.
+- Legal en passant capture: no.
+- Terminal state: stalemate or internal equivalent.
+- Search score: 0.
+- Subsequent static evaluation: must not be run.
+- UCI response from the root: bestmove 0000.
+
+Technical objective:
+Verify with Black to move that an en passant capture is rejected when its
+execution discovers a line of attack against the moving side's own king. The
+pseudolegal move must not prevent stalemate recognition.
+
+Status:
+VERIFIED
+
+==============================================================================
+6. BLOCK 3 — CHECKMATE VERSUS STALEMATE
+POSITIONS 21–32 OF 64
+==============================================================================
+
+------------------------------------------------------------------------------
+==============================================================================
+3.3 BLOCK 3 — CHECKMATE VERSUS STALEMATE
+2 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D27 — Unique white first move for mate in two
+Position 27 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/8/8/K7/8/4Q3/8/8 w - - 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on a5 and queen on e3.
+- Black: king on a8.
+
+Initial state:
+The white king on a5 is not in check. The black king on a8 is not in check
+either. There is no mate in one.
+
+Contrast between checkmate and stalemate:
+- Kb6 is the only first move that preserves the exact mate in two. Black must
+  reply Kb8, followed by Qe8#.
+- Qb6 is legal but causes immediate stalemate.
+
+Expected search result:
+Exact mate in two for White.
+
+Expected technical results:
+- Legal moves from the root: 30.
+- Mate in one available: no.
+- Exact distance: mate in 2.
+- Only first move that preserves mate in 2: Kb6 (a5b6).
+- Verified immediate stalemating move: Qb6 (e3b6).
+- Search score: mate in 2 favorable to White.
+- Expected PV: 1.Kb6 Kb8 2.Qe8#.
+- UCI response from the root: bestmove a5b6.
+
+Technical objective:
+Require an unambiguous selection at the root: only one move preserves mate in
+two, while a natural queen placement concedes an immediate draw.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D28 — Unique black first move for mate in two
+Position 28 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/4q3/8/k7/8/8/K7 b - - 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on a1.
+- Black: king on a4 and queen on e6.
+
+Initial state:
+The black king on a4 is not in check. The white king on a1 is not in check
+either. There is no mate in one.
+
+Contrast between checkmate and stalemate:
+- Kb3 is the only first move that preserves the exact mate in two. White must
+  reply Kb1, followed by Qe1#.
+- Qb3 is legal but causes immediate stalemate.
+
+Expected search result:
+Exact mate in two for Black.
+
+Expected technical results:
+- Legal moves from the root: 30.
+- Mate in one available: no.
+- Exact distance: mate in 2.
+- Only first move that preserves mate in 2: Kb3 (a4b3).
+- Verified immediate stalemating move: Qb3 (e6b3).
+- Search score: mate in 2 favorable to Black.
+- Expected PV: 1...Kb3 2.Kb1 Qe1#.
+- UCI response from the root: bestmove a4b3.
+
+Technical objective:
+Require with Black to move the only continuation that preserves mate in two
+and reject the symmetric stalemating alternative.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+==============================================================================
+3.4 BLOCK 4 — PRESERVING THE ADVANTAGE AGAINST STALEMATE
+2 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D37 — Quiet white move that preserves the win
+Position 37 of 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/2Q4p/8/3p4/3K4/8/8/1B6 w - - 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on d4, queen on c7, and bishop on b1.
+- Black: king on a8 and pawns on d5 and h7.
+
+Initial state:
+The white king on d4 is not in check. The black king on a8 is not in check
+either. The white queen confines the black king. The d5-pawn is blocked by the
+white king, and the h7-pawn retains the moves h6 and h5.
+
+Contrast between the quiet move and the capture:
+- Ba2 is a quiet move: it does not capture, give check, or promote. Black must
+  play h6 or h5; in both cases Bxd5# follows.
+- Bxh7 removes the only mobile black pawn. The d5-pawn remains blocked, and
+  the black king is stalemated.
+
+Expected search result:
+Mate in two for White by means of Ba2; the capture Bxh7 must be evaluated as a
+draw.
+
+Expected technical results:
+- Legal moves from the root: 36.
+- Main quiet move: Ba2 (b1a2).
+- Stalemating capture: Bxh7 (b1h7).
+- Legal replies for Black after Ba2: h6 (h7h6) and h5 (h7h5).
+- Admissible PVs: 1.Ba2 h6 2.Bxd5# and 1.Ba2 h5 2.Bxd5#.
+- Score of Bxh7: 0.
+- Score of Ba2: mate in 2 favorable to White.
+- UCI response from the root: bestmove b1a2.
+
+Technical objective:
+Verify that a quiet move that preserves a temporary move for the defender is
+preferred over an immediate capture that produces stalemate.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D38 — Quiet black move that preserves the win
+Position 38 of 64
+------------------------------------------------------------------------------
+
+FEN:
+1b6/8/8/3k4/3P4/8/2q4P/K7 b - - 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on a1 and pawns on d4 and h2.
+- Black: king on d5, queen on c2, and bishop on b8.
+
+Initial state:
+The black king on d5 is not in check. The white king on a1 is not in check
+either. The black queen confines the white king. The d4-pawn is blocked by the
+black king, and the h2-pawn retains the moves h3 and h4.
+
+Contrast between the quiet move and the capture:
+- Ba7 is a quiet move: it does not capture, give check, or promote. White must
+  play h3 or h4; in both cases Bxd4# follows.
+- Bxh2 removes the only mobile white pawn. The d4-pawn remains blocked, and
+  the white king is stalemated.
+
+Expected search result:
+Mate in two for Black by means of Ba7; the capture Bxh2 must be evaluated as a
+draw.
+
+Expected technical results:
+- Legal moves from the root: 36.
+- Main quiet move: Ba7 (b8a7).
+- Stalemating capture: Bxh2 (b8h2).
+- Legal replies for White after Ba7: h3 (h2h3) and h4 (h2h4).
+- Admissible PVs: 1...Ba7 2.h3 Bxd4# and 1...Ba7 2.h4 Bxd4#.
+- Score of Bxh2: 0.
+- Score of Ba7: mate in 2 favorable to Black.
+- UCI response from the root: bestmove b8a7.
+
+Technical objective:
+Verify with Black to move that the search finds the quiet move that preserves
+the win and rejects the immediate stalemating capture.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+==============================================================================
+3.5 BLOCK 5 — STALEMATE AS A DEFENSIVE RESOURCE
+2 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D45 — White stalemate forced in exactly four plies
+Position 45 of 64
+------------------------------------------------------------------------------
+
+FEN:
+4K3/7k/8/3Q4/8/q2r4/8/8 w - - 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on e8 and queen on d5.
+- Black: king on h7, queen on a3, and rook on d3.
+
+Initial state:
+The white king on e8 is not in check. The black king on h7 is not in check
+either. White has 28 legal moves and is down a rook in material. There is no
+forced stalemate in two plies.
+
+Forced defensive resource:
+- Qf7+ begins a stalemate sequence against both legal black king replies: Kh8
+  and Kh6.
+- After 1.Qf7+ Kh8, White can play 2.Qg8+ Kxg8 or 2.Qg7+ Kxg7; both captures
+  leave the white king on e8 stalemated.
+- After 1.Qf7+ Kh6, White must play 2.Qg6+ Kxg6; the white king is again
+  stalemated on e8.
+- Qg8+ also forces stalemate: 1...Kxg8 stalemates immediately, while 1...Kh6
+  allows 2.Qg6+ Kxg6.
+
+Expected search result:
+Draw for White by means of a stalemate forced in exactly four plies.
+
+Expected technical results:
+- Legal moves from the root: 28.
+- Stalemate forced in two plies: no.
+- Minimum distance to forced stalemate: 4 plies.
+- First moves that force stalemate in four plies:
+  Qf7+ (d5f7) and Qg8+ (d5g8).
+- Legal replies after Qf7+: Kh8 (h7h8) and Kh6 (h7h6).
+- Score of the forced continuations: 0.
+- Admissible main PV: 1.Qf7+ Kh6 2.Qg6+ Kxg6 1/2-1/2.
+- Directed UCI response from the root: bestmove d5f7 or bestmove d5g8.
+
+Technical objective:
+Verify that the stalemate value is propagated through four plies and that the
+defense adapts the second sacrifice to each legal reply by the opposing king.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D46 — Black stalemate forced in exactly four plies
+Position 46 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/Q2R4/8/3q4/8/7K/4k3 b - - 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on h2, queen on a6, and rook on d6.
+- Black: king on e1 and queen on d4.
+
+Initial state:
+The black king on e1 is not in check. The white king on h2 is not in check
+either. Black has 28 legal moves and is down a rook in material. There is no
+forced stalemate in two plies.
+
+Forced defensive resource:
+- Qf2+ begins a stalemate sequence against both legal white king replies: Kh3
+  and Kh1.
+- After 1...Qf2+ 2.Kh3, Black plays 2...Qg3+ 3.Kxg3, and the black king on
+  e1 is stalemated.
+- After 1...Qf2+ 2.Kh1, both 2...Qg2+ 3.Kxg2 and 2...Qg1+ 3.Kxg1 produce
+  stalemate.
+- Qg1+ also forces stalemate: 2.Kxg1 stalemates immediately, while 2.Kh3
+  allows 2...Qg3+ 3.Kxg3.
+
+Expected search result:
+Draw for Black by means of a stalemate forced in exactly four plies.
+
+Expected technical results:
+- Legal moves from the root: 28.
+- Stalemate forced in two plies: no.
+- Minimum distance to forced stalemate: 4 plies.
+- First moves that force stalemate in four plies:
+  Qf2+ (d4f2) and Qg1+ (d4g1).
+- Legal replies after Qf2+: Kh3 (h2h3) and Kh1 (h2h1).
+- Score of the forced continuations: 0.
+- Admissible main PV: 1...Qf2+ 2.Kh3 Qg3+ 3.Kxg3 1/2-1/2.
+- Directed UCI response from the root: bestmove d4f2 or bestmove d4g1.
+
+Technical objective:
+Verify with Black to move the propagation of stalemate through four plies and
+the selection of the second sacrifice according to White's chosen defense.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+==============================================================================
+3.6 BLOCK 6 — PROPAGATION AND EQUIVALENCE AMONG STALEMATES
+2 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D53 — Score 0 stable after Black's only legal capture
+Position 53 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/3q4/6Qk/4K3/1r6/8/8 b - - 1 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on e4 and queen on g5.
+- Black: king on h5, queen on d6, and rook on b3.
+
+Initial state:
+The black king on h5 is in check from the white queen on g5. Black has only
+one legal move, Kxg5. Before the capture, Black has a material advantage of a
+rook; after capturing the queen, Black retains a queen and rook against a
+king, but the position ends immediately in stalemate.
+
+Result propagation:
+- Kxg5 is the only legal response to the check.
+- After 1...Kxg5, the white king on e4 is not in check and has no legal move.
+- The squares d3, e3, and f3 are controlled by the black rook on b3; d4, d5,
+  and e5 by the black queen on d6; and f4 and f5 by the black king on g5.
+- The subsequent material evaluation must not replace the terminal result.
+
+Expected search result:
+Draw at every directed depth by means of 1...Kxg5.
+
+Expected technical results:
+- Legal moves from the root: 1.
+- King of the side to move in check: yes.
+- Only legal move: Kxg5 (h5g5).
+- White's legal moves after Kxg5: 0.
+- White king in check after Kxg5: no.
+- Final terminal state: stalemate.
+- Score at depth 1: 0.
+- Score at depth 2: 0.
+- Score at depth 4: 0.
+- Score at depth 8: 0.
+- Expected PV at every depth: 1...Kxg5 1/2-1/2.
+- UCI response from the root: bestmove h5g5.
+
+Technical objective:
+Verify that the stalemate value 0 is propagated back from the first child node
+and remains stable as depth increases, without being replaced by Black's large
+material advantage before or after the capture.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D54 — Score 0 stable after White's only legal capture
+Position 54 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/1R6/4k3/6qK/3Q4/8/8 w - - 1 2
+
+Side to move:
+White.
+
+Material:
+- White: king on h4, queen on d3, and rook on b6.
+- Black: king on e5 and queen on g4.
+
+Initial state:
+The white king on h4 is in check from the black queen on g4. White has only
+one legal move, Kxg4. Before the capture, White has a material advantage of a
+rook; after capturing the queen, White retains a queen and rook against a
+king, but the position ends immediately in stalemate.
+
+Result propagation:
+- Kxg4 is the only legal response to the check.
+- After 1.Kxg4, the black king on e5 is not in check and has no legal move.
+- The squares d4, d5, d6, and e4 are controlled by the white queen on d3; e6
+  and f6 by the white rook on b6; and f4 and f5 by the white king on g4.
+- The subsequent material evaluation must not replace the terminal result.
+
+Expected search result:
+Draw at every directed depth by means of 1.Kxg4.
+
+Expected technical results:
+- Legal moves from the root: 1.
+- King of the side to move in check: yes.
+- Only legal move: Kxg4 (h4g4).
+- Black's legal moves after Kxg4: 0.
+- Black king in check after Kxg4: no.
+- Final terminal state: stalemate.
+- Score at depth 1: 0.
+- Score at depth 2: 0.
+- Score at depth 4: 0.
+- Score at depth 8: 0.
+- Expected PV at every depth: 1.Kxg4 1/2-1/2.
+- UCI response from the root: bestmove h4g4.
+
+Technical objective:
+Verify with White to move that the stalemate value 0 is propagated identically
+at increasing depths and does not depend on color or the apparent material
+advantage.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+==============================================================================
+3.7 BLOCK 7 — INTEGRATED POSITIONS AND UCI OUTPUT
+4 REPRESENTATIVE TESTS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D61 — Black stalemate detected within the main search
+Position 61 of 64
+------------------------------------------------------------------------------
+
+FEN:
+QKr5/8/1k6/5R2/8/8/8/8 w - - 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on b8, queen on a8, and rook on f5.
+- Black: king on b6 and rook on c8.
+
+Initial state:
+The white king on b8 is in check from the black rook on c8. White has exactly
+one legal move, Kxc8. After the capture, White retains a queen and rook against
+a king, but the black king on b6 is stalemated.
+
+Subsequent terminal node:
+- After 1.Kxc8, the black king on b6 is not in check and has no legal move.
+- The squares a5 and a6 are controlled by the white queen on a8; b5 and c5 by
+  the white rook on f5; c6 by the queen; a7 and b7 by the queen; and c7 by the
+  white king on c8.
+- FEN of the terminal node:
+  Q1K5/8/1k6/5R2/8/8/8/8 b - - 0 1
+
+Directed UCI execution:
+- Load the initial FEN and run go depth 2.
+- Expect bestmove b8c8 and confirm score 0 at the root.
+- Then load the FEN of the terminal node and run go depth 1.
+- Expect bestmove 0000, send isready, and require readyok.
+
+Expected search result:
+A draw through the only legal line, 1.Kxc8, with stalemate recognized within
+the main search and propagated back to the root as 0.
+
+Expected technical results:
+- Legal moves from the root: 1.
+- White king in check: yes.
+- Only legal move: Kxc8 (b8c8).
+- Black's legal moves after Kxc8: 0.
+- Black king in check after Kxc8: no.
+- Terminal state of the child node: stalemate.
+- Score of Kxc8 at depth 2: 0.
+- Expected PV: 1.Kxc8 1/2-1/2.
+- UCI response from the initial root: bestmove b8c8.
+- UCI response from the terminal node: bestmove 0000.
+- Hang when moving from one search to the next: none.
+
+Technical objective:
+Verify that the main search recognizes stalemate in a child node before
+evaluating the resulting large material advantage, propagates the score 0,
+and preserves correct UCI output from both the nonterminal and terminal roots.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D62 — White stalemate detected within the main search
+Position 62 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/5r2/1K6/8/qkR5 b - - 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on b3 and rook on c1.
+- Black: king on b1, queen on a1, and rook on f4.
+
+Initial state:
+The black king on b1 is in check from the white rook on c1. Black has exactly
+one legal move, Kxc1. After the capture, Black retains a queen and rook against
+a king, but the white king on b3 is stalemated.
+
+Subsequent terminal node:
+- After 1...Kxc1, the white king on b3 is not in check and has no legal move.
+- The squares a2 and a3 are controlled by the black queen on a1; b2 by the
+  black king on c1; c2 and c3 by the queen; a4 by the queen; and b4 and c4 by
+  the black rook on f4.
+- FEN of the terminal node:
+  8/8/8/8/5r2/1K6/8/q1k5 w - - 0 2
+
+Directed UCI execution:
+- Load the initial FEN and run go depth 2.
+- Expect bestmove b1c1 and confirm score 0 at the root.
+- Then load the FEN of the terminal node and run go depth 1.
+- Expect bestmove 0000, send isready, and require readyok.
+
+Expected search result:
+A draw through the only legal line, 1...Kxc1, with stalemate recognized within
+the main search and propagated back to the root as 0.
+
+Expected technical results:
+- Legal moves from the root: 1.
+- Black king in check: yes.
+- Only legal move: Kxc1 (b1c1).
+- White's legal moves after Kxc1: 0.
+- White king in check after Kxc1: no.
+- Terminal state of the child node: stalemate.
+- Score of Kxc1 at depth 2: 0.
+- Expected PV: 1...Kxc1 1/2-1/2.
+- UCI response from the initial root: bestmove b1c1.
+- UCI response from the terminal node: bestmove 0000.
+- Hang when moving from one search to the next: none.
+
+Technical objective:
+Verify with Black to move that stalemate detection and propagation within the
+main search are symmetric and that both roots produce the corresponding UCI
+output without hanging.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D63 — Black stalemate at the horizon with possible quiescence intervention
+Position 63 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/2R5/8/5Q2/3k4/8/4q3/4K3 w - - 0 1
+
+Side to move:
+White.
+
+Material:
+- White: king on e1, queen on f5, and rook on c7.
+- Black: king on d4 and queen on e2.
+
+Initial state:
+The white king on e1 is in check from the black queen on e2. White has exactly
+one legal move, Kxe2. After the capture, White retains a queen and rook against
+a king, but the black king on d4 is stalemated exactly at the nominal horizon
+of a depth-1 search.
+
+Subsequent terminal node:
+- After 1.Kxe2, the black king on d4 is not in check and has no legal move.
+- The squares c3, c4, and c5 are controlled by the white rook on c7; d3 and e4
+  by the white queen on f5; e3 by the white king on e2; and d5 and e5 by the
+  queen.
+- FEN of the terminal node:
+  8/2R5/8/5Q2/3k4/8/4K3/8 b - - 0 1
+
+Directed UCI execution:
+- Load the initial FEN and run go depth 1.
+- Expect bestmove e1e2 and confirm score 0 at the root.
+- Then load the FEN of the terminal node and run go depth 1.
+- Expect bestmove 0000, send isready, and require readyok.
+
+Expected search result:
+A draw through the only legal line, 1.Kxe2. If the child node is received by
+quiescence, the terminal must be recognized before stand pat or static
+evaluation; if the architecture resolves it earlier, the result must be
+identical.
+
+Expected technical results:
+- Legal moves from the root: 1.
+- White king in check: yes.
+- Only legal move: Kxe2 (e1e2).
+- Black's legal moves after Kxe2: 0.
+- Black king in check after Kxe2: no.
+- Terminal state of the child node: stalemate.
+- Score of Kxe2 at depth 1: 0.
+- Material evaluation of the child node: must not replace the terminal value.
+- Expected PV: 1.Kxe2 1/2-1/2.
+- UCI response from the initial root: bestmove e1e2.
+- UCI response from the terminal node: bestmove 0000.
+- Hang while resolving the terminal node: none.
+
+Technical objective:
+Verify that a stalemate located at the depth-1 horizon retains the score 0
+even if control reaches the main-search boundary and quiescence may intervene,
+without accepting the material value as stand pat.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+STA-D64 — White stalemate at the horizon with possible quiescence intervention
+Position 64 of 64
+------------------------------------------------------------------------------
+
+FEN:
+4k3/4Q3/8/3K4/5q2/8/2r5/8 b - - 0 1
+
+Side to move:
+Black.
+
+Material:
+- White: king on d5 and queen on e7.
+- Black: king on e8, queen on f4, and rook on c2.
+
+Initial state:
+The black king on e8 is in check from the white queen on e7. Black has exactly
+one legal move, Kxe7. After the capture, Black retains a queen and rook against
+a king, but the white king on d5 is stalemated exactly at the nominal horizon
+of a depth-1 search.
+
+Subsequent terminal node:
+- After 1...Kxe7, the white king on d5 is not in check and has no legal move.
+- The squares c4, c5, and c6 are controlled by the black rook on c2; d6 and e5
+  by the black queen on f4; e6 by the black king on e7; and d4 and e4 by the
+  queen.
+- FEN of the terminal node:
+  8/4k3/8/3K4/5q2/8/2r5/8 w - - 0 2
+
+Directed UCI execution:
+- Load the initial FEN and run go depth 1.
+- Expect bestmove e8e7 and confirm score 0 at the root.
+- Then load the FEN of the terminal node and run go depth 1.
+- Expect bestmove 0000, send isready, and require readyok.
+
+Expected search result:
+A draw through the only legal line, 1...Kxe7. If the child node is received by
+quiescence, the terminal must be recognized before stand pat or static
+evaluation; if the architecture resolves it earlier, the result must be
+identical.
+
+Expected technical results:
+- Legal moves from the root: 1.
+- Black king in check: yes.
+- Only legal move: Kxe7 (e8e7).
+- White's legal moves after Kxe7: 0.
+- White king in check after Kxe7: no.
+- Terminal state of the child node: stalemate.
+- Score of Kxe7 at depth 1: 0.
+- Material evaluation of the child node: must not replace the terminal value.
+- Expected PV: 1...Kxe7 1/2-1/2.
+- UCI response from the initial root: bestmove e8e7.
+- UCI response from the terminal node: bestmove 0000.
+- Hang while resolving the terminal node: none.
+
+Technical objective:
+Verify with Black to move that stalemate recognition at the horizon, its score
+0, and both expected UCI outputs do not depend on color or board orientation.
+
+Status:
+VERIFIED
+
+==============================================================================
+4. FINAL NOTES
+==============================================================================
+
+1. This publication contains only 16 of the 64 verified positions.
+
+2. The complete private inventory retains the exhaustive coverage and is the
+reference for the full validation and regression testing of alpha-009.
+
+3. The nonconsecutive numbering is deliberate: each identifier preserves its
+original place within the complete inventory.
+
+4. The selected test sheets are reproduced without simplifying their FENs,
+analyses, expected results, technical objectives, or verification statuses.
+
+5. The sample is balanced: eight positions have White to move and eight have
+Black to move.
+
+6. Each test has its own oracle. The correct response may be bestmove 0000, a
+unique move, one of several admissible continuations, or a stable score of 0,
+depending on the test.
+
+7. Publication of this sample does not authorize distribution of the complete
+private inventory.
+
+==============================================================================
+END OF REPRESENTATIVE TEST INVENTORY — 16 OF 64 VERIFIED POSITIONS
+==============================================================================
