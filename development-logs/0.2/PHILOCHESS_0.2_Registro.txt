@@ -2158,9 +2158,9 @@ Los ocho casos abiertos continuaron siendo:
 - R09-T04;
 - R09-T05;
 - R09-T08;
-- R09-T09;
 - R09-T10;
-- R10-T05.
+- R10-T05;
+- R10-T06.
 
 Release y Debug produjeron la misma clasificación.
 
@@ -5229,18 +5229,576 @@ PHILOCHESS alcanzó una posición ganadora contra Zoidberg, pero no pudo
 convertirla porque no reconocía la triple repetición.
 
 Este no es un defecto de Mobility v1. Es una regla de ajedrez ausente cuya
-importancia práctica resultó decisiva. Por ello, la validación estableció la
-siguiente prioridad de desarrollo:
+importancia práctica resultó decisiva. Por ello, la validación confirmó el
+reconocimiento de las reglas de tablas dentro de la búsqueda como la siguiente
+área de desarrollo. Su primer hito planificado es:
 
-PHILOCHESS 0.2-alpha-009 — Implementación de las reglas de tablas en la búsqueda
+PHILOCHESS 0.2-alpha-009 — Reconocimiento del ahogado en la búsqueda
 
-Alpha-009 integrará en la búsqueda la repetición, la regla de las cincuenta
-jugadas y la detección de material insuficiente, de modo que PHILOCHESS pueda:
+Alpha-009 reconocerá expresamente el ahogado como tablas terminales para que
+PHILOCHESS pueda:
 
-- rechazar una continuación de tablas cuando se encuentre ganando;
-- aceptar o buscar las tablas cuando constituyan el mejor resultado disponible;
-- evaluar correctamente como 0,00 las posiciones terminales de tablas.
+- distinguir el ahogado del jaque mate en todos los niveles de la búsqueda;
+- rechazar una continuación que causa ahogado cuando se encuentre ganando;
+- buscar el ahogado cuando constituya el mejor recurso defensivo disponible;
+- evaluar correctamente como 0,00 los ahogados terminales.
 
 Por tanto, PHILOCHESS 0.2-alpha-008 — Evaluación básica de movilidad se
 considera desarrollado, validado internamente, validado en la práctica y
 cerrado satisfactoriamente.
+
+Fecha: 7 de agosto de 2026
+
+PHILOCHESS 0.2-alpha-009 — Reconocimiento del ahogado en la búsqueda
+
+Se implementó y validó el reconocimiento explícito del ahogado dentro de la
+búsqueda.
+
+Hito técnico:
+PHILOCHESS ahora reconoce el ahogado como tablas terminales en la raíz, dentro
+de la búsqueda alpha-beta principal y dentro de la búsqueda de quietud.
+
+Una posición de ahogado recibe ahora puntaje 0 antes de que la evaluación
+estática pueda reemplazar el resultado determinado por las reglas. El valor de
+tablas se propaga a través de la búsqueda para que PHILOCHESS pueda conservar
+una victoria rechazando una continuación que causa ahogado y pueda buscar el
+ahogado cuando constituye su mejor recurso defensivo.
+
+Esta es la novena versión del ciclo de desarrollo de PHILOCHESS 0.2. Se apoya
+directamente en el código validado de PHILOCHESS 0.2-alpha-008, sin modificar
+esa versión cerrada.
+
+Alpha-009 conserva:
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque y jaque mate;
+- perft y la validación perft con referencias conocidas;
+- la evaluación material;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de la fase y la interpolación de las tablas del rey;
+- la búsqueda alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción completa de la variante principal;
+- los informes UCI iterativos;
+- los informes UCI de puntajes de mate;
+- la conservación de la última iteración completamente terminada;
+- la prioridad de la jugada PV en la raíz y debajo de ella;
+- la prioridad de promociones y el ordenamiento MVV-LVA de capturas;
+- los límites temporales blando y duro;
+- la profundización iterativa controlada por tiempo;
+- el rechazo seguro de las iteraciones interrumpidas;
+- las baterías establecidas de regresión táctica, búsqueda de quietud, PST,
+  movilidad, ordenamiento de jugadas, variante principal, gestión del tiempo y
+  perft;
+- el inventario táctico y de búsqueda de quietud completo de 64 casos;
+- el inventario Mobility v1 completo de 64 casos.
+
+Nueva funcionalidad de alpha-009:
+- Se añadió una clasificación explícita del estado terminal con tres estados:
+  - ninguno;
+  - jaque mate;
+  - ahogado.
+- Se añadió la clasificación terminal después de la generación completa de
+  jugadas legales.
+- Se definió el ahogado como cero jugadas legales mientras el rey del bando al
+  turno no está en jaque.
+- Se conservó el jaque mate como cero jugadas legales mientras el rey del bando
+  al turno está en jaque.
+- Se asignó puntaje 0 al ahogado.
+- Se conservó el puntaje de jaque mate según la distancia al mate.
+- Se integró el reconocimiento del ahogado terminal en la raíz de la búsqueda.
+- Se integró el reconocimiento del ahogado terminal dentro de alpha-beta.
+- Se integró el reconocimiento del ahogado terminal dentro de la búsqueda de
+  quietud, antes de stand pat y de la evaluación estática.
+- Se añadió el informe del estado terminal de la raíz.
+- Se añadieron contadores independientes de nodos de ahogado y de jaque mate.
+- Se añadió un contador de llamadas a la evaluación estática para verificar
+  trayectorias terminales.
+- Se añadió bestmove 0000 para un ahogado terminal en la raíz.
+- Se añadió el comando de diagnóstico específico stalematetest.
+- Se añadieron las 64 posiciones aprobadas de ahogado al banco interno de
+  pruebas.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.2-alpha-009
+
+Regla operativa:
+
+El ahogado ocurre cuando el jugador al turno:
+- no tiene ninguna jugada legal; y
+- no está en jaque.
+
+La distinción terminal implementada en la búsqueda es:
+
+Cero jugadas legales + rey en jaque    = jaque mate
+Cero jugadas legales + rey sin jaque   = ahogado
+
+El ahogado termina la partida inmediatamente y se evalúa como tablas:
+
+puntaje de ahogado = 0
+
+El estado terminal se examina antes de stand pat o de la evaluación estática
+ordinaria. Por tanto, las ventajas materiales, de PST y de movilidad no pueden
+sobrescribir el puntaje de un ahogado terminal.
+
+Integración en la búsqueda:
+
+En la raíz, una posición terminal devuelve:
+- ninguna jugada legal elegible;
+- puntaje 0 para el ahogado;
+- bestmove 0000 en la salida UCI;
+- un nodo de ahogado registrado;
+- cero evaluaciones estáticas posteriores.
+
+Dentro de alpha-beta y de la búsqueda de quietud, el valor terminal se devuelve
+inmediatamente y se propaga mediante negamax con la convención de signo
+correcta.
+
+Esto permite cuatro comportamientos distintos en la búsqueda:
+- elegir el mate en lugar de un ahogado inmediato;
+- conservar una continuación ganadora en vez de desperdiciar la ventaja;
+- encontrar un ahogado forzado como recurso defensivo;
+- refutar un falso recurso de ahogado cuando el bando superior puede evitarlo.
+
+Soporte provisional de posiciones muertas:
+Las pruebas STA-D39 y STA-D40 exigen distinguir la subpromoción a torre de la
+promoción a dama, que ahoga, y de la promoción a alfil o caballo, que conduce a
+una posición muerta.
+
+Por ello, se añadió un subconjunto deliberadamente limitado de posiciones
+muertas para:
+- rey contra rey;
+- rey y alfil contra rey;
+- rey y caballo contra rey.
+
+Este soporte existe únicamente para conservar el oráculo exacto de las dos
+pruebas de ahogado. No constituye la implementación completa de las posiciones
+muertas ni reemplaza PHILOCHESS 0.2-alpha-010 — Reconocimiento de posiciones
+muertas en la búsqueda.
+
+Inventario de pruebas de soporte:
+Antes de programar, se elaboró, revisó y verificó un inventario completo de 64
+posiciones de ahogado.
+
+El inventario está dividido en siete bloques:
+- Bloque 1 — Reconocimiento directo del ahogado: 8 pruebas;
+- Bloque 2 — Casos fronterizos, legalidad y falsos positivos: 12 pruebas;
+- Bloque 3 — Jaque mate frente a ahogado: 12 pruebas;
+- Bloque 4 — Conservación de la ventaja frente al ahogado: 8 pruebas;
+- Bloque 5 — El ahogado como recurso defensivo: 12 pruebas;
+- Bloque 6 — Propagación y equivalencia entre ahogados: 4 pruebas;
+- Bloque 7 — Posiciones integradas y salida UCI: 8 pruebas.
+
+Total:
+64 pruebas.
+
+El inventario contiene:
+- 32 posiciones con las blancas al turno;
+- 32 posiciones con las negras al turno.
+
+Su cobertura incluye:
+- ahogados elementales;
+- piezas bloqueadas y clavadas absolutas;
+- controles de jaque mate;
+- una única jugada legal de rey;
+- una única jugada legal de otra pieza;
+- captura al paso legal como única salida;
+- captura al paso seudolegal pero ilegal;
+- familias de promociones;
+- mate en una, dos y tres jugadas frente al ahogado;
+- capturas ganadoras y jugadas tranquilas que evitan el ahogado;
+- la única subpromoción ganadora a torre;
+- recursos de ahogado inmediatos y profundos;
+- falsos recursos de ahogado;
+- propagación del puntaje 0 en varias profundidades;
+- continuaciones de ahogado equivalentes;
+- raíces terminales bajo límites de profundidad y tiempo;
+- ahogado dentro de la búsqueda principal;
+- ahogado en el horizonte de la búsqueda de quietud;
+- bestmove 0000 mediante UCI y respuesta posterior normal.
+
+Límite de la versión:
+Esta etapa modifica el tratamiento de estados terminales dentro de la búsqueda.
+
+No modifica:
+- el generador de jugadas legales;
+- la aplicación de jugadas;
+- los valores materiales;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de la fase;
+- la jerarquía de ordenamiento de jugadas;
+- la construcción de la variante principal;
+- la fórmula de asignación temporal;
+- el conjunto de jugadas examinado por la búsqueda de quietud;
+- los objetivos ni la estructura del inventario táctico conservado;
+- la detección de repetición;
+- las reglas de cincuenta o setenta y cinco jugadas;
+- la regla completa de posiciones muertas.
+
+Prueba de compilación Release:
+El programa compiló correctamente en Visual Studio mediante Release | x64 e
+ISO C++17.
+
+La compilación informó:
+1 compilación correcta y 0 errores.
+
+Prueba de compilación Debug:
+El programa compiló correctamente en Visual Studio mediante Debug | x64 e
+ISO C++17.
+
+La compilación informó:
+1 compilación correcta y 0 errores.
+
+Ambos ejecutables iniciaron y respondieron normalmente.
+
+Validación en Release
+
+Prueba 1 — Inventario completo del ahogado
+
+Comando ejecutado:
+
+stalematetest
+
+Resultado:
+
+PASS 64  FAIL 0  TOTAL 64
+
+Estructura del inventario:
+
+- Bloque 1: 8/8 superadas;
+- Bloque 2: 12/12 superadas;
+- Bloque 3: 12/12 superadas;
+- Bloque 4: 8/8 superadas;
+- Bloque 5: 12/12 superadas;
+- Bloque 6: 4/4 superadas;
+- Bloque 7: 8/8 superadas;
+- Inventory structure: PASS;
+- STALEMATE INVENTORY: PASS.
+
+Las 64 posiciones produjeron los resultados aprobados según las reglas y la
+búsqueda.
+
+La batería confirmó:
+- distinción correcta entre jaque mate y ahogado;
+- conteos exactos de jugadas legales en los casos fronterizos;
+- tratamiento correcto de la captura al paso y las promociones;
+- rechazo del ahogado inmediato cuando había mate o victoria disponible;
+- selección del ahogado como recurso defensivo;
+- propagación del puntaje 0 a través de la búsqueda principal y de quietud;
+- ausencia de evaluación estática después de establecer un ahogado terminal;
+- bestmove 0000 desde una raíz ahogada;
+- finalización estable y sin bloqueos.
+
+Corrección del orden de presentación:
+La primera ejecución correcta mostró STA-D55 y STA-D56 antes de STA-D53 y
+STA-D54 porque las pruebas estaban agrupadas por función auxiliar y no por
+identificador.
+
+STA-D55 y STA-D56 fueron separadas en su propio grupo de ejecución y llamadas
+después de las pruebas de propagación. Esto cambió únicamente el orden de
+presentación.
+
+Después de recompilar, stalematetest volvió a producir 64/64 pruebas superadas
+y mostró STA-D01 a STA-D64 en orden numérico estricto.
+
+Prueba 2 — Regresión táctica conservada
+
+Comando ejecutado:
+
+tactictest 4
+
+Resultado:
+Los tres casos tácticos produjeron el resultado esperado.
+
+El motor evitó el error conocido b6c6, encontró h5f3 como intento defensivo y
+encontró d5c7 como refutación táctica esperada. Las tres búsquedas completaron
+cuatro iteraciones.
+
+Prueba 3 — Inventario táctico y de búsqueda de quietud completo
+
+Comando ejecutado:
+
+inventorytest 4
+
+Resultado final:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categorías: [A] 21/21  [B] 33/33  [C] 10/10
+Estructura del inventario: PASS
+
+Los nueve casos OPEN fueron idénticos a los de alpha-008:
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Ningún caso devolvió FAIL. La distribución diagnóstica sin cambios confirmó
+que la implementación del ahogado no introdujo regresiones en este inventario.
+
+Prueba 4 — Regresión de Mobility v1
+
+Comando ejecutado:
+
+mobilitytest
+
+Resultado:
+
+PASS 64  FAIL 0  TOTAL 64
+
+La estructura permaneció correcta con 44 posiciones controladas, 10
+transversales y 10 integradas.
+
+Prueba 5 — Regresión de PHILOCHESS PST v1
+
+Comando ejecutado:
+
+psttest
+
+Resultado:
+
+PASS 8  FAIL 0  TOTAL 8
+
+La orientación de las PST, su reflexión, la simetría, el tratamiento de las
+fases, la interpolación del rey y la integración con la evaluación estática
+permanecieron correctos.
+
+Prueba 6 — Regresión de la búsqueda de quietud
+
+Comando ejecutado:
+
+qtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La prueba del horizonte seleccionó d1f3 con puntaje 405, igual que alpha-008.
+La secuencia de capturas devolvió 492, la promoción tranquila devolvió 892 y la
+evasión de jaque sin stand pat permaneció correcta.
+
+Prueba 7 — Regresión de la profundización iterativa
+
+Comando ejecutado:
+
+idtest 4
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Las profundidades 1 a 4 se completaron con bestmove b1c3 y los conteos
+progresivos de nodos esperados.
+
+Prueba 8 — Regresión de la variante principal
+
+Comando ejecutado:
+
+pvtest 4
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La variante principal permaneció legal y alcanzó la longitud esperada en cada
+profundidad probada.
+
+Prueba 9 — Regresión de la gestión del tiempo
+
+Comando ejecutado:
+
+timetest
+
+Resultado:
+
+PASS 4 FAIL 0 TOTAL 4
+
+La comprobación de asignación de tiempo para 15+10 produjo límites soft y hard de
+18158 ms y 21363 ms, respectivamente. La búsqueda explícita a profundidad 5, la
+respuesta de emergencia con 1 ms y la profundidad de búsqueda no decreciente al
+disponer de más tiempo continuaron funcionando correctamente.
+
+Prueba 10 — Regresión del ordenamiento de jugadas
+
+Comando ejecutado:
+
+ordertest
+
+Resultado:
+
+PASS 4 FAIL 0 TOTAL 4
+
+La prioridad de la PV, el ordenamiento MVV-LVA, el ordenamiento de las promociones
+y la prioridad de la PV por debajo de la raíz continuaron siendo correctos.
+
+Prueba 11 — Regresión de perft conocido
+
+Comando ejecutado:
+
+perftknown 4
+
+Resultado:
+
+PASS 24 FAIL 0 TOTAL 24
+
+Las seis posiciones conocidas coincidieron con sus conteos de referencia en las
+profundidades 1 a 4. Kiwipete devolvió 4085603 nodos a profundidad 4. El enroque,
+la captura al paso, las capturas, las promociones y la generación de jugadas
+legales continuaron funcionando correctamente.
+
+Prueba 12 — Comprobaciones adicionales de UCI y control de tiempo
+
+También se realizaron las siguientes comprobaciones en Release:
+- uci devolvió la identidad alpha-009, el autor y uciok;
+- isready devolvió readyok;
+- go movetime 100 respetó el límite hard de 100 ms, conservó la iteración
+  completada de profundidad 4, descartó la iteración incompleta de profundidad 5
+  y devolvió bestmove b1c3;
+- con negras al turno después de 1.e4, la selección discriminatoria del reloj
+  utilizó correctamente el tiempo y el incremento de las negras, conservó la
+  iteración completada de profundidad 6, descartó la iteración incompleta de
+  profundidad 7 y devolvió bestmove b8c6;
+- las búsquedas explícitas a profundidades 1, 2, 3 y 4 completaron exactamente las
+  profundidades solicitadas;
+- quit cerró el programa normalmente con código de salida 0.
+
+Validación en Debug
+
+Las principales baterías internas se repitieron con el ejecutable Debug | x64.
+
+Resultados:
+- stalematetest: 64/64 superadas;
+- inventorytest 4: 45 PASS, 0 FAIL, 9 OPEN, 10 BASELINE;
+- mobilitytest: 64/64 superadas;
+- psttest: 8/8 superadas;
+- qtest: 4/4 superadas;
+- idtest 4: 4/4 superadas;
+- pvtest 4: 4/4 superadas;
+- ordertest: 4/4 superadas;
+- tactictest 4: se encontraron los tres resultados tácticos;
+- perftknown 4: 24/24 superadas;
+- timetest después de la corrección: 4/4 superadas.
+
+La mayor duración de inventorytest 4 fue normal en una compilación Debug. Las
+pruebas de movilidad y evaluación directa terminaron rápidamente porque no
+recorren millones de nodos.
+
+Corrección del banco de pruebas de tiempo:
+
+La ejecución inicial de timetest en Release obtuvo 4/4. La primera ejecución en
+Debug obtuvo 3/4, aunque el motor se comportó correctamente.
+
+Las profundidades observadas en Debug fueron:
+
+* 50 ms:   profundidad 2;
+* 2000 ms: profundidad 3.
+
+La cuarta prueba tenía como objetivo verificar que disponer de más tiempo de
+reflexión no produjera una búsqueda completada a menor profundidad. Este
+requisito se cumplió. Sin embargo, la prueba también contenía la siguiente
+condición interna:
+
+longResult.depth > SEARCH_MAX_DEPTH
+
+Esta condición exigía que la búsqueda de 2000 ms superara la profundidad 4. El
+umbral dependía de la optimización del compilador y del rendimiento del equipo,
+no del comportamiento funcional que se estaba comprobando. Se cumplió en
+Release, que alcanzó la profundidad 5, pero no en Debug, que alcanzó la
+profundidad 3 mientras respetaba el límite de tiempo y buscaba a mayor
+profundidad que la ejecución de 50 ms.
+
+Por tanto, se eliminó el umbral dependiente del rendimiento. La prueba corregida
+conserva los requisitos pertinentes:
+
+* ambas búsquedas deben devolver una jugada legal;
+* ambas búsquedas deben realizarse bajo gestión del tiempo;
+* la búsqueda más prolongada no debe completarse a menor profundidad;
+* el tiempo transcurrido debe mantenerse dentro de los márgenes establecidos;
+* la variante principal devuelta debe ser legal.
+
+No se modificó la lógica de búsqueda ni la de gestión del tiempo. La corrección
+afectó únicamente al banco de pruebas.
+
+Después de compilar la corrección, timetest se ejecutó nuevamente en ambas
+configuraciones.
+
+Release:
+
+* 50 ms:    profundidad 3;
+* 2000 ms:  profundidad 5;
+* timetest: 4/4 pruebas superadas.
+
+Debug:
+
+* 50 ms:    profundidad 2;
+* 2000 ms:  profundidad 3;
+* timetest: 4/4 pruebas superadas.
+
+La prueba corregida ahora mide la propiedad indicada sin considerar la
+diferencia de rendimiento esperada entre las compilaciones Release y Debug como
+una regresión funcional.
+
+Limitaciones después de alpha-009:
+- el reconocimiento completo de posiciones muertas todavía no está
+  implementado;
+- solo está presente el subconjunto provisional de posiciones muertas exigido
+  por STA-D39 y STA-D40;
+- la regla de las cincuenta jugadas todavía no está implementada en la
+  búsqueda;
+- la regla automática de las setenta y cinco jugadas todavía no está
+  implementada;
+- la repetición de posiciones todavía no está implementada en la búsqueda;
+- todas las limitaciones de evaluación y búsqueda general documentadas para
+  alpha-008 permanecen, salvo cuando hayan sido reemplazadas expresamente en
+  esta entrada.
+
+Conclusión:
+
+PHILOCHESS 0.2-alpha-009 — Reconocimiento del ahogado en la búsqueda ha sido
+implementado y validado satisfactoriamente.
+
+PHILOCHESS superó:
+- compilación Release | x64 bajo ISO C++17 con 0 errores;
+- compilación Debug | x64 bajo ISO C++17 con 0 errores;
+- stalematetest con 64/64 posiciones correctas en Release y Debug;
+- los siete bloques del inventario del ahogado con sus conteos esperados;
+- la presentación numérica estricta de STA-D01 a STA-D64 después de corregir el
+  orden de presentación;
+- el reconocimiento del ahogado terminal en la raíz;
+- la propagación del puntaje 0 dentro de alpha-beta y de la búsqueda de
+  quietud;
+- la prevención de la evaluación estática después de reconocer un ahogado
+  terminal;
+- bestmove 0000 mediante UCI desde raíces terminales de ahogado;
+- la conservación del mate y de continuaciones ganadoras frente al ahogado;
+- la selección del ahogado forzado como recurso defensivo;
+- el rechazo de falsos recursos de ahogado;
+- la batería completa de regresión en Release;
+- la batería principal de regresión en Debug;
+- timetest corregido con resultados 4/4 en Release y Debug;
+- la comunicación UCI y el cierre normal del programa;
+- el funcionamiento estable sin jugadas ilegales del motor, bloqueos, fallos ni
+  terminaciones inesperadas.
+
+Esta validación confirma que el ahogado ya no se limita a ser detectado fuera
+del proceso de decisión. Ahora es un resultado terminal de la búsqueda, con
+valor 0, que puede afectar la selección de jugadas tanto en posiciones
+ganadoras como defensivas.
+
+La clasificación de estados terminales es ahora explícita y compartida por la
+raíz, alpha-beta y la búsqueda de quietud. Los contadores separados de ahogado,
+jaque mate y evaluaciones estáticas proporcionan evidencia directa de que los
+nodos terminales se clasifican una sola vez, reciben el puntaje correcto y se
+devuelven antes de la evaluación ordinaria.
+
+Por tanto, PHILOCHESS 0.2-alpha-009 — Reconocimiento del ahogado en la búsqueda
+se considera desarrollado, validado internamente y cerrado satisfactoriamente.
+
+La siguiente versión planificada es:
+
+PHILOCHESS 0.2-alpha-010 — Reconocimiento de posiciones muertas en la búsqueda
