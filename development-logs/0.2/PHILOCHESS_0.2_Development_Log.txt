@@ -29,7 +29,7 @@ https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 Date: July 12, 2026
 
-PHILOCHESS 0.2-alpha-001 — Basic quiescence search
+PHILOCHESS 0.2-alpha-001 — Basic Quiescence Search
 
 Implemented the first basic quiescence search in PHILOCHESS.
 
@@ -4988,18 +4988,553 @@ PHILOCHESS reached a winning position against Zoidberg, but failed to convert
 it because it did not recognise threefold repetition.
 
 This is not a defect of Mobility v1. It is a missing chess rule whose practical
-importance became decisive. The validation therefore established the next
-development priority:
+importance became decisive. The validation therefore confirmed draw-rule
+recognition inside the search as the next development area. Its first planned
+milestone is:
 
-PHILOCHESS 0.2-alpha-009 — Draw-Rule Implementation in Search
+PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search
 
-Alpha-009 will integrate repetition, the fifty-move rule, and
-insufficient-material detection into the search so that PHILOCHESS can:
+Alpha-009 will recognise stalemate explicitly as a terminal draw so that
+PHILOCHESS can:
 
-- reject a drawing continuation when it is winning;
-- accept or seek a draw when it is the best available result;
-- evaluate terminal drawn positions correctly as 0.00.
+- distinguish stalemate from checkmate at every search level;
+- reject a stalemating continuation when it is winning;
+- seek stalemate when it is the best available defensive result;
+- evaluate terminal stalemates correctly as 0.00.
 
 PHILOCHESS 0.2-alpha-008 — Basic Mobility Evaluation is therefore considered
 successfully developed, internally validated, practically validated, and
 closed.
+
+Date: August 7, 2026
+
+PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search
+
+Implemented and validated explicit stalemate recognition inside the search.
+
+Technical milestone:
+PHILOCHESS now recognises stalemate as a terminal draw at the root, inside the
+main alpha-beta search, and inside quiescence.
+
+A stalemated position is now assigned score 0 before static evaluation can
+replace the rules-based result. The draw value is propagated through the
+search so that PHILOCHESS can preserve a win by rejecting a stalemating
+continuation and can seek stalemate when it is the best available defensive
+result.
+
+This is the ninth version of the PHILOCHESS 0.2 development cycle. It builds
+directly on the validated PHILOCHESS 0.2-alpha-008 code without modifying that
+closed version.
+
+Alpha-009 preserves:
+- legal move generation and move application;
+- FEN loading and all special chess moves;
+- check and checkmate detection;
+- perft and known reference perft validation;
+- material evaluation;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- game-phase calculation and king-table interpolation;
+- alpha-beta and quiescence search;
+- iterative deepening;
+- complete principal-variation construction;
+- iterative UCI information reporting;
+- UCI mate-score reporting;
+- retention of the last fully completed iteration;
+- PV-move priority at the root and below the root;
+- promotion priority and MVV-LVA capture ordering;
+- soft and hard time limits;
+- time-controlled iterative deepening;
+- safe rejection of interrupted iterations;
+- the established tactical, quiescence, PST, mobility, move-ordering,
+  principal-variation, time-management, and perft regression suites;
+- the complete 64-case tactical and quiescence inventory;
+- the complete 64-case Mobility v1 inventory.
+
+New functionality in alpha-009:
+- Added an explicit terminal-state classification with three states:
+  - none;
+  - checkmate;
+  - stalemate.
+- Added terminal classification after complete legal-move generation.
+- Defined stalemate as zero legal moves while the side-to-move king is not in
+  check.
+- Preserved checkmate as zero legal moves while the side-to-move king is in
+  check.
+- Assigned score 0 to stalemate.
+- Preserved mate-distance scoring for checkmate.
+- Integrated terminal stalemate recognition at the search root.
+- Integrated terminal stalemate recognition inside alpha-beta.
+- Integrated terminal stalemate recognition inside quiescence before stand
+  pat and static evaluation.
+- Added root-terminal reporting.
+- Added independent stalemate-node and checkmate-node counters.
+- Added a static-evaluation-call counter for terminal-path verification.
+- Added bestmove 0000 for a terminal stalemate at the root.
+- Added the dedicated stalematetest diagnostic command.
+- Added all 64 approved stalemate positions to the internal test harness.
+- Updated UCI identification to:
+  id name PHILOCHESS 0.2-alpha-009
+
+Operational rule:
+
+Stalemate occurs when the player to move:
+- has no legal move; and
+- is not in check.
+
+The terminal distinction implemented in the search is:
+
+Zero legal moves + king in check     = checkmate
+Zero legal moves + king not in check = stalemate
+
+Stalemate ends the game immediately and is evaluated as a draw:
+
+stalemate score = 0
+
+The terminal state is examined before stand pat or the ordinary static
+evaluation. Therefore, material, PST, and mobility advantages cannot overwrite
+the score of a terminal stalemate.
+
+Search integration:
+
+At the root, a terminal position returns:
+- no legal best move;
+- score 0 for stalemate;
+- bestmove 0000 in UCI output;
+- one recorded stalemate node;
+- zero subsequent static evaluations.
+
+Inside alpha-beta and quiescence, the terminal value is returned immediately
+and propagated through negamax with the correct sign convention.
+
+This permits four distinct search behaviours:
+- choosing mate instead of immediate stalemate;
+- retaining a winning continuation instead of surrendering the advantage;
+- finding a forced stalemate as a defensive resource;
+- rejecting a false stalemate resource when the superior side can avoid it.
+
+Provisional dead-position support:
+Tests STA-D39 and STA-D40 require distinguishing rook underpromotion from
+queen promotion, which stalemates, and bishop or knight promotion, which leads
+to a dead position.
+
+A deliberately limited dead-position subset was therefore added for:
+- king against king;
+- king and bishop against king;
+- king and knight against king.
+
+This support exists only to preserve the exact oracle of the two stalemate
+tests. It is not the complete dead-position implementation and does not replace
+PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search.
+
+Supporting test inventory:
+Before coding, a complete 64-position stalemate inventory was prepared,
+reviewed, and verified.
+
+The inventory is divided into seven blocks:
+- Block 1 — Direct stalemate recognition: 8 tests;
+- Block 2 — Boundary cases, legality, and false positives: 12 tests;
+- Block 3 — Checkmate versus stalemate: 12 tests;
+- Block 4 — Preserving the advantage against stalemate: 8 tests;
+- Block 5 — Stalemate as a defensive resource: 12 tests;
+- Block 6 — Propagation and equivalence among stalemates: 4 tests;
+- Block 7 — Integrated positions and UCI output: 8 tests.
+
+Total:
+64 tests.
+
+The inventory contains:
+- 32 positions with White to move;
+- 32 positions with Black to move.
+
+Its coverage includes:
+- elementary stalemates;
+- blocked pieces and absolute pins;
+- checkmate controls;
+- single legal king moves;
+- single legal moves by another piece;
+- legal en passant as the only escape;
+- pseudolegal but illegal en passant;
+- promotion families;
+- mate in one, two, and three over stalemate;
+- winning captures and quiet moves that avoid stalemate;
+- the unique winning rook underpromotion;
+- immediate and deeper stalemate resources;
+- false stalemate resources;
+- score-0 propagation at several depths;
+- equivalent stalemating continuations;
+- terminal roots under depth and time limits;
+- stalemate inside the main search;
+- stalemate at the quiescence horizon;
+- UCI bestmove 0000 and subsequent responsiveness.
+
+Version boundary:
+This stage changes terminal handling inside the search.
+
+It does not modify:
+- the legal-move generator;
+- move application;
+- the material values;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- the game-phase calculation;
+- the move-ordering hierarchy;
+- principal-variation construction;
+- the time-allocation formula;
+- the set of moves searched by quiescence;
+- the objectives or structure of the preserved tactical inventory;
+- repetition detection;
+- the fifty-move or seventy-five-move rules;
+- the complete dead-position rule.
+
+Release compilation test:
+The program compiled successfully in Visual Studio using Release | x64 and
+ISO C++17.
+
+The compilation reported:
+1 successful build and 0 errors.
+
+Debug compilation test:
+The program compiled successfully in Visual Studio using Debug | x64 and
+ISO C++17.
+
+The compilation reported:
+1 successful build and 0 errors.
+
+Both executables started and responded normally.
+
+Release validation
+
+Test 1 — Complete stalemate inventory
+
+Command performed:
+
+stalematetest
+
+Result:
+
+PASS 64  FAIL 0  TOTAL 64
+
+Inventory structure:
+
+- Block 1: 8/8 passed;
+- Block 2: 12/12 passed;
+- Block 3: 12/12 passed;
+- Block 4: 8/8 passed;
+- Block 5: 12/12 passed;
+- Block 6: 4/4 passed;
+- Block 7: 8/8 passed;
+- Inventory structure: PASS;
+- STALEMATE INVENTORY: PASS.
+
+All 64 positions produced their approved rules-based and search results.
+
+The suite confirmed:
+- correct distinction between checkmate and stalemate;
+- exact legal-move counts in the boundary cases;
+- correct treatment of en passant and promotions;
+- rejection of immediate stalemate when mate or a win was available;
+- selection of stalemate as a defensive resource;
+- score 0 propagated through the main search and quiescence;
+- no static evaluation after a terminal stalemate was established;
+- bestmove 0000 from a stalemated root;
+- stable completion without hangs.
+
+Presentation-order correction:
+The first successful execution printed STA-D55 and STA-D56 before STA-D53 and
+STA-D54 because the tests were grouped by helper function rather than by
+identifier.
+
+STA-D55 and STA-D56 were separated into their own execution group and called
+after the propagation tests. This changed only the presentation order.
+
+After recompilation, stalematetest again produced 64/64 passed and displayed
+STA-D01 through STA-D64 in strict numerical order.
+
+Test 2 — Preserved tactical regression
+
+Command performed:
+
+tactictest 4
+
+Result:
+All three tactical cases produced the expected result.
+
+The engine avoided the known error b6c6, found h5f3 as the defensive attempt,
+and found d5c7 as the expected tactical refutation. All searches completed
+four iterations.
+
+Test 3 — Complete tactical and quiescence inventory
+
+Command performed:
+
+inventorytest 4
+
+Final result:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+The nine OPEN cases were identical to alpha-008:
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+No case returned FAIL. The unchanged diagnostic distribution confirmed that
+the stalemate implementation introduced no regression in this inventory.
+
+Test 4 — Mobility v1 regression
+
+Command performed:
+
+mobilitytest
+
+Result:
+
+PASS 64  FAIL 0  TOTAL 64
+
+The structure remained correct with 44 controlled, 10 transversal, and 10
+integrated positions.
+
+Test 5 — PHILOCHESS PST v1 regression
+
+Command performed:
+
+psttest
+
+Result:
+
+PASS 8  FAIL 0  TOTAL 8
+
+PST orientation, reflection, symmetry, phase handling, king interpolation,
+and integration with the static evaluation remained correct.
+
+Test 6 — Quiescence regression
+
+Command performed:
+
+qtest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The horizon test selected d1f3 with score 405, matching alpha-008. The capture
+chain returned 492, the quiet promotion returned 892, and check evasion without
+stand pat remained correct.
+
+Test 7 — Iterative-deepening regression
+
+Command performed:
+
+idtest 4
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Depths 1 through 4 completed, with bestmove b1c3 and the expected progressive
+node counts.
+
+Test 8 — Principal-variation regression
+
+Command performed:
+
+pvtest 4
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The principal variation remained legal and reached the expected length at
+every tested depth.
+
+Test 9 — Time-management regression
+
+Command performed:
+
+timetest
+
+Result:
+
+PASS 4 FAIL 0 TOTAL 4
+
+The 15+10 time-allocation check produced soft and hard limits of 18158 ms and
+21363 ms, respectively. The explicit depth-5 search, the 1 ms emergency
+response, and the non-decreasing search depth with additional time all remained
+functional.
+
+Test 10 — Move-ordering regression
+
+Command performed:
+
+ordertest
+
+Result:
+
+PASS 4 FAIL 0 TOTAL 4
+
+PV priority, MVV-LVA ordering, promotion ordering, and PV priority below the
+root remained correct.
+
+Test 11 — Known perft regression
+
+Command performed:
+
+perftknown 4
+
+Result:
+
+PASS 24 FAIL 0 TOTAL 24
+
+All six known positions matched their reference counts at depths 1 through 4.
+Kiwipete returned 4085603 nodes at depth 4. Castling, en passant, captures,
+promotions, and legal-move generation remained correct.
+
+Test 12 — Additional UCI and time-control checks
+
+The following checks were also performed in Release:
+- uci returned the alpha-009 identity, author, and uciok;
+- isready returned readyok;
+- go movetime 100 respected the 100 ms hard limit, retained the completed
+  depth-4 iteration, discarded the incomplete depth-5 iteration, and returned
+  bestmove b1c3;
+- with Black to move after 1.e4, discriminatory clock selection correctly used
+  Black's time and increment, retained the completed depth-6 iteration,
+  discarded the incomplete depth-7 iteration, and returned bestmove b8c6;
+- explicit searches at depths 1, 2, 3, and 4 completed exactly the requested
+  depths;
+- quit closed the program normally with exit code 0.
+
+Debug validation
+
+The principal internal suites were repeated with the Debug | x64 executable.
+
+Results:
+- stalematetest: 64/64 passed;
+- inventorytest 4: 45 PASS, 0 FAIL, 9 OPEN, 10 BASELINE;
+- mobilitytest: 64/64 passed;
+- psttest: 8/8 passed;
+- qtest: 4/4 passed;
+- idtest 4: 4/4 passed;
+- pvtest 4: 4/4 passed;
+- ordertest: 4/4 passed;
+- tactictest 4: all three tactical results found;
+- perftknown 4: 24/24 passed;
+- timetest after correction: 4/4 passed.
+
+The longer execution time of inventorytest 4 was normal for a Debug build.
+Mobility and direct evaluation tests completed rapidly because they do not
+search millions of nodes.
+
+Time-test harness correction:
+
+The initial Release execution of timetest returned 4/4. The first Debug
+execution returned 3/4 even though the engine behaved correctly.
+
+The depths observed in Debug were:
+
+* 50 ms:   depth 2;
+* 2000 ms: depth 3.
+
+The fourth test was intended to verify that additional thinking time did not
+produce a shallower completed search. This requirement was satisfied. However,
+the test also contained the following internal condition:
+
+longResult.depth > SEARCH_MAX_DEPTH
+
+This required the 2000 ms search to exceed depth 4. The threshold depended on
+compiler optimisation and machine performance rather than on the functional
+behaviour being tested. It was satisfied in Release, which reached depth 5,
+but not in Debug, which reached depth 3 while still respecting the time limit
+and searching more deeply than the 50 ms run.
+
+The performance-dependent threshold was therefore removed. The corrected test
+retains the relevant requirements:
+
+* both searches must return a legal move;
+* both searches must operate under time management;
+* the longer search must not complete at a shallower depth;
+* elapsed time must remain within the established margins;
+* the returned principal variation must be legal.
+
+No search or time-management logic was changed. The correction affected only
+the test harness.
+
+After the correction was compiled, timetest was executed again in both
+configurations.
+
+Release:
+
+* 50 ms:    depth 3;
+* 2000 ms:  depth 5;
+* timetest: 4/4 passed.
+
+Debug:
+
+* 50 ms:    depth 2;
+* 2000 ms:  depth 3;
+* timetest: 4/4 passed.
+
+The corrected test now measures its stated property without treating the
+expected performance difference between Release and Debug builds as a
+functional regression.
+
+Limitations after alpha-009:
+- complete dead-position recognition is not yet implemented;
+- only the provisional basic dead-position subset required by STA-D39 and
+  STA-D40 is present;
+- the fifty-move rule is not yet implemented in the search;
+- the seventy-five-move automatic rule is not yet implemented;
+- repetition of positions is not yet implemented in the search;
+- all evaluation and general search limitations documented for alpha-008 remain
+  unless explicitly superseded above.
+
+Conclusion:
+
+PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search has been implemented
+and validated successfully.
+
+PHILOCHESS passed:
+- Release | x64 compilation under ISO C++17 with 0 errors;
+- Debug | x64 compilation under ISO C++17 with 0 errors;
+- stalematetest with 64/64 successful positions in both Release and Debug;
+- all seven stalemate inventory blocks with their expected counts;
+- strict numerical presentation from STA-D01 through STA-D64 after the
+  presentation-order correction;
+- terminal stalemate recognition at the root;
+- score-0 propagation inside alpha-beta and quiescence;
+- prevention of static evaluation after terminal stalemate recognition;
+- UCI bestmove 0000 from terminal stalemate roots;
+- preservation of mate and winning continuations over stalemate;
+- selection of forced stalemate as a defensive resource;
+- rejection of false stalemate resources;
+- the complete Release regression battery;
+- the principal Debug regression battery;
+- the corrected timetest with 4/4 results in Release and Debug;
+- normal UCI communication and program closure;
+- stable operation without illegal engine moves, hangs, crashes, or unexpected
+  termination.
+
+This validation confirms that stalemate is no longer merely detected outside
+the decision process. It is now a terminal search result with value 0 that can
+affect move selection in both winning and defensive positions.
+
+Terminal-state classification is now explicit and shared by the root,
+alpha-beta, and quiescence. The separate stalemate, checkmate, and static-
+evaluation counters provide direct evidence that terminal nodes are classified
+once, scored correctly, and returned before ordinary evaluation.
+
+PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search is therefore
+considered successfully developed, internally validated, and closed.
+
+The next planned version is:
+
+PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search
