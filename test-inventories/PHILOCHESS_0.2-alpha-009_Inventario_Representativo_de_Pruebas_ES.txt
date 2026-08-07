@@ -1,0 +1,998 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-009
+INVENTARIO REPRESENTATIVO DE PRUEBAS
+RECONOCIMIENTO DEL AHOGADO EN LA BÚSQUEDA
+MUESTRA PÚBLICA REPRESENTATIVA — 16 DE 64 POSICIONES VERIFICADAS
+==============================================================================
+
+Autor y titular de los derechos de autor: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Este documento se distribuye bajo la licencia internacional Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0
+(CC BY-NC-ND 4.0).
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
+
+Fecha: 6 de agosto de 2026
+
+==============================================================================
+1. OBJETIVO Y ALCANCE
+==============================================================================
+
+Este documento presenta una muestra pública representativa de 16 posiciones
+tomadas del inventario privado completo de 64 pruebas verificadas preparado
+para:
+
+    PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search.
+
+La muestra permite documentar públicamente los principios, la diversidad y
+el rigor del inventario sin publicar la suite privada completa. No sustituye
+al inventario de 64 pruebas ni constituye una suite reducida independiente.
+
+Se conservan los identificadores y la numeración originales de las posiciones
+seleccionadas, así como sus FEN, análisis, resultados reglamentarios, oráculos
+técnicos, objetivos y estados VERIFICADA.
+
+==============================================================================
+2. CRITERIO DE SELECCIÓN
+==============================================================================
+
+Las 16 posiciones forman ocho parejas con colores invertidos. La selección
+mantiene equilibrio por bando al turno y representa los siete bloques del
+inventario completo:
+
+    Bloque 1 — Reconocimiento directo del ahogado                    2 pruebas
+    Bloque 2 — Casos fronterizos, legalidad y falsos positivos       2 pruebas
+    Bloque 3 — Mate frente a ahogado                                 2 pruebas
+    Bloque 4 — Conservación de la ventaja frente al ahogado          2 pruebas
+    Bloque 5 — Ahogado como recurso defensivo                        2 pruebas
+    Bloque 6 — Propagación y equivalencia entre ahogados             2 pruebas
+    Bloque 7 — Posiciones integradas y salida UCI                    4 pruebas
+                                                                    ----------
+    Total                                                           16 pruebas
+
+La muestra cubre:
+- ahogado terminal elemental desde la raíz;
+- captura al paso seudolegal, pero ilegal por exponer al propio rey;
+- elección única de mate en dos frente al ahogado inmediato;
+- jugada tranquila que conserva la victoria frente a una captura que ahoga;
+- ahogado defensivo forzado exactamente en cuatro plies;
+- estabilidad de la puntuación 0 a distintas profundidades;
+- reconocimiento y retropropagación dentro de la búsqueda principal;
+- reconocimiento en el horizonte con posible intervención de quiescence;
+- salida UCI correcta y simetría entre blancas y negras.
+
+Distribución por bando al turno:
+
+    Blancas al turno: 8 posiciones
+    Negras al turno:  8 posiciones
+                     -------------
+    Total:           16 posiciones
+
+Identificadores seleccionados:
+
+    STA-D01–STA-D02
+    STA-D19–STA-D20
+    STA-D27–STA-D28
+    STA-D37–STA-D38
+    STA-D45–STA-D46
+    STA-D53–STA-D54
+    STA-D61–STA-D64
+
+El estado VERIFICADA confirma que la FEN y el oráculo ajedrecístico y
+documental de cada ficha han sido revisados individualmente.
+
+==============================================================================
+3. PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+==============================================================================
+3.1 BLOQUE 1 — RECONOCIMIENTO DIRECTO DEL AHOGADO
+2 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D01 — Ahogado elemental del rey blanco en una esquina
+Posición 1 de 64
+------------------------------------------------------------------------------
+
+FEN:
+K7/2q5/2k5/8/8/8/8/8 w - - 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en a8.
+- Negras:  rey en c6 y dama en c7.
+
+Estado del rey blanco:
+El rey blanco en a8 no está en jaque.
+
+Análisis de las jugadas legales:
+- Ka7 no es legal: a7 está atacada por la dama negra de c7.
+- Kb7 no es legal: b7 está atacada por la dama negra de c7 y por el rey
+  negro de c6.
+- Kb8 no es legal: b8 está atacada por la dama negra de c7.
+- Las blancas no poseen ninguna otra pieza que pueda mover.
+
+Resultado reglamentario esperado:
+Ahogado.
+
+Resultados técnicos esperados:
+- Jugadas legales: 0.
+- Rey del bando al turno en jaque: no.
+- Estado terminal: stalemate o equivalente interno.
+- Puntuación de búsqueda: 0.
+- Evaluación estática posterior: no debe ejecutarse.
+- Respuesta UCI desde la raíz: bestmove 0000.
+
+Objetivo técnico:
+Verificar el reconocimiento más elemental del ahogado con las blancas al
+turno: el rey solo no está en jaque, pero sus tres destinos geométricos están
+atacados.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D02 — Ahogado elemental del rey negro en una esquina
+Posición 2 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/8/2K5/2Q5/k7 b - - 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en c3 y dama en c2.
+- Negras:  rey en a1.
+
+Estado del rey negro:
+El rey negro en a1 no está en jaque.
+
+Análisis de las jugadas legales:
+- Ka2 no es legal: a2 está atacada por la dama blanca de c2.
+- Kb1 no es legal: b1 está atacada por la dama blanca de c2.
+- Kb2 no es legal: b2 está atacada por la dama blanca de c2 y por el rey
+  blanco de c3.
+- Las negras no poseen ninguna otra pieza que pueda mover.
+
+Resultado reglamentario esperado:
+Ahogado.
+
+Resultados técnicos esperados:
+- Jugadas legales: 0.
+- Rey del bando al turno en jaque: no.
+- Estado terminal: stalemate o equivalente interno.
+- Puntuación de búsqueda: 0.
+- Evaluación estática posterior: no debe ejecutarse.
+- Respuesta UCI desde la raíz: bestmove 0000.
+
+Objetivo técnico:
+Verificar el reconocimiento elemental del ahogado con las negras al turno y
+proteger la detección frente a un posible tratamiento dependiente del color.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+==============================================================================
+3.2 BLOQUE 2 — CASOS FRONTERIZOS, LEGALIDAD Y FALSOS POSITIVOS
+2 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D19 — Captura al paso blanca ilegal por descubrimiento contra el rey
+Posición 19 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/6k1/6r1/r4pPK/8/6q1/8/8 w - f6 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en h5 y peón en g5.
+- Negras:  rey en g7, torres en a5 y g6, dama en g3 y peón en f5.
+
+Estado del rey blanco:
+El rey blanco en h5 no está en jaque. En la quinta fila, el peón negro de f5
+y el peón blanco de g5 interrumpen la línea de la torre negra de a5.
+
+Dato de captura al paso:
+El campo f6 de la FEN registra que el peón negro acaba de avanzar de f7 a f5.
+
+Análisis de las jugadas legales:
+- Kg4 y Kh4 están atacadas por las piezas negras.
+- Kg5 está ocupada por el peón blanco.
+- Kg6 está ocupada por la torre negra de g6 y protegida por el rey negro de
+  g7; Kh6 también está atacada.
+- g6 no es legal: g6 está ocupada por una torre negra.
+- gxh6 no existe: h6 está vacía.
+- gxf6 al paso es seudolegal, pero no legal: al retirar simultáneamente los
+  peones de g5 y f5 se abre la quinta fila y la torre negra de a5 deja en
+  jaque al rey blanco de h5.
+
+Resultado reglamentario esperado:
+Ahogado.
+
+Resultados técnicos esperados:
+- Jugadas legales: 0.
+- Rey del bando al turno en jaque: no.
+- Captura al paso legal: no.
+- Estado terminal: stalemate o equivalente interno.
+- Puntuación de búsqueda: 0.
+- Evaluación estática posterior: no debe ejecutarse.
+- Respuesta UCI desde la raíz: bestmove 0000.
+
+Objetivo técnico:
+Verificar que el campo de captura al paso de una FEN no se interpreta
+automáticamente como una jugada legal. La legalidad debe comprobarse después
+de retirar ambos peones y confirmar la seguridad del propio rey.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D20 — Captura al paso negra ilegal por descubrimiento contra el rey
+Posición 20 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/1Q6/8/kpP4R/1R6/1K6/8 b - c3 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en b2, dama en b6, torres en h4 y b3 y peón en c4.
+- Negras:  rey en a4 y peón en b4.
+
+Estado del rey negro:
+El rey negro en a4 no está en jaque. En la cuarta fila, el peón negro de b4 y
+el peón blanco de c4 interrumpen la línea de la torre blanca de h4.
+
+Dato de captura al paso:
+El campo c3 de la FEN registra que el peón blanco acaba de avanzar de c2 a c4.
+
+Análisis de las jugadas legales:
+- Ka3, Ka5 y Kb5 están atacadas por las piezas blancas.
+- Kb4 está ocupada por el peón negro.
+- Kxb3 no es legal: la torre blanca de b3 está protegida por el rey blanco de
+  b2.
+- b3 no es legal: b3 está ocupada por una torre blanca.
+- bxa3 no existe: a3 está vacía.
+- bxc3 al paso es seudolegal, pero no legal: al retirar simultáneamente los
+  peones de b4 y c4 se abre la cuarta fila y la torre blanca de h4 deja en
+  jaque al rey negro de a4.
+
+Resultado reglamentario esperado:
+Ahogado.
+
+Resultados técnicos esperados:
+- Jugadas legales: 0.
+- Rey del bando al turno en jaque: no.
+- Captura al paso legal: no.
+- Estado terminal: stalemate o equivalente interno.
+- Puntuación de búsqueda: 0.
+- Evaluación estática posterior: no debe ejecutarse.
+- Respuesta UCI desde la raíz: bestmove 0000.
+
+Objetivo técnico:
+Verificar con las negras al turno que una captura al paso se descarta cuando
+su ejecución descubre una línea de ataque contra el propio rey. La jugada
+seudolegal no debe impedir el reconocimiento del ahogado.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+6. BLOQUE 3 — MATE FRENTE A AHOGADO
+POSICIONES 21–32 DE 64
+==============================================================================
+
+------------------------------------------------------------------------------
+==============================================================================
+3.3 BLOQUE 3 — MATE FRENTE A AHOGADO
+2 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D27 — Única primera jugada blanca de mate en dos
+Posición 27 de 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/8/8/K7/8/4Q3/8/8 w - - 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en a5 y dama en e3.
+- Negras:  rey en a8.
+
+Estado inicial:
+El rey blanco en a5 no está en jaque. El rey negro en a8 tampoco está en
+jaque. No existe mate en una.
+
+Contraste entre mate y ahogado:
+- Kb6 es la única primera jugada que conserva el mate exacto en dos. Las
+  negras deben responder Kb8 y sigue Qe8#.
+- Qb6 es legal, pero provoca ahogado inmediato.
+
+Resultado de búsqueda esperado:
+Mate exacto en dos para las blancas.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 30.
+- Mate en una disponible: no.
+- Distancia exacta: mate en 2.
+- Única primera jugada que conserva el mate en 2: Kb6 (a5b6).
+- Jugada de ahogado inmediato comprobada: Qb6 (e3b6).
+- Puntuación de búsqueda: mate en 2 favorable a las blancas.
+- PV esperada: 1.Kb6 Kb8 2.Qe8#.
+- Respuesta UCI desde la raíz: bestmove a5b6.
+
+Objetivo técnico:
+Exigir una selección inequívoca en la raíz: solo una jugada conserva el mate
+en dos, mientras una colocación natural de la dama concede tablas inmediatas.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D28 — Única primera jugada negra de mate en dos
+Posición 28 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/4q3/8/k7/8/8/K7 b - - 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en a1.
+- Negras:  rey en a4 y dama en e6.
+
+Estado inicial:
+El rey negro en a4 no está en jaque. El rey blanco en a1 tampoco está en
+jaque. No existe mate en una.
+
+Contraste entre mate y ahogado:
+- Kb3 es la única primera jugada que conserva el mate exacto en dos. Las
+  blancas deben responder Kb1 y sigue Qe1#.
+- Qb3 es legal, pero provoca ahogado inmediato.
+
+Resultado de búsqueda esperado:
+Mate exacto en dos para las negras.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 30.
+- Mate en una disponible: no.
+- Distancia exacta: mate en 2.
+- Única primera jugada que conserva el mate en 2: Kb3 (a4b3).
+- Jugada de ahogado inmediato comprobada: Qb3 (e6b3).
+- Puntuación de búsqueda: mate en 2 favorable a las negras.
+- PV esperada: 1...Kb3 2.Kb1 Qe1#.
+- Respuesta UCI desde la raíz: bestmove a4b3.
+
+Objetivo técnico:
+Exigir con las negras al turno la única continuación que mantiene el mate en
+dos y rechazar la alternativa simétrica de ahogado.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+==============================================================================
+3.4 BLOQUE 4 — CONSERVACIÓN DE LA VENTAJA FRENTE AL AHOGADO
+2 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D37 — Jugada tranquila blanca que conserva la victoria
+Posición 37 de 64
+------------------------------------------------------------------------------
+
+FEN:
+k7/2Q4p/8/3p4/3K4/8/8/1B6 w - - 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en d4, dama en c7 y alfil en b1.
+- Negras:  rey en a8 y peones en d5 y h7.
+
+Estado inicial:
+El rey blanco en d4 no está en jaque. El rey negro en a8 tampoco está en
+jaque. La dama blanca encierra al rey negro. El peón d5 está bloqueado por el
+rey blanco y el peón h7 conserva las salidas h6 y h5.
+
+Contraste entre jugada tranquila y captura:
+- Ba2 es una jugada tranquila: no captura, no da jaque y no promociona. Las
+  negras deben jugar h6 o h5; en ambos casos sigue Bxd5#.
+- Bxh7 elimina el único peón negro móvil. El peón d5 continúa bloqueado y el
+  rey negro queda ahogado.
+
+Resultado de búsqueda esperado:
+Mate en dos para las blancas mediante Ba2; la captura Bxh7 debe valorarse como
+tablas.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 36.
+- Jugada tranquila principal: Ba2 (b1a2).
+- Captura que ahoga: Bxh7 (b1h7).
+- Respuestas legales de las negras después de Ba2: h6 (h7h6) y h5 (h7h5).
+- PV admisibles: 1.Ba2 h6 2.Bxd5# y 1.Ba2 h5 2.Bxd5#.
+- Puntuación de Bxh7: 0.
+- Puntuación de Ba2: mate en 2 favorable a las blancas.
+- Respuesta UCI desde la raíz: bestmove b1a2.
+
+Objetivo técnico:
+Verificar que una jugada tranquila que conserva una salida temporal del
+defensor sea preferida frente a una captura inmediata que produce ahogado.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D38 — Jugada tranquila negra que conserva la victoria
+Posición 38 de 64
+------------------------------------------------------------------------------
+
+FEN:
+1b6/8/8/3k4/3P4/8/2q4P/K7 b - - 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en a1 y peones en d4 y h2.
+- Negras:  rey en d5, dama en c2 y alfil en b8.
+
+Estado inicial:
+El rey negro en d5 no está en jaque. El rey blanco en a1 tampoco está en
+jaque. La dama negra encierra al rey blanco. El peón d4 está bloqueado por el
+rey negro y el peón h2 conserva las salidas h3 y h4.
+
+Contraste entre jugada tranquila y captura:
+- Ba7 es una jugada tranquila: no captura, no da jaque y no promociona. Las
+  blancas deben jugar h3 o h4; en ambos casos sigue Bxd4#.
+- Bxh2 elimina el único peón blanco móvil. El peón d4 continúa bloqueado y el
+  rey blanco queda ahogado.
+
+Resultado de búsqueda esperado:
+Mate en dos para las negras mediante Ba7; la captura Bxh2 debe valorarse como
+tablas.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 36.
+- Jugada tranquila principal: Ba7 (b8a7).
+- Captura que ahoga: Bxh2 (b8h2).
+- Respuestas legales de las blancas después de Ba7: h3 (h2h3) y h4 (h2h4).
+- PV admisibles: 1...Ba7 2.h3 Bxd4# y 1...Ba7 2.h4 Bxd4#.
+- Puntuación de Bxh2: 0.
+- Puntuación de Ba7: mate en 2 favorable a las negras.
+- Respuesta UCI desde la raíz: bestmove b8a7.
+
+Objetivo técnico:
+Verificar con las negras al turno que la búsqueda encuentre la jugada tranquila
+que conserva la victoria y rechace la captura inmediata que ahoga.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+==============================================================================
+3.5 BLOQUE 5 — AHOGADO COMO RECURSO DEFENSIVO
+2 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D45 — Ahogado blanco forzado exactamente en cuatro plies
+Posición 45 de 64
+------------------------------------------------------------------------------
+
+FEN:
+4K3/7k/8/3Q4/8/q2r4/8/8 w - - 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en e8 y dama en d5.
+- Negras:  rey en h7, dama en a3 y torre en d3.
+
+Estado inicial:
+El rey blanco en e8 no está en jaque. El rey negro en h7 tampoco está en
+jaque. Las blancas poseen 28 jugadas legales y se encuentran en desventaja
+material de una torre. No existe un ahogado forzado en dos plies.
+
+Recurso defensivo forzado:
+- Qf7+ inicia una secuencia de ahogado frente a las dos respuestas legales del
+  rey negro: Kh8 y Kh6.
+- Después de 1.Qf7+ Kh8, las blancas pueden jugar 2.Qg8+ Kxg8 o
+  2.Qg7+ Kxg7; ambas capturas dejan ahogado al rey blanco en e8.
+- Después de 1.Qf7+ Kh6, las blancas deben jugar 2.Qg6+ Kxg6; el rey blanco
+  vuelve a quedar ahogado en e8.
+- Qg8+ también fuerza el ahogado: 1...Kxg8 ahoga de inmediato, mientras
+  1...Kh6 permite 2.Qg6+ Kxg6.
+
+Resultado de búsqueda esperado:
+Tablas para las blancas mediante un ahogado forzado exacto en cuatro plies.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 28.
+- Ahogado forzado en dos plies: no.
+- Distancia mínima al ahogado forzado: 4 plies.
+- Primeras jugadas que fuerzan el ahogado en cuatro plies:
+  Qf7+ (d5f7) y Qg8+ (d5g8).
+- Respuestas legales después de Qf7+: Kh8 (h7h8) y Kh6 (h7h6).
+- Puntuación de las continuaciones forzadas: 0.
+- PV principal admisible: 1.Qf7+ Kh6 2.Qg6+ Kxg6 1/2-1/2.
+- Respuesta UCI dirigida desde la raíz: bestmove d5f7 o bestmove d5g8.
+
+Objetivo técnico:
+Verificar que el valor de ahogado se propague a cuatro plies y que la defensa
+adapte el segundo sacrificio a cada respuesta legal del rey rival.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D46 — Ahogado negro forzado exactamente en cuatro plies
+Posición 46 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/Q2R4/8/3q4/8/7K/4k3 b - - 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en h2, dama en a6 y torre en d6.
+- Negras:  rey en e1 y dama en d4.
+
+Estado inicial:
+El rey negro en e1 no está en jaque. El rey blanco en h2 tampoco está en
+jaque. Las negras poseen 28 jugadas legales y se encuentran en desventaja
+material de una torre. No existe un ahogado forzado en dos plies.
+
+Recurso defensivo forzado:
+- Qf2+ inicia una secuencia de ahogado frente a las dos respuestas legales del
+  rey blanco: Kh3 y Kh1.
+- Después de 1...Qf2+ 2.Kh3, las negras juegan 2...Qg3+ 3.Kxg3 y el rey
+  negro en e1 queda ahogado.
+- Después de 1...Qf2+ 2.Kh1, tanto 2...Qg2+ 3.Kxg2 como
+  2...Qg1+ 3.Kxg1 producen ahogado.
+- Qg1+ también fuerza el ahogado: 2.Kxg1 ahoga de inmediato, mientras
+  2.Kh3 permite 2...Qg3+ 3.Kxg3.
+
+Resultado de búsqueda esperado:
+Tablas para las negras mediante un ahogado forzado exacto en cuatro plies.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 28.
+- Ahogado forzado en dos plies: no.
+- Distancia mínima al ahogado forzado: 4 plies.
+- Primeras jugadas que fuerzan el ahogado en cuatro plies:
+  Qf2+ (d4f2) y Qg1+ (d4g1).
+- Respuestas legales después de Qf2+: Kh3 (h2h3) y Kh1 (h2h1).
+- Puntuación de las continuaciones forzadas: 0.
+- PV principal admisible: 1...Qf2+ 2.Kh3 Qg3+ 3.Kxg3 1/2-1/2.
+- Respuesta UCI dirigida desde la raíz: bestmove d4f2 o bestmove d4g1.
+
+Objetivo técnico:
+Verificar con las negras al turno la propagación del ahogado a cuatro plies y
+la selección del segundo sacrificio según la defensa elegida por las blancas.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+==============================================================================
+3.6 BLOQUE 6 — PROPAGACIÓN Y EQUIVALENCIA ENTRE AHOGADOS
+2 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D53 — Puntuación 0 estable tras la única captura legal de las negras
+Posición 53 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/3q4/6Qk/4K3/1r6/8/8 b - - 1 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en e4 y dama en g5.
+- Negras:  rey en h5, dama en d6 y torre en b3.
+
+Estado inicial:
+El rey negro en h5 está en jaque por la dama blanca de g5. Las negras poseen
+una sola jugada legal, Kxg5. Antes de la captura tienen una ventaja material
+de una torre; después de capturar la dama conservan dama y torre contra rey,
+pero la posición termina inmediatamente en ahogado.
+
+Propagación del resultado:
+- Kxg5 es la única respuesta legal al jaque.
+- Después de 1...Kxg5, el rey blanco en e4 no está en jaque y no posee ninguna
+  jugada legal.
+- Las casillas d3, e3 y f3 están controladas por la torre negra de b3; d4,
+  d5 y e5, por la dama negra de d6; y f4 y f5, por el rey negro de g5.
+- La evaluación material posterior no debe sustituir el resultado terminal.
+
+Resultado de búsqueda esperado:
+Tablas a todas las profundidades dirigidas mediante 1...Kxg5.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 1.
+- Rey del bando al turno en jaque: sí.
+- Única jugada legal: Kxg5 (h5g5).
+- Jugadas legales de las blancas después de Kxg5: 0.
+- Rey blanco después de Kxg5 en jaque: no.
+- Estado terminal final: ahogado.
+- Puntuación a profundidad 1: 0.
+- Puntuación a profundidad 2: 0.
+- Puntuación a profundidad 4: 0.
+- Puntuación a profundidad 8: 0.
+- PV esperada a todas las profundidades: 1...Kxg5 1/2-1/2.
+- Respuesta UCI desde la raíz: bestmove h5g5.
+
+Objetivo técnico:
+Comprobar que el valor 0 del ahogado retroceda desde el primer nodo hijo y se
+mantenga estable al aumentar la profundidad, sin ser reemplazado por la gran
+ventaja material de las negras antes o después de la captura.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D54 — Puntuación 0 estable tras la única captura legal de las blancas
+Posición 54 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/1R6/4k3/6qK/3Q4/8/8 w - - 1 2
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en h4, dama en d3 y torre en b6.
+- Negras:  rey en e5 y dama en g4.
+
+Estado inicial:
+El rey blanco en h4 está en jaque por la dama negra de g4. Las blancas poseen
+una sola jugada legal, Kxg4. Antes de la captura tienen una ventaja material
+de una torre; después de capturar la dama conservan dama y torre contra rey,
+pero la posición termina inmediatamente en ahogado.
+
+Propagación del resultado:
+- Kxg4 es la única respuesta legal al jaque.
+- Después de 1.Kxg4, el rey negro en e5 no está en jaque y no posee ninguna
+  jugada legal.
+- Las casillas d4, d5, d6 y e4 están controladas por la dama blanca de d3;
+  e6 y f6, por la torre blanca de b6; y f4 y f5, por el rey blanco de g4.
+- La evaluación material posterior no debe sustituir el resultado terminal.
+
+Resultado de búsqueda esperado:
+Tablas a todas las profundidades dirigidas mediante 1.Kxg4.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 1.
+- Rey del bando al turno en jaque: sí.
+- Única jugada legal: Kxg4 (h4g4).
+- Jugadas legales de las negras después de Kxg4: 0.
+- Rey negro después de Kxg4 en jaque: no.
+- Estado terminal final: ahogado.
+- Puntuación a profundidad 1: 0.
+- Puntuación a profundidad 2: 0.
+- Puntuación a profundidad 4: 0.
+- Puntuación a profundidad 8: 0.
+- PV esperada a todas las profundidades: 1.Kxg4 1/2-1/2.
+- Respuesta UCI desde la raíz: bestmove h4g4.
+
+Objetivo técnico:
+Comprobar con las blancas al turno que el valor 0 del ahogado se propague de
+manera idéntica a profundidades crecientes y no dependa del color ni de la
+ventaja material aparente.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+==============================================================================
+3.7 BLOQUE 7 — POSICIONES INTEGRADAS Y SALIDA UCI
+4 PRUEBAS REPRESENTATIVAS
+==============================================================================
+
+------------------------------------------------------------------------------
+STA-D61 — Ahogado negro detectado dentro de la búsqueda principal
+Posición 61 de 64
+------------------------------------------------------------------------------
+
+FEN:
+QKr5/8/1k6/5R2/8/8/8/8 w - - 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en b8, dama en a8 y torre en f5.
+- Negras:  rey en b6 y torre en c8.
+
+Estado inicial:
+El rey blanco en b8 está en jaque por la torre negra de c8. Las blancas poseen
+exactamente una jugada legal, Kxc8. Después de la captura conservan dama y
+torre contra rey, pero el rey negro de b6 queda ahogado.
+
+Nodo terminal posterior:
+- Después de 1.Kxc8, el rey negro en b6 no está en jaque y no posee ninguna
+  jugada legal.
+- Las casillas a5 y a6 están controladas por la dama blanca de a8; b5 y c5,
+  por la torre blanca de f5; c6, por la dama; a7 y b7, por la dama; y c7, por
+  el rey blanco de c8.
+- FEN del nodo terminal:
+  Q1K5/8/1k6/5R2/8/8/8/8 b - - 0 1
+
+Ejecución UCI dirigida:
+- Cargar la FEN inicial y ejecutar go depth 2.
+- Esperar bestmove b8c8 y confirmar puntuación 0 en la raíz.
+- Cargar después la FEN del nodo terminal y ejecutar go depth 1.
+- Esperar bestmove 0000, enviar isready y exigir readyok.
+
+Resultado de búsqueda esperado:
+Tablas mediante la única línea legal 1.Kxc8, con el ahogado reconocido dentro
+de la búsqueda principal y retropropagado como 0 a la raíz.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 1.
+- Rey blanco en jaque: sí.
+- Única jugada legal: Kxc8 (b8c8).
+- Jugadas legales de las negras después de Kxc8: 0.
+- Rey negro después de Kxc8 en jaque: no.
+- Estado terminal del nodo hijo: ahogado.
+- Puntuación de Kxc8 a profundidad 2: 0.
+- PV esperada: 1.Kxc8 1/2-1/2.
+- Respuesta UCI desde la raíz inicial: bestmove b8c8.
+- Respuesta UCI desde el nodo terminal: bestmove 0000.
+- Bloqueo al pasar de una búsqueda a la siguiente: ninguno.
+
+Objetivo técnico:
+Comprobar que la búsqueda principal reconozca un ahogado en un nodo hijo antes
+de evaluar la gran ventaja material resultante, propague el valor 0 y conserve
+una salida UCI correcta tanto desde la raíz no terminal como desde la terminal.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D62 — Ahogado blanco detectado dentro de la búsqueda principal
+Posición 62 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/5r2/1K6/8/qkR5 b - - 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en b3 y torre en c1.
+- Negras:  rey en b1, dama en a1 y torre en f4.
+
+Estado inicial:
+El rey negro en b1 está en jaque por la torre blanca de c1. Las negras poseen
+exactamente una jugada legal, Kxc1. Después de la captura conservan dama y
+torre contra rey, pero el rey blanco de b3 queda ahogado.
+
+Nodo terminal posterior:
+- Después de 1...Kxc1, el rey blanco en b3 no está en jaque y no posee ninguna
+  jugada legal.
+- Las casillas a2 y a3 están controladas por la dama negra de a1; b2, por el
+  rey negro de c1; c2 y c3, por la dama; a4, por la dama; y b4 y c4, por la
+  torre negra de f4.
+- FEN del nodo terminal:
+  8/8/8/8/5r2/1K6/8/q1k5 w - - 0 2
+
+Ejecución UCI dirigida:
+- Cargar la FEN inicial y ejecutar go depth 2.
+- Esperar bestmove b1c1 y confirmar puntuación 0 en la raíz.
+- Cargar después la FEN del nodo terminal y ejecutar go depth 1.
+- Esperar bestmove 0000, enviar isready y exigir readyok.
+
+Resultado de búsqueda esperado:
+Tablas mediante la única línea legal 1...Kxc1, con el ahogado reconocido dentro
+de la búsqueda principal y retropropagado como 0 a la raíz.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 1.
+- Rey negro en jaque: sí.
+- Única jugada legal: Kxc1 (b1c1).
+- Jugadas legales de las blancas después de Kxc1: 0.
+- Rey blanco después de Kxc1 en jaque: no.
+- Estado terminal del nodo hijo: ahogado.
+- Puntuación de Kxc1 a profundidad 2: 0.
+- PV esperada: 1...Kxc1 1/2-1/2.
+- Respuesta UCI desde la raíz inicial: bestmove b1c1.
+- Respuesta UCI desde el nodo terminal: bestmove 0000.
+- Bloqueo al pasar de una búsqueda a la siguiente: ninguno.
+
+Objetivo técnico:
+Comprobar con las negras al turno que la detección y la retropropagación del
+ahogado dentro de la búsqueda principal sean simétricas y que ambas raíces
+produzcan la salida UCI correspondiente sin bloqueo.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D63 — Ahogado negro en el horizonte con posible intervención de quiescence
+Posición 63 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/2R5/8/5Q2/3k4/8/4q3/4K3 w - - 0 1
+
+Bando al turno:
+Blancas.
+
+Material:
+- Blancas: rey en e1, dama en f5 y torre en c7.
+- Negras:  rey en d4 y dama en e2.
+
+Estado inicial:
+El rey blanco en e1 está en jaque por la dama negra de e2. Las blancas poseen
+exactamente una jugada legal, Kxe2. Después de la captura conservan dama y
+torre contra rey, pero el rey negro de d4 queda ahogado justo en el horizonte
+nominal de una búsqueda de profundidad 1.
+
+Nodo terminal posterior:
+- Después de 1.Kxe2, el rey negro en d4 no está en jaque y no posee ninguna
+  jugada legal.
+- Las casillas c3, c4 y c5 están controladas por la torre blanca de c7; d3 y
+  e4, por la dama blanca de f5; e3, por el rey blanco de e2; y d5 y e5, por
+  la dama.
+- FEN del nodo terminal:
+  8/2R5/8/5Q2/3k4/8/4K3/8 b - - 0 1
+
+Ejecución UCI dirigida:
+- Cargar la FEN inicial y ejecutar go depth 1.
+- Esperar bestmove e1e2 y confirmar puntuación 0 en la raíz.
+- Cargar después la FEN del nodo terminal y ejecutar go depth 1.
+- Esperar bestmove 0000, enviar isready y exigir readyok.
+
+Resultado de búsqueda esperado:
+Tablas mediante la única línea legal 1.Kxe2. Si el nodo hijo es recibido por
+quiescence, el terminal debe reconocerse antes de stand pat o de la evaluación
+estática; si la arquitectura lo resuelve antes, el resultado debe ser idéntico.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 1.
+- Rey blanco en jaque: sí.
+- Única jugada legal: Kxe2 (e1e2).
+- Jugadas legales de las negras después de Kxe2: 0.
+- Rey negro después de Kxe2 en jaque: no.
+- Estado terminal del nodo hijo: ahogado.
+- Puntuación de Kxe2 a profundidad 1: 0.
+- Evaluación material del nodo hijo: no debe sustituir el valor terminal.
+- PV esperada: 1.Kxe2 1/2-1/2.
+- Respuesta UCI desde la raíz inicial: bestmove e1e2.
+- Respuesta UCI desde el nodo terminal: bestmove 0000.
+- Bloqueo durante la resolución del nodo terminal: ninguno.
+
+Objetivo técnico:
+Comprobar que un ahogado situado en el horizonte de profundidad 1 conserve el
+valor 0 aunque el control llegue al límite de la búsqueda principal y pueda
+intervenir quiescence, sin aceptar el valor material como stand pat.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+STA-D64 — Ahogado blanco en el horizonte con posible intervención de quiescence
+Posición 64 de 64
+------------------------------------------------------------------------------
+
+FEN:
+4k3/4Q3/8/3K4/5q2/8/2r5/8 b - - 0 1
+
+Bando al turno:
+Negras.
+
+Material:
+- Blancas: rey en d5 y dama en e7.
+- Negras:  rey en e8, dama en f4 y torre en c2.
+
+Estado inicial:
+El rey negro en e8 está en jaque por la dama blanca de e7. Las negras poseen
+exactamente una jugada legal, Kxe7. Después de la captura conservan dama y
+torre contra rey, pero el rey blanco de d5 queda ahogado justo en el horizonte
+nominal de una búsqueda de profundidad 1.
+
+Nodo terminal posterior:
+- Después de 1...Kxe7, el rey blanco en d5 no está en jaque y no posee ninguna
+  jugada legal.
+- Las casillas c4, c5 y c6 están controladas por la torre negra de c2; d6 y
+  e5, por la dama negra de f4; e6, por el rey negro de e7; y d4 y e4, por la
+  dama.
+- FEN del nodo terminal:
+  8/4k3/8/3K4/5q2/8/2r5/8 w - - 0 2
+
+Ejecución UCI dirigida:
+- Cargar la FEN inicial y ejecutar go depth 1.
+- Esperar bestmove e8e7 y confirmar puntuación 0 en la raíz.
+- Cargar después la FEN del nodo terminal y ejecutar go depth 1.
+- Esperar bestmove 0000, enviar isready y exigir readyok.
+
+Resultado de búsqueda esperado:
+Tablas mediante la única línea legal 1...Kxe7. Si el nodo hijo es recibido por
+quiescence, el terminal debe reconocerse antes de stand pat o de la evaluación
+estática; si la arquitectura lo resuelve antes, el resultado debe ser idéntico.
+
+Resultados técnicos esperados:
+- Jugadas legales desde la raíz: 1.
+- Rey negro en jaque: sí.
+- Única jugada legal: Kxe7 (e8e7).
+- Jugadas legales de las blancas después de Kxe7: 0.
+- Rey blanco después de Kxe7 en jaque: no.
+- Estado terminal del nodo hijo: ahogado.
+- Puntuación de Kxe7 a profundidad 1: 0.
+- Evaluación material del nodo hijo: no debe sustituir el valor terminal.
+- PV esperada: 1...Kxe7 1/2-1/2.
+- Respuesta UCI desde la raíz inicial: bestmove e8e7.
+- Respuesta UCI desde el nodo terminal: bestmove 0000.
+- Bloqueo durante la resolución del nodo terminal: ninguno.
+
+Objetivo técnico:
+Comprobar con las negras al turno que el reconocimiento del ahogado en el
+horizonte, su puntuación 0 y las dos salidas UCI esperadas no dependan del color
+ni de la orientación del tablero.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+4. NOTAS FINALES
+==============================================================================
+
+1. Esta publicación contiene únicamente 16 de las 64 posiciones verificadas.
+
+2. El inventario privado completo conserva la cobertura exhaustiva y constituye
+la referencia para la validación integral y las regresiones de alpha-009.
+
+3. La numeración no consecutiva es deliberada: cada identificador conserva su
+lugar original dentro del inventario completo.
+
+4. Las fichas seleccionadas se reproducen sin simplificar sus FEN, análisis,
+resultados esperados, objetivos técnicos ni estados de verificación.
+
+5. La muestra está equilibrada: ocho posiciones corresponden a las blancas al
+turno y ocho a las negras.
+
+6. Cada ficha posee su propio oráculo. La respuesta correcta puede consistir
+en bestmove 0000, una jugada única, una de varias continuaciones admisibles o
+una puntuación 0 estable, según la prueba.
+
+7. La publicación de esta muestra no autoriza la distribución del inventario
+privado completo.
+
+==============================================================================
+FIN DEL INVENTARIO REPRESENTATIVO — 16 DE 64 POSICIONES VERIFICADAS
+==============================================================================
