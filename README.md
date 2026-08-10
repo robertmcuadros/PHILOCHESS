@@ -44,7 +44,7 @@ The latest version, PHILOCHESS 0.2-alpha-009, introduces stalemate recognition t
 | 0.1-alpha-022–024 | Extended perft validation suite and material evaluation |
 | 0.1-alpha-025–028 | Search preparation, basic negamax, expanded UCI integration and basic alpha-beta pruning |
 | 0.1-alpha-029 | GUI compatibility and first external game validation |
-| 0.1-alpha-030 | Tactical regression test from first external game |
+| 0.1-alpha-030 | Tactical regression test derived from the first GUI game |
 | 0.1-alpha-031 | Basic move ordering for alpha-beta search |
 | 0.1-alpha-032 | Final 0.1 validation and closure |
 
@@ -53,13 +53,14 @@ The latest version, PHILOCHESS 0.2-alpha-009, introduces stalemate recognition t
 | Version | Milestone |
 |---|---|
 | 0.2-alpha-001 | Basic quiescence search and refined MVV-LVA capture ordering |
-| 0.2-alpha-002 | Tactical regression and quiescence correctness |
+| 0.2-alpha-002 | Tactical regression testing and quiescence validation following the first tournament |
 | 0.2-alpha-003 | Iterative deepening with preservation of the last completed iteration |
 | 0.2-alpha-004 | Principal variation tracking and iterative UCI reporting |
 | 0.2-alpha-005 | Improved move ordering with PV-move priority and MVV-LVA |
 | 0.2-alpha-006 | Time-controlled iterative deepening with soft and hard time limits |
 | 0.2-alpha-007 | Piece-square tables with phase-dependent king evaluation |
 | 0.2-alpha-008 | Basic knight, bishop, rook and queen mobility evaluation |
+| 0.2-alpha-009 | Stalemate recognition throughout the search |
 
 ## Acknowledgments
 
