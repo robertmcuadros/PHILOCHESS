@@ -43,7 +43,7 @@ The latest version, PHILOCHESS 0.2-alpha-009, introduces stalemate recognition t
 | 0.1-alpha-013–021 | Legal move validation, game status, FEN loading, special moves, perft and divide |
 | 0.1-alpha-022–024 | Extended perft validation suite and material evaluation |
 | 0.1-alpha-025–028 | Search preparation, basic negamax, expanded UCI integration and basic alpha-beta pruning |
-| 0.1-alpha-029 | GUI compatibility and first external game validation |
+| 0.1-alpha-029 | GUI compatibility and validation in the first GUI game |
 | 0.1-alpha-030 | Tactical regression test derived from the first GUI game |
 | 0.1-alpha-031 | Basic move ordering for alpha-beta search |
 | 0.1-alpha-032 | Final 0.1 validation and closure |
