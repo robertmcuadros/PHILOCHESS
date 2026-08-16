@@ -29,7 +29,7 @@ The published C++ samples are self-contained and can be compiled independently w
 
 ## Current status
 
-The latest version, PHILOCHESS 0.2-alpha-009, introduces stalemate recognition throughout the search. The engine now identifies positions in which the side to move is not in check but has no legal moves and consistently evaluates them as draws at the root, in alpha-beta search, and in quiescence search. The implementation was validated against a stalemate test inventory and the complete regression suite. Development will continue with PHILOCHESS 0.2-alpha-010: Dead-Position Recognition in Search.
+The latest version, PHILOCHESS 0.2-alpha-010, introduces conservative dead-position recognition throughout the search. The engine now identifies positions in which neither side can checkmate the other through any legal series of moves and consistently evaluates them as draws at the root, in alpha-beta search, and in quiescence search. The implementation recognises basic dead positions directly from the material on the board and performs targeted analysis of structurally blocked positions to determine whether they are also dead. It was validated against a dedicated dead-position test inventory and the established regression suite. Development will continue with PHILOCHESS 0.2-alpha-011: Fifty-Move Rule in Search.
 
 ## PHILOCHESS 0.1 development milestones
 
