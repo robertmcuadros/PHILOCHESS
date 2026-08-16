@@ -61,6 +61,7 @@ The latest version, PHILOCHESS 0.2-alpha-010, introduces conservative dead-posit
 | 0.2-alpha-007 | Piece-square tables with phase-dependent king evaluation |
 | 0.2-alpha-008 | Basic knight, bishop, rook and queen mobility evaluation |
 | 0.2-alpha-009 | Stalemate recognition throughout the search |
+| 0.2-alpha-010 | Conservative dead-position recognition throughout the search |
 
 ## Acknowledgments
 
