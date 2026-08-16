@@ -5538,3 +5538,504 @@ considered successfully developed, internally validated, and closed.
 The next planned version is:
 
 PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search
+
+Date: August 15, 2026
+
+PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search
+
+Conservative dead-position recognition inside the search was implemented and
+internally validated.
+
+Technical milestone:
+
+PHILOCHESS can now recognise positions in which checkmate is impossible for
+either side through any legal sequence of moves. Such positions are
+immediately assigned a draw value and score 0.
+
+Recognition was integrated at:
+
+- the search root;
+- the alpha-beta search;
+- quiescence.
+
+Classification occurs before static evaluation can replace the rules-based
+result.
+
+This is the tenth version of the PHILOCHESS 0.2 development cycle. It builds
+directly on the validated PHILOCHESS 0.2-alpha-009 code without modifying that
+closed version.
+
+Alpha-010 preserves:
+
+- legal move generation and move application;
+- FEN loading and all special moves;
+- check, checkmate, and stalemate recognition;
+- correct precedence among checkmate, stalemate, and other draw results;
+- perft and known reference perft validation;
+- material evaluation;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- game-phase calculation and king-table interpolation;
+- alpha-beta and quiescence search;
+- iterative deepening;
+- principal-variation construction;
+- iterative search reporting;
+- mate-distance scores;
+- retention of the last completed iteration;
+- PV priority at and below the root;
+- MVV-LVA ordering and promotion priority;
+- soft and hard time limits;
+- safe rejection of interrupted iterations;
+- the preserved tactical, mobility, PST, quiescence, iterative-deepening, PV,
+  time-management, ordering, and perft suites;
+- the 64-case tactical and quiescence inventory;
+- the 64-case stalemate inventory.
+
+New functionality in alpha-010:
+
+- Added the explicit dead-position state.
+- Defined a dead position as one in which neither side can checkmate through
+  any legal continuation.
+- Assigned score 0 to dead positions.
+- Added an immediate material proof for the approved insufficient-material
+  cases.
+- Added a conservative structural proof for blocked positions in which
+  bilateral checkmate impossibility can be demonstrated.
+- Added counts of the proof states examined by the structural tests.
+- Integrated recognition at the search root.
+- Integrated recognition inside alpha-beta.
+- Integrated recognition inside quiescence.
+- Added an independent dead-position node counter.
+- Preserved checkmate and stalemate classification when no legal moves exist.
+- Prevented the detector from declaring a position dead when bilateral
+  checkmate impossibility could not be proved.
+- Added the dedicated deadpositiontest command.
+- Added an inventory of 64 root positions and 10 transitions.
+- Updated internal identification and diagnostic headings to
+  PHILOCHESS 0.2-alpha-010.
+
+Operational rule:
+
+Classification follows this order:
+
+- zero legal moves and king in check: checkmate;
+- zero legal moves and king not in check: stalemate;
+- one or more legal moves and bilateral mate impossibility proved: dead
+  position;
+- otherwise: live position.
+
+A dead position is evaluated as a draw:
+
+dead-position score = 0
+
+When a dead root still has legal moves, PHILOCHESS retains a legal move as its
+bestmove, even though the position is drawn. bestmove 0000 remains reserved
+for roots with no legal moves, such as checkmate or stalemate.
+
+Search integration:
+
+At the root, the detector can establish dead-position before beginning an
+unnecessary ordinary search.
+
+Inside alpha-beta and quiescence, score 0 is returned immediately and
+propagated through negamax using the correct sign convention.
+
+Transitions into dead positions can therefore:
+
+- secure a draw for the inferior side;
+- prevent a material advantage from being treated as a win;
+- avoid unnecessary search after mate impossibility has been proved;
+- coexist without interfering with checkmate and stalemate.
+
+Dead-position inventory:
+
+The inventory contains 64 verified roots and 10 verified transitions divided
+into four blocks:
+
+- Block 1 — Dead positions proved directly by material: 12 tests;
+- Block 2 — Structurally proved dead positions: 16 tests;
+- Block 3 — Negative controls and false-positive prevention: 20 tests;
+- Block 4 — Transitions, terminal precedence, and integration: 16 tests.
+
+Total:
+
+- 64 root positions;
+- 10 additional transitions.
+
+The suite covers:
+
+- basic dead positions by material;
+- structurally blocked positions;
+- symmetry between equivalent White and Black cases;
+- live positions with similar material or structure;
+- checked positions that remain live;
+- positions with only one legal move;
+- immediate transitions into a dead position;
+- recognition inside quiescence;
+- preservation of checkmate;
+- preservation of stalemate;
+- false-positive prevention.
+
+DPR-N19 and DPR-N20 observation:
+
+DPR-N19 and DPR-N20 were correctly classified as live roots. Their returned
+moves, g4g5 and b5b4, respectively, lead to dead positions, while alternative
+legal king moves preserve a sequence in which mate remains possible. This
+does not diminish the correct PASS result of either test.
+
+Version boundary:
+
+The alpha-010 detector is deliberately conservative and incremental. It
+declares a dead position only when an approved material or structural proof
+is available.
+
+It is therefore not intended to solve every possible dead position in chess
+exhaustively. A genuinely dead position outside the admitted patterns and
+structural proofs may remain classified as live or unproved. This policy
+prevents false positives inside the search.
+
+Alpha-010 does not modify:
+
+- legal move generation;
+- move application;
+- material values;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- game-phase calculation;
+- the move-ordering hierarchy;
+- principal-variation construction;
+- the time-allocation formula;
+- the ordinary quiescence move set;
+- the objectives or classification of the historical inventory;
+- the fifty-move rule;
+- the automatic seventy-five-move rule;
+- threefold-repetition detection.
+
+Compilation:
+
+The program compiled successfully in Visual Studio for x64 using ISO C++17
+and the MSVC v145 toolset.
+
+Release | x64:
+
+- 1 successful build;
+- 0 errors;
+- executable generated at x64\Release\PHILOCHESS.exe.
+
+Debug | x64:
+
+- 1 successful build;
+- 0 errors;
+- executable generated at x64\Debug\PHILOCHESS.exe.
+
+Both executables started normally and terminated through quit with exit
+code 0.
+
+Release validation
+
+Test 1 — Dead-position inventory
+
+Command performed:
+
+deadpositiontest
+
+Result:
+
+- Block 1: 12/12;
+- Block 2: 16/16;
+- Block 3: 20/20;
+- Block 4: 16/16;
+- roots: 64/64;
+- transitions: 10/10;
+- inventory structure: PASS;
+- DEAD-POSITION INVENTORY: PASS.
+
+Material cases required one proof state. Structural cases traversed their
+proof spaces and returned symmetrical counts for reflected positions.
+Negative controls returned zero proof states and produced no false positives.
+
+Transitions DPR-T03 through DPR-T12 correctly reached dead child positions.
+DPR-T13 and DPR-T14 preserved checkmate, while DPR-T15 and DPR-T16 preserved
+stalemate.
+
+Test 2 — Stalemate inventory
+
+Command performed:
+
+stalematetest
+
+Result:
+
+- Block 1: 8/8;
+- Block 2: 12/12;
+- Block 3: 12/12;
+- Block 4: 8/8;
+- Block 5: 12/12;
+- Block 6: 4/4;
+- Block 7: 8/8;
+- total: 64/64;
+- structure: PASS;
+- STALEMATE INVENTORY: PASS.
+
+The new dead-position state did not alter stalemate recognition or terminal
+precedence.
+
+Test 3 — Mobility
+
+Command performed:
+
+mobilitytest
+
+Result:
+
+- 64/64;
+- 44 controlled positions;
+- 10 transversal positions;
+- 10 integrated positions;
+- structure: PASS.
+
+Test 4 — Piece-square tables
+
+Command performed:
+
+psttest
+
+Result:
+
+PASS 8  FAIL 0  TOTAL 8
+
+Table orientation, reflection, initial symmetry, phase weights, king
+interpolation, representative PST changes, castling placement, and static-
+evaluation composition remained correct.
+
+Test 5 — Quiescence
+
+Command performed:
+
+qtest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The suite preserved:
+
+- d1f3 and score 405 in the horizon test;
+- score 492 in the capture chain;
+- score 892 in the quiet-promotion test;
+- check evasion without stand pat.
+
+Test 6 — Iterative deepening
+
+Command performed:
+
+idtest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Depths 1 through 4 completed with bestmove b1c3 and node counts of 20, 171,
+2253, and 17122.
+
+Test 7 — Principal variation
+
+Command performed:
+
+pvtest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The PV correctly reached lengths 1 through 4:
+
+- b1c3;
+- b1c3 b8c6;
+- b1c3 b8c6 g1f3;
+- b1c3 b8c6 g1f3 g8f6.
+
+Test 8 — Time management
+
+Command performed:
+
+timetest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The 15+10 allocation produced:
+
+- soft limit: 18158 ms;
+- hard limit: 21363 ms.
+
+The explicit depth-5 search completed correctly. The 1 ms emergency test
+returned the last available iteration, and the 50 ms versus 2000 ms
+comparison confirmed non-decreasing completed depth.
+
+Test 9 — Move ordering
+
+Command performed:
+
+ordertest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The following remained correct:
+
+- PV priority;
+- MVV-LVA capture ordering;
+- promotion priority;
+- PV priority below the root.
+
+Test 10 — Tactical regression
+
+Command performed:
+
+tactictest
+
+Result:
+
+All three diagnostics preserved their expected results:
+
+- the known bad move b6c6 was avoided in favour of b6d6;
+- h5f3 was found as the defensive attempt after 11.Bb5;
+- d5c7 was found as the tactical refutation after 11...Qxb5.
+
+All three searches completed four iterations. The dead-position counter
+remained zero in these unrelated positions.
+
+Test 11 — Known perft
+
+Command performed:
+
+perftknown 4
+
+Result:
+
+PASS 24  FAIL 0  TOTAL 24
+
+All six positions matched their depth-1 through depth-4 references:
+
+- initial position: 197281;
+- Kiwipete: 4085603;
+- en-passant and capture endgame: 43238;
+- promotions and castling pressure: 422333;
+- historical promotion bug trap: 2103487;
+- middlegame development: 3894594.
+
+Test 12 — Historical inventory
+
+Command performed:
+
+inventorytest
+
+Result:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+The nine OPEN cases remained unchanged:
+
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+No new case became open, and no previously closed regression was lost.
+
+Debug validation
+
+The principal battery was repeated with the Debug | x64 executable.
+
+Results:
+
+- deadpositiontest: 64/64 roots and 10/10 transitions;
+- stalematetest: 64/64;
+- mobilitytest: 64/64;
+- psttest: 8/8;
+- qtest: 4/4;
+- idtest: 4/4;
+- pvtest: 4/4;
+- timetest: 4/4;
+- ordertest: 4/4;
+- tactictest: all three expected tactical results;
+- perftknown 4: 24/24;
+- inventorytest: 45 PASS, 0 FAIL, 9 OPEN, and 10 BASELINE.
+
+Performance differences were normal for an unoptimised build:
+
+- the 1 ms response retained completed depth 0 and interrupted depth 1;
+- 50 ms completed depth 2;
+- 2000 ms completed depth 3.
+
+This satisfies the functional purpose of the test: the engine respected its
+limits, returned valid results, and did not complete a shallower search when
+given more time.
+
+No source-code or test-harness modification was required during this
+validation.
+
+Practical validation:
+
+No Myracle games were played during alpha-010. Practical validation is
+deliberately deferred until the remaining draw rules and their cross-rule
+integration are present.
+
+Limitations after alpha-010:
+
+- recognition is conservative and is not a universal solver for every
+  possible dead position;
+- the fifty-move rule is not yet integrated into the search;
+- threefold repetition is not yet integrated;
+- no external-GUI practical games were performed;
+- the general evaluation and search limitations documented in earlier stages
+  remain unless explicitly superseded.
+
+Conclusion:
+
+PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search was
+implemented and internally validated successfully.
+
+PHILOCHESS passed:
+
+- Release | x64 compilation under ISO C++17 with 0 errors;
+- Debug | x64 compilation under ISO C++17 with 0 errors;
+- 64/64 dead-position roots and 10/10 transitions in both configurations;
+- all four blocks of the new inventory;
+- false-positive prevention in all 20 negative controls;
+- recognition at the root, in alpha-beta, and in quiescence;
+- correct score-0 propagation;
+- preservation of checkmate and stalemate;
+- stalemate inventory: 64/64;
+- mobility: 64/64;
+- PST: 8/8;
+- quiescence: 4/4;
+- iterative deepening: 4/4;
+- principal variation: 4/4;
+- time management: 4/4;
+- move ordering: 4/4;
+- the preserved tactical regression;
+- known perft: 24/24;
+- the historical inventory with 45 PASS, 0 FAIL, 9 OPEN, and 10 BASELINE;
+- normal termination of both executables with exit code 0.
+
+No functional anomaly or regression attributable to the new rule was found.
+Timing differences between Release and Debug were normal, and the nine
+historical OPEN targets remained exactly unchanged.
+
+PHILOCHESS 0.2-alpha-010 is therefore considered successfully developed and
+internally validated within its established conservative scope.
+
+The next planned work will continue the remaining draw rules, beginning with:
+
+PHILOCHESS 0.2-alpha-011 — Fifty-Move Rule in Search
