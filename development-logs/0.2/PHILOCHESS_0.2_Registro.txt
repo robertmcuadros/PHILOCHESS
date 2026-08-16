@@ -5802,3 +5802,521 @@ se considera desarrollado, validado internamente y cerrado satisfactoriamente.
 La siguiente versión planificada es:
 
 PHILOCHESS 0.2-alpha-010 — Reconocimiento de posiciones muertas en la búsqueda
+
+Fecha: 15 de agosto de 2026
+
+PHILOCHESS 0.2-alpha-010 — Reconocimiento de posiciones muertas en la
+búsqueda
+
+Se implementó y validó internamente el reconocimiento conservador de
+posiciones muertas dentro de la búsqueda.
+
+Hito técnico:
+
+PHILOCHESS ahora puede reconocer posiciones en las que el jaque mate resulta
+imposible para ambos bandos mediante cualquier serie legal de jugadas. Estas
+posiciones reciben inmediatamente valor de tablas y puntaje 0.
+
+El reconocimiento se integró en:
+
+- la raíz de la búsqueda;
+- la búsqueda alpha-beta;
+- la búsqueda de quietud.
+
+La clasificación se realiza antes de que la evaluación estática pueda
+reemplazar el resultado determinado por las reglas.
+
+Esta es la décima versión del ciclo de desarrollo de PHILOCHESS 0.2. Se apoya
+directamente en el código validado de PHILOCHESS 0.2-alpha-009, sin modificar
+esa versión cerrada.
+
+Alpha-010 conserva:
+
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque, jaque mate y ahogado;
+- la prioridad correcta entre jaque mate, ahogado y otras tablas;
+- perft y la validación con referencias conocidas;
+- la evaluación material;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de fase y la interpolación de las tablas del rey;
+- alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción de la variante principal;
+- los informes iterativos de búsqueda;
+- los puntajes de mate según su distancia;
+- la conservación de la última iteración completada;
+- la prioridad de la PV en la raíz y debajo de ella;
+- el ordenamiento MVV-LVA y la prioridad de promociones;
+- los límites temporales blando y duro;
+- el rechazo seguro de iteraciones interrumpidas;
+- las baterías heredadas de táctica, movilidad, PST, quietud,
+  profundización iterativa, PV, tiempo, ordenamiento y perft;
+- el inventario táctico y de quietud de 64 casos;
+- el inventario de ahogado de 64 casos.
+
+Nueva funcionalidad de alpha-010:
+
+- Se añadió el estado explícito dead-position.
+- Se definió una posición muerta como aquella en la que ninguno de los dos
+  bandos puede dar jaque mate mediante ninguna continuación legal.
+- Se asignó puntaje 0 a las posiciones muertas.
+- Se añadió una comprobación material inmediata para los casos aprobados de
+  material insuficiente.
+- Se añadió una comprobación estructural conservadora para posiciones
+  bloqueadas en las que puede demostrarse la imposibilidad bilateral de mate.
+- Se añadieron conteos de estados examinados durante las pruebas
+  estructurales.
+- Se integró el reconocimiento en la raíz.
+- Se integró el reconocimiento dentro de alpha-beta.
+- Se integró el reconocimiento dentro de la búsqueda de quietud.
+- Se añadió un contador independiente de nodos de posición muerta.
+- Se conservó la clasificación de jaque mate y ahogado cuando no existen
+  jugadas legales.
+- Se evitó que el detector declarara muerta una posición cuando no pudiera
+  demostrar la imposibilidad bilateral de mate.
+- Se añadió el comando de diagnóstico específico deadpositiontest.
+- Se añadió un inventario de 64 raíces y 10 transiciones.
+- Se actualizaron la identificación interna y los encabezados diagnósticos a
+  PHILOCHESS 0.2-alpha-010.
+
+Regla operativa:
+
+La clasificación sigue este orden:
+
+- cero jugadas legales y rey en jaque: jaque mate;
+- cero jugadas legales y rey fuera de jaque: ahogado;
+- una o más jugadas legales y mate bilateralmente imposible: posición
+  muerta;
+- en los demás casos: posición viva.
+
+Una posición muerta se evalúa como tablas:
+
+dead-position score = 0
+
+Cuando una raíz muerta todavía contiene jugadas legales, PHILOCHESS conserva
+una jugada legal como bestmove, aunque el resultado sea tablas. bestmove 0000
+permanece reservado para raíces sin jugadas legales, como jaque mate o
+ahogado.
+
+Integración en la búsqueda:
+
+En la raíz, el detector puede establecer el estado dead-position antes de
+iniciar una búsqueda ordinaria innecesaria.
+
+Dentro de alpha-beta y de quietud, el valor 0 se devuelve inmediatamente y se
+propaga mediante negamax con la convención de signo correspondiente.
+
+Las transiciones hacia una posición muerta pueden, por tanto:
+
+- asegurar tablas para el bando inferior;
+- impedir que una ventaja material sea tratada como una victoria;
+- evitar búsquedas innecesarias después de demostrarse la imposibilidad de
+  mate;
+- coexistir sin interferir con jaque mate y ahogado.
+
+Inventario de posiciones muertas:
+
+El inventario contiene 64 raíces verificadas y 10 transiciones verificadas,
+distribuidas en cuatro bloques:
+
+- Bloque 1 — Posiciones muertas demostrables directamente por material:
+  12 pruebas;
+- Bloque 2 — Posiciones muertas demostrables estructuralmente: 16 pruebas;
+- Bloque 3 — Controles negativos y prevención de falsos positivos:
+  20 pruebas;
+- Bloque 4 — Transiciones, precedencia terminal e integración: 16 pruebas.
+
+Total:
+
+- 64 posiciones de raíz;
+- 10 transiciones adicionales.
+
+La batería comprueba:
+
+- posiciones muertas básicas por material;
+- posiciones estructurales bloqueadas;
+- simetría entre posiciones equivalentes de blancas y negras;
+- posiciones vivas con material o estructura parecidos;
+- posiciones en jaque que siguen siendo vivas;
+- posiciones con una sola jugada legal;
+- transiciones inmediatas hacia tablas por posición muerta;
+- reconocimiento dentro de la búsqueda de quietud;
+- preservación del jaque mate;
+- preservación del ahogado;
+- ausencia de falsos positivos.
+
+Observación sobre DPR-N19 y DPR-N20:
+
+Las raíces DPR-N19 y DPR-N20 fueron clasificadas correctamente como vivas.
+Sus bestmove, g4g5 y b5b4, respectivamente, conducen a posiciones muertas,
+pero otras jugadas legales de rey conservan una secuencia en la que el mate
+sigue siendo posible. Esto no menoscaba el resultado correcto de ambas
+pruebas.
+
+Límite de la versión:
+
+El detector de alpha-010 es deliberadamente conservador e incremental. Solo
+declara una posición muerta cuando dispone de una demostración material o
+estructural admitida por esta etapa.
+
+Por tanto, no pretende resolver de manera exhaustiva todas las posiciones
+muertas posibles del ajedrez. Una posición realmente muerta que quede fuera
+de los patrones y pruebas estructurales admitidos puede permanecer
+clasificada como viva o no demostrada. Esta política evita falsos positivos
+dentro de la búsqueda.
+
+Alpha-010 no modifica:
+
+- el generador de jugadas legales;
+- la aplicación de jugadas;
+- los valores materiales;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de fase;
+- la jerarquía de ordenamiento;
+- la construcción de la variante principal;
+- la fórmula de asignación temporal;
+- el conjunto ordinario de jugadas examinado por quietud;
+- los objetivos ni la clasificación del inventario histórico;
+- la regla de las cincuenta jugadas;
+- la regla automática de las setenta y cinco jugadas;
+- la detección de triple repetición.
+
+Compilación:
+
+El programa compiló correctamente en Visual Studio con plataforma x64,
+estándar ISO C++17 y herramientas MSVC v145.
+
+Release | x64:
+
+- 1 compilación correcta;
+- 0 errores;
+- ejecutable generado en x64\Release\PHILOCHESS.exe.
+
+Debug | x64:
+
+- 1 compilación correcta;
+- 0 errores;
+- ejecutable generado en x64\Debug\PHILOCHESS.exe.
+
+Ambos ejecutables iniciaron normalmente y terminaron mediante quit con código
+de salida 0.
+
+Validación en Release
+
+Prueba 1 — Inventario de posiciones muertas
+
+Comando ejecutado:
+
+deadpositiontest
+
+Resultado:
+
+- Bloque 1: 12/12;
+- Bloque 2: 16/16;
+- Bloque 3: 20/20;
+- Bloque 4: 16/16;
+- raíces: 64/64;
+- transiciones: 10/10;
+- estructura del inventario: PASS;
+- DEAD-POSITION INVENTORY: PASS.
+
+Los casos materiales necesitaron un único estado de prueba. Los casos
+estructurales recorrieron sus espacios de prueba y produjeron conteos
+simétricos en las posiciones reflejadas. Los controles negativos devolvieron
+cero estados de prueba y no produjeron falsos positivos.
+
+Las transiciones DPR-T03 a DPR-T12 alcanzaron correctamente posiciones hijas
+muertas. Las pruebas DPR-T13 y DPR-T14 conservaron el jaque mate, y DPR-T15 y
+DPR-T16 conservaron el ahogado.
+
+Prueba 2 — Inventario del ahogado
+
+Comando ejecutado:
+
+stalematetest
+
+Resultado:
+
+- Bloque 1: 8/8;
+- Bloque 2: 12/12;
+- Bloque 3: 12/12;
+- Bloque 4: 8/8;
+- Bloque 5: 12/12;
+- Bloque 6: 4/4;
+- Bloque 7: 8/8;
+- total: 64/64;
+- estructura: PASS;
+- STALEMATE INVENTORY: PASS.
+
+La nueva clasificación de posiciones muertas no alteró la detección del
+ahogado ni su precedencia terminal.
+
+Prueba 3 — Movilidad
+
+Comando ejecutado:
+
+mobilitytest
+
+Resultado:
+
+- 64/64;
+- 44 posiciones controladas;
+- 10 transversales;
+- 10 integradas;
+- estructura: PASS.
+
+Prueba 4 — Tablas pieza-casilla
+
+Comando ejecutado:
+
+psttest
+
+Resultado:
+
+PASS 8  FAIL 0  TOTAL 8
+
+Permanecieron correctas la orientación, la reflexión, la simetría inicial,
+la ponderación por fase, la interpolación del rey, los cambios
+representativos de PST, la colocación del enroque y la composición de la
+evaluación estática.
+
+Prueba 5 — Búsqueda de quietud
+
+Comando ejecutado:
+
+qtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Se conservaron:
+
+- d1f3 y puntaje 405 en la prueba del horizonte;
+- puntaje 492 en la secuencia de capturas;
+- puntaje 892 en la promoción tranquila;
+- evasión de jaque sin stand pat.
+
+Prueba 6 — Profundización iterativa
+
+Comando ejecutado:
+
+idtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Las profundidades 1 a 4 se completaron con bestmove b1c3 y conteos de 20,
+171, 2253 y 17122 nodos.
+
+Prueba 7 — Variante principal
+
+Comando ejecutado:
+
+pvtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La PV alcanzó correctamente las longitudes 1 a 4:
+
+- b1c3;
+- b1c3 b8c6;
+- b1c3 b8c6 g1f3;
+- b1c3 b8c6 g1f3 g8f6.
+
+Prueba 8 — Gestión del tiempo
+
+Comando ejecutado:
+
+timetest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La asignación 15+10 produjo:
+
+- límite blando: 18158 ms;
+- límite duro: 21363 ms.
+
+La búsqueda explícita a profundidad 5 se completó correctamente. La prueba
+de emergencia de 1 ms devolvió la última iteración disponible, y la
+comparación entre 50 ms y 2000 ms confirmó una profundidad no decreciente.
+
+Prueba 9 — Ordenamiento de jugadas
+
+Comando ejecutado:
+
+ordertest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Permanecieron correctas:
+
+- la prioridad de la PV;
+- el ordenamiento MVV-LVA;
+- la prioridad de promociones;
+- la prioridad de la PV debajo de la raíz.
+
+Prueba 10 — Regresión táctica
+
+Comando ejecutado:
+
+tactictest
+
+Resultado:
+
+Los tres diagnósticos conservaron sus resultados:
+
+- se evitó la jugada conocida como mala b6c6 y se eligió b6d6;
+- se encontró h5f3 como intento defensivo después de 11.Bb5;
+- se encontró d5c7 como refutación táctica después de 11...Qxb5.
+
+Las tres búsquedas completaron cuatro iteraciones. El contador de posiciones
+muertas permaneció en cero en estas posiciones no relacionadas.
+
+Prueba 11 — Perft conocido
+
+Comando ejecutado:
+
+perftknown 4
+
+Resultado:
+
+PASS 24  FAIL 0  TOTAL 24
+
+Las seis posiciones coincidieron con sus referencias en profundidades 1 a 4:
+
+- posición inicial: 197281;
+- Kiwipete: 4085603;
+- final con captura al paso y capturas: 43238;
+- promociones y presión de enroque: 422333;
+- trampa histórica de promoción: 2103487;
+- desarrollo de medio juego: 3894594.
+
+Prueba 12 — Inventario histórico
+
+Comando ejecutado:
+
+inventorytest
+
+Resultado:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categorías: [A] 21/21  [B] 33/33  [C] 10/10
+Estructura del inventario: PASS
+
+Los nueve casos OPEN permanecieron sin cambios:
+
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+No apareció ningún caso nuevo y ninguna regresión previamente cerrada
+volvió a abrirse.
+
+Validación en Debug
+
+La batería principal se repitió con el ejecutable Debug | x64.
+
+Resultados:
+
+- deadpositiontest: 64/64 raíces y 10/10 transiciones;
+- stalematetest: 64/64;
+- mobilitytest: 64/64;
+- psttest: 8/8;
+- qtest: 4/4;
+- idtest: 4/4;
+- pvtest: 4/4;
+- timetest: 4/4;
+- ordertest: 4/4;
+- tactictest: los tres resultados tácticos esperados;
+- perftknown 4: 24/24;
+- inventorytest: 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE.
+
+Las diferencias de rendimiento fueron las esperadas para una compilación sin
+optimización:
+
+- la respuesta de 1 ms conservó profundidad 0 e interrumpió profundidad 1;
+- 50 ms completaron profundidad 2;
+- 2000 ms completaron profundidad 3.
+
+Esto satisface el propósito funcional de la prueba: el motor respetó los
+límites, devolvió resultados válidos y no completó una profundidad menor al
+recibir más tiempo.
+
+No fue necesario modificar el código ni el banco de pruebas durante esta
+validación.
+
+Validación práctica:
+
+No se realizaron partidas en Myracle durante alpha-010. La validación
+práctica queda deliberadamente aplazada hasta que las reglas de tablas
+pendientes y su integración cruzada estén incorporadas.
+
+Limitaciones después de alpha-010:
+
+- el reconocimiento es conservador y no constituye un solucionador universal
+  de todas las posiciones muertas;
+- la regla de las cincuenta jugadas todavía no está integrada en la
+  búsqueda;
+- la triple repetición todavía no está integrada;
+- no se efectuaron partidas prácticas en una interfaz externa;
+- permanecen las limitaciones generales de evaluación y búsqueda
+  documentadas en etapas anteriores, salvo cuando hayan sido reemplazadas
+  expresamente.
+
+Conclusión:
+
+PHILOCHESS 0.2-alpha-010 — Reconocimiento de posiciones muertas en la
+búsqueda fue implementado y validado internamente con éxito.
+
+PHILOCHESS superó:
+
+- compilación Release | x64 bajo ISO C++17 con 0 errores;
+- compilación Debug | x64 bajo ISO C++17 con 0 errores;
+- 64/64 raíces y 10/10 transiciones de posiciones muertas en ambas
+  configuraciones;
+- los cuatro bloques del nuevo inventario;
+- prevención de falsos positivos en los 20 controles negativos;
+- reconocimiento en la raíz, alpha-beta y quietud;
+- propagación correcta del puntaje 0;
+- preservación de jaque mate y ahogado;
+- inventario de ahogado: 64/64;
+- movilidad: 64/64;
+- PST: 8/8;
+- quietud: 4/4;
+- profundización iterativa: 4/4;
+- variante principal: 4/4;
+- gestión del tiempo: 4/4;
+- ordenamiento: 4/4;
+- regresión táctica heredada;
+- perft conocido: 24/24;
+- inventario histórico con 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
+- cierre normal de ambos ejecutables con código 0.
+
+No se detectaron anomalías funcionales ni regresiones atribuibles a la nueva
+regla. Las diferencias temporales entre Release y Debug fueron normales y los
+nueve objetivos históricos OPEN permanecieron exactamente iguales.
+
+Por tanto, PHILOCHESS 0.2-alpha-010 se considera desarrollado y validado
+internamente dentro del alcance conservador establecido.
+
+El siguiente trabajo planificado continuará con las reglas de tablas
+pendientes, comenzando por:
+
+PHILOCHESS 0.2-alpha-011 — Regla de las cincuenta jugadas en la búsqueda
