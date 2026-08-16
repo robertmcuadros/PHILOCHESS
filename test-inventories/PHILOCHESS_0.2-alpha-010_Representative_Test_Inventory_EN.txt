@@ -1,0 +1,608 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-010
+REPRESENTATIVE TEST INVENTORY
+DEAD-POSITION RECOGNITION IN SEARCH
+PUBLIC SAMPLE — 16 TESTS SELECTED FROM 64
+==============================================================================
+
+Author and copyright holder: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is distributed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License
+(CC BY-NC-ND 4.0).
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en
+
+Sample date: August 15, 2026
+
+==============================================================================
+1. PURPOSE AND SELECTION CRITERIA
+==============================================================================
+
+This document is a public sample of the internal inventory used to validate:
+
+    PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search.
+
+The complete suite contains 64 tests. This sample retains 16 of them: four
+from each block of the original inventory and eight for each side to move.
+The identifiers, FENs, and oracles come from the complete inventory. Gaps in
+the numbering are deliberate: conceptual variety takes priority over
+identifier continuity.
+
+    Block 1 — Dead positions by material                         4 tests
+    Block 2 — Structural blockade or immobility                  4 tests
+    Block 3 — Boundaries and false positives                     4 tests
+    Block 4 — Transitions and search integration                 4 tests
+                                                                --------
+    Total                                                       16 tests
+
+Selected tests:
+
+    DPR-M01  DPR-M04  DPR-M05  DPR-M12
+    DPR-S01  DPR-S06  DPR-S13  DPR-S16
+    DPR-N01  DPR-N12  DPR-N17  DPR-N20
+    DPR-T01  DPR-T04  DPR-T11  DPR-T14
+
+The sample does not replace the complete inventory or reproduce every
+color-reversed pair. Derived nodes and transitions documented within a test
+are internal oracles of that test; they are not counted as additional tests.
+
+==============================================================================
+2. COMMON ORACLES
+==============================================================================
+
+Blocks 1 and 2 — Dead positions:
+
+- neither player can checkmate the opponent's king by any possible series of
+  legal moves;
+- the regulatory result is a draw by dead position;
+- the expected score at the root, in alpha-beta, and in quiescence is 0;
+- static evaluation and stand pat must not run after terminal recognition;
+- if the root retains legal moves and the GUI requests one, PHILOCHESS must
+  return a legal bestmove other than 0000.
+
+Block 3 — Negative controls:
+
+- at least one legal series ends in checkmate;
+- the position is not dead, and normal search must continue;
+- the dead-position rule must not impose a score of 0.
+
+Block 4 — Integration:
+
+- the verdict must be calculated from the updated state of every node;
+- dead positions created within alpha-beta or quiescence must return 0 before
+  static evaluation or stand pat;
+- checkmate retains its precedence, terminal cause, and score.
+
+The legal-move counts in this sample were made before applying dead-position
+termination.
+
+==============================================================================
+3. BLOCK 1 — DEAD POSITIONS BY MATERIAL
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-M01 — White king versus Black king
+Original position: 1 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/8/2k5/8/K7 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 2 (Ka2 and Kb1).
+
+Oracle:
+Both sides retain only the king. No pawn can promote, and no legal series can
+allow either player to construct checkmate. The existence of two legal moves
+rules out stalemate.
+
+Expected result:
+Dead position true; stalemate false; checkmate false; score 0 at the root, in
+alpha-beta, and in quiescence; legal bestmove other than 0000 if requested.
+
+Technical objective:
+Verify the most elementary material recognition with legal moves available.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-M04 — Black king in check against White king and bishop
+Original position: 4 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/4B3/8/8/8/K7 b - - 0 1
+
+Turn: Black. Check: yes. Legal moves: 2 (Kh7 and Kg8).
+
+Oracle:
+Black retains only the king. White retains a king and one dark-squared bishop,
+material incapable of checkmating a bare king under any legal cooperation.
+The current check is not checkmate because two evasions exist.
+
+Expected result:
+Dead position true; stalemate false; checkmate false; score 0 at the root, in
+alpha-beta, and in quiescence. Search must not examine the evasions deeply
+after the verdict; the UCI layer must only select a legal evasion.
+
+Technical objective:
+Verify that a dead position may contain a check with evasions and that its
+treatment does not depend on the color of the side to move.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-M05 — White king and knight versus Black king
+Original position: 5 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/8/2N5/8/K7 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 11.
+
+Oracle:
+A king and lone knight cannot checkmate a bare king by any legal series. The
+Black king alone cannot deliver checkmate either. The knight's full mobility
+confirms that dead position does not mean immobility.
+
+Expected result:
+Dead position true; stalemate false; checkmate false; score 0 at the root, in
+alpha-beta, and in quiescence. The knight's material value and mobility must
+not reach static evaluation or stand pat.
+
+Technical objective:
+Verify the K+N versus K class with the minor piece fully mobile.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-M12 — Two light-squared bishops per side
+Original position: 12 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/5b2/b7/8/6B1/8/1K6/3B4 b - - 0 1
+
+Turn: Black. Check: no. Legal moves: 19.
+
+Oracle:
+All four bishops remain on the light-square complex. No sequence can create
+other material or transfer a bishop to the dark-square complex; therefore,
+neither side can construct checkmate.
+
+Expected result:
+Dead position true; stalemate false; checkmate false; score 0 at the root, in
+alpha-beta, and in quiescence. Material, PST, and mobility must not replace
+the terminal value of 0.
+
+Technical objective:
+Verify the broad material family with several legally promoted bishops, all
+restricted to the same square complex.
+
+Status: VERIFIED
+
+==============================================================================
+4. BLOCK 2 — STRUCTURAL BLOCKADE OR IMMOBILITY
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-S01 — Dispersed barrier of three pawn pairs
+Original position: 13 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/2k5/8/1p1p2p1/1P1P2P1/8/2K5/8 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 8.
+
+Structural invariant:
+The b4-b5, d4-d5, and g4-g5 pairs are blocked. Their cross-attacks cover the
+unoccupied squares in the dividing zone. No pawn can advance or capture, and
+the kings remain in disjoint regions.
+
+Expected result:
+Dead position true; pawns with future mobility: none; score 0 at the root, in
+alpha-beta, and in quiescence; legal bestmove other than 0000 if requested.
+
+Technical objective:
+Verify that a dispersed barrier can be absolute through square control even
+when it does not occupy every file.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-S06 — Pawn barrier with a confined Black bishop
+Original position: 18 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/5k2/3b4/p1p1p1p1/P1P1P1P1/8/5K2/8 b - - 0 1
+
+Turn: Black. Check: no. Legal moves: 12.
+
+Structural invariant:
+The alternating barrier permanently separates the kings. The Black bishop on
+d6 can maneuver only in the upper sector; its downward routes end at the
+Black pawns on c5 and e5. It cannot reach the White king or release a pawn.
+
+Expected result:
+Dead position true; bishop permanently confined; no pawn with future
+mobility; score 0 before material, PST, mobility, or stand pat.
+
+Technical objective:
+Verify a mobile piece that is structurally unable to interact with the
+opposing king.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-S13 — Compact kingside blockade; single legal move
+Original position: 25 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/7p/k4p1P/5p1K/5Pp1/6P1/6P1/8 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 1 (Kh4).
+
+Structural invariant:
+The f4-f5, g3-g4, and h6-h7 pairs are blocked; g2 is stopped by its own pawn.
+After Kh4, no advance, capture, or promotion is possible, and the structural
+separation of the kings remains.
+
+Expected result:
+Dead position true; stalemate false; score 0. The only legal move must not
+undergo deep search; if the GUI requests it, Kh4 must be returned.
+
+Technical objective:
+Verify terminal recognition before following a single continuation that does
+not change bilateral checkmate impossibility.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-S16 — Complete stepped barrier; Black king in check
+Original position: 28 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/7p/p5pP/Pp2kpP1/1Pp1pP2/2PpP3/3P4/2K5 b - - 0 1
+
+Turn: Black. Check: yes. Legal moves: 3 (Kd6, Ke6, and Kd5).
+
+Structural invariant:
+All eight pawn pairs are blocked head-on, and no capture can change the
+structure. All three evasions keep the Black king in its region; no promotion,
+en passant capture, or interaction capable of constructing checkmate can
+occur.
+
+Expected result:
+Dead position true; checkmate false; stalemate false; score 0. The in-check
+path must not search the evasions deeply after the verdict.
+
+Technical objective:
+Verify a check with evasions inside a structurally dead position.
+
+Status: VERIFIED
+
+==============================================================================
+5. BLOCK 3 — BOUNDARIES AND FALSE POSITIVES
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-N01 — White king and two knights versus Black king
+Original position: 29 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/5NK1/4N3/8/8/8/8 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 20.
+
+Checkmate witness series:
+1. Nf7#
+
+Oracle:
+Two knights cannot force checkmate against correct defense, but a legal
+checkmate configuration exists with cooperation. The position is therefore
+not dead.
+
+Expected result:
+Detector false at the root, in alpha-beta, and in quiescence; normal
+evaluation and search must continue; bestmove other than 0000.
+
+Technical objective:
+Avoid confusing inability to force checkmate with the absolute impossibility
+of reaching it.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-N12 — Unilateral impossibility: Black rook versus White king
+Original position: 40 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/8/1k6/2r5/K7 b - - 0 1
+
+Turn: Black. Check: no. Legal moves: 19.
+
+Checkmate witness series:
+1... Rc1#
+
+Oracle:
+White retains only the king and cannot deliver checkmate, but Black can do so
+immediately. Impossibility must be established for both players; unilateral
+impossibility is insufficient.
+
+Expected result:
+Dead position false; the rule must not impose 0; normal evaluation and search
+must continue.
+
+Technical objective:
+Verify the bilateral conjunction when only one side lacks every checkmating
+possibility.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-N17 — Apparent blockade broken by a White en passant capture
+Original position: 45 of 64
+------------------------------------------------------------------------------
+
+FEN:
+4k3/8/1p1p4/1PpP1p1p/2P2P1P/8/8/4K3 w - c6 0 1
+
+Turn: White. Check: no. Legal moves: 7.
+
+Checkmate witness series:
+1. bxc6 e.p. Kf8 2. c7 Ke7 3. c5 dxc5
+4. c8=Q Kd6 5. Qd8#
+
+Oracle:
+The c6 target square preserves the en passant right. Both bxc6 e.p. and
+dxc6 e.p. break the only barrier, enable promotion, and preserve a legal
+checkmate series. If that right expires, the resulting structure is dead.
+
+Expected result:
+Dead position false; the en passant target square must form part of the
+analyzed state; normal search and bestmove other than 0000.
+
+Technical objective:
+Prevent an apparent barrier from being accepted while a legal en passant
+capture can open it.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-N20 — Buchanan boundary; checkmate possible for Black
+Original position: 48 of 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/7p/1p6/6pP/1p1p1pP1/1P1P1PkB/2B1K1Bb b - - 0 1
+
+Turn: Black. Check: no. Legal moves: 3 (Kh3, h5, and b4).
+
+Checkmate witness series:
+1... Kh3 2. Kd1 Bg2 3. Ke1 Bf1 4. Kd1 Be2+ 5. Ke1 Bd1
+6. Kf1 Bc2 7. Ke1 Bb1 8. Kd1 Kg2 9. Ke1 b4 10. Kd1 Kf1
+11. h5 Bc2#
+
+Oracle:
+The Black king's penetration, the b-pawn advance, and cooperation by the
+White h-pawn allow the Black bishop to reach c2 and deliver checkmate. The
+structure is a live boundary, not a dead position.
+
+Expected result:
+Dead position false; the rule must not impose 0; normal evaluation and search;
+bestmove other than 0000.
+
+Technical objective:
+Protect the Buchanan structural boundary and the potential mobility of kings,
+pawns, and bishops.
+
+Status: VERIFIED
+
+==============================================================================
+6. BLOCK 4 — TRANSITIONS AND SEARCH INTEGRATION
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-T01 — Dead position at the root with a White bishop
+Original position: 49 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/8/3B4/8/1K6 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 15.
+
+Integration oracle:
+The position is already dead at the root. Recognition must precede material,
+PST, mobility, stand pat, and deep search. If the GUI requests a move, only
+one of the legal continuations must be selected.
+
+Expected result:
+Dead position true; score 0; evaluation and deep search not run; legal
+bestmove other than 0000 if requested.
+
+Technical objective:
+Check detector placement at the root and replacement of a nonzero static
+evaluation with the regulatory terminal value of 0.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-T04 — Black capture removes the last piece capable of checkmate
+Original position: 52 of 64
+------------------------------------------------------------------------------
+
+Root FEN:
+8/8/8/3k4/3R4/8/8/7K b - - 0 1
+
+Turn: Black. Check: yes. Legal moves: 5.
+
+Transition under test:
+1... Kxd4
+
+Child-node FEN:
+8/8/8/8/3k4/8/8/7K w - - 0 2
+
+Integration oracle:
+The root is live because the White rook retains checkmating capability. Kxd4
+is a legal evasion that leaves king versus king; the child node must be
+recognized as dead before evaluating or searching the White king's three
+moves.
+
+Expected result:
+Live root; dead child node; alpha-beta score 0; subsequent evaluation not run;
+unmaking the move exactly restores the position, check, and turn.
+
+Technical objective:
+Verify recognition from the updated state of an alpha-beta child node.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-T11 — Dead position reached by a chain in quiescence
+Original position: 59 of 64
+------------------------------------------------------------------------------
+
+Root FEN:
+8/4k3/4r3/4R3/8/8/8/K7 w - - 0 1
+
+Turn: White. Check: no. Legal moves: 15.
+
+Sequence under test:
+1. Rxe6+ Kxe6
+
+FEN after 1. Rxe6+:
+8/4k3/4R3/8/8/8/8/K7 b - - 0 1
+
+Dead-node FEN after 1... Kxe6:
+8/8/4k3/8/8/8/8/K7 w - - 0 2
+
+Integration oracle:
+The root and intermediate node are live. The capture-evasion Kxe6 removes the
+last rook and creates king versus king. The terminal check must run at every
+quiescence node and before stand pat.
+
+Expected result:
+Dead final node; quiescence score 0; evaluation and stand pat not run; two
+unmake operations restore both rooks and the turn.
+
+Technical objective:
+Verify detection within quiescence after a capture chain.
+
+Status: VERIFIED
+
+------------------------------------------------------------------------------
+DPR-T14 — Checkmate regression against Black
+Original position: 62 of 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/6Q1/5K2/8/8/8/8/8 b - - 0 1
+
+Turn: Black. Check: yes. Legal moves: 0.
+
+Precedence oracle:
+The true terminal is checkmate in White's favor. The dead-position detector
+must not turn the mating score into a draw or allow subsequent static
+evaluation.
+
+Expected result:
+Checkmate true; stalemate false; terminal cause checkmate; mating score
+against the side to move, adjusted for distance according to the engine's
+convention; bestmove 0000.
+
+Technical objective:
+Confirm that the precedence and sign of the mating score remain intact.
+
+Status: VERIFIED
+
+==============================================================================
+7. SAMPLE MATRIX AND SUMMARY
+==============================================================================
+
+    ID       Block  Turn   Check  Moves  Expected root state
+    ------------------------------------------------------------------------
+    DPR-M01  1      White  No       2    Dead position
+    DPR-M04  1      Black  Yes      2    Dead position
+    DPR-M05  1      White  No      11    Dead position
+    DPR-M12  1      Black  No      19    Dead position
+    DPR-S01  2      White  No       8    Dead position
+    DPR-S06  2      Black  No      12    Dead position
+    DPR-S13  2      White  No       1    Dead position
+    DPR-S16  2      Black  Yes      3    Dead position
+    DPR-N01  3      White  No      20    Live position
+    DPR-N12  3      Black  No      19    Live position
+    DPR-N17  3      White  No       7    Live position
+    DPR-N20  3      Black  No       3    Live position
+    DPR-T01  4      White  No      15    Dead position
+    DPR-T04  4      Black  Yes      5    Live; dead alpha-beta child
+    DPR-T11  4      White  No      15    Live; dead quiescence node
+    DPR-T14  4      Black  Yes      0    Checkmate
+
+Distribution by block:
+
+    Block 1:    4 tests
+    Block 2:    4 tests
+    Block 3:    4 tests
+    Block 4:    4 tests
+               --------
+    Total:     16 tests
+
+Distribution by side to move:
+
+    White:   8 positions
+    Black:   8 positions
+            ------------
+    Total:  16 positions
+
+Distribution by check status:
+
+    Out of check:  12 positions
+    In check:       4 positions
+                   ------------
+    Total:         16 positions
+
+Distribution by root state:
+
+    Terminal dead position:       9 positions
+    Nonterminal live position:    6 positions
+    Checkmate:                    1 position
+                                 ------------
+    Total:                       16 positions
+
+The transitions in DPR-T04 and DPR-T11 are checks derived from those two
+tests and do not increase the sample total.
+
+==============================================================================
+8. CONCLUSION
+==============================================================================
+
+The sample brings together positive and negative cases, positions with and
+without check, minimal and promoted material, pawn blockades, piece
+confinement, en passant, a structural boundary, and terminal recognition at
+the root, in alpha-beta, and in quiescence. It also protects checkmate
+precedence.
+
+The 16 tests published here represent the scope of alpha-010 without exposing
+the complete internal inventory of 64 tests.
+
+Primary sources:
+https://handbook.fide.com/chapter/e012023
+https://chasolver.org/FUN22-full.pdf
+https://github.com/miguel-ambrona/chasolver/blob/main/tests/positions.txt
+
+==============================================================================
+END OF REPRESENTATIVE TEST INVENTORY — 16 OF 64 VERIFIED POSITIONS
+==============================================================================
