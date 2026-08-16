@@ -1,0 +1,617 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-010
+INVENTARIO REPRESENTATIVO DE PRUEBAS
+RECONOCIMIENTO DE POSICIONES MUERTAS EN LA BÚSQUEDA
+MUESTRA PÚBLICA — 16 PRUEBAS SELECCIONADAS DE 64
+==============================================================================
+
+Autor y titular de los derechos de autor: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Este documento se distribuye bajo la licencia internacional Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0 (CC BY-NC-ND 4.0).
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
+
+Fecha de la muestra: 15 de agosto de 2026
+
+==============================================================================
+1. OBJETIVO Y CRITERIO DE SELECCIÓN
+==============================================================================
+
+Este documento es una muestra pública del inventario interno utilizado para
+validar:
+
+    PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search.
+
+La suite completa contiene 64 pruebas. Esta muestra conserva 16 de ellas:
+cuatro por cada bloque del inventario original y ocho por cada bando al turno.
+Los identificadores, las FEN y los oráculos proceden del inventario completo.
+Los saltos de numeración son deliberados: se prioriza la variedad conceptual
+y no la continuidad de los identificadores.
+
+    Bloque 1 — Posiciones muertas por material                   4 pruebas
+    Bloque 2 — Bloqueo o inmovilidad estructural                 4 pruebas
+    Bloque 3 — Fronteras y falsos positivos                      4 pruebas
+    Bloque 4 — Transiciones e integración en la búsqueda         4 pruebas
+                                                                ----------
+    Total                                                       16 pruebas
+
+Pruebas seleccionadas:
+
+    DPR-M01  DPR-M04  DPR-M05  DPR-M12
+    DPR-S01  DPR-S06  DPR-S13  DPR-S16
+    DPR-N01  DPR-N12  DPR-N17  DPR-N20
+    DPR-T01  DPR-T04  DPR-T11  DPR-T14
+
+La muestra no sustituye al inventario completo ni reproduce todas las parejas
+con colores invertidos. Los nodos derivados y las transiciones documentadas
+dentro de una prueba son oráculos internos de esa prueba; no se cuentan como
+pruebas adicionales.
+
+==============================================================================
+2. ORÁCULOS COMUNES
+==============================================================================
+
+Bloques 1 y 2 — Posiciones muertas:
+
+- ninguno de los dos jugadores puede dar jaque mate mediante ninguna serie
+  posible de jugadas legales;
+- el resultado reglamentario es tablas por posición muerta;
+- la puntuación esperada en raíz, alfa-beta y quiescence es 0;
+- la evaluación estática y el stand pat no deben ejecutarse después del
+  reconocimiento terminal;
+- si la raíz conserva jugadas legales y la GUI solicita una, PHILOCHESS debe
+  devolver un bestmove legal distinto de 0000.
+
+Bloque 3 — Controles negativos:
+
+- existe al menos una serie legal que termina en jaque mate;
+- la posición no es muerta y la búsqueda normal debe continuar;
+- la regla de posición muerta no debe imponer una puntuación de 0.
+
+Bloque 4 — Integración:
+
+- el veredicto debe calcularse sobre el estado actualizado de cada nodo;
+- las posiciones muertas creadas dentro de alfa-beta o quiescence deben
+  devolver 0 antes de la evaluación estática o del stand pat;
+- el jaque mate conserva su precedencia, su causa terminal y su puntuación.
+
+Los conteos de jugadas legales indicados en esta muestra se realizaron antes
+de aplicar la terminación por posición muerta.
+
+==============================================================================
+3. BLOQUE 1 — POSICIONES MUERTAS POR MATERIAL
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-M01 — Rey blanco contra rey negro
+Posición original: 1 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/8/2k5/8/K7 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 2 (Ka2 y Kb1).
+
+Oráculo:
+Ambos bandos conservan únicamente el rey. No existe peón que pueda promover
+ni serie legal que permita a cualquiera de los jugadores construir un mate.
+La existencia de dos jugadas legales excluye el ahogado.
+
+Resultado esperado:
+Posición muerta verdadera; ahogado falso; jaque mate falso; puntuación 0 en
+raíz, alfa-beta y quiescence; bestmove legal distinto de 0000 si se solicita.
+
+Objetivo técnico:
+Verificar el reconocimiento material más elemental con movimientos legales
+disponibles.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-M04 — Rey negro en jaque frente a rey y alfil blanco
+Posición original: 4 de 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/4B3/8/8/8/K7 b - - 0 1
+
+Turno: Negras. Jaque: sí. Jugadas legales: 2 (Kh7 y Kg8).
+
+Oráculo:
+Las negras solo conservan el rey. Las blancas conservan rey y un alfil de
+casillas oscuras, material incapaz de dar mate al rey desnudo mediante
+cualquier cooperación legal. El jaque actual no es mate porque existen dos
+evasiones.
+
+Resultado esperado:
+Posición muerta verdadera; ahogado falso; jaque mate falso; puntuación 0 en
+raíz, alfa-beta y quiescence. La búsqueda no debe profundizar las evasiones
+después del veredicto; la capa UCI solo debe elegir una evasión legal.
+
+Objetivo técnico:
+Verificar que una posición muerta puede contener un jaque con evasiones y que
+el tratamiento no depende del color del bando al turno.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-M05 — Rey y caballo blancos contra rey negro
+Posición original: 5 de 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/8/2N5/8/K7 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 11.
+
+Oráculo:
+Rey y un solo caballo no pueden dar mate a un rey desnudo mediante ninguna
+serie legal. El rey negro solo tampoco puede dar mate. La movilidad completa
+del caballo confirma que posición muerta no significa inmovilidad.
+
+Resultado esperado:
+Posición muerta verdadera; ahogado falso; jaque mate falso; puntuación 0 en
+raíz, alfa-beta y quiescence. El valor material y la movilidad del caballo no
+deben alcanzar la evaluación estática ni el stand pat.
+
+Objetivo técnico:
+Verificar la clase K+N contra K con la pieza menor plenamente móvil.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-M12 — Dos alfiles de casillas claras por bando
+Posición original: 12 de 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/5b2/b7/8/6B1/8/1K6/3B4 b - - 0 1
+
+Turno: Negras. Jaque: no. Jugadas legales: 19.
+
+Oráculo:
+Los cuatro alfiles permanecen en el complejo de casillas claras. Ninguna
+secuencia puede crear otro material ni trasladar un alfil al complejo oscuro;
+por ello, ninguno de los dos bandos puede construir un mate.
+
+Resultado esperado:
+Posición muerta verdadera; ahogado falso; jaque mate falso; puntuación 0 en
+raíz, alfa-beta y quiescence. Material, PST y movilidad no deben sustituir el
+valor terminal de 0.
+
+Objetivo técnico:
+Verificar la familia material amplia con varios alfiles legalmente obtenibles
+por promoción, todos restringidos al mismo complejo de casillas.
+
+Estado: VERIFICADA
+
+==============================================================================
+4. BLOQUE 2 — BLOQUEO O INMOVILIDAD ESTRUCTURAL
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-S01 — Barrera dispersa de tres pares de peones
+Posición original: 13 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/2k5/8/1p1p2p1/1P1P2P1/8/2K5/8 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 8.
+
+Invariante estructural:
+Los pares b4-b5, d4-d5 y g4-g5 están bloqueados. Sus ataques cruzados cubren
+las casillas libres de la zona divisoria. Ningún peón puede avanzar ni
+capturar y los reyes permanecen en regiones disjuntas.
+
+Resultado esperado:
+Posición muerta verdadera; peones con movilidad futura: ninguno; puntuación 0
+en raíz, alfa-beta y quiescence; bestmove legal distinto de 0000 si se
+solicita.
+
+Objetivo técnico:
+Verificar que una barrera dispersa puede ser absoluta por control de casillas
+aunque no ocupe todas las columnas.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-S06 — Barrera de peones con un alfil negro confinado
+Posición original: 18 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/5k2/3b4/p1p1p1p1/P1P1P1P1/8/5K2/8 b - - 0 1
+
+Turno: Negras. Jaque: no. Jugadas legales: 12.
+
+Invariante estructural:
+La barrera alternada separa permanentemente a los reyes. El alfil negro de d6
+solo puede maniobrar en el sector superior; sus rutas hacia abajo terminan en
+los peones negros de c5 y e5. No puede alcanzar al rey blanco ni liberar un
+peón.
+
+Resultado esperado:
+Posición muerta verdadera; alfil permanentemente confinado; ningún peón con
+movilidad futura; puntuación 0 antes de material, PST, movilidad o stand pat.
+
+Objetivo técnico:
+Verificar una pieza móvil que es estructuralmente incapaz de interactuar con
+el rey adversario.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-S13 — Bloqueo compacto del flanco de rey; única jugada legal
+Posición original: 25 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/7p/k4p1P/5p1K/5Pp1/6P1/6P1/8 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 1 (Kh4).
+
+Invariante estructural:
+Los pares f4-f5, g3-g4 y h6-h7 están bloqueados; g2 queda detenido por su
+propio peón. Tras Kh4 no existe avance, captura o promoción posible y la
+separación estructural de los reyes permanece.
+
+Resultado esperado:
+Posición muerta verdadera; ahogado falso; puntuación 0. La única jugada
+legal no debe someterse a búsqueda profunda; si la GUI la solicita, debe
+devolverse Kh4.
+
+Objetivo técnico:
+Verificar el reconocimiento terminal antes de seguir una continuación única
+que no altera la imposibilidad bilateral de mate.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-S16 — Barrera escalonada completa; rey negro en jaque
+Posición original: 28 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/7p/p5pP/Pp2kpP1/1Pp1pP2/2PpP3/3P4/2K5 b - - 0 1
+
+Turno: Negras. Jaque: sí. Jugadas legales: 3 (Kd6, Ke6 y Kd5).
+
+Invariante estructural:
+Los ocho pares de peones están frontalmente bloqueados y ninguna captura
+puede modificar la estructura. Las tres evasiones mantienen al rey negro en
+su región; no puede producirse promoción, captura al paso ni interacción que
+permita construir un mate.
+
+Resultado esperado:
+Posición muerta verdadera; jaque mate falso; ahogado falso; puntuación 0. La
+ruta en jaque no debe profundizar las evasiones después del veredicto.
+
+Objetivo técnico:
+Verificar un jaque con evasiones dentro de una posición estructuralmente
+muerta.
+
+Estado: VERIFICADA
+
+==============================================================================
+5. BLOQUE 3 — FRONTERAS Y FALSOS POSITIVOS
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-N01 — Rey y dos caballos blancos contra rey negro
+Posición original: 29 de 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/5NK1/4N3/8/8/8/8 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 20.
+
+Serie testigo de mate:
+1. Nf7#
+
+Oráculo:
+Dos caballos no pueden forzar mate contra defensa correcta, pero sí existe una
+configuración legal de mate con cooperación. Por tanto, la posición no es
+muerta.
+
+Resultado esperado:
+Detector falso en raíz, alfa-beta y quiescence; la evaluación y la búsqueda
+normales deben continuar; bestmove distinto de 0000.
+
+Objetivo técnico:
+Evitar la confusión entre incapacidad de forzar el mate e imposibilidad
+absoluta de alcanzarlo.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-N12 — Imposibilidad unilateral: torre negra contra rey blanco
+Posición original: 40 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/8/8/8/1k6/2r5/K7 b - - 0 1
+
+Turno: Negras. Jaque: no. Jugadas legales: 19.
+
+Serie testigo de mate:
+1... Rc1#
+
+Oráculo:
+Las blancas solo conservan el rey y no pueden dar mate, pero las negras pueden
+hacerlo de inmediato. La imposibilidad debe demostrarse para ambos jugadores;
+una imposibilidad unilateral no basta.
+
+Resultado esperado:
+Posición muerta falsa; la regla no debe imponer 0; la evaluación y la
+búsqueda normales deben continuar.
+
+Objetivo técnico:
+Verificar la conjunción bilateral cuando solo uno de los bandos carece de toda
+posibilidad de mate.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-N17 — Bloqueo aparente roto por captura al paso blanca
+Posición original: 45 de 64
+------------------------------------------------------------------------------
+
+FEN:
+4k3/8/1p1p4/1PpP1p1p/2P2P1P/8/8/4K3 w - c6 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 7.
+
+Serie testigo de mate:
+1. bxc6 e.p. Kf8 2. c7 Ke7 3. c5 dxc5
+4. c8=Q Kd6 5. Qd8#
+
+Oráculo:
+La casilla c6 conserva el derecho de captura al paso. bxc6 e.p. y dxc6 e.p.
+rompen la única barrera, permiten la promoción y conservan una serie legal de
+mate. Si el derecho expira, la estructura resultante sí queda muerta.
+
+Resultado esperado:
+Posición muerta falsa; la casilla de captura al paso debe formar parte del
+estado analizado; búsqueda normal y bestmove distinto de 0000.
+
+Objetivo técnico:
+Evitar que una barrera aparente sea aceptada mientras una captura al paso
+legal pueda abrirla.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-N20 — Frontera de Buchanan; mate posible para las negras
+Posición original: 48 de 64
+------------------------------------------------------------------------------
+
+FEN:
+8/8/7p/1p6/6pP/1p1p1pP1/1P1P1PkB/2B1K1Bb b - - 0 1
+
+Turno: Negras. Jaque: no. Jugadas legales: 3 (Kh3, h5 y b4).
+
+Serie testigo de mate:
+1... Kh3 2. Kd1 Bg2 3. Ke1 Bf1 4. Kd1 Be2+ 5. Ke1 Bd1
+6. Kf1 Bc2 7. Ke1 Bb1 8. Kd1 Kg2 9. Ke1 b4 10. Kd1 Kf1
+11. h5 Bc2#
+
+Oráculo:
+La penetración del rey negro, el avance del peón b y la cooperación del
+peón h blanco permiten al alfil negro alcanzar c2 y dar mate. La estructura
+es una frontera viva, no una posición muerta.
+
+Resultado esperado:
+Posición muerta falsa; la regla no debe imponer 0; evaluación y búsqueda
+normales; bestmove distinto de 0000.
+
+Objetivo técnico:
+Proteger la frontera estructural de Buchanan y la movilidad potencial de
+reyes, peones y alfiles.
+
+Estado: VERIFICADA
+
+==============================================================================
+6. BLOQUE 4 — TRANSICIONES E INTEGRACIÓN EN LA BÚSQUEDA
+==============================================================================
+
+------------------------------------------------------------------------------
+DPR-T01 — Posición muerta en la raíz con alfil blanco
+Posición original: 49 de 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/8/8/8/8/3B4/8/1K6 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 15.
+
+Oráculo de integración:
+La posición ya es muerta en la raíz. El reconocimiento debe preceder a la
+evaluación material, PST, movilidad, stand pat y búsqueda profunda. Si la GUI
+solicita una jugada, solo debe elegirse una de las continuaciones legales.
+
+Resultado esperado:
+Posición muerta verdadera; puntuación 0; evaluación y búsqueda profunda no
+ejecutadas; bestmove legal distinto de 0000 si se solicita.
+
+Objetivo técnico:
+Comprobar la ubicación del detector en la raíz y la sustitución de una
+evaluación estática no nula por el terminal reglamentario de 0.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-T04 — Captura negra elimina la última pieza capaz de dar mate
+Posición original: 52 de 64
+------------------------------------------------------------------------------
+
+FEN de la raíz:
+8/8/8/3k4/3R4/8/8/7K b - - 0 1
+
+Turno: Negras. Jaque: sí. Jugadas legales: 5.
+
+Transición sometida a prueba:
+1... Kxd4
+
+FEN del nodo hijo:
+8/8/8/8/3k4/8/8/7K w - - 0 2
+
+Oráculo de integración:
+La raíz está viva porque la torre blanca conserva capacidad de mate. Kxd4 es
+una evasión legal que deja rey contra rey; el nodo hijo debe reconocerse como
+posición muerta antes de evaluar o explorar las tres jugadas del rey blanco.
+
+Resultado esperado:
+Raíz viva; nodo hijo muerto; puntuación 0 en alfa-beta; evaluación posterior
+no ejecutada; deshacer la jugada restaura exactamente posición, jaque y turno.
+
+Objetivo técnico:
+Verificar el reconocimiento sobre el estado actualizado de un nodo hijo de
+alfa-beta.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-T11 — Posición muerta alcanzada por una cadena en quiescence
+Posición original: 59 de 64
+------------------------------------------------------------------------------
+
+FEN de la raíz:
+8/4k3/4r3/4R3/8/8/8/K7 w - - 0 1
+
+Turno: Blancas. Jaque: no. Jugadas legales: 15.
+
+Secuencia sometida a prueba:
+1. Rxe6+ Kxe6
+
+FEN después de 1. Rxe6+:
+8/4k3/4R3/8/8/8/8/K7 b - - 0 1
+
+FEN del nodo muerto después de 1... Kxe6:
+8/8/4k3/8/8/8/8/K7 w - - 0 2
+
+Oráculo de integración:
+La raíz y el nodo intermedio están vivos. La captura-evasión Kxe6 elimina la
+última torre y crea rey contra rey. La comprobación terminal debe ejecutarse
+en cada nodo de quiescence y antes del stand pat.
+
+Resultado esperado:
+Nodo final muerto; puntuación 0 en quiescence; evaluación y stand pat no
+ejecutados; dos operaciones de deshacer restauran ambas torres y el turno.
+
+Objetivo técnico:
+Verificar la detección dentro de quiescence después de una cadena de
+capturas.
+
+Estado: VERIFICADA
+
+------------------------------------------------------------------------------
+DPR-T14 — Regresión de jaque mate contra las negras
+Posición original: 62 de 64
+------------------------------------------------------------------------------
+
+FEN:
+7k/6Q1/5K2/8/8/8/8/8 b - - 0 1
+
+Turno: Negras. Jaque: sí. Jugadas legales: 0.
+
+Oráculo de precedencia:
+El terminal auténtico es jaque mate a favor de las blancas. El detector de
+posición muerta no debe convertir la puntuación de mate en tablas ni permitir
+una evaluación estática posterior.
+
+Resultado esperado:
+Jaque mate verdadero; ahogado falso; causa terminal jaque mate; puntuación de
+mate contra el bando al turno, ajustada por distancia según la convención del
+motor; bestmove 0000.
+
+Objetivo técnico:
+Confirmar que la precedencia y el signo de la puntuación de mate permanecen
+intactos.
+
+Estado: VERIFICADA
+
+==============================================================================
+7. MATRIZ Y RESUMEN DE LA MUESTRA
+==============================================================================
+
+    ID       Bloque  Turno    Jaque  Jugadas  Estado esperado en la raíz
+    -----------------------------------------------------------------------
+    DPR-M01  1       Blancas  No        2     Posición muerta
+    DPR-M04  1       Negras   Sí        2     Posición muerta
+    DPR-M05  1       Blancas  No       11     Posición muerta
+    DPR-M12  1       Negras   No       19     Posición muerta
+    DPR-S01  2       Blancas  No        8     Posición muerta
+    DPR-S06  2       Negras   No       12     Posición muerta
+    DPR-S13  2       Blancas  No        1     Posición muerta
+    DPR-S16  2       Negras   Sí        3     Posición muerta
+    DPR-N01  3       Blancas  No       20     Posición viva
+    DPR-N12  3       Negras   No       19     Posición viva
+    DPR-N17  3       Blancas  No        7     Posición viva
+    DPR-N20  3       Negras   No        3     Posición viva
+    DPR-T01  4       Blancas  No       15     Posición muerta
+    DPR-T04  4       Negras   Sí        5     Viva; hijo muerto en alfa-beta
+    DPR-T11  4       Blancas  No       15     Viva; nodo muerto en quiescence
+    DPR-T14  4       Negras   Sí        0     Jaque mate
+
+Distribución por bloque:
+
+    Bloque 1:   4 pruebas
+    Bloque 2:   4 pruebas
+    Bloque 3:   4 pruebas
+    Bloque 4:   4 pruebas
+               ----------
+    Total:     16 pruebas
+
+Distribución por bando al turno:
+
+    Blancas:   8 posiciones
+    Negras:    8 posiciones
+              ------------
+    Total:    16 posiciones
+
+Distribución por estado de jaque:
+
+    Fuera de jaque:  12 posiciones
+    En jaque:         4 posiciones
+                     -------------
+    Total:           16 posiciones
+
+Distribución por estado de la raíz:
+
+    Posición muerta terminal:    9 posiciones
+    Posición viva no terminal:   6 posiciones
+    Jaque mate:                  1 posición
+                                -------------
+    Total:                      16 posiciones
+
+Las transiciones de DPR-T04 y DPR-T11 son comprobaciones derivadas de esas
+dos pruebas y no incrementan el total de la muestra.
+
+==============================================================================
+8. CONCLUSIÓN
+==============================================================================
+
+La muestra reúne casos positivos y negativos, posiciones con y sin jaque,
+material mínimo y promovido, bloqueos de peones, confinamiento de piezas,
+captura al paso, una frontera estructural y reconocimiento terminal en raíz,
+alfa-beta y quiescence. También protege la precedencia del jaque mate.
+
+Las 16 pruebas aquí publicadas representan el alcance de alpha-010 sin revelar
+el inventario interno completo de 64 pruebas.
+
+Fuentes principales:
+https://handbook.fide.com/chapter/e012023
+https://chasolver.org/FUN22-full.pdf
+https://github.com/miguel-ambrona/chasolver/blob/main/tests/positions.txt
+
+==============================================================================
+FIN DEL INVENTARIO REPRESENTATIVO — 16 DE 64 POSICIONES VERIFICADAS
+==============================================================================
