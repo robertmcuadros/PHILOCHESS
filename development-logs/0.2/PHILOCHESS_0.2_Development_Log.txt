@@ -6039,3 +6039,707 @@ internally validated within its established conservative scope.
 The next planned work will continue the remaining draw rules, beginning with:
 
 PHILOCHESS 0.2-alpha-011 — Fifty-Move Rule in Search
+
+Date: August 19, 2026
+
+PHILOCHESS 0.2-alpha-011 — Fifty-Move Rule in Search
+
+Fifty-move-rule recognition inside the search was implemented and
+internally validated.
+
+Technical milestone:
+
+PHILOCHESS can now use the halfmove clock stored in the position to
+recognise search nodes eligible under the fifty-move rule.
+
+When 100 consecutive plies have been completed without a pawn move or
+capture, the position receives draw value and score 0 inside the search.
+
+Recognition was integrated at:
+
+- the search root;
+- the alpha-beta search;
+- quiescence.
+
+The rule can now influence move selection. PHILOCHESS can avoid a drawing
+continuation when a winning line resets the counter, or select the draw when
+it is the best available defensive result.
+
+Alpha-011 preserves:
+
+- legal move generation and move application;
+- FEN loading and all special moves;
+- check, checkmate, and stalemate recognition;
+- conservative dead-position recognition;
+- correct precedence among checkmate, stalemate, dead position, and the new
+  fifty-move result;
+- perft and known reference perft validation;
+- material evaluation;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- game-phase calculation and king-table interpolation;
+- alpha-beta and quiescence search;
+- iterative deepening;
+- principal-variation construction;
+- iterative search reporting;
+- mate-distance scores;
+- retention of the last completed iteration;
+- PV priority at and below the root;
+- MVV-LVA ordering and promotion priority;
+- soft and hard time limits;
+- safe rejection of interrupted iterations;
+- the preserved tactical, mobility, PST, quiescence, iterative-deepening,
+  PV, time-management, ordering, and perft suites;
+- the 64-case tactical and quiescence inventory;
+- the 64-case stalemate inventory;
+- the 64-root and 10-transition dead-position inventory.
+
+New functionality in alpha-011:
+
+- Added the constant FIFTY_MOVE_RULE_PLIES with value 100.
+- Added the explicit FiftyMoveDraw search state.
+- Added recognition based exclusively on halfmoveClock.
+- Defined the exact threshold as halfmoveClock greater than or equal to 100.
+- Assigned score 0 to FiftyMoveDraw nodes.
+- Kept fullmoveNumber completely independent of the rule.
+- Integrated recognition at the search root.
+- Integrated recognition inside alpha-beta.
+- Integrated recognition inside quiescence.
+- Applied recognition before stand pat and static evaluation.
+- Added an independent fifty-move-node counter.
+- Added fifty-move-node statistics to the search diagnostics.
+- Preserved a legal root bestmove when the position still has legal moves.
+- Reserved bestmove 0000 for roots without legal moves.
+- Preserved checkmate, stalemate, and dead-position precedence.
+- Allowed a checked position with legal evasions to receive the
+  FiftyMoveDraw result when its halfmove clock reaches 100.
+- Preserved mate-in-one selection over branches valued as draws.
+- Allowed winning lines to avoid the draw by playing a pawn move or capture.
+- Allowed an inferior side to choose a drawing continuation.
+- Added the dedicated fiftymovetest command.
+- Added a complete inventory of 64 tests in six blocks.
+- Updated internal identification and diagnostic headings to
+  PHILOCHESS 0.2-alpha-011.
+
+Historical-state and counter rule:
+
+PHILOCHESS uses the fifth field of a complete FEN as the halfmove clock:
+
+halfmoveClock
+
+The sixth field remains the independent fullmove number:
+
+fullmoveNumber
+
+The fifty-move rule uses only halfmoveClock.
+
+After every legal move, the counter follows this rule:
+
+- a pawn move resets halfmoveClock to 0;
+- a capture resets halfmoveClock to 0;
+- every other legal move increments halfmoveClock by exactly 1.
+
+The reset applies to:
+
+- ordinary pawn moves;
+- double pawn advances;
+- ordinary captures;
+- en-passant captures;
+- noncapturing promotions;
+- capturing promotions.
+
+The increment applies to:
+
+- quiet king moves;
+- quiet knight moves;
+- quiet bishop moves;
+- quiet rook moves;
+- quiet queen moves;
+- castling;
+- quiet checking moves.
+
+Giving check does not reset the counter. Castling does not reset it either.
+The fullmove number continues to advance independently after Black moves.
+
+Operational search rule:
+
+Classification follows this order:
+
+- zero legal moves and king in check: checkmate;
+- zero legal moves and king not in check: stalemate;
+- one or more legal moves and bilateral mate impossibility proved: dead
+  position;
+- otherwise, halfmove clock greater than or equal to 100:
+  FiftyMoveDraw;
+- otherwise: nonterminal position.
+
+The corresponding scores are:
+
+- checkmate: mate score adjusted by search ply;
+- stalemate: 0;
+- dead position: 0;
+- FiftyMoveDraw: 0.
+
+Checkmate therefore retains absolute precedence at the threshold. Stalemate
+and dead position also retain their established classifications.
+
+Check alone is not terminal. If the king is in check but has legal evasions
+and halfmoveClock is at least 100, the search result is FiftyMoveDraw.
+
+Root and UCI behaviour:
+
+A root position with halfmoveClock at least 100 and legal moves is assigned
+score 0 without entering unnecessary ordinary search or static evaluation.
+
+PHILOCHESS still preserves and returns a legal bestmove. It does not return
+bestmove 0000 merely because the halfmove clock has reached 100.
+
+Reaching the threshold does not terminate the engine process. It terminates
+the evaluation of that search node with score 0. In actual play, result
+adjudication remains the responsibility of the configured GUI.
+
+This separation allows PHILOCHESS to consider the rule during calculation
+while remaining able to provide a valid UCI move whenever legal moves exist.
+
+Search integration:
+
+At a nonterminal root below 100, all legal candidate moves remain available
+for comparison.
+
+A quiet move from halfmove clock 99 creates a child with value 100. That
+child is recognised as a draw and returns score 0.
+
+A pawn move or capture from 99 resets the child counter to 0. Search can
+therefore continue evaluating that branch normally.
+
+As a result, PHILOCHESS can:
+
+- reject a drawing branch when a winning reset is available;
+- continue examining root siblings after encountering a drawing branch;
+- choose a drawing branch when every alternative is worse;
+- propagate score 0 through one or more negamax levels;
+- preserve checkmate over branches that reach the threshold.
+
+Inside quiescence, FiftyMoveDraw is recognised before:
+
+- stand pat;
+- static evaluation;
+- capture expansion;
+- ordinary check-evasion expansion.
+
+A capture that resets the counter prevents a false positive and allows
+quiescence to continue normally.
+
+Fifty-move-rule inventory:
+
+The inventory contains 64 approved tests divided into six blocks:
+
+- Block 1 — Initial state, FEN, and counter reconstruction: 8 tests;
+- Block 2 — Counter increments and resets: 16 tests;
+- Block 3 — State copying and branch isolation: 8 tests;
+- Block 4 — Thresholds, false positives, and precedence: 12 tests;
+- Block 5 — Root, UCI, alpha-beta, and propagation: 12 tests;
+- Block 6 — Quiescence and integration with other rules: 8 tests.
+
+Total:
+
+- 64 tests.
+
+The suite covers:
+
+- position startpos initialisation;
+- complete FEN loading;
+- preservation of halfmove clocks 0, 99, 100, and 101;
+- separation of halfmoveClock and fullmoveNumber;
+- reconstruction through position startpos moves;
+- continuation through position fen ... moves;
+- exact increment and reset conditions;
+- castling, checking moves, en passant, and promotions;
+- parent immutability;
+- sibling-branch isolation;
+- recursive isolation at two plies;
+- exact threshold recognition;
+- prevention of early and fullmove-number false positives;
+- checkmate, stalemate, and dead-position precedence;
+- legal UCI bestmove preservation;
+- score-0 propagation;
+- winning avoidance of a drawing branch;
+- defensive selection of a drawing branch;
+- preservation of mate in one;
+- detection before stand pat;
+- threshold recognition at the quiescence horizon;
+- checked quiescence nodes;
+- counter reset by tactical captures;
+- integration with the other terminal results.
+
+Version boundary:
+
+Alpha-011 models the fifty-move rule inside PHILOCHESS's decision process.
+The engine evaluates an eligible search node as a draw but does not itself
+declare the external game result or close the UCI session.
+
+The configured graphical interface remains responsible for adjudicating the
+game result.
+
+Alpha-011 does not modify:
+
+- legal move generation;
+- move application;
+- material values;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- game-phase calculation;
+- the move-ordering hierarchy;
+- principal-variation construction;
+- the time-allocation formula;
+- the ordinary quiescence move set;
+- the objectives or classification of the historical inventory;
+- stalemate recognition;
+- conservative dead-position recognition;
+- threefold-repetition detection.
+
+Compilation:
+
+The program compiled successfully in Visual Studio for x64 using ISO C++17
+and the MSVC v145 toolset.
+
+Release | x64:
+
+- 1 successful build;
+- 0 errors;
+- executable generated at x64\Release\PHILOCHESS.exe.
+
+Debug | x64:
+
+- 1 successful build;
+- 0 errors;
+- executable generated at x64\Debug\PHILOCHESS.exe.
+
+Both executables started normally and terminated through quit with exit
+code 0.
+
+Release validation
+
+Test 1 — Fifty-move-rule inventory
+
+Command performed:
+
+fiftymovetest
+
+Result:
+
+- Block 1: 8/8;
+- Block 2: 16/16;
+- Block 3: 8/8;
+- Block 4: 12/12;
+- Block 5: 12/12;
+- Block 6: 8/8;
+- total: 64/64;
+- inventory structure: PASS;
+- FIFTY-MOVE-RULE INVENTORY: PASS.
+
+Block 1 confirmed:
+
+- startpos with halfmove 0 and fullmove 1;
+- exact FEN loading at halfmove clocks 0, 99, and 100;
+- recovery of the initial placement with halfmove clock 4 after four
+  reversible knight moves;
+- reconstruction of a quiet transition from 99 to 100;
+- reset and subsequent reconstruction from startpos;
+- continuation of a nonzero counter from a FEN.
+
+Block 2 confirmed increments after quiet moves by every required piece,
+castling, and a quiet checking move. It also confirmed resets after pawn
+moves, ordinary captures, en-passant captures, and promotions.
+
+All 16/16 counter cases matched their exact final FEN, halfmove clock, and
+fullmove number.
+
+Block 3 confirmed that the parent and all ancestors remained unchanged.
+Every descendant matched its oracle in both forward and reverse exploration
+order.
+
+All 8/8 branch-isolation tests passed, including recursive isolation at two
+plies and preservation of en-passant and castling state between siblings.
+
+Block 4 confirmed:
+
+- halfmove clock 99 does not activate the rule;
+- halfmove clock 100 activates it exactly;
+- halfmove clock 101 remains eligible;
+- fullmove number 100 causes no false positive;
+- quiet movement from 98 to 99 remains nonterminal;
+- a pawn move or capture from 99 prevents a false positive;
+- available pawn moves do not cancel a position already at 100;
+- checkmate retains precedence;
+- stalemate retains precedence;
+- dead position retains precedence;
+- check with legal evasions at 100 receives FiftyMoveDraw.
+
+All 12/12 threshold and precedence tests passed.
+
+Block 5 confirmed root, UCI, alpha-beta, and propagation behaviour.
+
+The direct root cases returned:
+
+- FMR-S01: score 0 and bestmove c1h1;
+- FMR-S02: score 0 and bestmove c8h8;
+- FMR-S03: score 0 and bestmove h1h2;
+- FMR-S04: checkmate score -100000 and bestmove 0000;
+- FMR-S05: stalemate score 0 and bestmove 0000;
+- FMR-S06: dead-position score 0 and bestmove a1b1.
+
+The fixed-depth cases returned:
+
+- FMR-S07: score 0, bestmove c1h1, 16 fifty-move nodes;
+- FMR-S08: score 614, bestmove e2e4, 16 fifty-move nodes;
+- FMR-S09: score 0, bestmove h8g8, 3 fifty-move nodes;
+- FMR-S10: score 99999, bestmove f5c8, 22 fifty-move nodes;
+- FMR-S11: score 0, bestmove c1h1, 17 fifty-move nodes;
+- FMR-S12: score 0, bestmove c1h1, 17 fifty-move nodes.
+
+FMR-S08 demonstrated that PHILOCHESS does not stop after the first drawing
+root branch. It continued until finding e2e4, which reset the counter and
+preserved a winning material evaluation.
+
+FMR-S09 demonstrated that the inferior side can deliberately choose a draw.
+
+FMR-S10 demonstrated that mate in one remains preferable to all branches
+that reach the fifty-move threshold.
+
+All 12/12 root and propagation tests passed.
+
+Block 6 confirmed quiescence integration:
+
+- FMR-Q01: direct detection before stand pat, score 0, qnodes 1;
+- FMR-Q02: threshold at the horizon, score 0, qnodes 16;
+- FMR-Q03: checked eligible node, score 0, qnodes 1;
+- FMR-Q04: quiet evasions reach 100, score 0, qnodes 3;
+- FMR-Q05: capture chain resets the clock, score 492, qnodes 4;
+- FMR-Q06: checkmate prevails, score -100000;
+- FMR-Q07: stalemate prevails, score 0;
+- FMR-Q08: dead position prevails, score 0.
+
+All 8/8 quiescence and cross-rule tests passed.
+
+Test 2 — Quiescence regression
+
+Command performed:
+
+qtest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The suite preserved:
+
+- d1f3 and score 405 in the horizon test;
+- score 492 in the capture chain;
+- score 892 in the quiet-promotion test;
+- check evasion without stand pat.
+
+Test 3 — Iterative deepening
+
+Command performed:
+
+idtest 4
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Depths 1 through 4 completed with bestmove b1c3 and node counts of 20, 171,
+2253, and 17122.
+
+Test 4 — Principal variation
+
+Command performed:
+
+pvtest 4
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The PV correctly reached lengths 1 through 4:
+
+- b1c3;
+- b1c3 b8c6;
+- b1c3 b8c6 g1f3;
+- b1c3 b8c6 g1f3 g8f6.
+
+Test 5 — Time management
+
+Command performed:
+
+timetest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The 15+10 allocation produced:
+
+- soft limit: 18158 ms;
+- hard limit: 21363 ms;
+- depth ceiling: 64.
+
+The explicit depth-5 search completed correctly.
+
+The 1 ms emergency test completed depth 2, interrupted depth 3, and returned
+a valid result. The 50 ms versus 2000 ms comparison completed depths 3 and 5,
+respectively, confirming non-decreasing completed depth.
+
+Test 6 — Move ordering
+
+Command performed:
+
+ordertest
+
+Result:
+
+PASS 4  FAIL 0  TOTAL 4
+
+The following remained correct:
+
+- PV priority;
+- MVV-LVA capture ordering;
+- promotion priority;
+- PV priority below the root.
+
+Test 7 — Mobility
+
+Command performed:
+
+mobilitytest
+
+Result:
+
+- 64/64;
+- 44 controlled positions;
+- 10 transversal positions;
+- 10 integrated positions;
+- structure: PASS.
+
+Test 8 — Piece-square tables
+
+Command performed:
+
+psttest
+
+Result:
+
+PASS 8  FAIL 0  TOTAL 8
+
+Table orientation, reflection, initial symmetry, phase weights, king
+interpolation, representative PST changes, castling placement, and static-
+evaluation composition remained correct.
+
+Test 9 — Known perft
+
+Command performed:
+
+perftknown 4
+
+Result:
+
+PASS 24  FAIL 0  TOTAL 24
+
+All six positions matched their depth-1 through depth-4 references:
+
+- initial position: 197281;
+- Kiwipete: 4085603;
+- en-passant and capture endgame: 43238;
+- promotions and castling pressure: 422333;
+- historical promotion bug trap: 2103487;
+- middlegame development: 3894594.
+
+Test 10 — Tactical regression
+
+Command performed:
+
+tactictest 4
+
+Result:
+
+All three diagnostics preserved their expected results:
+
+- the known bad move b6c6 was avoided in favour of b6d6;
+- h5f3 was found as the legal defensive attempt after 11.Bb5;
+- d5c7 was found as the tactical refutation after 11...Qxb5.
+
+Test 11 — Historical inventory
+
+Command performed:
+
+inventorytest 4
+
+Result:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categories: [A] 21/21  [B] 33/33  [C] 10/10
+Inventory structure: PASS
+
+The nine OPEN cases remained unchanged:
+
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+No new case became open, and no previously closed regression was lost.
+
+Test 12 — Stalemate inventory
+
+Command performed:
+
+stalematetest
+
+Result:
+
+- Block 1: 8/8;
+- Block 2: 12/12;
+- Block 3: 12/12;
+- Block 4: 8/8;
+- Block 5: 12/12;
+- Block 6: 4/4;
+- Block 7: 8/8;
+- total: 64/64;
+- inventory structure: PASS;
+- STALEMATE INVENTORY: PASS.
+
+The new rule did not alter stalemate recognition or its terminal precedence.
+
+Test 13 — Dead-position inventory
+
+Command performed:
+
+deadpositiontest
+
+Result:
+
+- Block 1: 12/12;
+- Block 2: 16/16;
+- Block 3: 20/20;
+- Block 4: 16/16;
+- root positions: 64/64;
+- transitions: 10/10;
+- inventory structure: PASS;
+- DEAD-POSITION INVENTORY: PASS.
+
+The new rule did not alter conservative dead-position recognition,
+false-positive prevention, or transition handling.
+
+Debug validation
+
+The complete battery was repeated with the Debug | x64 executable.
+
+Results:
+
+- fiftymovetest: 64/64;
+- qtest: 4/4;
+- idtest 4: 4/4;
+- pvtest 4: 4/4;
+- timetest: 4/4;
+- ordertest: 4/4;
+- mobilitytest: 64/64;
+- psttest: 8/8;
+- perftknown 4: 24/24;
+- tactictest 4: all three expected tactical results;
+- inventorytest 4: 45 PASS, 0 FAIL, 9 OPEN, and 10 BASELINE;
+- stalematetest: 64/64;
+- deadpositiontest: 64/64 roots and 10/10 transitions.
+
+The fifty-move inventory again passed all six blocks:
+
+- Block 1: 8/8;
+- Block 2: 16/16;
+- Block 3: 8/8;
+- Block 4: 12/12;
+- Block 5: 12/12;
+- Block 6: 8/8;
+- total: 64/64;
+- inventory structure: PASS;
+- FIFTY-MOVE-RULE INVENTORY: PASS.
+
+Performance differences were normal for an unoptimised build:
+
+- the 1 ms response retained completed depth 0 and interrupted depth 1;
+- 50 ms completed depth 2;
+- 2000 ms completed depth 3.
+
+This satisfies the functional purpose of the test: the engine respected its
+limits, returned valid results, and did not complete a shallower search when
+given more time.
+
+No source-code or test-harness modification was required during this
+validation.
+
+Practical validation:
+
+Practical play remains deliberately deferred until threefold-repetition
+detection and the final integration of the draw rules have been completed.
+
+Limitations after alpha-011:
+
+- the fifty-move rule is evaluated inside the search, while external game
+  adjudication remains the responsibility of the configured GUI;
+- threefold repetition is not yet integrated into the search;
+- no external-GUI practical games were performed;
+- dead-position recognition remains conservative rather than universal;
+- the general evaluation and search limitations documented in earlier
+  stages remain unless explicitly superseded.
+
+Conclusion:
+
+PHILOCHESS 0.2-alpha-011 — Fifty-Move Rule in Search was implemented and
+internally validated successfully.
+
+PHILOCHESS passed:
+
+- Release | x64 compilation under ISO C++17 with 0 errors;
+- Debug | x64 compilation under ISO C++17 with 0 errors;
+- the complete 64-case fifty-move-rule inventory in both configurations;
+- all six blocks of the new inventory;
+- exact FEN loading and counter reconstruction;
+- all increment and reset conditions;
+- parent, ancestor, and sibling-branch isolation;
+- exact recognition at halfmove clock 100;
+- prevention of early and fullmove-number false positives;
+- correct terminal precedence;
+- recognition at the root, in alpha-beta, and in quiescence;
+- correct score-0 propagation;
+- legal bestmove preservation at eligible roots with legal moves;
+- winning avoidance and defensive selection of drawing branches;
+- preservation of mate in one;
+- detection before stand pat and static evaluation;
+- stalemate inventory: 64/64;
+- dead-position inventory: 64/64 roots and 10/10 transitions;
+- mobility: 64/64;
+- PST: 8/8;
+- quiescence: 4/4;
+- iterative deepening: 4/4;
+- principal variation: 4/4;
+- time management: 4/4;
+- move ordering: 4/4;
+- the preserved tactical regression;
+- known perft: 24/24;
+- the historical inventory with 45 PASS, 0 FAIL, 9 OPEN, and 10 BASELINE;
+- normal termination of both executables with exit code 0.
+
+No functional anomaly or regression attributable to the new rule was found.
+Timing differences between Release and Debug were normal, and all historical
+OPEN targets remained exactly unchanged.
+
+PHILOCHESS 0.2-alpha-011 is therefore considered successfully developed,
+internally validated, and closed.
+
+The next planned version is:
+
+PHILOCHESS 0.2-alpha-012 — Threefold Repetition Detection in Search
