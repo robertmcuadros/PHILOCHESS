@@ -1,0 +1,693 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-011
+REPRESENTATIVE TEST INVENTORY
+FIFTY-MOVE RULE IN SEARCH
+PUBLIC SAMPLE — 16 OF 64 VERIFIED TESTS
+==============================================================================
+
+Author and copyright holder: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is distributed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International license
+(CC BY-NC-ND 4.0).
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en
+
+Date: August 19, 2026
+
+This public inventory contains sixteen representative tests selected from the
+complete sixty-four-test validation inventory for PHILOCHESS 0.2-alpha-011.
+It preserves the approved identifiers, original numbering, FENs, move
+sequences, expected results, and technical objectives of the selected tests.
+
+The sample covers the six technical blocks of the complete inventory:
+- historical-state loading and reconstruction;
+- counter increments and resets;
+- Position copying and branch isolation;
+- thresholds, false positives, and terminal precedence;
+- root, UCI, alpha-beta, and score propagation;
+- quiescence and integration with other terminal rules.
+
+Representative distribution:
+
+    Block 1:  2 tests
+    Block 2:  2 tests
+    Block 3:  2 tests
+    Block 4:  4 tests
+    Block 5:  4 tests
+    Block 6:  2 tests
+    Total:   16 tests
+
+Technical oracle used by the sample:
+- The fifth FEN field is the halfmove clock.
+- A pawn move or any capture resets the clock to 0.
+- Every other legal move increments the clock by one.
+- The sixth FEN field is independent of the fifty-move counter.
+- FiftyMoveDraw is recognized when halfmoveClock >= 100.
+- Checkmate, Stalemate, and DeadPosition retain their precedence and identity.
+- A FiftyMoveDraw node returns score 0.
+- Detection is integrated at the root, in alpha-beta, and in quiescence.
+- At a legal root, UCI still receives a legal bestmove; 0000 remains reserved
+  for roots without legal moves.
+
+The identifiers use the form FMR-Xnn, where FMR means Fifty-Move Rule, X
+identifies the technical family, and nn preserves the order inside its block.
+
+==============================================================================
+1. BLOCK 1 — INITIAL STATE, FEN, AND COUNTER RECONSTRUCTION
+2 representative tests
+==============================================================================
+
+FMR-H05 — Same initial placement with different history
+Test 5 of 64
+------------------------------------------------------------------------------
+
+Command under test:
+
+    position startpos moves g1f3 g8f6 f3g1 f6g8
+
+Counter sequence:
+
+    g1f3  halfmoveClock: 0 -> 1
+    g8f6  halfmoveClock: 1 -> 2
+    f3g1  halfmoveClock: 2 -> 3
+    f6g8  halfmoveClock: 3 -> 4
+
+Equivalent FEN of the expected final state:
+
+    rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 4 3
+
+Expected final state:
+- White to move.
+- The white king is not in check.
+- 20 legal moves.
+- Castling rights: KQkq.
+- En-passant target square: none.
+- Halfmove clock: 4.
+- Fullmove number: 3.
+
+Reconstruction analysis:
+- Both the white and black knights return to their initial squares.
+- None of the four moves is a pawn move or capture.
+- The placement, side to move, castling rights, and en-passant target square
+  again match the initial position.
+- The halfmove clock does not return to 0: it must retain the history of four
+  reversible moves.
+- The fullmove number increases after each black move and ends at 3.
+
+Expected technical results:
+- Complete sequence accepted: yes.
+- Four moves applied legally: yes.
+- Final placement identical to the initial position: yes.
+- Final halfmove clock equal to 4: yes.
+- Final fullmove number equal to 3: yes.
+- Exact match with the equivalent final FEN: yes.
+
+Technical objective:
+Demonstrate that historical state cannot be inferred solely from placement
+and that position startpos moves preserves the counter even when the pieces
+return to their original squares.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-H06 — Reconstructed transition from 99 to 100
+Test 6 of 64
+------------------------------------------------------------------------------
+
+Command under test:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 99 50 moves c1c2
+
+Counter sequence:
+
+    Initial FEN state:  halfmoveClock =  99,   fullmoveNumber = 50
+    c1c2:               halfmoveClock = 100,   fullmoveNumber = 50
+
+Equivalent FEN of the expected final state:
+
+    7k/8/8/8/8/8/2R5/K7 b - - 100 50
+
+Expected final state:
+- Black to move.
+- The black king is not in check.
+- 3 legal moves.
+- Castling rights: none.
+- En-passant target square: none.
+- Halfmove clock: 100.
+- Fullmove number: 50.
+
+Reconstruction analysis:
+- The position fen ... moves path must begin at 99, not at 0.
+- c1c2 is a quiet rook move: it neither moves a pawn nor makes a capture.
+- The move raises the counter exactly from 99 to 100.
+- Because the move is made by White, the fullmove number remains at 50.
+- The final position has legal moves; the test does not confuse the threshold
+  with checkmate or stalemate.
+
+Expected technical results:
+- Base FEN accepted: yes.
+- Move c1c2 accepted: yes.
+- Final halfmove clock equal to 100: yes.
+- Final fullmove number equal to 50: yes.
+- Exact match with the equivalent final FEN: yes.
+- Invocation of search as part of this test: no.
+
+Technical objective:
+Verify that position fen ... moves reconstructs exactly the operational
+transition that completes 100 plies, without yet anticipating alpha-011
+scoring or terminal precedence.
+
+Status:
+VERIFIED
+
+==============================================================================
+2. BLOCK 2 — COUNTER INCREMENTS AND RESETS
+2 representative tests
+==============================================================================
+
+FMR-C01 — Increment after a quiet white king move
+Test 9 of 64
+------------------------------------------------------------------------------
+
+Command under test:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 98 50 moves a1b1
+
+Counter transition:
+
+    a1b1: halfmoveClock 98 -> 99, fullmoveNumber 50 -> 50
+
+Equivalent FEN of the expected final state:
+
+    7k/8/8/8/8/8/8/1KR5 b - - 99 50
+
+Expected final state:
+- Black to move.
+- Neither king is in check.
+- 3 legal moves.
+- Halfmove clock: 99.
+- Fullmove number: 50.
+
+Analysis and technical objective:
+a1b1 moves a king without capturing. It must increment the halfmove clock by
+one and, because it is a white move, must not alter the fullmove number.
+
+Expected technical results:
+- Base FEN and move accepted: yes.
+- Exact increment 98 -> 99: yes.
+- Improper reset: none.
+- Exact match with the equivalent final FEN: yes.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-C13 — Reset after a white en-passant capture
+Test 21 of 64
+------------------------------------------------------------------------------
+
+Command under test:
+
+    position fen 7k/8/8/3pP3/8/8/8/K7 w - d6 0 50 moves e5d6
+
+Counter transition:
+
+    e5d6: halfmoveClock 0 -> 0, fullmoveNumber 50 -> 50
+
+Equivalent FEN of the expected final state:
+
+    7k/8/3P4/8/8/8/8/K7 b - - 0 50
+
+Expected final state:
+- Black to move.
+- Neither king is in check.
+- 3 legal moves.
+- En-passant target square: none.
+- Halfmove clock: 0.
+- Fullmove number: 50.
+
+Analysis and technical objective:
+The base FEN uses 0 because the immediately preceding double advance that made
+the en-passant capture possible had already reset the counter. e5d6 must keep
+it at 0, remove the pawn from d5, and clear the d6 en-passant target square.
+
+Expected technical results:
+- Base FEN and en-passant capture accepted: yes.
+- Black pawn removed from d5: yes.
+- Final halfmove clock equal to 0: yes.
+- Exact match with the equivalent final FEN: yes.
+
+Status:
+VERIFIED
+
+==============================================================================
+3. BLOCK 3 — STATE COPYING AND BRANCH ISOLATION
+2 representative tests
+==============================================================================
+
+FMR-B04 — Incrementing branch versus pawn-move branch
+Test 28 of 64
+------------------------------------------------------------------------------
+
+Parent FEN:
+
+    7k/8/8/8/8/8/4P3/K1R5 w - - 99 50
+
+Branch A — quiet move:
+
+    c1c2
+
+Expected FEN for A:
+
+    7k/8/8/8/8/8/2R1P3/K7 b - - 100 50
+
+Branch B — pawn move:
+
+    e2e4
+
+Expected FEN for B:
+
+    7k/8/8/8/4P3/8/8/K1R5 b - e3 0 50
+
+Isolation checks:
+- A must reach 100 from parent value 99.
+- B must reset to 0 from the same parent value 99.
+- The e3 en-passant target square exists only in B.
+- The parent retains the pawn on e2, rook on c1, and halfmove clock 99.
+- A–B and B–A order must not alter the oracles.
+
+Technical objective:
+Demonstrate that a branch reaching the threshold and another resetting the
+counter can coexist without transmitting the halfmove clock or en-passant
+state to each other.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-B08 — Recursive isolation at two plies
+Test 32 of 64
+------------------------------------------------------------------------------
+
+Root FEN:
+
+    7k/8/8/8/8/8/4P3/K1R5 w - - 98 50
+
+Branch A:
+
+    c1c2 h8h7
+
+Expected FEN after c1c2:
+
+    7k/8/8/8/8/8/2R1P3/K7 b - - 99 50
+
+Expected FEN after c1c2 h8h7:
+
+    8/7k/8/8/8/8/2R1P3/K7 w - - 100 51
+
+Branch B:
+
+    e2e4 h8h7
+
+Expected FEN after e2e4:
+
+    7k/8/8/8/4P3/8/8/K1R5 b - e3 0 50
+
+Expected FEN after e2e4 h8h7:
+
+    8/7k/8/8/4P3/8/8/K1R5 w - - 1 51
+
+Isolation checks:
+- Child A1 must retain 99 after grandchild A2 with value 100 is created.
+- Child B1 must retain 0 and the e3 target square after B2 with value 1 and
+  no en-passant target square is created.
+- The root must retain halfmove clock 98 and its complete FEN.
+- Complete exploration of A cannot change B1 or B2, and vice versa.
+- A–B and B–A order must produce the same four descendants.
+
+Technical objective:
+Extend the isolation check beyond the root and demonstrate that each recursive
+level preserves its own state while building descendants.
+
+Status:
+VERIFIED
+
+==============================================================================
+4. BLOCK 4 — THRESHOLDS, FALSE POSITIVES, AND PRECEDENCE
+4 representative tests
+==============================================================================
+
+FMR-T01 — Halfmove clock 99 does not activate the rule
+Test 33 of 64
+------------------------------------------------------------------------------
+
+FEN under test:
+
+    7k/8/8/8/8/8/8/K1R5 w - - 99 73
+
+Position state:
+- White to move.
+- The white king is not in check.
+- 16 legal moves.
+- The position is not dead.
+- Halfmove clock: 99.
+- Fullmove number: 73.
+
+Expected internal result:
+- Higher-precedence terminal state: none.
+- Condition halfmoveClock >= 100: false.
+- FiftyMoveDraw classification: no.
+- Draw score imposed by this rule: no.
+- Normal node processing: continues.
+
+Technical objective:
+Fix the immediate lower boundary and detect any premature comparison that
+recognizes the rule after only 99 plies.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-T02 — Halfmove clock 100 activates the rule exactly
+Test 34 of 64
+------------------------------------------------------------------------------
+
+FEN under test:
+
+    7k/8/8/8/8/8/8/K1R5 w - - 100 73
+
+Position state:
+- White to move.
+- The white king is not in check.
+- 16 legal moves.
+- The position is not dead.
+- Halfmove clock: 100.
+
+Expected internal result:
+- Higher-precedence terminal state: none.
+- Condition halfmoveClock >= 100: true.
+- Classification: FiftyMoveDraw.
+- Internal score: 0.
+- Continuation of this node beyond the detector: no.
+
+Technical objective:
+Verify exact activation at 100 and, for the first time, turn the state value
+already covered in earlier blocks into an internal draw result.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-T04 — Fullmove number 100 does not cause a false positive
+Test 36 of 64
+------------------------------------------------------------------------------
+
+FEN under test:
+
+    7k/8/8/8/8/8/8/K1R5 w - - 0 100
+
+Position state:
+- White to move.
+- The white king is not in check.
+- 16 legal moves.
+- Halfmove clock: 0.
+- Fullmove number: 100.
+
+Expected internal result:
+- Condition halfmoveClock >= 100: false.
+- FiftyMoveDraw classification: no.
+- Draw score imposed by this rule: no.
+- Normal node processing: continues.
+
+Technical objective:
+Protect the separation between the fifth and sixth FEN fields and prevent the
+fullmove number from being used as the fifty-move counter.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-T10 — Stalemate retains precedence with counter 100
+Test 42 of 64
+------------------------------------------------------------------------------
+
+FEN under test:
+
+    7k/5Q2/6K1/8/8/8/8/8 b - - 100 73
+
+Position state:
+- Black to move.
+- The black king is not in check.
+- 0 legal moves.
+- Applicable preexisting state: stalemate.
+
+Expected internal result:
+- Classification: Stalemate.
+- FiftyMoveDraw classification: no.
+- Internal score: 0.
+- Terminal identity retained for diagnostics: yes.
+
+Technical objective:
+Preserve stalemate recognition before the fifty-move rule even though both
+paths would produce a draw score.
+
+Status:
+VERIFIED
+
+==============================================================================
+5. BLOCK 5 — ROOT, UCI, ALPHA-BETA, AND PROPAGATION
+4 representative tests
+==============================================================================
+
+FMR-S01 — Draw-eligible white root with legal moves
+Test 45 of 64
+------------------------------------------------------------------------------
+
+Commands under test:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 100 73
+    go depth 2
+
+Root state:
+- White to move.
+- The white king is not in check.
+- 16 legal moves.
+- The position is not dead.
+- Halfmove clock: 100.
+
+Expected internal results:
+- Root classification: FiftyMoveDraw.
+- Score: 0.
+- Subsequent static evaluation: must not run.
+- Subsequent alpha-beta exploration: must not run.
+- Move available for UCI: yes.
+
+Expected UCI output:
+- score cp 0.
+- legal bestmove other than 0000.
+- Reference with current ordering: bestmove c1h1.
+- First PV move: equal to bestmove.
+
+Technical objective:
+Verify the principal root contract: recognize the draw without losing the
+ability to answer with a legal move if requested by the protocol.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-S08 — A winning advantage avoids a drawing branch
+Test 52 of 64
+------------------------------------------------------------------------------
+
+Fixed-depth internal probe:
+
+    position fen 7k/8/8/8/8/8/4P3/K1R5 w - - 99 73
+    depth 2
+
+Search structure:
+- White has a rook and a pawn against a lone king.
+- The root has 18 legal moves.
+- 16 king or rook moves produce FiftyMoveDraw children with score 0.
+- e2e3 and e2e4 reset the counter and retain the material advantage.
+- The pawn moves appear after the drawing branches in the stable order before
+  move ordering.
+
+Expected results:
+- The first drawing branch does not stop the root loop.
+- Final root score: positive.
+- bestmove: e2e4.
+- Reference score with the current evaluation: +614 cp.
+- Selection of a quiet move that reaches 100: no.
+
+Technical objective:
+Demonstrate that PHILOCHESS avoids completing the rule when it has a
+continuation evaluated as winning that resets the counter.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-S09 — The disadvantaged side chooses the draw
+Test 53 of 64
+------------------------------------------------------------------------------
+
+Fixed-depth internal probe:
+
+    position fen 7k/4p3/8/8/8/8/8/K1R5 b - - 99 73
+    depth 2
+
+Search structure:
+- Black has a king and a pawn against White's king and rook.
+- The root has 5 legal moves.
+- e7e6 and e7e5 reset the counter and preserve Black's disadvantage.
+- h8g8, h8g7, and h8h7 produce FiftyMoveDraw children with score 0.
+
+Expected results:
+- Final root score: 0.
+- bestmove belonging to {h8g8, h8g7, h8h7}.
+- Reference with current ordering: bestmove h8g8.
+- Selection of e7e6 or e7e5: no.
+
+Technical objective:
+Verify the complementary minimax behavior: a materially inferior side must
+prefer an immediately available draw over a normal line with a negative
+evaluation.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-S10 — Mate in one versus FiftyMoveDraw branches
+Test 54 of 64
+------------------------------------------------------------------------------
+
+Fixed-depth internal probe:
+
+    position fen 7k/8/6K1/5Q2/8/8/8/8 w - - 99 73
+    depth 2
+
+Expected principal transition:
+
+    f5c8
+
+FEN after f5c8:
+
+    2Q4k/8/6K1/8/8/8/8/8 b - - 100 73
+
+Search structure:
+- The root has 28 legal moves.
+- Nonterminal quiet moves that reach 100 receive score 0.
+- f5c8 reaches 100, gives checkmate, and retains Checkmate precedence.
+
+Expected results:
+- bestmove: f5c8.
+- Score: mate in 1 for White.
+- Replacement of mate by FiftyMoveDraw: no.
+- Preference for a drawing branch over mate: no.
+
+Technical objective:
+Verify within alpha-beta that mate precedence not only produces the correct
+score but also governs move selection.
+
+Status:
+VERIFIED
+
+==============================================================================
+6. BLOCK 6 — QUIESCENCE AND INTEGRATION WITH OTHER RULES
+2 representative tests
+==============================================================================
+
+FMR-Q01 — Direct detection before stand pat
+Test 57 of 64
+------------------------------------------------------------------------------
+
+Direct internal quiescence probe:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 100 73
+    qprobe
+
+Node state:
+- White to move and not in check.
+- 16 legal moves.
+- The position is not dead.
+- Halfmove clock: 100.
+
+Expected results:
+- Classification: FiftyMoveDraw.
+- Quiescence score: 0.
+- qnodes: 1.
+- fiftyMoveNodes: 1.
+- qStandPatNodes: 0.
+- staticEvaluationCalls: 0.
+- Capture or promotion expansion: no.
+
+Technical objective:
+Demonstrate that the detector is part of quiescence and returns the draw
+before stand pat, static evaluation, and any subsequent tactical expansion.
+
+Status:
+VERIFIED
+
+------------------------------------------------------------------------------
+FMR-Q08 — Dead position prevails within quiescence
+Test 64 of 64
+------------------------------------------------------------------------------
+
+Direct internal quiescence probe:
+
+    position fen 7k/8/8/8/8/8/8/K7 w - - 100 73
+    qprobe
+
+Node state:
+- White to move and not in check.
+- 3 legal moves.
+- The position is dead by material.
+- Halfmove clock: 100.
+
+Expected results:
+- Classification: DeadPosition.
+- FiftyMoveDraw classification: no.
+- Score: 0.
+- deadPositionNodes: 1.
+- fiftyMoveNodes: 0.
+- qStandPatNodes and staticEvaluationCalls: 0.
+
+Technical objective:
+Verify that the alpha-010 detector retains within quiescence its precedence,
+diagnostic identity, and termination before the rule added in alpha-011.
+
+Status:
+VERIFIED
+
+==============================================================================
+7. REPRESENTATIVE INVENTORY SUMMARY
+==============================================================================
+
+Block 1 — Initial state, FEN, and reconstruction:       2/2 verified
+Block 2 — Counter increments and resets:                2/2 verified
+Block 3 — State copying and branch isolation:           2/2 verified
+Block 4 — Thresholds, false positives, and precedence:  4/4 verified
+Block 5 — Root, UCI, alpha-beta, and propagation:       4/4 verified
+Block 6 — Quiescence and integration:                   2/2 verified
+                                                       --------------
+TOTAL:                                                 16/16 verified
+
+The selected tests form a compact public demonstration of the complete path
+of the fifty-move rule: historical state, counter maintenance, branch safety,
+threshold classification, terminal precedence, move selection, score
+propagation, and quiescence integration.
+
+This representative inventory does not replace the complete sixty-four-test
+validation inventory.
+
+==============================================================================
+END OF PHILOCHESS 0.2-alpha-011 REPRESENTATIVE TEST INVENTORY
+==============================================================================
