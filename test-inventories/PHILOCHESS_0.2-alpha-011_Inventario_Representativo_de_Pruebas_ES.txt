@@ -1,0 +1,699 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-011
+INVENTARIO REPRESENTATIVO DE PRUEBAS
+REGLA DE LAS CINCUENTA JUGADAS EN LA BÚSQUEDA
+MUESTRA PÚBLICA — 16 DE 64 PRUEBAS VERIFICADAS
+==============================================================================
+
+Autor y titular de los derechos de autor: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Este documento se distribuye bajo la licencia internacional Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0
+(CC BY-NC-ND 4.0).
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
+
+Fecha: 19 de agosto de 2026
+
+Este inventario público contiene dieciséis pruebas representativas tomadas
+del inventario completo de sesenta y cuatro pruebas de validación de
+PHILOCHESS 0.2-alpha-011. Conserva los identificadores aprobados, la
+numeración original, las FEN, las secuencias de jugadas, los resultados
+esperados y los objetivos técnicos de las pruebas seleccionadas.
+
+La muestra cubre los seis bloques técnicos del inventario completo:
+- carga y reconstrucción del estado histórico;
+- incrementos y reinicios del contador;
+- copia de Position y aislamiento entre ramas;
+- umbrales, falsos positivos y precedencia terminal;
+- raíz, UCI, alpha-beta y propagación de la puntuación;
+- quiescence e integración con otras reglas terminales.
+
+Distribución representativa:
+
+    Bloque 1:  2 pruebas
+    Bloque 2:  2 pruebas
+    Bloque 3:  2 pruebas
+    Bloque 4:  4 pruebas
+    Bloque 5:  4 pruebas
+    Bloque 6:  2 pruebas
+    Total:    16 pruebas
+
+Oráculo técnico utilizado por la muestra:
+- El quinto campo de la FEN es el halfmove clock.
+- Un movimiento de peón o cualquier captura reinicia el contador en 0.
+- Cualquier otra jugada legal incrementa el contador en una unidad.
+- El sexto campo de la FEN es independiente del contador de cincuenta jugadas.
+- FiftyMoveDraw se reconoce cuando halfmoveClock >= 100.
+- Checkmate, Stalemate y DeadPosition conservan su precedencia e identidad.
+- Un nodo FiftyMoveDraw devuelve puntuación 0.
+- La detección se integra en la raíz, en alpha-beta y en quiescence.
+- En una raíz legal, UCI todavía recibe un bestmove legal; 0000 permanece
+  reservado para raíces sin jugadas legales.
+
+Los identificadores utilizan la forma FMR-Xnn, donde FMR significa
+Fifty-Move Rule, X identifica la familia técnica y nn conserva el orden dentro
+de su bloque.
+
+==============================================================================
+1. BLOQUE 1 — ESTADO INICIAL, FEN Y RECONSTRUCCIÓN DEL CONTADOR
+2 pruebas representativas
+==============================================================================
+
+FMR-H05 — Misma colocación inicial con historial diferente
+Prueba 5 de 64
+------------------------------------------------------------------------------
+
+Comando sometido a prueba:
+
+    position startpos moves g1f3 g8f6 f3g1 f6g8
+
+Secuencia del contador:
+
+    g1f3  halfmoveClock: 0 -> 1
+    g8f6  halfmoveClock: 1 -> 2
+    f3g1  halfmoveClock: 2 -> 3
+    f6g8  halfmoveClock: 3 -> 4
+
+FEN equivalente del estado final esperado:
+
+    rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 4 3
+
+Estado final esperado:
+- Blancas al turno.
+- El rey blanco no está en jaque.
+- 20 jugadas legales.
+- Derechos de enroque: KQkq.
+- Casilla de captura al paso: ninguna.
+- Halfmove clock: 4.
+- Fullmove number: 3.
+
+Análisis de la reconstrucción:
+- Los dos caballos blancos y negros regresan a sus casillas iniciales.
+- Ninguna de las cuatro jugadas es movimiento de peón ni captura.
+- La colocación, el turno, los derechos de enroque y la casilla de captura al
+  paso vuelven a coincidir con la posición inicial.
+- El halfmove clock no vuelve a 0: debe conservar el historial de cuatro
+  jugadas reversibles.
+- El fullmove number aumenta después de cada jugada negra y termina en 3.
+
+Resultados técnicos esperados:
+- Secuencia completa aceptada: sí.
+- Cuatro jugadas aplicadas legalmente: sí.
+- Colocación final idéntica a la posición inicial: sí.
+- Halfmove clock final igual a 4: sí.
+- Fullmove number final igual a 3: sí.
+- Coincidencia exacta con la FEN final equivalente: sí.
+
+Objetivo técnico:
+Demostrar que el estado histórico no puede deducirse únicamente de la
+colocación y que position startpos moves conserva el contador aunque las
+piezas regresen a sus casillas de origen.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-H06 — Transición reconstruida de 99 a 100
+Prueba 6 de 64
+------------------------------------------------------------------------------
+
+Comando sometido a prueba:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 99 50 moves c1c2
+
+Secuencia del contador:
+
+    Estado FEN inicial: halfmoveClock =  99,  fullmoveNumber = 50
+    c1c2:               halfmoveClock = 100,  fullmoveNumber = 50
+
+FEN equivalente del estado final esperado:
+
+    7k/8/8/8/8/8/2R5/K7 b - - 100 50
+
+Estado final esperado:
+- Negras al turno.
+- El rey negro no está en jaque.
+- 3 jugadas legales.
+- Derechos de enroque: ninguno.
+- Casilla de captura al paso: ninguna.
+- Halfmove clock: 100.
+- Fullmove number: 50.
+
+Análisis de la reconstrucción:
+- La ruta position fen ... moves debe comenzar en 99, no en 0.
+- c1c2 es una jugada tranquila de torre: no mueve un peón ni realiza una
+  captura.
+- La jugada eleva el contador exactamente de 99 a 100.
+- Como la jugada corresponde a las blancas, el fullmove number permanece en
+  50.
+- La posición final posee jugadas legales; la prueba no confunde el umbral con
+  jaque mate o ahogado.
+
+Resultados técnicos esperados:
+- FEN base aceptada: sí.
+- Jugada c1c2 aceptada: sí.
+- Halfmove clock final igual a 100: sí.
+- Fullmove number final igual a 50: sí.
+- Coincidencia exacta con la FEN final equivalente: sí.
+- Invocación de la búsqueda como parte de esta prueba: no.
+
+Objetivo técnico:
+Verificar que position fen ... moves reconstruya exactamente la transición
+operativa que completa 100 plies, sin anticipar todavía la puntuación ni la
+precedencia terminal de alpha-011.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+2. BLOQUE 2 — INCREMENTOS Y REINICIOS DEL CONTADOR
+2 pruebas representativas
+==============================================================================
+
+FMR-C01 — Incremento por jugada tranquila de rey blanco
+Prueba 9 de 64
+------------------------------------------------------------------------------
+
+Comando sometido a prueba:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 98 50 moves a1b1
+
+Transición del contador:
+
+    a1b1: halfmoveClock 98 -> 99, fullmoveNumber 50 -> 50
+
+FEN equivalente del estado final esperado:
+
+    7k/8/8/8/8/8/8/1KR5 b - - 99 50
+
+Estado final esperado:
+- Negras al turno.
+- Ningún rey está en jaque.
+- 3 jugadas legales.
+- Halfmove clock: 99.
+- Fullmove number: 50.
+
+Análisis y objetivo técnico:
+a1b1 mueve un rey sin captura. Debe incrementar el halfmove clock en una
+unidad y, por ser una jugada blanca, no debe alterar el fullmove number.
+
+Resultados técnicos esperados:
+- FEN base y jugada aceptadas: sí.
+- Incremento exacto 98 -> 99: sí.
+- Reinicio indebido: ninguno.
+- Coincidencia exacta con la FEN final equivalente: sí.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-C13 — Reinicio por captura al paso blanca
+Prueba 21 de 64
+------------------------------------------------------------------------------
+
+Comando sometido a prueba:
+
+    position fen 7k/8/8/3pP3/8/8/8/K7 w - d6 0 50 moves e5d6
+
+Transición del contador:
+
+    e5d6: halfmoveClock 0 -> 0, fullmoveNumber 50 -> 50
+
+FEN equivalente del estado final esperado:
+
+    7k/8/3P4/8/8/8/8/K7 b - - 0 50
+
+Estado final esperado:
+- Negras al turno.
+- Ningún rey está en jaque.
+- 3 jugadas legales.
+- Casilla de captura al paso: ninguna.
+- Halfmove clock: 0.
+- Fullmove number: 50.
+
+Análisis y objetivo técnico:
+La FEN base utiliza 0 porque el avance doble inmediatamente anterior que hizo
+posible la captura al paso ya reinició el contador. e5d6 debe conservarlo en
+0, retirar el peón de d5 y limpiar la casilla d6 de captura al paso.
+
+Resultados técnicos esperados:
+- FEN base y captura al paso aceptadas: sí.
+- Peón negro retirado de d5: sí.
+- Halfmove clock final igual a 0: sí.
+- Coincidencia exacta con la FEN final equivalente: sí.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+3. BLOQUE 3 — COPIA DE ESTADO Y AISLAMIENTO ENTRE RAMAS
+2 pruebas representativas
+==============================================================================
+
+FMR-B04 — Rama incremental frente a rama con movimiento de peón
+Prueba 28 de 64
+------------------------------------------------------------------------------
+
+FEN padre:
+
+    7k/8/8/8/8/8/4P3/K1R5 w - - 99 50
+
+Rama A — jugada tranquila:
+
+    c1c2
+
+FEN esperada de A:
+
+    7k/8/8/8/8/8/2R1P3/K7 b - - 100 50
+
+Rama B — movimiento de peón:
+
+    e2e4
+
+FEN esperada de B:
+
+    7k/8/8/8/4P3/8/8/K1R5 b - e3 0 50
+
+Comprobaciones de aislamiento:
+- A debe alcanzar 100 a partir del padre 99.
+- B debe reiniciarse en 0 a partir del mismo padre 99.
+- La casilla e3 de captura al paso existe únicamente en B.
+- El padre conserva el peón en e2, la torre en c1 y halfmove clock 99.
+- Los órdenes A–B y B–A no deben alterar los oráculos.
+
+Objetivo técnico:
+Demostrar que una rama que alcanza el umbral y otra que reinicia el contador
+pueden coexistir sin transmitirse el halfmove clock ni la captura al paso.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-B08 — Aislamiento recursivo a dos plies
+Prueba 32 de 64
+------------------------------------------------------------------------------
+
+FEN raíz:
+
+    7k/8/8/8/8/8/4P3/K1R5 w - - 98 50
+
+Rama A:
+
+    c1c2 h8h7
+
+FEN esperada después de c1c2:
+
+    7k/8/8/8/8/8/2R1P3/K7 b - - 99 50
+
+FEN esperada después de c1c2 h8h7:
+
+    8/7k/8/8/8/8/2R1P3/K7 w - - 100 51
+
+Rama B:
+
+    e2e4 h8h7
+
+FEN esperada después de e2e4:
+
+    7k/8/8/8/4P3/8/8/K1R5 b - e3 0 50
+
+FEN esperada después de e2e4 h8h7:
+
+    8/7k/8/8/4P3/8/8/K1R5 w - - 1 51
+
+Comprobaciones de aislamiento:
+- El hijo A1 debe conservar 99 después de crear el nieto A2 con valor 100.
+- El hijo B1 debe conservar 0 y la casilla e3 después de crear B2 con valor 1
+  y sin casilla de captura al paso.
+- La raíz debe conservar halfmove clock 98 y su FEN completa.
+- La exploración completa de A no puede cambiar B1 ni B2, y viceversa.
+- Los órdenes A–B y B–A deben producir los mismos cuatro descendientes.
+
+Objetivo técnico:
+Extender el control de aislamiento más allá de la raíz y demostrar que cada
+nivel recursivo conserva su propio estado mientras construye descendientes.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+4. BLOQUE 4 — UMBRALES, FALSOS POSITIVOS Y PRECEDENCIAS
+4 pruebas representativas
+==============================================================================
+
+FMR-T01 — Halfmove clock 99 no activa la regla
+Prueba 33 de 64
+------------------------------------------------------------------------------
+
+FEN sometida a prueba:
+
+    7k/8/8/8/8/8/8/K1R5 w - - 99 73
+
+Estado de la posición:
+- Blancas al turno.
+- El rey blanco no está en jaque.
+- 16 jugadas legales.
+- La posición no es muerta.
+- Halfmove clock: 99.
+- Fullmove number: 73.
+
+Resultado interno esperado:
+- Estado terminal de mayor precedencia: ninguno.
+- Condición halfmoveClock >= 100: falsa.
+- Clasificación FiftyMoveDraw: no.
+- Puntuación de tablas impuesta por esta regla: no.
+- Tratamiento normal del nodo: continúa.
+
+Objetivo técnico:
+Fijar el límite inferior inmediato y detectar cualquier comparación prematura
+que reconozca la regla después de solo 99 plies.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-T02 — Halfmove clock 100 activa exactamente la regla
+Prueba 34 de 64
+------------------------------------------------------------------------------
+
+FEN sometida a prueba:
+
+    7k/8/8/8/8/8/8/K1R5 w - - 100 73
+
+Estado de la posición:
+- Blancas al turno.
+- El rey blanco no está en jaque.
+- 16 jugadas legales.
+- La posición no es muerta.
+- Halfmove clock: 100.
+
+Resultado interno esperado:
+- Estado terminal de mayor precedencia: ninguno.
+- Condición halfmoveClock >= 100: verdadera.
+- Clasificación: FiftyMoveDraw.
+- Puntuación interna: 0.
+- Continuación de este nodo por debajo del detector: no.
+
+Objetivo técnico:
+Verificar la activación exacta en 100 y convertir por primera vez el valor de
+estado ya cubierto en los bloques anteriores en un resultado interno de tablas.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-T04 — Fullmove number 100 no genera un falso positivo
+Prueba 36 de 64
+------------------------------------------------------------------------------
+
+FEN sometida a prueba:
+
+    7k/8/8/8/8/8/8/K1R5 w - - 0 100
+
+Estado de la posición:
+- Blancas al turno.
+- El rey blanco no está en jaque.
+- 16 jugadas legales.
+- Halfmove clock: 0.
+- Fullmove number: 100.
+
+Resultado interno esperado:
+- Condición halfmoveClock >= 100: falsa.
+- Clasificación FiftyMoveDraw: no.
+- Puntuación de tablas impuesta por esta regla: no.
+- Tratamiento normal del nodo: continúa.
+
+Objetivo técnico:
+Proteger la separación entre los campos quinto y sexto de la FEN y evitar que
+el número de jugada completa sea utilizado como contador de cincuenta jugadas.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-T10 — El ahogado conserva su precedencia con contador 100
+Prueba 42 de 64
+------------------------------------------------------------------------------
+
+FEN sometida a prueba:
+
+    7k/5Q2/6K1/8/8/8/8/8 b - - 100 73
+
+Estado de la posición:
+- Negras al turno.
+- El rey negro no está en jaque.
+- 0 jugadas legales.
+- Estado preexistente aplicable: ahogado.
+
+Resultado interno esperado:
+- Clasificación: Stalemate.
+- Clasificación FiftyMoveDraw: no.
+- Puntuación interna: 0.
+- Identidad terminal conservada para diagnóstico: sí.
+
+Objetivo técnico:
+Preservar el reconocimiento de ahogado antes de la regla de las cincuenta
+jugadas, aun cuando ambas rutas producirían una puntuación de tablas.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+5. BLOQUE 5 — RAÍZ, UCI, ALPHA-BETA Y PROPAGACIÓN
+4 pruebas representativas
+==============================================================================
+
+FMR-S01 — Raíz blanca elegible con jugadas legales
+Prueba 45 de 64
+------------------------------------------------------------------------------
+
+Comandos sometidos a prueba:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 100 73
+    go depth 2
+
+Estado de la raíz:
+- Blancas al turno.
+- El rey blanco no está en jaque.
+- 16 jugadas legales.
+- La posición no es muerta.
+- Halfmove clock: 100.
+
+Resultados internos esperados:
+- Clasificación de raíz: FiftyMoveDraw.
+- Puntuación: 0.
+- Evaluación estática posterior: no debe ejecutarse.
+- Exploración alpha-beta posterior: no debe ejecutarse.
+- Movimiento disponible para UCI: sí.
+
+Salida UCI esperada:
+- score cp 0.
+- bestmove legal distinto de 0000.
+- Referencia con el ordenamiento actual: bestmove c1h1.
+- Primer movimiento de la PV: igual al bestmove.
+
+Objetivo técnico:
+Verificar el contrato principal de la raíz: reconocer las tablas sin perder la
+capacidad de responder con una jugada legal si el protocolo la solicita.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-S08 — La ventaja ganadora evita una rama de tablas
+Prueba 52 de 64
+------------------------------------------------------------------------------
+
+Sonda interna de profundidad fija:
+
+    position fen 7k/8/8/8/8/8/4P3/K1R5 w - - 99 73
+    depth 2
+
+Estructura de la búsqueda:
+- Blancas poseen torre y peón contra rey.
+- La raíz tiene 18 jugadas legales.
+- 16 jugadas de rey o torre producen hijos FiftyMoveDraw con score 0.
+- e2e3 y e2e4 reinician el contador y conservan la ventaja material.
+- Las jugadas de peón aparecen después de las ramas de tablas en el orden
+  estable previo al ordenamiento.
+
+Resultados esperados:
+- La primera rama de tablas no detiene el bucle de la raíz.
+- Puntuación final de la raíz: positiva.
+- bestmove: e2e4.
+- Puntuación de referencia con la evaluación actual: +614 cp.
+- Selección de una jugada tranquila que alcance 100: no.
+
+Objetivo técnico:
+Demostrar que PHILOCHESS evita completar la regla cuando dispone de una
+continuación evaluada como ganadora que reinicia el contador.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-S09 — El bando en desventaja elige las tablas
+Prueba 53 de 64
+------------------------------------------------------------------------------
+
+Sonda interna de profundidad fija:
+
+    position fen 7k/4p3/8/8/8/8/8/K1R5 b - - 99 73
+    depth 2
+
+Estructura de la búsqueda:
+- Negras poseen rey y peón contra rey y torre blancos.
+- La raíz tiene 5 jugadas legales.
+- e7e6 y e7e5 reinician el contador y mantienen la desventaja negra.
+- h8g8, h8g7 y h8h7 producen hijos FiftyMoveDraw con score 0.
+
+Resultados esperados:
+- Puntuación final de la raíz: 0.
+- bestmove perteneciente a {h8g8, h8g7, h8h7}.
+- Referencia con el ordenamiento actual: bestmove h8g8.
+- Selección de e7e6 o e7e5: no.
+
+Objetivo técnico:
+Comprobar el comportamiento minimax complementario: un bando materialmente
+inferior debe preferir la disponibilidad inmediata de tablas a una línea
+normal con evaluación negativa.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-S10 — Mate en una frente a ramas FiftyMoveDraw
+Prueba 54 de 64
+------------------------------------------------------------------------------
+
+Sonda interna de profundidad fija:
+
+    position fen 7k/8/6K1/5Q2/8/8/8/8 w - - 99 73
+    depth 2
+
+Transición principal esperada:
+
+    f5c8
+
+FEN después de f5c8:
+
+    2Q4k/8/6K1/8/8/8/8/8 b - - 100 73
+
+Estructura de la búsqueda:
+- La raíz tiene 28 jugadas legales.
+- Las jugadas tranquilas no terminales que alcanzan 100 reciben score 0.
+- f5c8 alcanza 100, da jaque mate y conserva la precedencia Checkmate.
+
+Resultados esperados:
+- bestmove: f5c8.
+- Puntuación: mate en 1 a favor de las blancas.
+- Sustitución del mate por FiftyMoveDraw: no.
+- Preferencia de una rama de tablas sobre el mate: no.
+
+Objetivo técnico:
+Verificar dentro de alpha-beta que la precedencia del mate no solo produzca el
+score correcto, sino que gobierne también la selección del movimiento.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+6. BLOQUE 6 — QUIESCENCE E INTEGRACIÓN CON OTRAS REGLAS
+2 pruebas representativas
+==============================================================================
+
+FMR-Q01 — Detección directa antes del stand pat
+Prueba 57 de 64
+------------------------------------------------------------------------------
+
+Sonda interna directa de quiescence:
+
+    position fen 7k/8/8/8/8/8/8/K1R5 w - - 100 73
+    qprobe
+
+Estado del nodo:
+- Blancas al turno y fuera de jaque.
+- 16 jugadas legales.
+- La posición no es muerta.
+- Halfmove clock: 100.
+
+Resultados esperados:
+- Clasificación: FiftyMoveDraw.
+- Puntuación de quiescence: 0.
+- qnodes: 1.
+- fiftyMoveNodes: 1.
+- qStandPatNodes: 0.
+- staticEvaluationCalls: 0.
+- Expansión de capturas o promociones: no.
+
+Objetivo técnico:
+Demostrar que el detector forma parte de quiescence y devuelve las tablas
+antes del stand pat, de la evaluación estática y de cualquier expansión
+táctica posterior.
+
+Estado:
+VERIFICADA
+
+------------------------------------------------------------------------------
+FMR-Q08 — La posición muerta prevalece dentro de quiescence
+Prueba 64 de 64
+------------------------------------------------------------------------------
+
+Sonda interna directa de quiescence:
+
+    position fen 7k/8/8/8/8/8/8/K7 w - - 100 73
+    qprobe
+
+Estado del nodo:
+- Blancas al turno y fuera de jaque.
+- 3 jugadas legales.
+- La posición es muerta por material.
+- Halfmove clock: 100.
+
+Resultados esperados:
+- Clasificación: DeadPosition.
+- Clasificación FiftyMoveDraw: no.
+- Puntuación: 0.
+- deadPositionNodes: 1.
+- fiftyMoveNodes: 0.
+- qStandPatNodes y staticEvaluationCalls: 0.
+
+Objetivo técnico:
+Verificar que el detector de alpha-010 conserve en quiescence su precedencia,
+su identidad diagnóstica y su terminación anterior a la regla incorporada en
+alpha-011.
+
+Estado:
+VERIFICADA
+
+==============================================================================
+7. RESUMEN DEL INVENTARIO REPRESENTATIVO
+==============================================================================
+
+Bloque 1 — Estado inicial, FEN y reconstrucción:       2/2 verificadas
+Bloque 2 — Incrementos y reinicios del contador:       2/2 verificadas
+Bloque 3 — Copia de estado y aislamiento:              2/2 verificadas
+Bloque 4 — Umbrales, falsos positivos y precedencia:   4/4 verificadas
+Bloque 5 — Raíz, UCI, alpha-beta y propagación:        4/4 verificadas
+Bloque 6 — Quiescence e integración:                   2/2 verificadas
+                                                     -----------------
+TOTAL:                                               16/16 verificadas
+
+Las pruebas seleccionadas forman una demostración pública compacta del
+recorrido completo de la regla de las cincuenta jugadas: estado histórico,
+mantenimiento del contador, seguridad entre ramas, clasificación del umbral,
+precedencia terminal, selección de movimiento, propagación de la puntuación e
+integración en quiescence.
+
+Este inventario representativo no reemplaza el inventario completo de sesenta
+y cuatro pruebas de validación.
+
+==============================================================================
+FIN DEL INVENTARIO REPRESENTATIVO DE PRUEBAS DE PHILOCHESS 0.2-alpha-011
+==============================================================================
