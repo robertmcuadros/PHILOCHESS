@@ -6320,3 +6320,729 @@ El siguiente trabajo planificado continuará con las reglas de tablas
 pendientes, comenzando por:
 
 PHILOCHESS 0.2-alpha-011 — Regla de las cincuenta jugadas en la búsqueda
+
+Fecha: 19 de agosto de 2026
+
+PHILOCHESS 0.2-alpha-011 — Regla de las cincuenta jugadas en la
+búsqueda
+
+Se implementó y validó internamente el reconocimiento de la regla de las
+cincuenta jugadas dentro de la búsqueda.
+
+Hito técnico:
+
+PHILOCHESS ahora puede utilizar el reloj de medias jugadas almacenado en la
+posición para reconocer nodos de búsqueda que cumplen la regla de las
+cincuenta jugadas.
+
+Cuando se completan 100 plies consecutivos sin movimiento de peón ni captura,
+la posición recibe valor de tablas y puntaje 0 dentro de la búsqueda.
+
+El reconocimiento se integró en:
+
+- la raíz de la búsqueda;
+- la búsqueda alpha-beta;
+- la búsqueda de quietud.
+
+La regla puede ahora influir en la selección de jugadas. PHILOCHESS puede
+evitar una continuación de tablas cuando una línea ganadora reinicia el
+contador, o elegir las tablas cuando constituyen el mejor recurso defensivo.
+
+Alpha-011 conserva:
+
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque, jaque mate y ahogado;
+- el reconocimiento conservador de posiciones muertas;
+- la prioridad correcta entre jaque mate, ahogado, posición muerta y el nuevo
+  resultado por la regla de las cincuenta jugadas;
+- perft y la validación con referencias conocidas;
+- la evaluación material;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de fase y la interpolación de las tablas del rey;
+- alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción de la variante principal;
+- los informes iterativos de búsqueda;
+- los puntajes de mate según su distancia;
+- la conservación de la última iteración completada;
+- la prioridad de la PV en la raíz y debajo de ella;
+- el ordenamiento MVV-LVA y la prioridad de promociones;
+- los límites temporales blando y duro;
+- el rechazo seguro de iteraciones interrumpidas;
+- las baterías heredadas de táctica, movilidad, PST, quietud,
+  profundización iterativa, PV, tiempo, ordenamiento y perft;
+- el inventario táctico y de quietud de 64 casos;
+- el inventario de ahogado de 64 casos;
+- el inventario de posiciones muertas de 64 raíces y 10 transiciones.
+
+Nueva funcionalidad de alpha-011:
+
+- Se añadió la constante FIFTY_MOVE_RULE_PLIES con valor 100.
+- Se añadió el estado explícito FiftyMoveDraw.
+- Se añadió reconocimiento basado exclusivamente en halfmoveClock.
+- Se definió el umbral exacto como halfmoveClock mayor o igual que 100.
+- Se asignó puntaje 0 a los nodos FiftyMoveDraw.
+- Se mantuvo fullmoveNumber completamente independiente de la regla.
+- Se integró el reconocimiento en la raíz.
+- Se integró el reconocimiento dentro de alpha-beta.
+- Se integró el reconocimiento dentro de la búsqueda de quietud.
+- Se aplicó el reconocimiento antes de stand pat y la evaluación estática.
+- Se añadió un contador independiente de nodos de la regla.
+- Se añadieron estadísticas de dichos nodos a los diagnósticos de búsqueda.
+- Se conservó una bestmove legal en raíces que todavía tienen jugadas.
+- Se reservó bestmove 0000 para raíces sin jugadas legales.
+- Se conservó la precedencia de jaque mate, ahogado y posición muerta.
+- Se permitió que una posición en jaque con evasiones legales reciba el
+  resultado FiftyMoveDraw cuando su halfmove clock alcanza 100.
+- Se conservó la elección de mate en uno sobre ramas evaluadas como tablas.
+- Se permitió que las líneas ganadoras eviten las tablas mediante un
+  movimiento de peón o una captura.
+- Se permitió que el bando inferior elija una continuación de tablas.
+- Se añadió el comando específico fiftymovetest.
+- Se añadió un inventario completo de 64 pruebas en seis bloques.
+- Se actualizaron la identificación interna y los encabezados diagnósticos a
+  PHILOCHESS 0.2-alpha-011.
+
+Estado histórico y regla del contador:
+
+PHILOCHESS utiliza el quinto campo de un FEN completo como reloj de medias
+jugadas:
+
+halfmoveClock
+
+El sexto campo permanece como número independiente de jugada completa:
+
+fullmoveNumber
+
+La regla de las cincuenta jugadas utiliza únicamente halfmoveClock.
+
+Después de cada jugada legal, el contador sigue esta regla:
+
+- un movimiento de peón reinicia halfmoveClock a 0;
+- una captura reinicia halfmoveClock a 0;
+- cualquier otra jugada legal incrementa halfmoveClock exactamente en 1.
+
+El reinicio se aplica a:
+
+- movimientos ordinarios de peón;
+- avances dobles de peón;
+- capturas ordinarias;
+- capturas al paso;
+- promociones sin captura;
+- promociones con captura.
+
+El incremento se aplica a:
+
+- jugadas tranquilas de rey;
+- jugadas tranquilas de caballo;
+- jugadas tranquilas de alfil;
+- jugadas tranquilas de torre;
+- jugadas tranquilas de dama;
+- enroques;
+- jugadas tranquilas que dan jaque.
+
+Dar jaque no reinicia el contador. El enroque tampoco lo reinicia.
+El número de jugada completa continúa avanzando independientemente después
+de las jugadas de las negras.
+
+Regla operativa de búsqueda:
+
+La clasificación sigue este orden:
+
+- cero jugadas legales y rey en jaque: jaque mate;
+- cero jugadas legales y rey fuera de jaque: ahogado;
+- una o más jugadas legales e imposibilidad bilateral de mate demostrada:
+  posición muerta;
+- en los demás casos, halfmove clock mayor o igual que 100:
+  FiftyMoveDraw;
+- en los demás casos: posición no terminal.
+
+Los puntajes correspondientes son:
+
+- jaque mate: puntaje de mate ajustado por el ply de búsqueda;
+- ahogado: 0;
+- posición muerta: 0;
+- FiftyMoveDraw: 0.
+
+Por tanto, el jaque mate conserva precedencia absoluta en el umbral. El
+ahogado y la posición muerta también conservan sus clasificaciones ya
+establecidas.
+
+El jaque por sí solo no es terminal. Si el rey está en jaque, pero dispone de
+evasiones legales y halfmoveClock es al menos 100, el resultado de búsqueda
+es FiftyMoveDraw.
+
+Comportamiento en la raíz y en UCI:
+
+Una posición de raíz con halfmoveClock al menos 100 y jugadas legales recibe
+puntaje 0 sin entrar en una búsqueda ordinaria o evaluación estática
+innecesarias.
+
+PHILOCHESS todavía conserva y devuelve una bestmove legal. No devuelve
+bestmove 0000 simplemente porque el reloj de medias jugadas haya alcanzado
+100.
+
+Alcanzar el umbral no detiene el proceso del motor. Finaliza la evaluación de
+ese nodo de búsqueda con puntaje 0. En una partida real, la adjudicación del
+resultado sigue siendo responsabilidad de la interfaz configurada.
+
+Esta separación permite que PHILOCHESS considere la regla durante el cálculo
+y, al mismo tiempo, pueda proporcionar una jugada UCI válida siempre que
+existan jugadas legales.
+
+Integración en la búsqueda:
+
+En una raíz no terminal por debajo de 100, todas las jugadas legales
+candidatas permanecen disponibles para su comparación.
+
+Una jugada tranquila desde halfmove clock 99 crea una posición hija con valor
+100. Esa hija se reconoce como tablas y devuelve puntaje 0.
+
+Un movimiento de peón o una captura desde 99 reinicia el contador de la hija
+a 0. Por tanto, la búsqueda puede continuar evaluando normalmente esa rama.
+
+Como resultado, PHILOCHESS puede:
+
+- rechazar una rama de tablas cuando existe un reinicio ganador;
+- continuar examinando ramas hermanas después de encontrar tablas;
+- elegir una rama de tablas cuando todas las alternativas son peores;
+- propagar el puntaje 0 a través de uno o más niveles negamax;
+- conservar el jaque mate sobre ramas que alcanzan el umbral.
+
+Dentro de quietud, FiftyMoveDraw se reconoce antes de:
+
+- stand pat;
+- la evaluación estática;
+- la expansión de capturas;
+- la expansión ordinaria de evasiones de jaque.
+
+Una captura que reinicia el contador evita un falso positivo y permite que la
+búsqueda de quietud continúe normalmente.
+
+Inventario de la regla de las cincuenta jugadas:
+
+El inventario contiene 64 pruebas aprobadas distribuidas en seis bloques:
+
+- Bloque 1 — Estado inicial, FEN y reconstrucción del contador: 8 pruebas;
+- Bloque 2 — Incrementos y reinicios del contador: 16 pruebas;
+- Bloque 3 — Copia de estado y aislamiento entre ramas: 8 pruebas;
+- Bloque 4 — Umbrales, falsos positivos y precedencias: 12 pruebas;
+- Bloque 5 — Raíz, UCI, alpha-beta y propagación: 12 pruebas;
+- Bloque 6 — Quietud e integración con otras reglas: 8 pruebas.
+
+Total:
+
+- 64 pruebas.
+
+La batería comprueba:
+
+- inicialización mediante position startpos;
+- carga de FEN completos;
+- conservación de halfmove clocks 0, 99, 100 y 101;
+- separación entre halfmoveClock y fullmoveNumber;
+- reconstrucción mediante position startpos moves;
+- continuación mediante position fen ... moves;
+- condiciones exactas de incremento y reinicio;
+- enroque, jugadas de jaque, captura al paso y promociones;
+- inmutabilidad del padre;
+- aislamiento entre ramas hermanas;
+- aislamiento recursivo a dos plies;
+- reconocimiento exacto del umbral;
+- prevención de detección temprana y falsos positivos por fullmoveNumber;
+- precedencia de jaque mate, ahogado y posición muerta;
+- conservación de una bestmove UCI legal;
+- propagación del puntaje 0;
+- evitación ganadora de una rama de tablas;
+- selección defensiva de una rama de tablas;
+- preservación del mate en uno;
+- detección antes de stand pat;
+- reconocimiento del umbral en el horizonte de quietud;
+- nodos de quietud con el rey en jaque;
+- reinicio del contador mediante capturas tácticas;
+- integración con los demás resultados terminales.
+
+Límite de la versión:
+
+Alpha-011 modela la regla de las cincuenta jugadas dentro del proceso de
+decisión de PHILOCHESS. El motor evalúa como tablas un nodo que cumple la
+regla, pero no declara por sí mismo el resultado externo de la partida ni
+cierra la sesión UCI.
+
+La interfaz gráfica configurada conserva la responsabilidad de adjudicar el
+resultado.
+
+Alpha-011 no modifica:
+
+- el generador de jugadas legales;
+- la aplicación de jugadas;
+- los valores materiales;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de fase;
+- la jerarquía de ordenamiento;
+- la construcción de la variante principal;
+- la fórmula de asignación temporal;
+- el conjunto ordinario de jugadas examinado por quietud;
+- los objetivos ni la clasificación del inventario histórico;
+- el reconocimiento del ahogado;
+- el reconocimiento conservador de posiciones muertas;
+- la detección de triple repetición.
+
+Compilación:
+
+El programa compiló correctamente en Visual Studio con plataforma x64,
+estándar ISO C++17 y herramientas MSVC v145.
+
+Release | x64:
+
+- 1 compilación correcta;
+- 0 errores;
+- ejecutable generado en x64\Release\PHILOCHESS.exe.
+
+Debug | x64:
+
+- 1 compilación correcta;
+- 0 errores;
+- ejecutable generado en x64\Debug\PHILOCHESS.exe.
+
+Ambos ejecutables iniciaron normalmente y terminaron mediante quit con código
+de salida 0.
+
+Validación en Release
+
+Prueba 1 — Inventario de la regla de las cincuenta jugadas
+
+Comando ejecutado:
+
+fiftymovetest
+
+Resultado:
+
+- Bloque 1: 8/8;
+- Bloque 2: 16/16;
+- Bloque 3: 8/8;
+- Bloque 4: 12/12;
+- Bloque 5: 12/12;
+- Bloque 6: 8/8;
+- total: 64/64;
+- estructura del inventario: PASS;
+- FIFTY-MOVE-RULE INVENTORY: PASS.
+
+El Bloque 1 confirmó:
+
+- startpos con halfmove 0 y fullmove 1;
+- carga exacta de FEN con halfmove clocks 0, 99 y 100;
+- recuperación de la posición inicial con halfmove clock 4 después de cuatro
+  movimientos reversibles de caballo;
+- reconstrucción de una transición tranquila de 99 a 100;
+- reinicio y reconstrucción posterior desde startpos;
+- continuación de un contador distinto de cero desde un FEN.
+
+El Bloque 2 confirmó incrementos después de jugadas tranquilas de todas las
+piezas requeridas, enroques y una jugada tranquila de jaque. También confirmó
+reinicios después de movimientos de peón, capturas ordinarias, capturas al
+paso y promociones.
+
+Los 16/16 casos del contador coincidieron con su FEN final, halfmove clock y
+fullmove number exactos.
+
+El Bloque 3 confirmó que el padre y todos los antepasados permanecieron sin
+cambios. Cada descendiente coincidió con su oráculo tanto en orden directo
+como inverso de exploración.
+
+Las 8/8 pruebas de aislamiento entre ramas pasaron, incluido el aislamiento
+recursivo a dos plies y la conservación de captura al paso y derechos de
+enroque entre ramas hermanas.
+
+El Bloque 4 confirmó:
+
+- halfmove clock 99 no activa la regla;
+- halfmove clock 100 la activa exactamente;
+- halfmove clock 101 permanece dentro de la regla;
+- fullmove number 100 no produce un falso positivo;
+- una jugada tranquila de 98 a 99 permanece como no terminal;
+- un movimiento de peón o captura desde 99 evita un falso positivo;
+- las jugadas de peón disponibles no cancelan una posición ya situada en 100;
+- el jaque mate conserva precedencia;
+- el ahogado conserva precedencia;
+- la posición muerta conserva precedencia;
+- un jaque con evasiones legales en 100 recibe FiftyMoveDraw.
+
+Las 12/12 pruebas de umbrales y precedencia pasaron.
+
+El Bloque 5 confirmó el comportamiento en raíz, UCI, alpha-beta y
+propagación.
+
+Los casos directos de raíz devolvieron:
+
+- FMR-S01: puntaje 0 y bestmove c1h1;
+- FMR-S02: puntaje 0 y bestmove c8h8;
+- FMR-S03: puntaje 0 y bestmove h1h2;
+- FMR-S04: puntaje de jaque mate -100000 y bestmove 0000;
+- FMR-S05: puntaje de ahogado 0 y bestmove 0000;
+- FMR-S06: puntaje de posición muerta 0 y bestmove a1b1.
+
+Los casos de profundidad fija devolvieron:
+
+- FMR-S07: puntaje 0, bestmove c1h1, 16 nodos de la regla;
+- FMR-S08: puntaje 614, bestmove e2e4, 16 nodos de la regla;
+- FMR-S09: puntaje 0, bestmove h8g8, 3 nodos de la regla;
+- FMR-S10: puntaje 99999, bestmove f5c8, 22 nodos de la regla;
+- FMR-S11: puntaje 0, bestmove c1h1, 17 nodos de la regla;
+- FMR-S12: puntaje 0, bestmove c1h1, 17 nodos de la regla.
+
+FMR-S08 demostró que PHILOCHESS no se detiene después de la primera rama de
+tablas en la raíz. Continuó hasta encontrar e2e4, que reinició el contador y
+conservó una evaluación material ganadora.
+
+FMR-S09 demostró que el bando inferior puede elegir deliberadamente tablas.
+
+FMR-S10 demostró que el mate en uno permanece por encima de todas las ramas
+que alcanzan el umbral de las cincuenta jugadas.
+
+Las 12/12 pruebas de raíz y propagación pasaron.
+
+El Bloque 6 confirmó la integración en quietud:
+
+- FMR-Q01: detección antes de stand pat, puntaje 0, qnodes 1;
+- FMR-Q02: umbral en el horizonte, puntaje 0, qnodes 16;
+- FMR-Q03: nodo elegible en jaque, puntaje 0, qnodes 1;
+- FMR-Q04: evasiones tranquilas llegan a 100, puntaje 0, qnodes 3;
+- FMR-Q05: la secuencia de capturas reinicia el reloj, puntaje 492,
+  qnodes 4;
+- FMR-Q06: prevalece el jaque mate, puntaje -100000;
+- FMR-Q07: prevalece el ahogado, puntaje 0;
+- FMR-Q08: prevalece la posición muerta, puntaje 0.
+
+Las 8/8 pruebas de quietud e integración cruzada pasaron.
+
+Prueba 2 — Regresión de búsqueda de quietud
+
+Comando ejecutado:
+
+qtest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La batería conservó:
+
+- d1f3 y puntaje 405 en la prueba del horizonte;
+- puntaje 492 en la secuencia de capturas;
+- puntaje 892 en la promoción tranquila;
+- evasión de jaque sin stand pat.
+
+Prueba 3 — Profundización iterativa
+
+Comando ejecutado:
+
+idtest 4
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Las profundidades 1 a 4 se completaron con bestmove b1c3 y conteos de 20,
+171, 2253 y 17122 nodos.
+
+Prueba 4 — Variante principal
+
+Comando ejecutado:
+
+pvtest 4
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La PV alcanzó correctamente las longitudes 1 a 4:
+
+- b1c3;
+- b1c3 b8c6;
+- b1c3 b8c6 g1f3;
+- b1c3 b8c6 g1f3 g8f6.
+
+Prueba 5 — Gestión del tiempo
+
+Comando ejecutado:
+
+timetest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+La asignación 15+10 produjo:
+
+- límite blando: 18158 ms;
+- límite duro: 21363 ms;
+- techo de profundidad: 64.
+
+La búsqueda explícita a profundidad 5 se completó correctamente.
+
+La prueba de emergencia de 1 ms completó profundidad 2, interrumpió
+profundidad 3 y devolvió un resultado válido. La comparación entre 50 ms y
+2000 ms completó profundidades 3 y 5, respectivamente, confirmando una
+profundidad completada no decreciente.
+
+Prueba 6 — Ordenamiento de jugadas
+
+Comando ejecutado:
+
+ordertest
+
+Resultado:
+
+PASS 4  FAIL 0  TOTAL 4
+
+Permanecieron correctas:
+
+- la prioridad de la PV;
+- el ordenamiento MVV-LVA;
+- la prioridad de promociones;
+- la prioridad de la PV debajo de la raíz.
+
+Prueba 7 — Movilidad
+
+Comando ejecutado:
+
+mobilitytest
+
+Resultado:
+
+- 64/64;
+- 44 posiciones controladas;
+- 10 posiciones transversales;
+- 10 posiciones integradas;
+- estructura: PASS.
+
+Prueba 8 — Tablas pieza-casilla
+
+Comando ejecutado:
+
+psttest
+
+Resultado:
+
+PASS 8  FAIL 0  TOTAL 8
+
+Permanecieron correctas la orientación, la reflexión, la simetría inicial,
+la ponderación por fase, la interpolación del rey, los cambios
+representativos de PST, la colocación del enroque y la composición de la
+evaluación estática.
+
+Prueba 9 — Perft conocido
+
+Comando ejecutado:
+
+perftknown 4
+
+Resultado:
+
+PASS 24  FAIL 0  TOTAL 24
+
+Las seis posiciones coincidieron con sus referencias en profundidades 1 a 4:
+
+- posición inicial: 197281;
+- Kiwipete: 4085603;
+- final con captura al paso y capturas: 43238;
+- promociones y presión de enroque: 422333;
+- trampa histórica de promoción: 2103487;
+- desarrollo de medio juego: 3894594.
+
+Prueba 10 — Regresión táctica
+
+Comando ejecutado:
+
+tactictest 4
+
+Resultado:
+
+Los tres diagnósticos conservaron sus resultados esperados:
+
+- se evitó la jugada conocida como mala b6c6 y se eligió b6d6;
+- se encontró h5f3 como intento defensivo legal después de 11.Bb5;
+- se encontró d5c7 como refutación táctica después de 11...Qxb5.
+
+Prueba 11 — Inventario histórico
+
+Comando ejecutado:
+
+inventorytest 4
+
+Resultado:
+
+PASS 45  FAIL 0  OPEN 9  BASELINE 10  TOTAL 64
+Categorías: [A] 21/21  [B] 33/33  [C] 10/10
+Estructura del inventario: PASS
+
+Los nueve casos OPEN permanecieron sin cambios:
+
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+No apareció ningún caso nuevo y ninguna regresión previamente cerrada volvió
+a abrirse.
+
+Prueba 12 — Inventario del ahogado
+
+Comando ejecutado:
+
+stalematetest
+
+Resultado:
+
+- Bloque 1: 8/8;
+- Bloque 2: 12/12;
+- Bloque 3: 12/12;
+- Bloque 4: 8/8;
+- Bloque 5: 12/12;
+- Bloque 6: 4/4;
+- Bloque 7: 8/8;
+- total: 64/64;
+- estructura del inventario: PASS;
+- STALEMATE INVENTORY: PASS.
+
+La nueva regla no alteró el reconocimiento del ahogado ni su precedencia
+terminal.
+
+Prueba 13 — Inventario de posiciones muertas
+
+Comando ejecutado:
+
+deadpositiontest
+
+Resultado:
+
+- Bloque 1: 12/12;
+- Bloque 2: 16/16;
+- Bloque 3: 20/20;
+- Bloque 4: 16/16;
+- posiciones de raíz: 64/64;
+- transiciones: 10/10;
+- estructura del inventario: PASS;
+- DEAD-POSITION INVENTORY: PASS.
+
+La nueva regla no alteró el reconocimiento conservador de posiciones
+muertas, la prevención de falsos positivos ni el manejo de transiciones.
+
+Validación en Debug
+
+La batería completa se repitió con el ejecutable Debug | x64.
+
+Resultados:
+
+- fiftymovetest: 64/64;
+- qtest: 4/4;
+- idtest 4: 4/4;
+- pvtest 4: 4/4;
+- timetest: 4/4;
+- ordertest: 4/4;
+- mobilitytest: 64/64;
+- psttest: 8/8;
+- perftknown 4: 24/24;
+- tactictest 4: los tres resultados tácticos esperados;
+- inventorytest 4: 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
+- stalematetest: 64/64;
+- deadpositiontest: 64/64 raíces y 10/10 transiciones.
+
+El inventario de las cincuenta jugadas volvió a superar sus seis bloques:
+
+- Bloque 1: 8/8;
+- Bloque 2: 16/16;
+- Bloque 3: 8/8;
+- Bloque 4: 12/12;
+- Bloque 5: 12/12;
+- Bloque 6: 8/8;
+- total: 64/64;
+- estructura del inventario: PASS;
+- FIFTY-MOVE-RULE INVENTORY: PASS.
+
+Las diferencias de rendimiento fueron las esperadas para una compilación sin
+optimización:
+
+- la respuesta de 1 ms conservó profundidad 0 e interrumpió profundidad 1;
+- 50 ms completaron profundidad 2;
+- 2000 ms completaron profundidad 3.
+
+Esto satisface el propósito funcional de la prueba: el motor respetó sus
+límites, devolvió resultados válidos y no completó una profundidad menor al
+recibir más tiempo.
+
+No fue necesario modificar el código ni el banco de pruebas durante esta
+validación.
+
+Validación práctica:
+
+La validación práctica permanece deliberadamente aplazada hasta que se hayan
+completado la detección de triple repetición y la integración final de las
+reglas de tablas.
+
+Limitaciones después de alpha-011:
+
+- la regla de las cincuenta jugadas se evalúa dentro de la búsqueda, mientras
+  la adjudicación externa permanece a cargo de la interfaz configurada;
+- la triple repetición todavía no está integrada en la búsqueda;
+- no se efectuaron partidas prácticas en una interfaz externa;
+- el reconocimiento de posiciones muertas permanece conservador y no
+  universal;
+- permanecen las limitaciones generales de evaluación y búsqueda
+  documentadas en etapas anteriores, salvo cuando hayan sido reemplazadas.
+
+Conclusión:
+
+PHILOCHESS 0.2-alpha-011 — Regla de las cincuenta jugadas en la búsqueda fue
+implementado y validado internamente con éxito.
+
+PHILOCHESS superó:
+
+- compilación Release | x64 bajo ISO C++17 con 0 errores;
+- compilación Debug | x64 bajo ISO C++17 con 0 errores;
+- el inventario completo de 64 pruebas de la regla en ambas configuraciones;
+- los seis bloques del nuevo inventario;
+- carga exacta de FEN y reconstrucción del contador;
+- todas las condiciones de incremento y reinicio;
+- aislamiento del padre, antepasados y ramas hermanas;
+- reconocimiento exacto en halfmove clock 100;
+- prevención de detección temprana y falsos positivos por fullmove number;
+- precedencia terminal correcta;
+- reconocimiento en la raíz, alpha-beta y quietud;
+- propagación correcta del puntaje 0;
+- conservación de bestmove legal en raíces elegibles con jugadas legales;
+- evitación ganadora y selección defensiva de ramas de tablas;
+- preservación del mate en uno;
+- detección antes de stand pat y la evaluación estática;
+- inventario de ahogado: 64/64;
+- inventario de posiciones muertas: 64/64 raíces y 10/10 transiciones;
+- movilidad: 64/64;
+- PST: 8/8;
+- quietud: 4/4;
+- profundización iterativa: 4/4;
+- variante principal: 4/4;
+- gestión del tiempo: 4/4;
+- ordenamiento: 4/4;
+- regresión táctica heredada;
+- perft conocido: 24/24;
+- inventario histórico con 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
+- cierre normal de ambos ejecutables con código 0.
+
+No se detectaron anomalías funcionales ni regresiones atribuibles a la nueva
+regla. Las diferencias temporales entre Release y Debug fueron normales y
+todos los objetivos históricos OPEN permanecieron exactamente iguales.
+
+Por tanto, PHILOCHESS 0.2-alpha-011 se considera desarrollado, validado
+internamente y cerrado satisfactoriamente.
+
+La siguiente versión planificada es:
+
+PHILOCHESS 0.2-alpha-012 — Detección de triple repetición en la búsqueda
