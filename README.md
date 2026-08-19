@@ -62,6 +62,7 @@ The latest version, PHILOCHESS 0.2-alpha-011, introduces recognition of the fift
 | 0.2-alpha-008 | Basic knight, bishop, rook and queen mobility evaluation |
 | 0.2-alpha-009 | Stalemate recognition throughout the search |
 | 0.2-alpha-010 | Conservative dead-position recognition throughout the search |
+| 0.2-alpha-011 | Fifty-move rule recognition throughout the search |
 
 ## Acknowledgments
 
