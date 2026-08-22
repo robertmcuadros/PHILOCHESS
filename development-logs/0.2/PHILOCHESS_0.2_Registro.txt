@@ -7046,3 +7046,693 @@ internamente y cerrado satisfactoriamente.
 La siguiente versión planificada es:
 
 PHILOCHESS 0.2-alpha-012 — Detección de triple repetición en la búsqueda
+
+Fecha: 21 de agosto de 2026
+
+PHILOCHESS 0.2-alpha-012 — Detección de triple repetición en la búsqueda
+
+Se implementó y validó internamente la detección de la triple repetición como
+resultado de búsqueda.
+
+Hito técnico:
+
+PHILOCHESS ahora puede reconstruir y conservar la secuencia de posiciones que
+condujo a la raíz actual, combinar ese historial de partida con la ruta activa
+de búsqueda y reconocer la tercera aparición, o cualquier aparición posterior,
+de una misma posición.
+
+Una posición repetida elegible recibe valor de tablas y puntaje 0 en la raíz,
+dentro de la búsqueda alpha-beta principal y dentro de la búsqueda de quietud.
+Por tanto, el resultado puede influir en la selección de jugadas: PHILOCHESS
+puede rechazar la repetición cuando está mejor y existe una continuación
+superior, o elegirla cuando todas las alternativas son peores.
+
+Esta es la duodécima versión del ciclo de desarrollo de PHILOCHESS 0.2. Se
+apoya directamente en el código validado de PHILOCHESS 0.2-alpha-011, sin
+modificar esa versión cerrada.
+
+Alpha-012 conserva:
+
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque, jaque mate y ahogado;
+- el reconocimiento conservador de posiciones muertas;
+- la regla de las cincuenta jugadas dentro de la búsqueda;
+- la precedencia establecida del jaque mate, ahogado y posición muerta;
+- perft y la validación perft con referencias conocidas;
+- la evaluación material;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de fase y la interpolación de las tablas del rey;
+- alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción completa de la variante principal;
+- los informes iterativos UCI y los puntajes de distancia al mate;
+- la conservación de la última iteración completada por entero;
+- la prioridad de la PV en la raíz y debajo de ella;
+- el ordenamiento MVV-LVA y la prioridad de promociones;
+- los límites temporales blando y duro y el rechazo seguro de iteraciones
+  interrumpidas;
+- todos los inventarios y comandos de regresión heredados.
+
+Nueva funcionalidad de alpha-012:
+
+- Se añadió una identidad de repetición para cada posición pertinente del
+  historial y de la búsqueda.
+- La colocación de las piezas forma parte de la identidad.
+- El bando al turno forma parte de la identidad.
+- Los derechos de enroque forman parte de la identidad.
+- El objetivo de captura al paso forma parte de la identidad solo cuando
+  existe una captura al paso legal y efectiva.
+- Una casilla nominal de captura al paso que no puede utilizarse legalmente no
+  crea una identidad de repetición diferente.
+- HalfmoveClock y fullmoveNumber se excluyen deliberadamente de la identidad
+  de repetición.
+- La posición inicial P0 se almacena como primera aparición del historial.
+- Se añadió la reconstrucción completa para position startpos moves.
+- Se añadió la reconstrucción completa para position fen ... moves.
+- Un nuevo comando position reemplaza el historial UCI anterior.
+- ucinewgame separa los historiales de partidas sucesivas.
+- Los comandos go sucesivos no modifican el historial UCI almacenado.
+- Las posiciones reversibles de la ruta activa de búsqueda se combinan con el
+  historial UCI de la partida.
+- Las jugadas irreversibles establecen un nuevo segmento pertinente de
+  repetición.
+- Las entradas de la ruta de búsqueda se restauran después de retornos
+  normales y cortes.
+- Las ramas hermanas permanecen aisladas.
+- La raíz no se cuenta dos veces cuando comienza alpha-beta.
+- Una tercera aparición se reconoce al entrar en alpha-beta o quietud.
+- Una cuarta aparición, y todas las posteriores, continúa siendo reconocida.
+- La triple repetición se devuelve antes de la evaluación estática ordinaria o
+  del stand pat de quietud.
+- Una posición repetida recibe puntaje 0 con la propagación negamax correcta.
+- Una raíz repetida con jugadas legales conserva una bestmove legal.
+- bestmove 0000 permanece reservado para raíces sin jugadas legales.
+- Se añadieron contadores diagnósticos independientes de apariciones y
+  retornos de repetición.
+- Se añadió el comando threefoldtest.
+- Se incorporó un inventario completo de 64 pruebas aprobadas en seis bloques.
+- Se actualizaron la identificación interna y los encabezados diagnósticos a
+  PHILOCHESS 0.2-alpha-012.
+
+Identidad de posición:
+
+Dos entradas del historial representan la misma posición solamente cuando son
+iguales todos los elementos siguientes:
+
+- cada pieza en cada casilla;
+- el bando al turno;
+- todos los derechos de enroque vigentes;
+- la posibilidad efectiva de captura al paso.
+
+Los campos halfmove y fullmove del FEN no afectan esta comparación. Continúan
+disponibles para sus propias reglas y diagnósticos, pero no pueden impedir que
+dos posiciones idénticas en los demás aspectos cuenten como apariciones de una
+repetición.
+
+La regla de captura al paso efectiva evita los dos tipos de error comprobados
+por el inventario. Una captura al paso legal distingue las posiciones. Un
+objetivo nominal sin captura legal posible, incluida una captura seudolegal
+impedida por una clavada, no las distingue.
+
+Modelo de historial y ruta de búsqueda:
+
+El comando UCI position reconstruye la secuencia completa desde P0, en lugar
+de almacenar solamente el FEN final. La posición actual ya se encuentra, por
+tanto, exactamente una vez en el historial cuando comienza la búsqueda.
+
+Durante la búsqueda, cada hija legal aporta su identidad a la ruta activa. El
+conteo de apariciones de un nodo es la suma de las entradas coincidentes del
+historial UCI pertinente y de la ruta activa, sin contar dos veces la raíz.
+
+Cada identidad añadida a la ruta se elimina al regresar, incluso después de
+cortes beta y retornos por repetición. Por ello, el orden de exploración no
+puede filtrar una posición de una rama hermana hacia otra.
+
+Las jugadas irreversibles delimitan el segmento pertinente. Las capturas
+ordinarias, capturas al paso, jugadas de peón y promociones impiden que las
+posiciones anteriores a ese límite cuenten como apariciones posteriores del
+nuevo segmento.
+
+Comportamiento de la búsqueda:
+
+La comprobación de repetición está activa en la raíz, en alpha-beta y en
+quietud. Al alcanzar la tercera aparición o una posterior, el nodo devuelve
+puntaje 0 antes de que una evaluación material, PST, de movilidad, auxiliar o
+de stand pat pueda reemplazar el resultado determinado por la regla.
+
+El puntaje de tablas se compara normalmente con los puntajes de las ramas
+hermanas. Esto produce el comportamiento estratégico previsto:
+
+- el bando ganador rechaza la repetición cuando una continuación supera 0;
+- el bando inferior puede buscarla cuando las alternativas son inferiores a
+  0;
+- la repetición puede prevalecer sobre una línea adversa de mate;
+- una victoria por mate continúa prevaleciendo sobre una repetición disponible;
+- las alternativas equivalentes de puntaje 0 permanecen deterministas según
+  el ordenamiento establecido;
+- una rama superior a las tablas por un centipeón es preferida;
+- las tablas se aceptan sobre una rama inferior por un centipeón.
+
+Límite de raíz y UCI:
+
+Alpha-012 modela la repetición dentro del proceso de decisión. No anuncia ni
+adjudica externamente el resultado de la partida. La interfaz conserva la
+responsabilidad de terminar oficialmente la partida.
+
+Cuando una raíz repetida tiene jugadas legales, PHILOCHESS devuelve puntaje 0
+y conserva una jugada legal para bestmove. Esto mantiene la continuidad UCI.
+Un ahogado terminal continúa devolviendo bestmove 0000 porque no existe jugada
+legal.
+
+Inventario de triple repetición:
+
+El inventario aprobado contiene 64 pruebas distribuidas en seis bloques:
+
+- Bloque 1 — Identidad de posición y conteo de apariciones: 8 pruebas;
+- Bloque 2 — Reconstrucción y gestión del historial UCI: 8 pruebas;
+- Bloque 3 — Detección en la raíz y comportamiento UCI: 8 pruebas;
+- Bloque 4 — Detección dentro de alpha-beta y quietud: 16 pruebas;
+- Bloque 5 — Decisión estratégica y propagación del puntaje: 16 pruebas;
+- Bloque 6 — Falsos positivos, límites y regresión específica: 8 pruebas.
+
+Total:
+
+- 64 pruebas;
+- 43 casos positivos;
+- 21 casos negativos.
+
+El inventario abarca:
+
+- tercera y cuarta apariciones exactas;
+- solamente dos apariciones como control negativo;
+- apariciones no consecutivas;
+- diferencias en el bando al turno y los derechos de enroque;
+- casos de captura al paso legal, nominal y clavada;
+- independencia respecto de los contadores del FEN;
+- reconstrucción desde startpos y FEN;
+- reemplazo y separación de historiales de partida;
+- comandos go sucesivos;
+- límites creados por jugadas irreversibles;
+- raíces repetidas con ambos bandos al turno;
+- una segunda aparición en la raíz que no debe producir un atajo;
+- conservación de bestmove legal y precedencia del ahogado;
+- apariciones combinadas del historial y de la ruta de búsqueda;
+- entrada en alpha-beta y quietud;
+- nodos en jaque y precedencia sobre stand pat;
+- restauración del padre, restauración tras cortes y aislamiento de hermanos;
+- propagación del puntaje 0 para ambos bandos;
+- elección entre repetición, pérdidas, victorias y líneas de mate;
+- la regresión histórica contra Zoidberg.
+
+Regresión específica de PHILOCHESS 0.2-alpha-008:
+
+El último caso del inventario reconstruye la posición de la primera partida
+práctica contra Zoidberg 0.1 en la que el motor anterior repitió jaques pese a
+disponer de una ventaja ganadora.
+
+Alpha-012 reconstruyó un historial de 97 posiciones. Evaluó la continuación
+repetitiva como 0 y la alternativa controlada como +480 centipeones, y eligió:
+
+bestmove b6b8
+
+Esto confirma que el motor ya no selecciona el ciclo de tablas cuando existe
+una continuación no repetitiva claramente superior en esa regresión.
+
+Límite de la versión:
+
+Alpha-012 no añade:
+
+- tratamiento automático de la quíntuple repetición;
+- avisos externos UCI específicos de tablas;
+- terminación automática de la partida por parte del motor;
+- la capa final unificada de precedencia y regresión cruzada para todas las
+  reglas de tablas.
+
+Esas tareas se reservan deliberadamente para alpha-013.
+
+Compilación:
+
+El programa compiló correctamente en Visual Studio 2022 con plataforma x64 y
+compatibilidad ISO C++17.
+
+Release | x64:
+
+- 1 compilación correcta;
+- 0 errores;
+- ejecutable generado en x64\Release\PHILOCHESS.exe.
+
+Debug | x64:
+
+- 1 compilación correcta;
+- 0 errores;
+- ejecutable generado en x64\Debug\PHILOCHESS.exe.
+
+Validación en Release
+
+Prueba 1 — Inventario de triple repetición
+
+Comando ejecutado:
+
+threefoldtest
+
+Resultado:
+
+- Bloque 1: 8/8 superadas;
+- Bloque 2: 8/8 superadas;
+- Bloque 3: 8/8 superadas;
+- Bloque 4: 16/16 superadas;
+- Bloque 5: 16/16 superadas;
+- Bloque 6: 8/8 superadas;
+- total: 64/64 superadas;
+- estructura del inventario: PASS;
+- THREEFOLD-REPETITION INVENTORY: PASS.
+
+Todos los casos de identidad, historial, ruta de búsqueda, raíz, alpha-beta,
+quietud, decisión, límites y regresión produjeron los resultados aprobados.
+
+Prueba 2 — Inventario de la regla de las cincuenta jugadas
+
+Comando ejecutado:
+
+fiftymovetest
+
+Resultado:
+
+- Bloque 1: 8/8;
+- Bloque 2: 16/16;
+- Bloque 3: 8/8;
+- Bloque 4: 12/12;
+- Bloque 5: 12/12;
+- Bloque 6: 8/8;
+- total: 64/64;
+- estructura del inventario: PASS;
+- FIFTY-MOVE-RULE INVENTORY: PASS.
+
+El nuevo historial de repetición no alteró la reconstrucción del halfmove
+clock, el aislamiento de ramas, el umbral, la propagación ni la quietud.
+
+Prueba 3 — Inventario de posiciones muertas
+
+Comando ejecutado:
+
+deadpositiontest
+
+Resultado:
+
+- Bloque 1: 12/12;
+- Bloque 2: 16/16;
+- Bloque 3: 20/20;
+- Bloque 4: 16/16;
+- posiciones de raíz: 64/64;
+- transiciones: 10/10;
+- estructura del inventario: PASS;
+- DEAD-POSITION INVENTORY: PASS.
+
+Prueba 4 — Inventario del ahogado
+
+Comando ejecutado:
+
+stalematetest
+
+Resultado:
+
+- Bloque 1: 8/8;
+- Bloque 2: 12/12;
+- Bloque 3: 12/12;
+- Bloque 4: 8/8;
+- Bloque 5: 12/12;
+- Bloque 6: 4/4;
+- Bloque 7: 8/8;
+- total: 64/64;
+- estructura del inventario: PASS;
+- STALEMATE INVENTORY: PASS.
+
+Las pruebas 3 y 4 confirmaron la conservación de la clasificación de posición
+muerta, jaque mate y ahogado mientras el soporte de repetición permanecía
+activo.
+
+Prueba 5 — Inventario Mobility v1
+
+Comando ejecutado:
+
+mobilitytest
+
+Resultado:
+
+- 64/64 superadas;
+- 44 posiciones controladas;
+- 10 posiciones transversales;
+- 10 posiciones integradas;
+- estructura del inventario: PASS.
+
+Prueba 6 — Tablas pieza-casilla
+
+Comando ejecutado:
+
+psttest
+
+Resultado:
+
+Piece-square table tests: 8/8 passed
+
+Prueba 7 — Regresión de la búsqueda de quietud
+
+Comando ejecutado:
+
+qtest
+
+Resultado:
+
+Quiescence tests: 4/4 passed
+
+Los cuatro casos establecidos conservaron la evitación de recaptura situada
+después del horizonte, las secuencias de capturas, la promoción tranquila y
+la evasión de jaque sin stand pat.
+
+Prueba 8 — Profundización iterativa
+
+Comando ejecutado:
+
+idtest 4
+
+Resultado:
+
+- profundidad 1: 1/1 terminada, 20 nodos;
+- profundidad 2: 2/2 terminadas, 171 nodos;
+- profundidad 3: 3/3 terminadas, 2253 nodos;
+- profundidad 4: 4/4 terminadas, 17122 nodos;
+- bestmove b1c3;
+- Iterative deepening tests: 4/4 passed.
+
+Prueba 9 — Variante principal
+
+Comando ejecutado:
+
+pvtest 4
+
+Resultado:
+
+- b1c3;
+- b1c3 b8c6;
+- b1c3 b8c6 g1f3;
+- b1c3 b8c6 g1f3 g8f6;
+- Principal variation tests: 4/4 passed.
+
+Prueba 10 — Gestión del tiempo
+
+Comando ejecutado:
+
+timetest
+
+Resultado:
+
+- asignación 15+10: límite blando 18158 ms, límite duro 21363 ms y techo de
+  profundidad 64;
+- profundidad explícita 5: profundidad 5 terminada;
+- resultado de emergencia de un milisegundo: profundidad 1 terminada y
+  profundidad 2 interrumpida;
+- profundidad no decreciente con más tiempo: profundidad 3 a 50 ms y
+  profundidad 5 a 2000 ms;
+- Time-controlled iterative-deepening tests: 4/4 passed.
+
+Prueba 11 — Ordenamiento de jugadas
+
+Comando ejecutado:
+
+ordertest
+
+Resultado:
+
+Move-ordering tests: 4/4 passed
+
+Permanecieron correctos la prioridad de la PV, el ordenamiento MVV-LVA, la
+prioridad de promociones y la prioridad de la PV debajo de la raíz.
+
+Prueba 12 — Referencias perft conocidas
+
+Comando ejecutado:
+
+perftknown 4
+
+Resultado:
+
+perftknown 4: 24/24 passed
+
+Las seis posiciones coincidieron en profundidades 1 a 4:
+
+- posición inicial: 197281 a profundidad 4;
+- Kiwipete: 4085603;
+- final de captura al paso y capturas: 43238;
+- promociones y presión de enroque: 422333;
+- trampa histórica de promoción: 2103487;
+- desarrollo de medio juego: 3894594.
+
+Prueba 13 — Regresión táctica conservada
+
+Comando ejecutado:
+
+tactictest 4
+
+Resultado:
+
+- se evitó la jugada conocida como mala b6c6 y se eligió b6d6;
+- h5f3 permaneció como intento defensivo legal después de 11.Bb5;
+- d5c7 permaneció como refutación táctica esperada después de 11...Qxb5.
+
+Las tres búsquedas terminaron normalmente.
+
+Prueba 14 — Inventario histórico de táctica y quietud
+
+Comando ejecutado:
+
+inventorytest 4
+
+Resultado:
+
+- PASS 45;
+- FAIL 0;
+- OPEN 9;
+- BASELINE 10;
+- TOTAL 64;
+- categorías [A] 21/21, [B] 33/33 y [C] 10/10;
+- estructura del inventario: PASS.
+
+Los nueve objetivos OPEN permanecieron sin cambios:
+
+- R03-T01;
+- R07-T02;
+- R07-T03;
+- R09-T04;
+- R09-T05;
+- R09-T08;
+- R09-T10;
+- R10-T05;
+- R10-T06.
+
+Prueba 15 — Cierre normal de Release
+
+Comando ejecutado:
+
+quit
+
+Resultado:
+
+El ejecutable Release terminó normalmente con código 0 (0x0).
+
+Validación en Debug
+
+El inventario específico de esta etapa se repitió con Debug | x64.
+
+Comando ejecutado:
+
+threefoldtest
+
+Resultado:
+
+- Bloque 1: 8/8 superadas;
+- Bloque 2: 8/8 superadas;
+- Bloque 3: 8/8 superadas;
+- Bloque 4: 16/16 superadas;
+- Bloque 5: 16/16 superadas;
+- Bloque 6: 8/8 superadas;
+- total: 64/64 superadas;
+- estructura del inventario: PASS;
+- THREEFOLD-REPETITION INVENTORY: PASS.
+
+Debug reprodujo exactamente la clasificación funcional obtenida en Release.
+El ejecutable Debug terminó después mediante quit con código 0 (0x0).
+
+La batería completa de regresión heredada se ejecutó en Release. Debug se
+utilizó para reproducir el nuevo inventario alpha-012 de 64 casos y confirmar
+el inicio, la ejecución y el cierre normales sin optimización. No se informa
+como resultado Debug ninguna batería que no fue ejecutada en esa configuración.
+
+Validación práctica en GUI contra Zoidberg 0.1
+
+Después de cerrar la validación interna, PHILOCHESS 0.2-alpha-012 Release fue
+cargado en Myracle y probado en dos partidas contra Zoidberg 0.1 con los
+colores invertidos.
+
+Condiciones:
+
+- control de tiempo: 900+10, equivalente a 15 minutos más 10 segundos por
+  jugada;
+- posición inicial normal;
+- ejecutable Release | x64;
+- sin libro de aperturas;
+- sin tablebases Syzygy;
+- ponder desactivado;
+- adjudicación full balanced sin tablebases;
+- una partida con cada color.
+
+Resultado del encuentro:
+
+Zoidberg 0.1 ganó 2-0.
+
+Partida 1 — PHILOCHESS 0.2-alpha-012 contra Zoidberg 0.1
+
+Resultado: 0-1
+
+PHILOCHESS condujo las blancas y obtuvo una amplia ventaja desde la apertura y
+el medio juego. Aprovechó la descoordinación de las piezas negras, penetró con
+una torre en la séptima fila, presionó ambos flancos y mantuvo bajo presión al
+rey negro expuesto. En su mejor momento, la posición blanca recibió una
+evaluación cercana a +10.
+
+El motor no encontró una conversión concluyente. Prefirió ganancias materiales
+y expansiones laterales, permitió que Zoidberg se reorganizara y dejó disminuir
+repetidamente la ventaja antes de que nuevos errores rivales la ampliaran otra
+vez.
+
+El punto de inflexión definitivo fue 50.Rf8+??. La liquidación resultante
+eliminó la torre activa y el peón pasado de la columna e, extinguió la
+iniciativa y condujo a una posición aproximadamente equilibrada. Después del
+cambio de damas, PHILOCHESS entró en un final con un peón menos, aunque todavía
+disponía de posibilidades razonables de resistencia.
+
+Una maniobra imprecisa del rey permitió el avance del peón pasado negro de la
+columna h. Las negras crearon después una segunda amenaza de coronación con el
+peón g. PHILOCHESS buscó contrajuego con su propio peón pasado en lugar de
+detener la amenaza más urgente, permitió la coronación negra y volvió
+inevitable el mate.
+
+Partida 2 — Zoidberg 0.1 contra PHILOCHESS 0.2-alpha-012
+
+Resultado: 1-0 por adjudicación
+
+PHILOCHESS condujo las negras y quedó inferior desde la apertura. Los
+desplazamientos prematuros de la dama, el enroque antes de coordinar las piezas
+y la omisión reiterada de una ruptura central útil concedieron la iniciativa a
+las blancas.
+
+Zoidberg instaló un caballo en f7, desde donde atacó ambas torres negras. El
+principal punto de inflexión fue 10...Rxd1+?, con la que PHILOCHESS aceptó una
+liquidación desfavorable. Aunque el otro caballo negro capturó después la torre
+blanca de a1, PHILOCHESS perdió ambas torres y entró en una posición con
+desventaja material. Zoidberg conservó una torre, mientras su caballo de h8
+quedó temporalmente aislado y fuera de juego.
+
+PHILOCHESS reorganizó sus piezas menores y creó amenazas contra el rey blanco.
+Dos imprecisiones de Zoidberg redujeron brevemente la ventaja y dieron a las
+negras posibilidades razonables de resistencia. PHILOCHESS prefirió entonces
+la centralización y la actividad aparente de los alfiles en lugar del bloqueo
+defensivo necesario. Las blancas obtuvieron un peligroso peón pasado en la
+columna f.
+
+Los jaques y el contrajuego táctico no detuvieron el peón. Cuando alcanzó la
+séptima fila y sus principales bloqueadores fueron eliminados, la coronación se
+volvió inevitable. Myracle adjudicó la posición decisiva a favor de las
+blancas.
+
+Conclusiones de la validación práctica:
+
+- ambas partidas se completaron mediante funcionamiento normal de la GUI;
+- todas las jugadas de PHILOCHESS fueron legales;
+- no se produjo ninguna pérdida por tiempo;
+- no hubo bloqueo, cuelgue ni cierre inesperado del motor;
+- no apareció ningún fallo visible de comunicación UCI;
+- ninguna detección falsa de triple repetición afectó las partidas;
+- alpha-012 permaneció funcionalmente estable con ambos colores;
+- las dos derrotas expusieron limitaciones de fuerza ajedrecística, no un fallo
+  de implementación de la nueva regla.
+
+Las partidas destacaron la necesidad de mejorar:
+
+- la conversión de ventajas ganadoras;
+- la evaluación de la seguridad del rey;
+- la selección de maniobras tranquilas y forzantes;
+- la evaluación y el bloqueo de peones pasados;
+- la comprensión de la apertura y el control central;
+- la coordinación de las piezas;
+- la valoración de desequilibrios materiales;
+- la defensa contra peones pasados avanzados.
+
+El resultado de estas dos partidas es una muestra práctica de estabilidad, no
+una medición Elo. Su tamaño no permite aislar un cambio de fuerza causado por
+el reconocimiento de la triple repetición y no contradice la validación
+interna satisfactoria de alpha-012.
+
+Limitaciones después de alpha-012:
+
+- la repetición se evalúa dentro de la búsqueda mientras la adjudicación
+  externa permanece a cargo de la GUI;
+- la quíntuple repetición automática no está implementada;
+- no se añadieron avisos externos UCI específicos de tablas;
+- queda pendiente la capa final unificada de precedencia y regresión cruzada;
+- el reconocimiento conservador de posiciones muertas no constituye un
+  solucionador universal;
+- permanecen las limitaciones generales de evaluación y búsqueda establecidas,
+  salvo cuando esta entrada las haya reemplazado expresamente.
+
+Conclusión:
+
+PHILOCHESS 0.2-alpha-012 — Detección de triple repetición en la búsqueda fue
+implementado y validado satisfactoriamente dentro del alcance aprobado.
+
+PHILOCHESS superó:
+
+- compilación Release | x64 bajo C++17 con 0 errores;
+- compilación Debug | x64 bajo C++17 con 0 errores;
+- el inventario de 64 casos de triple repetición en Release;
+- el mismo inventario de 64 casos de triple repetición en Debug;
+- los seis nuevos bloques con sus conteos requeridos;
+- la identidad exacta por colocación, bando al turno, derechos de enroque y
+  estado efectivo de captura al paso;
+- la exclusión de los contadores FEN de la identidad de repetición;
+- la reconstrucción y el reemplazo completos del historial UCI;
+- la separación de partidas sucesivas y la conservación entre búsquedas go;
+- el aislamiento y la restauración de la ruta activa de búsqueda;
+- la detección de la tercera aparición en la raíz, alpha-beta y quietud;
+- la propagación correcta del puntaje 0 y su comparación estratégica con las
+  alternativas;
+- la regresión específica de repetición contra Zoidberg;
+- inventario de cincuenta jugadas: 64/64;
+- inventario de posiciones muertas: 64/64 raíces y 10/10 transiciones;
+- inventario del ahogado: 64/64;
+- inventario de movilidad: 64/64;
+- pruebas PST: 8/8;
+- pruebas de quietud: 4/4;
+- pruebas de profundización iterativa: 4/4;
+- pruebas de variante principal: 4/4;
+- pruebas de gestión del tiempo: 4/4;
+- pruebas de ordenamiento: 4/4;
+- perft conocido: 24/24;
+- la regresión táctica conservada;
+- el inventario histórico con 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
+- cierre normal de Release y Debug con código 0;
+- dos partidas prácticas completas a 900+10 en Myracle sin ilegalidad,
+  pérdida por tiempo, bloqueo ni fallo UCI.
+
+No se detectó ninguna anomalía funcional ni regresión heredada atribuible a
+la nueva regla. La derrota práctica por 0-2 frente al más fuerte Zoidberg 0.1
+expuso debilidades de evaluación y conversión, mientras confirmó la estabilidad
+del motor.
+
+Por tanto, PHILOCHESS 0.2-alpha-012 se considera desarrollado, validado
+internamente, observado en la práctica y cerrado dentro del límite definido.
+
+La siguiente versión planificada es:
+
+PHILOCHESS 0.2-alpha-013 — Integración de reglas de tablas y regresión cruzada
