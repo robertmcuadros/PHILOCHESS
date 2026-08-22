@@ -1,0 +1,50 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.08.21"]
+[Round "1"]
+[White "PHILOCHESS 0.2 alpha 012"]
+[Black "Zoidberg 0.1"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "1200"]
+[BlackElo "1665"]
+[Time "13:12:47"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 c6 2. Nf3 b5 3. a3 Nf6 4. e4 g6 5. e5 Ng4 6. d4 f6 7. h3 Nh6 
+8. Be3 Nf5 9. Bd3 Nxe3 10. fxe3 fxe5 11. dxe5 Bh6 12. Qd2 Ba6 13. O-O O-O 14. Nd4 Re8 
+15. Qf2 Kh8 16. Qg3 Qc7 17. Rf7 Rg8 18. Rxe7 Qd8 19. Rf7 Bb7 20. Be4 a6 21. b4 Bc8 
+22. a4 bxa4 23. Rxa4 Qe8 24. Rf1 Bg7 25. Ra5 Bb7 26. Qg5 Bf8 27. Qf6+ Bg7 28. Qd6 Ra7 
+29. Qc5 Ra8 30. Qb6 Qc8 31. Qc5 Bf8 32. Qc4 Be7 33. Rf7 Bg5 34. Qe2 Rg7 35. Rxg7 Kxg7 
+36. g3 Bd8 37. Rc5 Bb6 38. Rc4 Qe8 39. Na4 Ba7 40. Nf3 Qe6 41. Bd3 Qxh3 42. Qf2 Qh6 
+43. Rf4 a5 44. bxa5 Na6 45. Bc4 Nb4 46. e6 d5 47. Bb3 Kg8 48. e7 Na6 49. Nc3 Qg7 
+50. Rf8+ Rxf8 51. exf8=Q+ Qxf8 52. Nd1 Qd8 53. Ne5 Qe7 54. Ng4 h5 55. Qf6 Qxf6 56. Nxf6+ Kg7 
+57. Ne8+ Kf8 58. Nd6 Nc5 59. Nxb7 Nxb7 60. a6 Nc5 61. Kg2 Nxa6 62. Ba4 Nb8 63. Kf2 Bc5 
+64. Nb2 g5 65. Nd3 Bd6 66. c3 c5 67. Bb5 Ke7 68. c4 dxc4 69. Bxc4 Nd7 70. Bb5 Nf6 
+71. Kf3 Kd8 72. e4 g4+ 73. Ke3 Bxg3 74. Nxc5 h4 75. Ne6+ Kc8 76. Kd4 h3 77. e5 Bf2+ 
+78. Kd3 h2 79. Bc6 Nh5 80. Bd5 Ng3 81. Ng5 h1=Q 82. Bxh1 Nxh1 83. Ne4 g3 84. e6 g2 
+85. Nd6+ Kd8 86. Ke4 g1=Q 87. Kf5 Qg8 88. Nf7+ 0-1
+
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.08.21"]
+[Round "2"]
+[White "Zoidberg 0.1"]
+[Black "PHILOCHESS 0.2-alpha-012"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1665"]
+[BlackElo "1200"]
+[Time "13:59:34"]
+[ECO "B00"]
+[Opening "Nimzowitsch Defense: Scandinavian Variation, Exchange Variation"]
+[Termination "white wins by adjudication"]
+
+1. e4 Nc6 2. d4 d5 3. exd5 Qxd5 4. Nf3 Bf5 5. Be2 Qe4 6. c4 O-O-O 7. Ng5 Qxd4 
+8. Nxf7 Nb4 9. Be3 Qxd1+ 10. Bxd1 Rxd1+ 11. Kxd1 Nc2 12. Nxh8 Nxa1 13. Nc3 Nc2 14. Bxa7 Nh6 
+15. h3 e5 16. g4 Bd3 17. Kd2 e4 18. f3 Nb4 19. a3 Nc6 20. Be3 Bxc4 21. Nxe4 Be7 
+22. Bxh6 gxh6 23. f4 Bd5 24. Re1 Nd4 25. Kc1 Kd7 26. f5 c5 27. f6 Nb3+ 28. Kd1 Bd6 
+29. Nxd6 Bf3+ 30. Kc2 Nd4+ 31. Kc3 Ne2+ 32. Rxe2 Bxe2 33. Nxb7 Ke6 34. f7 Ke7 35. Nxc5 h5 
+36. Ne6 Kxe6 1-0
