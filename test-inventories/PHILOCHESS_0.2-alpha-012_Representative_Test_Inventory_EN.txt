@@ -1,0 +1,1711 @@
+==============================================================================
+PHILOCHESS 0.2-alpha-012
+REPRESENTATIVE TEST INVENTORY
+THREEFOLD REPETITION DETECTION IN SEARCH
+REPRESENTATIVE SAMPLE — 16 VERIFIED TESTS
+==============================================================================
+
+Author and copyright holder: Robert M. Cuadros.
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is distributed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License
+(CC BY-NC-ND 4.0).
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en
+
+Date: August 22, 2026
+
+This sample document was prepared from the complete 64-test inventory for
+PHILOCHESS 0.2-alpha-012. It preserves the identifiers, data, oracles, and
+PASS/FAIL criteria of the sixteen selected original cases.
+
+This representative selection does not replace the complete inventory. Its
+purpose is to provide a compact sample spanning all six blocks and their main
+risks: position identity under the rules, UCI history, the root threshold,
+detection in alpha-beta and quiescence, stack restoration, strategic
+comparison, and the real-game regression against Zoidberg 0.1.
+
+==============================================================================
+1. OBJECTIVE AND SCOPE
+==============================================================================
+
+This document contains a formal sample intended to validate:
+
+    PHILOCHESS 0.2-alpha-012 — Threefold Repetition Detection in Search.
+
+The sample contains 16 tests distributed across the six original blocks:
+
+    Block 1 — Identity and counting                                3 tests
+    Block 2 — History reconstruction and management                2 tests
+    Block 3 — Root detection and UCI behavior                      2 tests
+    Block 4 — Detection inside search                              3 tests
+    Block 5 — Strategic decision and propagation                   3 tests
+    Block 6 — False positives, boundaries, and regression          3 tests
+                                                                  --------
+    Total                                                         16 tests
+
+Selected identifiers:
+
+    Block 1 — TRR-I01, TRR-I05, and TRR-I06
+    Block 2 — TRR-H01 and TRR-H05
+    Block 3 — TRR-R01 and TRR-R03
+    Block 4 — TRR-S01, TRR-S08, and TRR-S09
+    Block 5 — TRR-D05, TRR-D08, and TRR-D09
+    Block 6 — TRR-X01, TRR-X03, and TRR-X08
+
+The selection retains positive and negative controls and covers:
+
+- the exact third appearance and an insufficient second appearance;
+- castling rights and effective en passant in position identity;
+- complete reconstruction and replacement of UCI history;
+- root detection without ordinary search;
+- combination of permanent history with the active variation;
+- exact stack restoration after a repetition return and cutoff;
+- repetition checking on entry to quiescence before stand pat;
+- rejection of a draw when a superior continuation or forced mate exists;
+- defensive selection of a draw over a negative alternative;
+- apparently available en passant made illegal by an absolute pin;
+- continued detection at the fourth appearance;
+- reproduction of the historical regression case from the game against
+  Zoidberg 0.1.
+
+The technical basis and general oracles are preserved in full to retain the
+same methodological framework as the original inventory. References there to
+identifiers not included in this sample point to the complete 64-test suite.
+
+Specific UCI notices and full integration with other draw rules
+remain reserved for alpha-013.
+
+==============================================================================
+2. TECHNICAL BASIS AND ORACLES
+==============================================================================
+
+2.1 Basis in the Laws of Chess and position identity
+
+The threefold repetition rule concerns positions, not the literal repetition
+of moves. The appearances need not be consecutive or separated by the same
+move sequence.
+
+For the purposes of this inventory, two positions are considered identical
+only when all of the following match:
+
+- pieces of the same type and color occupy the same squares;
+- the same player has the move;
+- the same castling rights exist;
+- the same legal en-passant capture is effectively available.
+
+Rules reference:
+https://handbook.fide.com/chapter/e012023
+
+Visual equality of the board is insufficient. A change of turn, loss of a
+castling right, or the existence of a legal en-passant capture can make two
+positions with the same piece placement different.
+
+2.2 Conceptual repetition key
+
+The identity represented by PHILOCHESS can be expressed conceptually as:
+
+    piece placement | side to move | castling rights | effective en passant
+
+The implementation may use a position key or any equivalent representation,
+provided that it preserves this identity exactly.
+
+The halfmove clock and fullmove number are not part of a position's identity
+for threefold repetition. Their values may change between appearances without
+preventing the positions from being identical under the rules.
+
+2.3 Effective en-passant capture
+
+The mere textual presence of an en-passant target square in the FEN must not
+automatically create a different position. That information distinguishes
+identity only when the player to move actually has a legal en-passant capture.
+
+This block covers both the case in which the en-passant capture exists and the
+case in which the square is recorded but no capture is possible.
+
+2.4 History and scope of an isolated FEN
+
+PHILOCHESS can receive a position through:
+
+    position startpos moves <sequence>
+    position fen <complete FEN> moves <sequence>
+
+When a move sequence is supplied, the positions must be reconstructed in order
+and retained as part of the history relevant to repetition.
+
+An isolated FEN does not encode how many times the position appeared earlier.
+It therefore cannot by itself prove a second or third historical appearance.
+This limitation is tested explicitly in TRR-H04.
+
+2.5 Occurrence counting and threshold
+
+P0 denotes the initial position of the sequence, before the first move. The
+position after the first move is ply 1, and so on.
+
+The current position is part of the history and must be counted exactly once.
+For the alpha-012 oracle:
+
+    occurrenceCount = 1  -> no threefold repetition
+    occurrenceCount = 2  -> no threefold repetition
+    occurrenceCount = 3  -> threefoldDetected = true
+
+Earlier appearances may be separated by different positions and different
+move sequences.
+
+2.6 Common oracle for the block
+
+Each test must verify, as applicable:
+
+- complete legal reconstruction of the UCI sequence;
+- exact final FEN;
+- identification of the relevant appearances by ply number;
+- equality or inequality of the expected conceptual key;
+- exact occurrenceCount for the root position;
+- exact value of threefoldDetected;
+- absence of false positives caused by turn, castling, or en passant;
+- absence of false negatives caused by the halfmove clock, fullmove number, or
+  a merely nominal en-passant target square.
+
+No test in the first block requires a score, PV, bestmove, static evaluation,
+alpha-beta search, or quiescence search.
+
+2.7 Identifier convention
+
+Identifiers in the first block follow the pattern:
+
+    TRR-Inn
+
+where:
+
+- TRR means Threefold Repetition Rule;
+- I means Identity or position identity;
+- nn represents the two-digit sequential number.
+
+2.8 Reconstruction of history communicated through UCI
+
+Each position command defines from scratch the base position and move sequence
+that PHILOCHESS must reconstruct. The relevant history contains P0 and one
+additional position after each legal move in the sequence. Therefore:
+
+    historyPositionCount = number of moves + 1
+
+The startpos form uses the standard initial position as P0. The fen form uses
+exactly the supplied FEN as P0; the engine has no information about positions
+preceding that FEN.
+
+2.9 History replacement and separation between games
+
+A new position command completely replaces the history built by the preceding
+position command. This replacement must occur even when the interface has not
+sent ucinewgame.
+
+When ucinewgame is received, any historical or temporary state from the
+previous game must remain separate from the new game. A later isready command
+only synchronizes communication and adds no positions to history.
+
+2.10 Immutability of UCI history during go
+
+The go command starts a search on the current position, but it neither executes
+the bestmove nor modifies the history supplied by the position command.
+Positions generated during search belong to the temporary variation path and
+must be removed when moves are unmade.
+
+If several go commands are sent without a new position command, the root
+remains the same and its history entry must not be duplicated. This property
+prevents contamination between searches and keeps the root, which is already
+the last UCI-history entry, from being counted twice.
+
+2.11 Boundary after irreversible moves
+
+A pawn move or capture prevents the current position from being identical to a
+position preceding that irreversible change. Repetition counting may be
+limited to the segment after the last irreversible move, provided that the
+position reached immediately after that move is included as the first entry of
+the new segment.
+
+This inventory requires the correct functional result; it does not impose a
+specific internal structure for storing or traversing history.
+
+2.12 Common oracle for Block 2
+
+Each test must verify, as applicable:
+
+- legal and ordered reconstruction of P0 and all communicated plies;
+- exact historyPositionCount;
+- exact final FEN;
+- exact occurrenceCount for the current position;
+- exact value of threefoldDetected;
+- complete replacement of history after a new position command;
+- absence of historical information invented from an isolated FEN;
+- absence of changes produced by ucinewgame, isready, or go beyond each
+  command's specific contract;
+- absence of root duplication and residual state from earlier searches or
+  games;
+- correct counting within the segment after the last irreversible move.
+
+No test in the second block yet requires a score, PV, or specific bestmove.
+Integration of the draw result at the root is tested in Block 3; detection
+inside the tree is tested in later blocks.
+
+2.13 Block 2 identifier convention
+
+Identifiers in the second block follow the pattern:
+
+    TRR-Hnn
+
+where:
+
+- TRR means Threefold Repetition Rule;
+- H means History or UCI history;
+- nn represents the two-digit sequential number.
+
+2.14 Threefold repetition already present at the root
+
+When the key of the current position appears three times in the relevant UCI
+history, PHILOCHESS must recognize that a draw may be claimed under the rules
+before starting ordinary search. For alpha-012, the oracle is:
+
+    rootThreefoldDetected = true
+    rootScore = 0
+    UCI score = cp 0
+
+The third appearance permits a draw claim but does not mean that the root has
+no legal moves. PHILOCHESS must preserve its UCI contract and respond to go
+with a legal bestmove.
+
+2.15 Draw shortcut and work permitted at the root
+
+Once threefold repetition is recognized at the root, PHILOCHESS may generate
+the legal moves needed to select a UCI response, but it must not perform static
+evaluation or enter alpha-beta or quiescence search.
+
+The instrumented oracles are:
+
+    staticEvalCalls = 0
+    alphaBetaCalls  = 0
+    quiescenceCalls = 0
+
+No specific nodes, time, or depth value is required in the information line,
+because those fields may depend on the reporting system. Nor is a PV required
+when ordinary search is not executed.
+
+2.16 Legal bestmove and use of 0000
+
+At a repeated root with legal moves:
+
+    bestmove belongs to the set of legal moves
+    bestmove != 0000
+
+The inventory does not prescribe a specific move when several equivalent legal
+responses exist. It may prescribe one when the root has only one legal move.
+
+bestmove 0000 is reserved for a root with no legal moves, such as checkmate or
+stalemate. The control in this block uses stalemate to verify the UCI boundary
+without turning it into an exhaustive precedence test among rules; that
+regression is completed in Block 6.
+
+2.17 go modes and information reporting
+
+Root detection must be independent of the mode that starts the search. This
+block covers:
+
+    go depth <n>
+    go movetime <ms>
+    go wtime <ms> btime <ms> winc <ms> binc <ms>
+
+Specific notices issued through info string are outside alpha-012 and are
+reserved for alpha-013 integration work. This block requires only the neutral
+score and the corresponding bestmove.
+
+2.18 Common oracle for Block 3
+
+Each test must verify, as applicable:
+
+- exact occurrenceCount and threefoldDetected at the root;
+- rootScore = 0 and score cp 0 when threefold repetition exists;
+- absence of static evaluation, alpha-beta, and quiescence after recognition
+  of threefold repetition at the root;
+- legal bestmove other than 0000 when legal moves exist;
+- exact bestmove when only one legal move exists;
+- ordinary search active when only two appearances exist;
+- equivalent behavior with White and Black to move;
+- stability with go depth, go movetime, and UCI time control;
+- preservation of history and result across successive searches;
+- bestmove 0000 only in the control with no legal moves;
+- preservation of the stalemate diagnosis in the terminal control.
+
+No draw-claim info string, specific PV, or specific bestmove is required when
+the root has more than one legal move.
+
+2.19 Block 3 identifier convention
+
+Identifiers in the third block follow the pattern:
+
+    TRR-Rnn
+
+where:
+
+- TRR means Threefold Repetition Rule;
+- R means Root or search root;
+- nn represents the two-digit sequential number.
+
+2.20 Combined history during search
+
+At an internal node, the relevant count combines two sources:
+
+1. the permanent history reconstructed through position, whose last entry is
+   the current root;
+2. temporary positions generated after the root in the active line.
+
+The root must not be added a second time when alpha-beta starts. For a target
+node, the conceptual oracle is:
+
+    combinedOccurrenceCount =
+        appearances in UCI history
+      + appearances after the root in the active line
+
+The target node position is included exactly once as the line's last entry.
+Positions in already abandoned branches are not part of the count.
+
+2.21 Detection in alpha-beta
+
+When an alpha-beta node reaches combinedOccurrenceCount = 3, PHILOCHESS must
+recognize the draw before static evaluation, ordinary child expansion, and any
+later entry into quiescence. The local oracle is:
+
+    alphaBetaThreefoldDetected = true
+    nodeScore = 0
+    staticEvalCallsAtTarget = 0
+    childExpansionCallsAtTarget = 0
+    quiescenceCallsFromTarget = 0
+
+The block tests the result at the repeated node. Complete propagation of that
+value to the root and bestmove selection are reserved for Block 5.
+
+2.22 Detection upon entering quiescence search
+
+Quiescence search must check repetition upon node entry, before calculating
+stand pat or generating tactical continuations. When the entry node is the
+third appearance:
+
+    quiescenceThreefoldDetected = true
+    quiescenceScore = 0
+    standPatEvalCallsAtTarget = 0
+    quiescenceChildCallsAtTarget = 0
+
+Sequences leading to these nodes are generated by alpha-beta search.
+Quiescence is not required to produce silent-move cycles by itself.
+
+2.23 Branch isolation and temporary-stack restoration
+
+Each move added to the line must add exactly one temporary position, and each
+unmake must remove exactly the corresponding entry. This remains mandatory
+when a return occurs because of threefold repetition or causes an alpha-beta
+cutoff.
+
+After leaving a branch:
+
+    temporaryPathDepth = value before the branch
+    historyPositionCount = value before the search
+
+A position visited in one sibling branch cannot contribute to the count of the
+next branch. This contract also applies to successive quiescence calls in
+different branches.
+
+2.24 Common oracle for Block 4
+
+Each test must verify, as applicable:
+
+- exact FEN of the root and target node;
+- historyPositionCount before search begins;
+- appearances from UCI history and the active line;
+- exact combinedOccurrenceCount at the target node;
+- positive detection only on the third appearance;
+- local score 0 in alpha-beta or quiescence when threefold repetition exists;
+- absence of static evaluation, stand pat, and child expansion after detection;
+- normal continuation of search when only two appearances exist;
+- absence of root double counting;
+- isolation between sibling branches;
+- complete restoration of the temporary stack after an ordinary return, a
+  repetition return, or an alpha-beta cutoff;
+- immutability of permanent UCI history.
+
+The internal harness is instrumented to ensure that target lines are visited
+at the indicated depth and search phase. The bestmove, PV, and final root score
+are not oracles for this block.
+
+2.25 Block 4 identifier convention
+
+Identifiers in the fourth block follow the pattern:
+
+    TRR-Snn
+
+where:
+
+- TRR means Threefold Repetition Rule;
+- S means Search or detection inside search;
+- nn represents the two-digit sequential number.
+
+TRR-S01 through TRR-S08 apply to alpha-beta. TRR-S09 through TRR-S16 apply to
+quiescence search.
+
+2.26 Controlled tree and Block 5 score convention
+
+The strategic tests use an instrumented tree with legal moves and an explicit
+set of candidates at the root. The repetitive branch is reconstructed through
+a legal sequence and obtains score 0 exclusively upon reaching the third
+appearance.
+
+Nonrepetitive alternatives may receive controlled values to isolate comparison
+and propagation behavior from future changes in PST, mobility, or other
+evaluation terms. When a test uses an actual checkmate or a dead-position
+termination, candidateScore is derived from that rules-based result rather
+than from an injected value.
+
+candidateScore always denotes the value already propagated to the perspective
+of the side to move at the root. Therefore:
+
+    candidateScore > 0  -> favorable result for the root side
+    candidateScore = 0  -> neutral result
+    candidateScore < 0  -> unfavorable result for the root side
+
+At a root with Black to move, a positive value favors Black. The harness may
+limit examined candidates to those specified by each test, but all of them
+must be legal moves in the root FEN.
+
+2.27 Propagation of zero in negamax
+
+The node that recognizes the third appearance returns exactly 0. In negamax,
+each level reverses the sign of the received value, but:
+
+    -0 = 0
+
+Consequently, the neutral score must pass unchanged through any number of
+levels and remain unchanged when moving from quiescence to alpha-beta and from
+alpha-beta to the root. It must not become +1, -1, an incomplete bound, or a
+static evaluation of the repeated position.
+
+2.28 Strategic ordering of alternatives
+
+The expected chess behavior arises from ordinary score comparison; it requires
+no separate rules based on labels such as winning or losing. The conceptual
+order is:
+
+    forced mate > positive score > draw = 0
+                  > negative score > forced mating loss
+
+PHILOCHESS must therefore avoid a repetitive branch when an alternative above
+0 exists, choose it when all other alternatives are below 0, and be able to
+accept it when no alternative is better.
+
+2.29 Ties between equivalent alternatives
+
+When a repetitive branch and a nonrepetitive branch both receive
+candidateScore = 0, the oracle accepts both as valid best moves. The inventory
+does not require an artificial tiebreak or a specific bestmove. It does
+require:
+
+    rootScore = 0
+    bestmove belongs to the set of candidates with score 0
+
+A stable ordering policy may retain the first move or select another equivalent
+one without constituting a failure.
+
+In TRR-D13 and TRR-D14, the nonrepetitive alternative reaches the dead position
+K+N against K. Its candidateScore = 0 is therefore an exact result under the
+rules, not an approximation of static evaluation.
+
+2.30 Common oracle for Block 5
+
+Each test must verify, as applicable:
+
+- legality of the FEN, history, and all root candidates;
+- occurrenceCount = 2 at the root before searching;
+- combinedOccurrenceCount = 3 in the repetitive branch;
+- local score 0 at the repeated node;
+- exact negation and propagation of zero to candidateScore = 0;
+- exact controlled value of every instrumented leaf or exact terminal value of
+  each mate or dead-position branch;
+- rootScore equal to the maximum candidateScore from the perspective of the
+  side to move;
+- selection of the positive alternative over the draw;
+- selection of the draw over negative alternatives;
+- selection of a forced mate over the draw;
+- selection of the draw over a forced mating loss;
+- symmetry with White and Black to move;
+- independence from the order in which candidates are examined;
+- no requirement for a unique bestmove when several alternatives tie for the
+  maximum value.
+
+These tests do observe propagation to the root and the strategic choice among
+different candidates. They do not replace precedence rules applied within a
+single terminal node or the complete cross-rule regression reserved for
+alpha-013.
+
+2.31 Block 5 identifier convention
+
+Identifiers in the fifth block follow the pattern:
+
+    TRR-Dnn
+
+where:
+
+- TRR means Threefold Repetition Rule;
+- D means Decision or strategic decision;
+- nn represents the two-digit sequential number.
+
+TRR-D01 through TRR-D04 test propagation. TRR-D05 through TRR-D08 test rejection
+of the draw when a superior continuation exists. TRR-D09 through TRR-D12 test
+seeking the draw against inferior alternatives. TRR-D13 through TRR-D16 test
+acceptance and the boundaries around score 0.
+
+2.32 Block 6 identity edge cases
+
+Block 6 extends identity controls without repeating the basic cases from the
+first block. TRR-X01 requires full legality checking of an apparently available
+en-passant capture: the presence of an en-passant target square and an adjacent
+pawn is insufficient if the capture exposes the moving side's king. TRR-X02
+requires castling rights to remain part of the key even when castling is
+temporarily prevented and only one of those rights is lost.
+
+2.33 Behavior beyond the threshold and continuity of the UCI response
+
+TRR-X03 uses four appearances to verify that the functional condition is
+occurrenceCount >= 3 and does not deactivate after the third. If the interface
+does not adjudicate the draw, PHILOCHESS retains score cp 0 and returns a legal
+bestmove other than 0000. Automatic fivefold repetition is not part of this
+inventory.
+
+2.34 Special irreversible transitions
+
+TRR-X04, TRR-X05, and TRR-X06 test, respectively, an ordinary capture made by a
+piece, an executed en-passant capture, and a noncapturing promotion. In all
+three cases, the position reached immediately after the last irreversible move
+must be retained as the first valid appearance of the new segment. The harness
+must verify the exact FEN, halfmove-clock reset, complete board update, and
+count of later returns.
+
+2.35 Immediate detection and regression based on the game against Zoidberg
+
+TRR-X07 places the third appearance at search ply 1 and requires it to be
+recognized in alpha-beta with positive remaining depth. TRR-X08 reconstructs
+96 plies from the PHILOCHESS 0.2-alpha-008–Zoidberg 0.1 game and fixes the
+root after 48...Kd7.
+The continuation 49.Rb7+ Kd6 reaches the third appearance and receives
+candidateScore = 0; the controlled alternative 49.Rb8 preserves a score of
++480 and must be selected.
+
+2.36 Common oracle for Block 6
+
+Each test must verify, as applicable:
+
+- legality of the initial FEN and every communicated sequence;
+- exact historyPositionCount, occurrenceCount, and combinedOccurrenceCount;
+- normalization of en passant according to its effective legality;
+- partial and permanent update of castling rights;
+- preservation of detection when occurrenceCount reaches 4;
+- inclusion of the position immediately after an ordinary capture, an
+  en-passant capture, or a promotion as the first entry of the new segment;
+- detection at the first node after the root before evaluation or expansion;
+- exact reconstruction of the critical plies in the reference game;
+- local score 0 for the repetitive branch and selection of the positive
+  controlled alternative in the regression against Zoidberg;
+- absence of interference from the fifty-move rule, automatic fivefold
+  repetition, and UCI notices reserved for later work.
+
+2.37 Block 6 identifier convention
+
+Identifiers in the sixth block follow the pattern:
+
+    TRR-Xnn
+
+where:
+
+- TRR means Threefold Repetition Rule;
+- X identifies false positives, edge cases, and specific regressions;
+- nn represents the two-digit sequential number.
+
+TRR-X01 through TRR-X03 cover identity and behavior beyond the threshold.
+TRR-X04 through TRR-X06 cover special irreversible transitions. TRR-X07 tests
+the first-node boundary within search, and TRR-X08 reproduces the historical
+regression case.
+
+==============================================================================
+3. BLOCK 1 — POSITION IDENTITY AND OCCURRENCE COUNTING
+REPRESENTATIVE TESTS 1–3 OF 16
+==============================================================================
+
+Block-specific execution conventions:
+
+- All three tests are fully reconstructed before the counter is queried.
+- occurrenceCount and threefoldDetected are the primary oracles.
+- The sample covers the exact threshold, castling rights, and a legal
+  en-passant capture as components of position identity under the rules.
+
+------------------------------------------------------------------------------
+TRR-I01 — Exact third appearance of the initial position
+Test 1 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Basic positive control.
+
+Technical objective:
+  Confirm that the initial position is recognized as having appeared for the
+  third time after two legal knight cycles.
+
+UCI command:
+  position startpos moves g1f3 g8f6 f3g1 f6g8 g1f3 g8f6 f3g1 f6g8
+
+Resulting root FEN:
+  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 8 5
+
+Relevant appearances:
+  1. Ply 0:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+  2. Ply 4:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 4 3
+  3. Ply 8:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 8 5
+
+Expected result:
+  occurrenceCount = 3
+  threefoldDetected = true
+
+PASS criterion:
+  The three positions produce the same repetition key, and the current
+  position is recognized as the third appearance.
+
+FAIL criterion:
+  The counter returns a value other than 3 or detection is not activated.
+
+Note:
+  The FEN counters change among the three appearances but do not alter the
+  identity of the position under the rules.
+
+------------------------------------------------------------------------------
+TRR-I05 — Same placement but different castling rights
+Test 2 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative control for historical identity.
+
+Technical objective:
+  Confirm that an earlier position with castling rights is not counted as
+  identical to another in which those rights have been lost, even though the
+  kings and rooks have returned to their original squares.
+
+UCI command:
+  position fen r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1 moves e1f1 e8f8 f1e1 f8e8 e1f1 e8f8 f1e1 f8e8
+
+Resulting root FEN:
+  r3k2r/8/8/8/8/8/8/R3K2R w - - 8 5
+
+States with the same placement and White to move:
+  Ply 0, with castling rights:
+    r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1
+  Ply 4, without castling rights:
+    r3k2r/8/8/8/8/8/8/R3K2R w - - 4 3
+  Ply 8, without castling rights:
+    r3k2r/8/8/8/8/8/8/R3K2R w - - 8 5
+
+Expected result for the root key:
+  occurrenceCount = 2
+  threefoldDetected = false
+
+PASS criterion:
+  The ply-0 position is excluded because it retains KQkq; only plies 4 and 8
+  are counted.
+
+FAIL criterion:
+  The engine compares only piece placement and side to move, counts ply 0 as
+  well, and declares a nonexistent threefold repetition.
+
+------------------------------------------------------------------------------
+TRR-I06 — Legal en-passant capture distinguishes the positions
+Test 3 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative identity control for effective en passant.
+
+Technical objective:
+  Confirm that a position in which White can play e5xd6 en passant is not
+  counted as identical to the same placement after that temporary right has
+  expired.
+
+UCI command:
+  position fen 7k/3p4/8/4P3/8/8/N7/7K b - - 0 1 moves d7d5 a2b4 h8g8 b4a2 g8h8 a2b4 h8g8 b4a2 g8h8
+
+Resulting root FEN:
+  7k/8/8/3pP3/8/8/N7/7K w - - 8 6
+
+States with the same placement and White to move:
+  Ply 1, en-passant capture e5xd6 available:
+    7k/8/8/3pP3/8/8/N7/7K w - d6 0 2
+  Ply 5, en-passant capture unavailable:
+    7k/8/8/3pP3/8/8/N7/7K w - - 4 4
+  Ply 9, en-passant capture unavailable:
+    7k/8/8/3pP3/8/8/N7/7K w - - 8 6
+
+Expected result for the root key:
+  occurrenceCount = 2
+  threefoldDetected = false
+
+PASS criterion:
+  Ply 1 receives a different key because e5xd6 en passant is a legal move;
+  only plies 5 and 9 are counted.
+
+FAIL criterion:
+  The engine ignores a legal en-passant capture, counts three appearances, and
+  produces a false positive.
+
+==============================================================================
+4. BLOCK 2 — UCI-HISTORY RECONSTRUCTION AND MANAGEMENT
+REPRESENTATIVE TESTS 4–5 OF 16
+==============================================================================
+
+Block-specific execution conventions:
+
+- Each test begins without residual history from an earlier test.
+- P0 and every later position are reconstructed in the supplied order.
+- A new position command completely replaces the preceding history.
+
+------------------------------------------------------------------------------
+TRR-H01 — Complete reconstruction through position startpos moves
+Test 4 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Positive reconstruction control from the initial position.
+
+Technical objective:
+  Confirm that PHILOCHESS reconstructs and retains in order every position
+  communicated through position startpos moves, including the position reached
+  after pawn moves e2e3 and e7e6.
+
+UCI command:
+  position startpos moves e2e3 e7e6 g1f3 g8f6 f3g1 f6g8 g1f3 g8f6 f3g1 f6g8
+
+Resulting root FEN:
+  rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 8 6
+
+Reconstructed history:
+  historyPositionCount = 11
+
+Relevant appearances of the root position:
+  1. Ply 2:
+     rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2
+  2. Ply 6:
+     rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 4 4
+  3. Ply 10:
+     rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 8 6
+
+Expected result:
+  occurrenceCount = 3
+  threefoldDetected = true
+
+PASS criterion:
+  P0 and all ten plies are reconstructed in the received order; the current
+  position is identified at plies 2, 6, and 10 and detection is activated.
+
+FAIL criterion:
+  A position in the sequence is omitted, the order is altered, the history
+  does not contain eleven entries, or the third appearance is not recognized.
+
+------------------------------------------------------------------------------
+TRR-H05 — A new position command completely replaces the previous history
+Test 5 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative residual-history control without ucinewgame.
+
+Technical objective:
+  Confirm that a second position command replaces the history of the first,
+  even without an intervening ucinewgame and even when the second FEN matches
+  the root reached by the first command.
+
+Sequence of UCI commands:
+  1. position fen 7k/7p/8/8/8/8/1N6/7K w - - 20 11 moves b2a4 h8g8 a4b2 g8h8 b2a4 h8g8 a4b2 g8h8
+  2. position fen 7k/7p/8/8/8/8/1N6/7K w - - 28 15
+
+Expected state after the first position command:
+  historyPositionCount = 9
+  occurrenceCount = 3
+  threefoldDetected = true
+
+Root FEN after the second position command:
+  7k/7p/8/8/8/8/1N6/7K w - - 28 15
+
+Expected state after the second position command:
+  historyPositionCount = 1
+  occurrenceCount = 1
+  threefoldDetected = false
+
+PASS criterion:
+  The second position command removes all nine earlier entries and creates a
+  new history containing only the received FEN as P0.
+
+FAIL criterion:
+  The earlier history is extended or mixed with the new one, occurrenceCount
+  remains above 1, or threefold repetition remains active.
+
+==============================================================================
+5. BLOCK 3 — ROOT DETECTION AND UCI BEHAVIOR
+REPRESENTATIVE TESTS 6–7 OF 16
+==============================================================================
+
+Block-specific execution conventions:
+
+- The go command is sent after the history supplied by position has been fully
+  reconstructed.
+- score cp 0 represents the neutral draw value.
+- A second appearance retains ordinary search; a third appearance at the root
+  activates the shortcut while still requiring a legal bestmove.
+
+------------------------------------------------------------------------------
+TRR-R01 — Threefold repetition at a root with White to move
+Test 6 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Basic positive control for root draw detection.
+
+Technical objective:
+  Confirm that a third appearance already present at a root with White to move
+  receives the draw value before static evaluation and ordinary search,
+  without preventing PHILOCHESS from returning a legal move.
+
+Sequence of UCI commands:
+  1. position startpos moves g1f3 g8f6 f3g1 f6g8 g1f3 g8f6 f3g1 f6g8
+  2. go depth 4
+
+Root FEN:
+  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 8 5
+
+Expected repetition state:
+  historyPositionCount = 9
+  occurrenceCount = 3
+  threefoldDetected = true
+  rootThreefoldDetected = true
+
+Expected search work:
+  staticEvalCalls = 0
+  alphaBetaCalls  = 0
+  quiescenceCalls = 0
+
+Expected UCI output:
+  score cp 0
+  bestmove = any legal White move
+  bestmove != 0000
+
+PASS criterion:
+  The root is recognized as a draw, ordinary search is not executed, and a
+  legal bestmove other than 0000 is returned.
+
+FAIL criterion:
+  The third appearance is not recognized, evaluation is performed, alpha-beta
+  or quiescence is called, a score other than 0 is reported, or 0000 is
+  returned while legal moves are available.
+
+------------------------------------------------------------------------------
+TRR-R03 — Second root appearance must not trigger the repetition shortcut
+Test 7 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative root-threshold control.
+
+Technical objective:
+  Confirm that a root appearing only twice is not treated as a draw by
+  repetition and is processed through the usual search procedure.
+
+Sequence of UCI commands:
+  1. position startpos moves g1f3 g8f6 f3g1 f6g8
+  2. go depth 2
+
+Root FEN:
+  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 4 3
+
+Expected repetition state:
+  historyPositionCount = 5
+  occurrenceCount = 2
+  threefoldDetected = false
+  rootThreefoldDetected = false
+
+Expected search work:
+  ordinaryRootSearchEntered = true
+  alphaBetaCalls > 0
+
+Expected UCI output:
+  score = ordinary search result; no specific value is prescribed
+  bestmove = any legal White move
+  bestmove != 0000
+
+PASS criterion:
+  The repetition shortcut is not activated, ordinary search reaches the
+  requested depth, and a legal move is returned.
+
+FAIL criterion:
+  occurrenceCount = 2 is treated as a draw, score cp 0 is forced without
+  searching, alpha-beta is omitted, or 0000 is returned.
+
+Note:
+  A final score of 0 produced by the search does not itself constitute a
+  failure; the decisive oracle is that the threefold-repetition shortcut is
+  not used.
+
+==============================================================================
+6. BLOCK 4 — DETECTION INSIDE ALPHA-BETA AND QUIESCENCE SEARCH
+REPRESENTATIVE TESTS 8–10 OF 16
+==============================================================================
+
+Block-specific execution conventions:
+
+- The internal harness is instrumented to traverse the target lines.
+- The historical root is not duplicated when the temporary stack is created.
+- The sample covers alpha-beta, restoration after a cutoff, and detection on
+  entry to quiescence before stand pat.
+
+------------------------------------------------------------------------------
+TRR-S01 — Two UCI appearances and a third in alpha-beta
+Test 8 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Basic positive control for combined history in alpha-beta.
+
+Technical objective:
+  Confirm that two appearances retained in UCI history and a later return in
+  the active line complete threefold repetition at an alpha-beta node with
+  White to move.
+
+Sequence of UCI commands:
+  1. position fen 7k/7p/8/8/8/8/1N6/7K w - - 0 1 moves b2a4 h8g8 a4b2 g8h8
+  2. go depth 5
+
+Root FEN:
+  7k/7p/8/8/8/8/1N6/7K w - - 4 3
+
+Root state before search:
+  historyPositionCount = 5
+  occurrenceCount = 2
+  rootThreefoldDetected = false
+
+Target alpha-beta line:
+  b2a4 h8g8 a4b2 g8h8
+
+Target node, search ply 4:
+  7k/7p/8/8/8/8/1N6/7K w - - 8 5
+
+Contribution to the target-node count:
+  appearances in UCI history = 2, plies 0 and 4
+  appearances after the root in the line = 1, search ply 4
+  combinedOccurrenceCount = 3
+
+Expected local result:
+  alphaBetaThreefoldDetected = true
+  nodeScore = 0
+  staticEvalCallsAtTarget = 0
+  childExpansionCallsAtTarget = 0
+  quiescenceCallsFromTarget = 0
+
+PASS criterion:
+  The node at search ply 4 combines the two historical appearances with the
+  active appearance, returns 0, and performs no later work from that node.
+
+FAIL criterion:
+  Only UCI history or only the line is queried, the count of 3 is not reached,
+  the node is evaluated or expanded, or its score differs from 0.
+
+------------------------------------------------------------------------------
+TRR-S08 — Repetition return and cutoff restore the alpha-beta stack
+Test 9 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Positive restoration control after an early return.
+
+Technical objective:
+  Confirm that a node returning 0 for threefold repetition can cause an
+  alpha-beta cutoff without leaving temporary positions on the active stack.
+
+Sequence of UCI commands:
+  1. position fen 7k/7p/8/8/8/8/1N6/7K w - - 0 1 moves b2a4 h8g8 a4b2 g8h8
+  2. Execute the target line through the alpha-beta harness with a window that
+     exposes the cutoff produced by score 0.
+
+Instrumented window at the node receiving the return:
+  alpha = -1
+  beta  = 0
+
+Expected cutoff condition:
+  returnedScore = 0
+  returnedScore >= beta
+
+Root FEN:
+  7k/7p/8/8/8/8/1N6/7K w - - 4 3
+
+Root state before the call:
+  historyPositionCount = 5
+  occurrenceCount = 2
+  temporaryPathDepth = 0
+
+Target alpha-beta line:
+  b2a4 h8g8 a4b2 g8h8
+
+Repeated node, search ply 4:
+  7k/7p/8/8/8/8/1N6/7K w - - 8 5
+  combinedOccurrenceCount = 3
+  alphaBetaThreefoldDetected = true
+  nodeScore = 0
+
+Expected state after the return and cutoff:
+  cutoffObserved = true
+  temporaryPathDepth = 0
+  historyPositionCount = 5
+  root occurrenceCount = 2
+  rootThreefoldDetected = false
+  makeMoveCount for the line = unmakeMoveCount for the line
+
+PASS criterion:
+  Repetition returns 0, the cutoff occurs, and every temporary position is
+  removed without modifying permanent history.
+
+FAIL criterion:
+  The early return omits an unmake, entries remain on the stack, the root
+  falsely reaches three appearances, or the make/unmake counts differ.
+
+------------------------------------------------------------------------------
+TRR-S09 — Two UCI appearances and a third upon entering quiescence
+Test 10 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Basic positive control for quiescence detection.
+
+Technical objective:
+  Confirm that a third appearance reached exactly when alpha-beta depth is
+  exhausted is recognized upon entering quiescence before stand pat.
+
+Sequence of UCI commands:
+  1. position fen 7k/7p/8/8/8/8/1N6/7K w - - 0 1 moves b2a4 h8g8 a4b2 g8h8
+  2. go depth 4
+
+Root FEN:
+  7k/7p/8/8/8/8/1N6/7K w - - 4 3
+
+Quiescence-entry line:
+  b2a4 h8g8 a4b2 g8h8
+
+Quiescence-entry node, search ply 4:
+  7k/7p/8/8/8/8/1N6/7K w - - 8 5
+
+Contribution to the count:
+  appearances in UCI history = 2
+  appearances after the root in the line = 1
+  combinedOccurrenceCount = 3
+
+Expected local result:
+  quiescenceThreefoldDetected = true
+  quiescenceScore = 0
+  standPatEvalCallsAtTarget = 0
+  quiescenceChildCallsAtTarget = 0
+
+PASS criterion:
+  Quiescence recognizes the third appearance upon entry, returns 0, and
+  neither calculates stand pat nor generates tactical continuations.
+
+FAIL criterion:
+  Stand pat is calculated before repetition is checked, children are expanded,
+  the count of 3 is not detected, or a value other than 0 is returned.
+
+==============================================================================
+7. BLOCK 5 — STRATEGIC DECISION AND VALUE PROPAGATION
+REPRESENTATIVE TESTS 11–13 OF 16
+==============================================================================
+
+Block-specific execution conventions:
+
+- Every root contains two appearances; the cyclic branch reaches the third.
+- candidateScore is expressed from the perspective of the root side to move.
+- The sample compares a draw with a positive score, a mating win, and a
+  negative score, using only legal candidates.
+
+------------------------------------------------------------------------------
+TRR-D05 — White avoids repetition to preserve an advantage
+Test 11 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative control for repetitive-branch selection.
+
+Technical objective:
+  Confirm that White rejects candidateScore = 0 when a nonrepetitive
+  continuation preserves an objectively winning position.
+
+Sequence of UCI commands:
+  1. position fen 7k/p7/8/8/8/8/1N5P/7K w - - 0 1 moves b2a4 h8g8 a4b2 g8h8
+  2. go depth 5 through the controlled tree
+
+Root FEN:
+  7k/p7/8/8/8/8/1N5P/7K w - - 4 3
+
+Candidates and scores from White's perspective:
+  b2a4 — repetitive branch — candidateScore = 0
+  b2d3 — nonrepetitive continuation — candidateScore = +200
+
+Expected result:
+  repetitionBranchDetected = true
+  rootScore = +200
+  bestmove b2d3
+
+PASS criterion:
+  The engine correctly recognizes the draw after b2a4 but chooses b2d3 because
+  it preserves White's objective advantage.
+
+FAIL criterion:
+  Repetition detection ends the entire root, b2a4 is selected despite the
+  winning continuation, or rootScore remains 0.
+
+------------------------------------------------------------------------------
+TRR-D08 — A forced mate prevails over repetition
+Test 12 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative control for draw selection against a forced win.
+
+Technical objective:
+  Confirm that a branch containing a genuine, unique mate in one is selected
+  over a threefold-repetition branch with score 0.
+
+Sequence of UCI commands:
+  1. position fen n6k/4R1pp/8/8/8/8/8/KN6 w - - 0 1 moves b1a3 a8b6 a3b1 b6a8
+  2. go depth 5 through the controlled tree
+
+Root FEN:
+  n6k/4R1pp/8/8/8/8/8/KN6 w - - 4 3
+
+Initial state:
+  historyPositionCount = 5
+  root occurrenceCount = 2
+  rootThreefoldDetected = false
+  rootCandidateSet = {b1a3, e7e8}
+
+Instrumented search order:
+  1. b1a3
+  2. e7e8
+
+Repetitive branch:
+  b1a3 a8b6 a3b1 b6a8
+
+Repeated position, search ply 4:
+  n6k/4R1pp/8/8/8/8/8/KN6 w - - 8 5
+  combinedOccurrenceCount = 3
+  alphaBetaThreefoldDetected = true
+  candidateScore(b1a3) = 0
+
+Mate branch:
+  e7e8#
+
+Final position:
+  n3R2k/6pp/8/8/8/8/8/KN6 b - - 5 3
+  sideToMoveInCheck = true
+  legalReplyCount = 0
+  checkmateDetected = true
+  mateDistance = 1
+  candidateScore(e7e8) = +MATE_SCORE, with adjusted distance
+
+Expected result:
+  repetitionBranchDetected = true
+  mateBranchDetected = true
+  rootScore = +MATE_SCORE, with distance adjusted by PHILOCHESS
+  bestmove e7e8
+
+PASS criterion:
+  The engine correctly values the repetitive branch as a draw, recognizes the
+  actual checkmate after e7e8, and selects the forced win.
+
+FAIL criterion:
+  The engine accepts the draw, fails to recognize mate, reports rootScore = 0,
+  or selects b1a3.
+
+Note:
+  The mate after e7e8 is a verified legal termination, not an injected score.
+  This test compares two search alternatives; cross-rule precedence cases are
+  completed in Block 6 and alpha-013.
+
+------------------------------------------------------------------------------
+TRR-D09 — White seeks repetition against a negative alternative
+Test 13 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Basic positive control for defensive selection.
+
+Technical objective:
+  Confirm that White forces threefold repetition through perpetual check when
+  the only enabled alternative leaves White with a decisive disadvantage.
+
+Sequence of UCI commands:
+  1. position fen q4r1k/6R1/6K1/8/8/8/8/8 w - - 0 1 moves g7h7 h8g8 h7g7 g8h8
+  2. go depth 5 through the controlled tree
+
+Root FEN:
+  q4r1k/6R1/6K1/8/8/8/8/8 w - - 4 3
+
+Candidates and scores from White's perspective:
+  g7e7 — nonrepetitive continuation — candidateScore = -900
+  g7h7 — perpetual-check branch — candidateScore = 0
+
+Instrumented search order:
+  1. g7e7
+  2. g7h7
+
+Forced repetitive branch:
+  g7h7 h8g8 h7g7 g8h8
+
+Legal Black replies:
+  after g7h7+ — {h8g8}
+  after h7g7+ — {g8h8}
+
+Expected result:
+  rootOccurrenceCount = 2
+  combinedOccurrenceCount = 3
+  forcedRepetitionBranchDetected = true
+  rootScore = 0
+  bestmove g7h7
+
+PASS criterion:
+  The forced perpetual check improves the provisional value from -900 to 0 and
+  establishes g7h7 as the best move.
+
+FAIL criterion:
+  Black has an additional reply, the third appearance is not reached, zero
+  does not reach the root, or the engine returns g7e7.
+
+==============================================================================
+8. BLOCK 6 — FALSE POSITIVES, EDGE CASES, AND SPECIFIC REGRESSION
+REPRESENTATIVE TESTS 14–16 OF 16
+==============================================================================
+
+Block-specific execution conventions:
+
+- Each test begins without residual history.
+- Halfmove clocks remain below 100.
+- The sample covers en passant made illegal by a pin, the fourth appearance,
+  and the real-game regression against Zoidberg 0.1.
+- Automatic fivefold repetition, specific UCI notices, and complete cross-rule
+  draw regression remain outside alpha-012.
+
+------------------------------------------------------------------------------
+TRR-X01 — Apparently available en-passant capture is illegal because of an
+          absolute pin
+Test 14 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Positive control for legal normalization in an en-passant edge case.
+
+Technical objective:
+  Confirm that the simultaneous presence of an en-passant target square and an
+  adjacent pawn does not distinguish two positions when the only apparently
+  available en-passant capture is illegal because the pawn is absolutely
+  pinned against its own king.
+
+UCI command:
+  position fen 4r2k/3p4/8/4P3/8/8/N7/4K3 b - - 0 1 moves d7d5 a2b4 h8g8 b4a2 g8h8 a2b4 h8g8 b4a2 g8h8
+
+Resulting root FEN:
+  4r2k/8/8/3pP3/8/8/N7/4K3 w - - 8 6
+
+Reconstructed history:
+  historyPositionCount = 10
+
+States identical under the rules:
+
+  Ply 1, d6 recorded and an adjacent White pawn on e5:
+    4r2k/8/8/3pP3/8/8/N7/4K3 w - d6 0 2
+
+  Ply 5, without an en-passant square:
+    4r2k/8/8/3pP3/8/8/N7/4K3 w - - 4 4
+
+  Ply 9, without an en-passant square:
+    4r2k/8/8/3pP3/8/8/N7/4K3 w - - 8 6
+
+Special legality check at ply 1:
+  recorded en-passant square = d6
+  adjacent White pawn = e5
+  pseudolegal candidate = e5d6
+  legalEnPassantCapture = false
+  effectiveEnPassantSquare = -
+
+Basis for illegality:
+  The White pawn on e5 blocks the e-file between the Black rook on e8 and the
+  White king on e1. If White played e5xd6 en passant, the pawn would leave e5
+  and open the file, exposing its own king to the rook. Therefore, e5d6 is not
+  a legal move.
+
+Expected result:
+  occurrenceCount = 3
+  threefoldDetected = true
+
+PASS criterion:
+  PHILOCHESS rejects e5d6 as illegal, normalizes the d6 square at ply 1 as
+  ineffective, and assigns the same repetition key to plies 1, 5, and 9. The
+  counter returns exactly 3 and activates detection.
+
+FAIL criterion:
+  PHILOCHESS treats d6 as effective merely because an adjacent White pawn
+  exists, improperly accepts e5d6 as legal, creates a different key for ply 1,
+  returns occurrenceCount = 2, or fails to recognize threefold repetition.
+
+Note:
+  TRR-I07 uses a nominal en-passant target square with no pawn able to capture.
+  TRR-X01 extends that case: here a pawn is geometrically able to capture,
+  but the capture remains ineffective because it fails the complete legality
+  check. No score, bestmove, UCI notice, or interaction with another draw rule
+  is part of this test's oracles.
+
+------------------------------------------------------------------------------
+TRR-X03 — Fourth appearance of a position
+Test 15 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Positive control for continued detection beyond the threshold.
+
+Technical objective:
+  Confirm that threefold repetition remains recognized when a position appears
+  for the fourth time and that the counter does not restrict the condition to
+  occurrenceCount exactly equal to 3.
+
+Sequence of UCI commands:
+  1. position startpos moves g1f3 g8f6 f3g1 f6g8 g1f3 g8f6 f3g1 f6g8 g1f3 g8f6 f3g1 f6g8
+  2. go depth 4
+
+Root FEN:
+  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 12 7
+
+Reconstructed history:
+  historyPositionCount = 13
+
+Relevant appearances:
+
+  1. Ply 0:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+  2. Ply 4:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 4 3
+
+  3. Ply 8:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 8 5
+
+  4. Ply 12:
+     rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 12 7
+
+State when the third appearance is completed at ply 8:
+  occurrenceCount = 3
+  threefoldDetected = true
+
+Expected root state after the fourth appearance:
+  occurrenceCount = 4
+  threefoldDetected = true
+  rootThreefoldDetected = true
+  rootScore = 0
+
+Expected search work:
+  staticEvalCalls = 0
+  alphaBetaCalls  = 0
+  quiescenceCalls = 0
+
+Expected UCI output:
+  score cp 0
+  bestmove = any legal White move
+  bestmove != 0000
+
+PASS criterion:
+  PHILOCHESS counts appearances at plies 0, 4, 8, and 12 exactly, returns
+  occurrenceCount = 4, and keeps threefoldDetected and rootThreefoldDetected
+  active. The root receives score 0, does not enter ordinary search, and
+  returns a legal move other than 0000.
+
+FAIL criterion:
+  Detection improperly uses occurrenceCount == 3 and deactivates at the fourth
+  appearance, the counter returns a value other than 4, ordinary search begins,
+  the score ceases to be neutral, or 0000 is returned while legal moves exist.
+
+Note:
+  This test models an interface that allows the game to continue after the
+  third appearance and later reports a fourth appearance. PHILOCHESS must
+  continue recognizing that the threefold threshold has already been reached.
+  It does not terminate the game or stop responding: if the interface does not
+  adjudicate the draw, it returns a legal bestmove and can continue receiving
+  new position and go commands. TRR-X03 neither implements nor tests automatic
+  fivefold repetition: it uses only four appearances and alpha-012's condition,
+  occurrenceCount >= 3. No specific UCI notice is required.
+
+------------------------------------------------------------------------------
+TRR-X08 — Regression test based on PHILOCHESS 0.2-alpha-008 versus Zoidberg 0.1
+Test 16 of 16
+------------------------------------------------------------------------------
+
+Classification:
+  Negative control for a historical regression test based on a real game and
+  for the resulting strategic decision.
+
+Technical objective:
+  Reproduce the PHILOCHESS 0.2-alpha-008–Zoidberg 0.1 game through the
+  position after 48...Kd7 and confirm that PHILOCHESS does not choose
+  49.Rb7+, because the reply 49...Kd6 reaches an earlier position for the
+  third time and turns a game with a clear material advantage for White into
+  a draw.
+
+Reference game:
+  White = PHILOCHESS 0.2-alpha-008
+  Black = Zoidberg 0.1
+  Site = Myracle GUI
+  Date = July 27, 2026
+  Time control = 900+10
+  Result = 1/2-1/2
+  Termination = draw by threefold repetition
+
+Sequence of UCI commands:
+  1. Send one position startpos moves command with the complete sequence shown
+     below. The line breaks are typographical only:
+
+     b1c3 c7c6 g1f3 b7b5 a2a3 g8f6 e2e4 e7e5
+     d2d4 d8a5 f3e5 f6e4 d1h5 e4d6 c1g5 f8e7
+     g5e7 e8e7 f1d3 h7h6 e1g1 c8a6 c3e4 d6e4
+     h5f7 e7d8 f7g7 h8e8 d3e4 d8c8 e4f5 a5d8
+     g7h6 c8c7 h6g6 e8g8 g6h7 d8g5 g2g3 g8g7
+     h7h8 d7d6 h2h4 g5f6 e5g4 f6f7 f1e1 c7b6
+     e1e8 a6b7 g4e3 f7c7 c2c4 g7e7 c4c5 b6a6
+     e8d8 d6c5 a3a4 e7e3 a4b5 a6b5 h8g8 e3f3
+     f5e4 f3f7 d8f8 b8a6 e4d3 b5b6 g8f7 c7f7
+     f8f7 a6b4 d4c5 b6c5 f7b7 b4d3 a1a3 a8d8
+     a3c3 c5d4 c3c6 a7a5 b2b3 d8d5 c6c4 d4e5
+     f2f4 e5d6 b7b6 d6d7 b6b7 d7d6 b7b6 d6d7
+
+  2. go depth 3 through the controlled tree
+
+Root FEN:
+  8/3k4/1R6/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 7 49
+
+Reconstructed history:
+  historyPositionCount = 97
+
+Critical segment of the reconstructed game:
+  45.f4+ Kd6 46.Rb6+ Kd7 47.Rb7+ Kd6 48.Rb6+ Kd7
+
+Appearances of the root position:
+
+  1. Ply 92, after 46...Kd7:
+     8/3k4/1R6/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 3 47
+
+  2. Ply 96, after 48...Kd7:
+     8/3k4/1R6/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 7 49
+
+Root state before search:
+  occurrenceCount = 2
+  threefoldDetected = false
+  rootThreefoldDetected = false
+
+Root material balance according to PHILOCHESS values:
+
+  White:
+    two rooks = 2 × 500 = 1000
+    four pawns = 4 × 100 = 400
+    total = 1400
+
+  Black:
+    one rook = 500
+    one knight = 320
+    one pawn = 100
+    total = 920
+
+  Material balance from White's perspective:
+    materialBalance = +480
+
+Controlled candidate set:
+  rootCandidateSet = {b6b7, b6b8}
+
+Instrumented search order:
+  1. b6b7 — 49.Rb7+, the game's repetitive continuation
+  2. b6b8 — 49.Rb8, a legal non-repetitive alternative
+
+First position of the repetitive branch:
+
+  Search ply 1, after b6b7:
+    8/1R1k4/8/p2r4/2R2P1P/1P1n2P1/8/6K1 b - - 8 49
+
+  Appearances of this position:
+    UCI history = 1, ply 93
+    active variation = 1, search ply 1
+    combinedOccurrenceCount = 2
+    alphaBetaThreefoldDetected = false
+
+Black reply enabled in the reference branch:
+  d7d6 — 49...Kd6
+
+Repeated node, search ply 2:
+  8/1R6/3k4/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 9 50
+
+Appearances of the repeated-node position:
+
+  1. Ply 90, after 45...Kd6:
+     8/1R6/3k4/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 1 46
+
+  2. Ply 94, after 47...Kd6:
+     8/1R6/3k4/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 5 48
+
+  3. Search ply 2, after 49...Kd6:
+     8/1R6/3k4/p2r4/2R2P1P/1P1n2P1/8/6K1 w - - 9 50
+
+Expected local result in the repetitive branch:
+  combinedOccurrenceCount = 3
+  alphaBetaThreefoldDetected = true
+  nodeScore = 0
+  staticEvalCallsAtTarget = 0
+  childExpansionCallsAtTarget = 0
+  quiescenceCallsFromTarget = 0
+  candidateScore(b6b7) = 0
+
+Non-repetitive alternative:
+  b6b8 — 49.Rb8
+
+Expected state of the alternative:
+  repetitionDetected = false
+  candidateScore(b6b8) = +480
+
+Expected root result:
+  repetitionBranchDetected = true
+  rootScore = +480
+  bestmove b6b8
+
+PASS criterion:
+  PHILOCHESS correctly reconstructs all 97 positions, recognizes that the root
+  appeared only twice, and enters ordinary search. The b6b7 d7d6 continuation
+  reaches the third appearance of the position seen at plies 90 and 94,
+  receives candidateScore = 0, and is not evaluated as a winning continuation.
+  The b6b8 alternative retains the controlled positive value of +480, exceeds
+  the draw, and determines bestmove b6b8.
+
+FAIL criterion:
+  PHILOCHESS declares the root repeated before searching, omits an appearance
+  at ply 90 or 94, fails to recognize the third appearance at search ply 2,
+  statically evaluates the repeated node, or assigns b6b7 a value other than
+  0. Again accepting the repetition through b6b7, retaining rootScore = 0, or
+  returning a bestmove other than b6b8 within the controlled set also
+  constitutes failure.
+
+Note:
+  The original game ended after 49...Kd6, when the position from plies 90 and
+  94 appeared for the third time. This test's root is fixed two plies earlier,
+  after 48...Kd7, because PHILOCHESS can still avoid repetition there:
+  49.Rb7+ permits 49...Kd6 and leads to a draw, whereas 49.Rb8 departs
+  from the cycle and preserves the material advantage. The +480 value is a
+  controlled score based only on the position's material balance; it does not
+  prescribe the full evaluation, including PST, mobility, or other future
+  terms. The halfmove clock remains below 100, and no other draw rule
+  intervenes. No specific UCI notice is required.
+
+==============================================================================
+9. SAMPLE COVERAGE MATRICES
+==============================================================================
+
+9.1 Selection by block
+
+    ID       Type       Main aspect
+    --------------------------------------------------------------------------
+    TRR-I01  Positive   Exact third appearance of the initial position
+    TRR-I05  Negative   Different castling rights
+    TRR-I06  Negative   Legal en-passant capture in one appearance
+    TRR-H01  Positive   Complete reconstruction from startpos moves
+    TRR-H05  Negative   Complete replacement by a new position command
+    TRR-R01  Positive   Threefold repetition at a White-to-move root
+    TRR-R03  Negative   Second appearance without the repetition shortcut
+    TRR-S01  Positive   Two UCI appearances and a third in alpha-beta
+    TRR-S08  Positive   Restoration after alpha-beta return and cutoff
+    TRR-S09  Positive   Third appearance on entry to quiescence
+    TRR-D05  Negative   Superior continuation preserves White's advantage
+    TRR-D08  Negative   Forced mate outranks the draw
+    TRR-D09  Positive   White seeks a draw against score -900
+    TRR-X01  Positive   En passant illegal because of an absolute pin
+    TRR-X03  Positive   Fourth appearance and occurrenceCount >= 3
+    TRR-X08  Negative   Regression from the game against Zoidberg 0.1
+
+9.2 Cumulative balance
+
+    Positive controls: 9
+    Negative controls: 7
+                      --
+    Total:            16
+
+9.3 Functional coverage
+
+- identity: piece placement, side to move, castling, and effective en passant;
+- threshold: second, third, and fourth appearance;
+- history: ordered reconstruction and complete replacement;
+- root: neutral score, legal bestmove, and no ordinary search;
+- search: alpha-beta, quiescence, and make/unmake balance;
+- decision: advantage, mate, disadvantage, and draw as score 0;
+- edge case: absolute pin affecting en passant;
+- regression: real history and winning alternative against Zoidberg 0.1.
+
+==============================================================================
+10. QUANTITATIVE SUMMARY AND CONCLUSIONS
+==============================================================================
+
+10.1 Sample summary
+
+    Block 1 — Identity and counting:                          3 verified
+    Block 2 — History reconstruction and management:          2 verified
+    Block 3 — Root detection and UCI behavior:                2 verified
+    Block 4 — Detection inside search:                        3 verified
+    Block 5 — Strategic decision and propagation:             3 verified
+    Block 6 — False positives, boundaries, and regression:    3 verified
+                                                             -----------
+    Total:                                                   16 verified
+
+    Positive controls:                                        9 verified
+    Negative controls:                                        7 verified
+                                                             -----------
+    Total:                                                   16 verified
+
+10.2 Conclusions
+
+1. TRR-I01, TRR-I05, and TRR-I06 isolate the threshold and two identity
+   components that cannot be inferred from the board's appearance alone.
+
+2. TRR-H01 and TRR-H05 verify the two essential UCI-history contracts: complete
+   reconstruction and total replacement upon receipt of a new position
+   command.
+
+3. TRR-R01 and TRR-R03 separate the third appearance, which receives score
+   cp 0 without ordinary search, from the second, which must continue searching.
+
+4. TRR-S01, TRR-S08, and TRR-S09 traverse the three critical integration
+   points: alpha-beta, stack restoration, and quiescence entry before stand pat.
+
+5. TRR-D05, TRR-D08, and TRR-D09 demonstrate that the draw participates in
+   ordinary comparison: a positive score and mate outrank it, while 0 exceeds
+   -900.
+
+6. TRR-X01, TRR-X03, and TRR-X08 cover special legality, continuity beyond the
+   threshold, and the practical regression case that motivated alpha-012.
+
+The sample provides a compact and balanced review. Exhaustive validation of
+alpha-012 remains the purpose of the complete 64-test inventory.
+
+==============================================================================
+END OF REPRESENTATIVE INVENTORY — 16 VERIFIED TESTS
+==============================================================================
