@@ -7572,8 +7572,7 @@ como resultado Debug ninguna batería que no fue ejecutada en esa configuración
 Validación práctica en GUI contra Zoidberg 0.1
 
 Después de cerrar la validación interna, PHILOCHESS 0.2-alpha-012 Release fue
-cargado en Myracle y probado en dos partidas contra Zoidberg 0.1 con los
-colores invertidos.
+cargado en Myracle y probado en dos partidas contra Zoidberg 0.1.
 
 Condiciones:
 
@@ -7613,9 +7612,9 @@ cambio de damas, PHILOCHESS entró en un final con un peón menos, aunque todav�
 disponía de posibilidades razonables de resistencia.
 
 Una maniobra imprecisa del rey permitió el avance del peón pasado negro de la
-columna h. Las negras crearon después una segunda amenaza de coronación con el
+columna h. Las negras crearon después una segunda amenaza de promoción con el
 peón g. PHILOCHESS buscó contrajuego con su propio peón pasado en lugar de
-detener la amenaza más urgente, permitió la coronación negra y volvió
+detener la amenaza más urgente, permitió la promoción negra y volvió
 inevitable el mate.
 
 Partida 2 — Zoidberg 0.1 contra PHILOCHESS 0.2-alpha-012
@@ -7642,7 +7641,7 @@ defensivo necesario. Las blancas obtuvieron un peligroso peón pasado en la
 columna f.
 
 Los jaques y el contrajuego táctico no detuvieron el peón. Cuando alcanzó la
-séptima fila y sus principales bloqueadores fueron eliminados, la coronación se
+séptima fila y sus principales bloqueadores fueron eliminados, la promoción se
 volvió inevitable. Myracle adjudicó la posición decisiva a favor de las
 blancas.
 
@@ -7673,6 +7672,103 @@ El resultado de estas dos partidas es una muestra práctica de estabilidad, no
 una medición Elo. Su tamaño no permite aislar un cambio de fuerza causado por
 el reconocimiento de la triple repetición y no contradice la validación
 interna satisfactoria de alpha-012.
+
+Validación práctica adicional en GUI contra Shallow Blue 2.0.0
+
+Fecha: 27 de agosto de 2026
+
+Después de la validación práctica frente a Zoidberg 0.1, PHILOCHESS
+0.2-alpha-012 fue probado en otras dos partidas en Myracle contra Shallow Blue
+2.0.0.
+
+Condiciones:
+
+- control de tiempo: 900+10, equivalente a 15 minutos más 10 segundos por
+  jugada;
+- posición inicial normal;
+- ejecutable Release | x64;
+- sin libro de aperturas;
+- sin tablebases Syzygy;
+- ponder desactivado;
+- adjudicación full balanced sin tablebases;
+- una partida con cada color.
+
+Resultado del encuentro:
+
+Shallow Blue 2.0.0 ganó 2-0.
+
+Partida 1 — PHILOCHESS 0.2-alpha-012 contra Shallow Blue 2.0.0
+
+Resultado: 0-1 por adjudicación
+
+PHILOCHESS condujo las blancas. En la primera mitad de la partida aceptó una
+posición incómoda y 26.Ba4 dejó al alfil expuesto a un posible encierro,
+pero Shallow Blue no aprovechó la ocasión y permitió después el cambio de los
+alfiles. PHILOCHESS estabilizó la posición, mejoró la actividad de sus torres
+y llegó a un final con opciones prácticas de victoria.
+
+La partida se prolongó hasta un final de damas en el que Shallow Blue buscó
+repetidamente jaques y secuencias de repetición. PHILOCHESS evitó varios de
+esos ciclos mientras conservaba una evaluación positiva y continuó buscando
+una continuación superior a las tablas. Este comportamiento fue coherente con
+el objetivo de alpha-012 y aportó evidencia práctica adicional de que la
+triple repetición ya influye en la selección de jugadas.
+
+El punto crítico llegó con 124.c3??, jugada que PHILOCHESS evaluó como +0.82 a
+profundidad 8. Shallow Blue respondió 124...Qe5+, un jaque que atacó al mismo
+tiempo la dama blanca. Después de 125.Kg4 Qxd4+, la evaluación de PHILOCHESS
+cayó a -6.69 y la posición se volvió decisiva. El episodio no mostró un fallo
+de la regla de repetición: expuso la necesidad de encontrar antes respuestas
+forzantes del rival y de valorar con mayor precisión los peones próximos a la
+promoción.
+
+Partida 2 — Shallow Blue 2.0.0 contra PHILOCHESS 0.2-alpha-012
+
+Resultado: 1-0 por adjudicación
+
+Shallow Blue condujo las blancas y ganó espacio en el centro y en el flanco de
+rey. PHILOCHESS logró neutralizar gran parte de esa presión y, tras una fase de
+errores y complicaciones tácticas mutuas, recuperó material con 27...dxe3. La
+posición volvió a ser defendible y PHILOCHESS mantuvo evaluaciones cercanas al
+equilibrio durante varias jugadas.
+
+Después de 36.Rb7, la torre blanca atacó el peón de a7. PHILOCHESS eligió 
+36...a5??, una defensa directa del peón que no resolvió la coordinación de las 
+piezas. Se identificó 36...Nf8 como candidata defensiva multifunción: despeja la 
+séptima fila para la torre de h7, ataca la torre blanca de b7 y sostiene 
+indirectamente el peón de a7 por rayos X. Tras 37.Be4, la torre negra fue apartada 
+de h7, cayó el peón de h6 y el peón negro de a5 terminó también cayendo.
+
+Después de los cambios de torres, el final volvió a mostrar otra limitación.
+Shallow Blue reconoció muy pronto la fuerza de los peones pasados blancos,
+mientras PHILOCHESS mantuvo una evaluación moderadamente inferior hasta que la
+promoción entró de forma más directa en su horizonte. Tras 51.a5, su evaluación
+cayó bruscamente de -1.35 a -7.79. La secuencia proporciona un caso claro para
+el futuro trabajo sobre peones pasados, distancia de promoción y bloqueo.
+
+Conclusiones de la validación práctica adicional:
+
+- ambas partidas se completaron mediante funcionamiento normal de la GUI;
+- todas las jugadas de PHILOCHESS fueron legales;
+- las dos partidas terminaron por adjudicación y no por pérdida de tiempo;
+- no apareció ningún fallo visible de comunicación UCI;
+- no se observó ninguna detección falsa de triple repetición;
+- la primera partida mostró de manera práctica que PHILOCHESS puede evitar
+  ciclos de repetición mientras conserva una continuación evaluada por encima
+  de tablas;
+- 124.c3?? expuso una limitación de búsqueda ante una respuesta forzante y una
+  valoración insuficiente de amenazas de promoción;
+- 36...a5?? expuso la necesidad de priorizar defensas multifunción ante piezas y
+  objetivos atacados;
+- el final de la segunda partida confirmó la necesidad de una evaluación más
+  fuerte de peones pasados, promoción y bloqueo;
+- las dos partidas aportan posiciones candidatas para futuros inventarios de
+  regresión de búsqueda y evaluación.
+
+Estas partidas constituyen validación práctica adicional de la misma versión,
+no un nuevo hito de código ni una medición Elo independiente. Los errores
+observados corresponden a limitaciones de búsqueda, ordenamiento y evaluación
+que permanecen fuera del alcance específico de alpha-012.
 
 Limitaciones después de alpha-012:
 
@@ -7722,13 +7818,16 @@ PHILOCHESS superó:
 - la regresión táctica conservada;
 - el inventario histórico con 45 PASS, 0 FAIL, 9 OPEN y 10 BASELINE;
 - cierre normal de Release y Debug con código 0;
-- dos partidas prácticas completas a 900+10 en Myracle sin ilegalidad,
-  pérdida por tiempo, bloqueo ni fallo UCI.
+- cuatro partidas prácticas completas en Myracle: dos contra Zoidberg 0.1 y dos 
+  contra Shallow Blue 2.0.0, sin ilegalidad, bloqueo ni fallo UCI visible.
 
 No se detectó ninguna anomalía funcional ni regresión heredada atribuible a
-la nueva regla. La derrota práctica por 0-2 frente al más fuerte Zoidberg 0.1
-expuso debilidades de evaluación y conversión, mientras confirmó la estabilidad
-del motor.
+la nueva regla. Las derrotas prácticas por 0-2 frente a Zoidberg 0.1 y por 0-2
+frente a Shallow Blue 2.0.0 expusieron debilidades de evaluación, profundidad,
+ordenamiento y conversión, mientras confirmaron la estabilidad del motor. La
+primera partida frente a Shallow Blue aportó además evidencia práctica de que
+PHILOCHESS puede rechazar ciclos de repetición cuando conserva una alternativa
+evaluada por encima de tablas.
 
 Por tanto, PHILOCHESS 0.2-alpha-012 se considera desarrollado, validado
 internamente, observado en la práctica y cerrado dentro del límite definido.
