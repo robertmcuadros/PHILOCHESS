@@ -1,0 +1,60 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.08.27"]
+[Round "1"]
+[White "PHILOCHESS 0.2 alpha 012"]
+[Black "Shallow Blue 2.0.0"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "1200"]
+[BlackElo "1617"]
+[Time "00:56:19"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 Nf6 2. Nf3 d5 3. d4 e6 4. Bf4 Bb4 5. Nd2 Nh5 6. Be5 Nc6 7. e3 Bxc3 
+8. bxc3 Nxe5 9. dxe5 g6 10. g4 Ng7 11. Bd3 Qg5 12. f4 Qh4+ 13. Kf1 h5 14. g5 Qh3+ 
+15. Kf2 Nf5 16. Nf3 Nh4 17. Bf1 Qxf3+ 18. Qxf3 Nxf3 19. Kxf3 Bd7 20. Rb1 b6 21. Bd3 Bc6 
+22. Rb4 Bb7 23. Bb5+ Ke7 24. Rb3 h4 25. h3 c5 26. Ba4 c4 27. Rb4 Kd8 28. Rd1 Kc7 
+29. Rdb1 Rab8 30. Kg4 Ba8 31. Bb5 Bc6 32. Bxc6 Kxc6 33. a4 a5 34. R4b2 Kc7 35. Rb5 Rb7 
+36. Kf3 Kc6 37. e4 dxe4+ 38. Kxe4 Rd8 39. Ke3 Rd5 40. Rxd5 exd5 41. Kd4 Rb8 42. f5 gxf5 
+43. Rf1 b5 44. axb5+ Rxb5 45. Rxf5 Rb1 46. Rf6+ Kb5 47. Kxd5 Rd1+ 48. Ke4 Re1+ 49. Kd5 Rd1+ 
+50. Ke4 Re1+ 51. Kd4 Rd1+ 52. Ke3 Re1+ 53. Kd4 Rd1+ 54. Ke3 Re1+ 55. Kf4 Re2 56. Rf5 Kc6 
+57. Rf6+ Kb5 58. Rf5 Rf2+ 59. Kg4 Rxf5 60. Kxf5 a4 61. g6 fxg6+ 62. Kxg6 Kc5 63. e6 a3 
+64. e7 a2 65. e8=Q a1=Q 66. Qe5+ Kc6 67. Qe4+ Kb5 68. Qd5+ Kb6 69. Qd6+ Kb7 70. Qb4+ Ka7 
+71. Qc5+ Kb7 72. Qb5+ Ka7 73. Qc5+ Kb7 74. Qb4+ Ka7 75. Qe7+ Kb6 76. Qd6+ Kb7 77. Qd7+ Kb6 
+78. Qd4+ Kb5 79. Qd7+ Kb6 80. Qd4+ Kb5 81. Qd5+ Kb6 82. Qxc4 Qg1+ 83. Kh7 Qg5 84. Qe4 Kc5 
+85. Qd4+ Kc6 86. Qc4+ Kb6 87. Qd4+ Kc6 88. Qa4+ Kd6 89. Qa6+ Ke7 90. Qb7+ Kd6 91. Qa6+ Ke7 
+92. Qd3 Qh5+ 93. Kg7 Qg5+ 94. Kh7 Qh5+ 95. Kg7 Qg5+ 96. Qg6 Qg3 97. c4 Qc3+ 98. Kh6 Qxh3 
+99. Qg5+ Kd6 100. Qd5+ Ke7 101. Kh5 Qg3 102. Qe4+ Kd6 103. Qd5+ Ke7 104. Qc5+ Ke6 105. Qc6+ Ke7 
+106. Qc5+ Ke6 107. Qc6+ Ke7 108. Qe4+ Kd6 109. Qd4+ Kc6 110. Qd5+ Kc7 111. Qc5+ Kd7 112. Qd4+ Kc6 
+113. Qd5+ Kc7 114. Qc5+ Kd7 115. Qf5+ Kd6 116. Qf8+ Kd7 117. Qf5+ Kd6 118. Qb5 Ke7 119. Qd5 h3 
+120. Qe4+ Kd6 121. Qd5+ Ke7 122. Qe4+ Kd6 123. Qd4+ Ke6 124. c3 Qe5+ 125. Kg4 Qxd4+ 126. cxd4 h2 
+127. Kf4 h1=Q 128. Ke3 Qb1 129. Kd2 Kf5 130. Kc3 Ke4 131. d5 Qe1+ 132. Kc2 Kd4 133. d6 Qc3+ 
+134. Kb1 0-1
+
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.08.27"]
+[Round "2"]
+[White "Shallow Blue 2.0.0"]
+[Black "PHILOCHESS 0.2 alpha 012"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1617"]
+[BlackElo "1200"]
+[Time "02:19:07"]
+[ECO "B00"]
+[Opening "Nimzowitsch Defense: Scandinavian Variation, Advance Variation"]
+[Termination "white wins by adjudication"]
+
+1. e4 Nc6 2. d4 d5 3. e5 e6 4. Nf3 Bb4+ 5. Nc3 Nge7 6. Qd3 O-O 7. a3 Bxc3+ 
+8. Qxc3 Bd7 9. Bd3 f6 10. O-O fxe5 11. dxe5 Qe8 12. Re1 Qh5 13. Bd2 Ng6 14. Ng5 h6 
+15. Be2 Qh4 16. Nf3 Qh5 17. Qb3 Ngxe5 18. Qxb7 Qf5 19. Qxc7 Rac8 20. Qd6 Qxc2 21. Be3 Qxb2 
+22. Rab1 Nxf3+ 23. gxf3 Qe5 24. Qxd7 Rc7 25. f4 Rxd7 26. fxe5 d4 27. Bg4 dxe3 28. Bxe6+ Kh8 
+29. Rxe3 Re7 30. Bd5 Nxe5 31. Rc1 Rd8 32. Bg2 g5 33. Rc5 Rde8 34. Rb3 Nd7 35. Rc6 Rh7 
+36. Rb7 a5 37. Be4 Rg7 38. Rxh6+ Kg8 39. Bd5+ Kf8 40. Rh8+ Ke7 41. Rxe8+ Kxe8 42. Bc6 Re7 
+43. Rb5 g4 44. Rxa5 Kd8 45. Rd5 Kc7 46. Bxd7 Rxd7 47. Rxd7+ Kxd7 48. f3 gxf3 49. h4 Kd6 
+50. a4 Ke5 51. a5 Kd5 52. h5 Kc6 53. h6 Kd5 54. h7 Kc6 55. h8=Q Kc5 56. a6 f2+ 
+57. Kxf2 Kb6 1-0
