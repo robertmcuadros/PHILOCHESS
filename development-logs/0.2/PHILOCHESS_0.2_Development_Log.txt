@@ -6748,159 +6748,161 @@ Date: August 21, 2026
 
 PHILOCHESS 0.2-alpha-012 — Threefold Repetition Detection in Search
 
-Threefold-repetition detection was implemented and internally validated as a
-search result.
+Threefold repetition detection as a search result was implemented and
+internally validated.
 
 Technical milestone:
 
-PHILOCHESS can now reconstruct and preserve the sequence of chess positions
-that led to the current root, combine that game history with the active search
-path, and recognize the third or any later occurrence of the same position.
+PHILOCHESS can now reconstruct and preserve the sequence of positions that led
+to the current root, combine that game history with the active search path,
+and recognize the third occurrence, or any subsequent occurrence, of the same
+position.
 
-An eligible repeated position receives draw value and score 0 at the root,
-inside the main alpha-beta search, and inside quiescence search. The result can
-therefore affect move selection: PHILOCHESS can reject repetition while ahead
-when a better continuation exists, or choose repetition when every alternative
-is worse.
+An eligible repeated position receives a draw value and a score of 0 at the
+root, within the main alpha-beta search, and within quiescence search.
+Therefore, the result can influence move selection: PHILOCHESS can reject the
+repetition when it is better and a superior continuation exists, or choose it
+when all alternatives are worse.
 
-This is the twelfth version of the PHILOCHESS 0.2 development cycle. It is
-based directly on the validated PHILOCHESS 0.2-alpha-011 source without
+This is the twelfth version in the PHILOCHESS 0.2 development cycle. It is
+based directly on the validated PHILOCHESS 0.2-alpha-011 code, without
 modifying that closed version.
 
-Alpha-012 preserves:
+Alpha-012 retains:
 
-- legal move generation and move application;
+- legal move generation and application;
 - FEN loading and all special moves;
-- check, checkmate, and stalemate recognition;
-- conservative dead-position recognition;
-- the fifty-move rule inside the search;
-- the established precedence of checkmate, stalemate, and dead positions;
-- perft and known-reference perft validation;
+- check, checkmate, and stalemate detection;
+- conservative recognition of dead positions;
+- the fifty-move rule within the search;
+- the established precedence of checkmate, stalemate, and dead position;
+- perft and perft validation against known references;
 - material evaluation;
 - PHILOCHESS PST v1;
 - PHILOCHESS Mobility v1;
-- game-phase calculation and king-table interpolation;
+- phase calculation and king-table interpolation;
 - alpha-beta and quiescence search;
 - iterative deepening;
 - complete principal-variation construction;
-- iterative UCI search information and mate-distance scores;
-- preservation of the last completely finished iteration;
-- PV priority at and below the root;
-- MVV-LVA capture ordering and promotion priority;
+- iterative UCI reporting and mate-distance scores;
+- preservation of the last fully completed iteration;
+- PV priority at the root and below it;
+- MVV-LVA ordering and promotion priority;
 - soft and hard time limits and safe rejection of interrupted iterations;
-- all inherited diagnostic inventories and regression commands.
+- all inherited regression inventories and commands.
 
 New alpha-012 functionality:
 
-- A repetition identity was added for every position relevant to game history
-  and search.
+- A repetition identity was added for every relevant position in history and
+  search.
 - Piece placement is part of the identity.
-- The side to move is part of the identity.
+- Side to move is part of the identity.
 - Castling rights are part of the identity.
-- An en-passant target is part of the identity only when an effective legal
-  en-passant capture exists.
-- A nominal en-passant square that cannot be used legally does not create a
+- The en passant target is part of the identity only when a legal and
+  effective en passant capture exists.
+- A nominal en passant square that cannot legally be used does not create a
   different repetition identity.
 - HalfmoveClock and fullmoveNumber are deliberately excluded from repetition
   identity.
-- The initial position P0 is stored as the first history occurrence.
-- Complete history reconstruction was added for position startpos moves.
-- Complete history reconstruction was added for position fen ... moves.
+- The initial position P0 is stored as the first occurrence in history.
+- Full reconstruction was added for position startpos moves.
+- Full reconstruction was added for position fen ... moves.
 - A new position command replaces the previous UCI history.
 - ucinewgame separates the histories of successive games.
-- Repeated go commands do not mutate the stored UCI history.
-- Reversible positions from the active search path are combined with the UCI
-  game history.
+- Successive go commands do not modify the stored UCI history.
+- Reversible positions on the active search path are combined with the game
+  history.
 - Irreversible moves establish a new relevant repetition segment.
 - Search-path entries are restored after normal returns and cutoffs.
 - Sibling branches remain isolated.
 - The root is not counted twice when alpha-beta begins.
-- A third occurrence is recognized on entry to alpha-beta or quiescence.
-- A fourth and every later occurrence remains recognized.
+- A third occurrence is recognized upon entering alpha-beta or quiescence.
+- A fourth occurrence, and all later occurrences, continues to be recognized.
 - Threefold repetition is returned before ordinary static evaluation or
   quiescence stand pat.
-- A repeated position receives score 0 with the correct negamax propagation.
-- A repeated root with legal moves keeps a legal bestmove.
-- bestmove 0000 remains reserved for roots without legal moves.
-- Independent diagnostic counters were added for repetition occurrences and
-  repetition search returns.
-- The command threefoldtest was added.
-- A complete inventory of 64 approved tests in six blocks was embedded.
-- Internal version and diagnostic headings were updated to
-  PHILOCHESS 0.2-alpha-012.
+- A repeated position receives a score of 0 with correct negamax propagation.
+- A repeated root with legal moves preserves a legal bestmove.
+- bestmove 0000 remains reserved for roots with no legal moves.
+- Independent diagnostic counters for repetition occurrences and returns were
+  added.
+- The threefoldtest command was added.
+- A complete inventory of 64 approved tests in six blocks was incorporated.
+- Internal identification and diagnostic headers were updated to PHILOCHESS
+  0.2-alpha-012.
 
 Position identity:
 
 Two history entries represent the same position only when all of the following
-are equal:
+elements are equal:
 
 - every piece on every square;
 - the side to move;
 - all current castling rights;
-- the effective en-passant possibility.
+- effective en passant capture availability.
 
-The FEN halfmove and fullmove fields do not affect this comparison. They remain
-available for their own rules and diagnostics, but they cannot prevent two
-otherwise identical positions from counting as repetition occurrences.
+The halfmove and fullmove fields of the FEN do not affect this comparison.
+They remain available for their own rules and diagnostics, but they cannot
+prevent two positions that are otherwise identical from counting as
+occurrences of a repetition.
 
-The effective-en-passant rule prevents both kinds of error tested by the
-inventory. A legal en-passant capture distinguishes the positions. A nominal
-target with no possible legal capture, including a pseudo-legal capture made
-illegal by a pin, does not distinguish them.
+The effective en passant rule prevents the two types of error verified by the
+inventory. A legal en passant capture distinguishes the positions. A nominal
+target with no legal capture possible, including a pseudo-legal capture
+prevented by a pin, does not distinguish them.
 
 History and search-path model:
 
-The UCI position command reconstructs the complete sequence beginning with P0,
-rather than storing only the final FEN. The current position is therefore
-already present exactly once when search begins.
+The UCI position command reconstructs the complete sequence from P0 instead of
+storing only the final FEN. The current position is therefore already present
+exactly once in history when the search begins.
 
-During search, each legal child contributes its identity to the active path.
-The occurrence count for a node is the sum of matching entries in the relevant
-UCI history and the active path, without double-counting the root.
+During the search, each legal child contributes its identity to the active
+path. The occurrence count for a node is the sum of matching entries in the
+relevant UCI history and the active path, without counting the root twice.
 
-Every pushed search identity is removed on return, including beta cutoffs and
-repetition returns. Consequently, exploration order cannot leak a position
-from one sibling into another.
+Every identity added to the path is removed on return, including after beta
+cutoffs and repetition returns. Therefore, exploration order cannot leak a
+position from one sibling branch into another.
 
-Irreversible moves delimit the relevant segment. Ordinary captures,
-en-passant captures, pawn moves and promotions prevent positions before that
-boundary from being counted as later occurrences of the new segment.
+Irreversible moves delimit the relevant segment. Ordinary captures, en passant
+captures, pawn moves, and promotions prevent positions before that boundary
+from counting as later occurrences in the new segment.
 
 Search behavior:
 
 The repetition check is active at the root, in alpha-beta, and in quiescence.
-At the third occurrence or later, the node returns score 0 before a material,
-PST, mobility, auxiliary evaluation, or stand-pat score can replace the
-rule-determined result.
+When the third occurrence or a later occurrence is reached, the node returns a
+score of 0 before any material, PST, mobility, auxiliary, or stand-pat
+evaluation can replace the result determined by the rule.
 
-The draw score is then compared normally with the scores of sibling moves.
-This produces the intended strategic behavior:
+The draw score is compared normally with the scores of sibling branches. This
+produces the intended strategic behavior:
 
-- a winning side rejects repetition when a continuation scores above 0;
-- a losing side can seek repetition when the alternatives score below 0;
-- repetition can prevail over an adverse mating line;
-- a mating win still prevails over an available repetition;
-- equal zero alternatives remain deterministic under the established move
-  ordering;
-- a branch scoring only one centipawn above the draw is preferred to it;
-- a draw is accepted over a branch scoring one centipawn below it.
+- the winning side rejects the repetition when a continuation scores above 0;
+- the inferior side can seek it when the alternatives score below 0;
+- repetition can prevail over an adverse mate line;
+- a mating win continues to prevail over an available repetition;
+- equivalent score-0 alternatives remain deterministic according to the
+  established ordering;
+- a branch one centipawn better than a draw is preferred;
+- a draw is accepted over a branch one centipawn worse.
 
 Root and UCI boundary:
 
-Alpha-012 models repetition inside the decision process. It does not announce
-or adjudicate the external game result. The GUI remains responsible for the
-official game termination.
+Alpha-012 models repetition within the decision process. It does not
+externally announce or adjudicate the game result. The interface retains
+responsibility for officially ending the game.
 
-When a repeated root has legal moves, PHILOCHESS returns score 0 while retaining
-a legal move for bestmove. This preserves UCI continuity. A terminal stalemate
-still returns bestmove 0000 because no legal move exists.
+When a repeated root has legal moves, PHILOCHESS returns a score of 0 and
+preserves a legal move for bestmove. This maintains UCI continuity. A terminal
+stalemate continues to return bestmove 0000 because no legal move exists.
 
 Threefold-repetition inventory:
 
 The approved inventory contains 64 tests distributed across six blocks:
 
 - Block 1 — Position identity and occurrence counting: 8 tests;
-- Block 2 — UCI-history reconstruction and management: 8 tests;
+- Block 2 — UCI history reconstruction and management: 8 tests;
 - Block 3 — Root detection and UCI behavior: 8 tests;
 - Block 4 — Detection inside alpha-beta and quiescence: 16 tests;
 - Block 5 — Strategic decision and score propagation: 16 tests;
@@ -6916,73 +6918,73 @@ The inventory covers:
 
 - exact third and fourth occurrences;
 - only two occurrences as a negative control;
-- nonconsecutive occurrences;
+- non-consecutive occurrences;
 - differences in side to move and castling rights;
-- legal, nominal, and pinned en-passant cases;
+- legal, nominal, and pinned en passant cases;
 - independence from FEN counters;
-- startpos and FEN reconstruction;
+- reconstruction from startpos and FEN;
 - replacement and separation of game histories;
-- repeated go commands;
-- irreversible segment boundaries;
-- repeated roots with both colors to move;
-- a second root occurrence that must not cause a shortcut;
-- legal bestmove retention and stalemate precedence;
-- mixed history/search-path occurrences;
-- alpha-beta and quiescence entry;
-- checked nodes and stand-pat precedence;
-- parent restoration, cutoff restoration, and sibling isolation;
-- score-zero propagation for both sides;
-- choice between repetition, losses, wins, and mating lines;
-- the historical Zoidberg repetition regression.
+- successive go commands;
+- boundaries created by irreversible moves;
+- repeated roots with either side to move;
+- a second occurrence at the root that must not trigger a shortcut;
+- preservation of a legal bestmove and stalemate precedence;
+- combined occurrences from history and the search path;
+- entry into alpha-beta and quiescence;
+- nodes in check and precedence over stand pat;
+- parent restoration, restoration after cutoffs, and sibling isolation;
+- score-0 propagation for both sides;
+- selection among repetition, losses, wins, and mate lines;
+- the historical regression against Zoidberg.
 
 Specific regression from PHILOCHESS 0.2-alpha-008:
 
-The final inventory case reconstructs the position from the first practical
-game against Zoidberg 0.1 in which the earlier engine repeated checks while
-holding a winning advantage.
+The final case in the inventory reconstructs the position from the first
+practical game against Zoidberg 0.1 in which the earlier engine repeated
+checks despite having a winning advantage.
 
-Alpha-012 reconstructed a history of 97 positions. It scored the repeating
-continuation as 0 and the controlled alternative as +480 centipawns, choosing:
+Alpha-012 reconstructed a history of 97 positions. It evaluated the repetitive
+continuation as 0 and the controlled alternative as +480 centipawns, and
+chose:
 
 bestmove b6b8
 
 This confirms that the engine no longer selects the drawing cycle when a
-clearly superior nonrepeating continuation is available in that regression.
+clearly superior non-repetitive continuation exists in that regression.
 
 Version boundary:
 
 Alpha-012 does not add:
 
-- automatic fivefold-repetition handling;
-- external UCI draw announcements;
+- automatic handling of fivefold repetition;
+- specific external UCI draw notifications;
 - automatic game termination by the engine;
-- the final unified precedence and cross-rule regression layer for all draw
-  rules.
+- the final unified precedence and cross-regression layer for all draw rules.
 
-Those tasks are intentionally reserved for alpha-013.
+Those tasks are deliberately reserved for alpha-013.
 
 Compilation:
 
-The program compiled successfully in Visual Studio 2022 with platform x64 and
+The program compiled successfully in Visual Studio 2022 with x64 platform and
 ISO C++17 compatibility.
 
 Release | x64:
 
 - 1 successful build;
 - 0 errors;
-- executable generated in x64\Release\PHILOCHESS.exe.
+- executable generated at x64\Release\PHILOCHESS.exe.
 
 Debug | x64:
 
 - 1 successful build;
 - 0 errors;
-- executable generated in x64\Debug\PHILOCHESS.exe.
+- executable generated at x64\Debug\PHILOCHESS.exe.
 
 Release validation
 
 Test 1 — Threefold-repetition inventory
 
-Command:
+Command executed:
 
 threefoldtest
 
@@ -6999,11 +7001,11 @@ Result:
 - THREEFOLD-REPETITION INVENTORY: PASS.
 
 All identity, history, search-path, root, alpha-beta, quiescence, decision,
-boundary, and regression cases produced their approved results.
+boundary, and regression cases produced the approved results.
 
 Test 2 — Fifty-move-rule inventory
 
-Command:
+Command executed:
 
 fiftymovetest
 
@@ -7019,12 +7021,12 @@ Result:
 - inventory structure: PASS;
 - FIFTY-MOVE-RULE INVENTORY: PASS.
 
-The new repetition history did not alter halfmove-clock reconstruction,
-branch isolation, threshold recognition, propagation, or quiescence behavior.
+The new repetition history did not alter halfmove-clock reconstruction, branch
+isolation, the threshold, propagation, or quiescence.
 
 Test 3 — Dead-position inventory
 
-Command:
+Command executed:
 
 deadpositiontest
 
@@ -7041,7 +7043,7 @@ Result:
 
 Test 4 — Stalemate inventory
 
-Command:
+Command executed:
 
 stalematetest
 
@@ -7059,11 +7061,11 @@ Result:
 - STALEMATE INVENTORY: PASS.
 
 Tests 3 and 4 confirmed preservation of dead-position, checkmate, and
-stalemate classification while repetition support was active.
+stalemate classification while repetition support remained active.
 
 Test 5 — Mobility v1 inventory
 
-Command:
+Command executed:
 
 mobilitytest
 
@@ -7071,13 +7073,13 @@ Result:
 
 - 64/64 passed;
 - 44 controlled positions;
-- 10 transversal positions;
+- 10 cross-check positions;
 - 10 integrated positions;
 - inventory structure: PASS.
 
 Test 6 — Piece-square tables
 
-Command:
+Command executed:
 
 psttest
 
@@ -7085,9 +7087,9 @@ Result:
 
 Piece-square table tests: 8/8 passed
 
-Test 7 — Quiescence regression
+Test 7 — Quiescence-search regression
 
-Command:
+Command executed:
 
 qtest
 
@@ -7095,12 +7097,13 @@ Result:
 
 Quiescence tests: 4/4 passed
 
-The four established cases preserved horizon-recapture avoidance, capture
-chains, quiet promotion handling, and check evasion without stand pat.
+The four established cases preserved avoidance of a recapture beyond the
+horizon, capture sequences, quiet promotion, and in-check evasion without
+stand pat.
 
 Test 8 — Iterative deepening
 
-Command:
+Command executed:
 
 idtest 4
 
@@ -7115,7 +7118,7 @@ Result:
 
 Test 9 — Principal variation
 
-Command:
+Command executed:
 
 pvtest 4
 
@@ -7129,23 +7132,23 @@ Result:
 
 Test 10 — Time management
 
-Command:
+Command executed:
 
 timetest
 
 Result:
 
-- 15+10 allocation: soft 18158 ms, hard 21363 ms, depth ceiling 64;
-- explicit depth 5: completed depth 5;
-- one-millisecond emergency result: depth 1 completed and depth 2
-  interrupted;
-- nondecreasing depth with more time: depth 3 at 50 ms and depth 5 at
-  2000 ms;
+- 15+10 allocation: soft limit 18158 ms, hard limit 21363 ms, and depth cap
+  64;
+- explicit depth 5: depth 5 completed;
+- one-millisecond emergency result: depth 1 completed and depth 2 interrupted;
+- non-decreasing depth with more time: depth 3 at 50 ms and depth 5 at 2000
+  ms;
 - Time-controlled iterative-deepening tests: 4/4 passed.
 
 Test 11 — Move ordering
 
-Command:
+Command executed:
 
 ordertest
 
@@ -7153,12 +7156,12 @@ Result:
 
 Move-ordering tests: 4/4 passed
 
-PV priority, MVV-LVA capture order, promotion priority, and PV priority below
-the root remained correct.
+PV priority, MVV-LVA ordering, promotion priority, and PV priority below the
+root remained correct.
 
 Test 12 — Known perft references
 
-Command:
+Command executed:
 
 perftknown 4
 
@@ -7166,32 +7169,32 @@ Result:
 
 perftknown 4: 24/24 passed
 
-All six reference positions matched at depths 1 through 4:
+All six positions matched at depths 1 through 4:
 
 - initial position: 197281 at depth 4;
 - Kiwipete: 4085603;
-- en-passant/capture endgame: 43238;
+- en passant and capture endgame: 43238;
 - promotions and castling pressure: 422333;
-- promotion bug trap: 2103487;
-- middle-game development: 3894594.
+- historical promotion trap: 2103487;
+- middlegame development: 3894594.
 
 Test 13 — Preserved tactical regression
 
-Command:
+Command executed:
 
 tactictest 4
 
 Result:
 
-- the known bad move b6c6 was avoided and b6d6 was selected;
-- h5f3 remained the legal defensive attempt after 11.Bb5;
+- the known bad move b6c6 was avoided and b6d6 was chosen;
+- h5f3 remained a legal defensive attempt after 11.Bb5;
 - d5c7 remained the expected tactical refutation after 11...Qxb5.
 
 All three searches completed normally.
 
-Test 14 — Historical tactical/quiescence inventory
+Test 14 — Historical tactical and quiescence inventory
 
-Command:
+Command executed:
 
 inventorytest 4
 
@@ -7202,7 +7205,7 @@ Result:
 - OPEN 9;
 - BASELINE 10;
 - TOTAL 64;
-- categories [A] 21/21, [B] 33/33, [C] 10/10;
+- categories [A] 21/21, [B] 33/33, and [C] 10/10;
 - inventory structure: PASS.
 
 The nine OPEN targets remained unchanged:
@@ -7217,21 +7220,21 @@ The nine OPEN targets remained unchanged:
 - R10-T05;
 - R10-T06.
 
-Test 15 — Clean Release termination
+Test 15 — Normal Release shutdown
 
-Command:
+Command executed:
 
 quit
 
 Result:
 
-The Release executable terminated normally with exit code 0 (0x0).
+The Release executable terminated normally with code 0 (0x0).
 
 Debug validation
 
-The alpha-specific inventory was repeated with Debug | x64.
+The stage-specific inventory was repeated with Debug | x64.
 
-Command:
+Command executed:
 
 threefoldtest
 
@@ -7247,19 +7250,18 @@ Result:
 - inventory structure: PASS;
 - THREEFOLD-REPETITION INVENTORY: PASS.
 
-Debug reproduced the exact functional classification obtained in Release.
-The Debug executable then terminated through quit with exit code 0 (0x0).
+Debug reproduced exactly the functional classification obtained in Release.
+The Debug executable then terminated through quit with code 0 (0x0).
 
-The complete inherited regression battery was executed in Release. Debug was
-used to reproduce the new 64-case alpha-012 inventory and to confirm clean
-startup, execution, and termination without optimization. No Debug result is
-reported for a suite that was not executed in that configuration.
+The complete inherited regression battery was run in Release. Debug was used
+to reproduce the new 64-case alpha-012 inventory and confirm normal startup,
+execution, and shutdown without optimization. No battery that was not executed
+in that configuration is reported as a Debug result.
 
 Practical GUI validation against Zoidberg 0.1
 
-After the internal validation was closed, PHILOCHESS 0.2-alpha-012 Release was
-loaded in Myracle and tested in two games against Zoidberg 0.1 with colors
-reversed.
+After internal validation was closed, PHILOCHESS 0.2-alpha-012 Release was
+loaded into Myracle and tested in two games against Zoidberg 0.1.
 
 Conditions:
 
@@ -7269,7 +7271,7 @@ Conditions:
 - no opening book;
 - no Syzygy tablebases;
 - ponder disabled;
-- full-balanced adjudication without tablebases;
+- full balanced adjudication without tablebases;
 - one game with each color.
 
 Match result:
@@ -7280,59 +7282,59 @@ Game 1 — PHILOCHESS 0.2-alpha-012 vs. Zoidberg 0.1
 
 Result: 0-1
 
-PHILOCHESS played White and obtained a large opening and middlegame
-advantage. It exploited Black's lack of coordination, penetrated the seventh
-rank with a rook, applied pressure on both wings, and kept the exposed black
-king under pressure. At its peak, the white position received an evaluation
-close to +10.
+PHILOCHESS played White and obtained a large advantage from the opening and
+middlegame. It exploited the lack of coordination among the black pieces,
+penetrated with a rook on the seventh rank, applied pressure on both flanks,
+and kept the exposed black king under pressure. At its peak, the white
+position received an evaluation close to +10.
 
 The engine did not find a conclusive conversion. It preferred material gains
 and lateral expansion, allowed Zoidberg to reorganize, and repeatedly let the
-advantage decline before new opposing errors enlarged it again.
+advantage decrease before new opponent errors enlarged it again.
 
 The decisive turning point was 50.Rf8+??. The resulting liquidation removed
 the active rook and the passed e-pawn, extinguished the initiative, and led to
-an approximately equal position. After the queens were exchanged,
-PHILOCHESS entered an ending one pawn down but with reasonable resistance.
+an approximately equal position. After the queen exchange, PHILOCHESS entered
+an endgame one pawn down, although it still had reasonable chances to resist.
 
-An imprecise king maneuver allowed Black's passed h-pawn to advance. Black
+An inaccurate king maneuver allowed the black passed h-pawn to advance. Black
 then created a second promotion threat with the g-pawn. PHILOCHESS sought
-counterplay with its own passer instead of stopping the more urgent threat,
-allowing Black to promote and making mate inevitable.
+counterplay with its own passed pawn instead of stopping the more urgent
+threat, allowed the black promotion, and made mate inevitable.
 
 Game 2 — Zoidberg 0.1 vs. PHILOCHESS 0.2-alpha-012
 
 Result: 1-0 by adjudication
 
-PHILOCHESS played Black and was inferior from the opening. Premature queen
-moves, castling before the pieces were coordinated, and repeated omission of
-a useful central break gave White the initiative.
+PHILOCHESS played Black and became inferior from the opening. Premature queen
+moves, castling before coordinating the pieces, and repeated failure to employ
+a useful central break conceded the initiative to White.
 
-Zoidberg installed a knight on f7, attacking both black rooks. The principal
-turning point was 10...Rxd1+?, which accepted an unfavorable liquidation.
-Although Black's other knight later captured the white rook on a1,
-PHILOCHESS lost both rooks and entered a materially inferior position.
-Zoidberg retained a rook while its knight on h8 remained temporarily isolated
-and out of play.
+Zoidberg installed a knight on f7, from where it attacked both black rooks.
+The main turning point was 10...Rxd1+?, with which PHILOCHESS accepted an
+unfavorable liquidation. Although the other black knight later captured the
+white rook on a1, PHILOCHESS lost both rooks and entered a materially inferior
+position. Zoidberg retained a rook, while its knight on h8 was temporarily
+isolated and out of play.
 
-PHILOCHESS reorganized its minor pieces and generated threats against the
-white king. Two Zoidberg inaccuracies briefly reduced the advantage and gave
-Black reasonable resistance chances. PHILOCHESS then favored centralization
-and apparent bishop activity instead of the required defensive blockade.
-White obtained a dangerous passed f-pawn.
+PHILOCHESS reorganized its minor pieces and created threats against the white
+king. Two inaccuracies by Zoidberg briefly reduced the advantage and gave
+Black reasonable chances to resist. PHILOCHESS then preferred centralization
+and the apparent activity of the bishops instead of the necessary defensive
+blockade. White obtained a dangerous passed f-pawn.
 
-Checks and tactical counterplay did not stop the pawn. Once it reached the
-seventh rank and its principal blockers were removed, promotion became
-inevitable. Myracle adjudicated the decisive position in White's favor.
+Checks and tactical counterplay did not stop the pawn. When it reached the
+seventh rank and its main blockers were removed, promotion became inevitable.
+Myracle adjudicated the decisive position in White's favor.
 
-Practical-validation conclusions:
+Conclusions from the practical validation:
 
-- both games completed through normal GUI operation;
-- every PHILOCHESS move was legal;
+- both games were completed through normal GUI operation;
+- all PHILOCHESS moves were legal;
 - no loss on time occurred;
-- no crash, hang, or unexpected engine termination occurred;
-- no visible UCI communication failure occurred;
-- no false threefold-repetition detection affected either game;
+- there was no freeze, hang, or unexpected engine shutdown;
+- no visible UCI communication failure appeared;
+- no false threefold-repetition detection affected the games;
 - alpha-012 remained functionally stable with both colors;
 - the two losses exposed chess-strength limitations, not an implementation
   failure of the new rule.
@@ -7341,33 +7343,127 @@ The games highlighted the need to improve:
 
 - conversion of winning advantages;
 - king-safety evaluation;
-- quiet and forcing maneuver selection;
+- selection of quiet and forcing maneuvers;
 - passed-pawn evaluation and blockade;
 - opening understanding and central control;
 - piece coordination;
 - evaluation of material imbalances;
 - defense against advanced passed pawns.
 
-This two-game result is a practical stability sample, not an Elo measurement.
-It does not reverse the successful internal validation of alpha-012 and is too
-small to isolate a strength change caused by threefold-repetition awareness.
+The result of these two games is a practical stability sample, not an Elo
+measurement. Its size does not allow isolation of a strength change caused by
+threefold-repetition recognition and does not contradict the successful
+internal validation of alpha-012.
+
+Additional practical GUI validation against Shallow Blue 2.0.0
+
+Date: August 27, 2026
+
+After the practical validation against Zoidberg 0.1, PHILOCHESS 0.2-alpha-012
+was tested in two additional games in Myracle against Shallow Blue 2.0.0.
+
+Conditions:
+
+- time control: 900+10, equivalent to 15 minutes plus 10 seconds per move;
+- normal initial position;
+- Release | x64 executable;
+- no opening book;
+- no Syzygy tablebases;
+- ponder disabled;
+- full balanced adjudication without tablebases;
+- one game with each color.
+
+Match result:
+
+Shallow Blue 2.0.0 won 2-0.
+
+Game 1 — PHILOCHESS 0.2-alpha-012 vs. Shallow Blue 2.0.0
+
+Result: 0-1 by adjudication
+
+PHILOCHESS played White. In the first half of the game it accepted an
+uncomfortable position, and 26.Ba4 left the bishop exposed to possible
+entrapment, but Shallow Blue did not exploit the opportunity and later allowed
+the bishops to be exchanged. PHILOCHESS stabilized the position, improved the
+activity of its rooks, and reached an endgame with practical winning chances.
+
+The game extended into a queen endgame in which Shallow Blue repeatedly sought
+checks and repetition sequences. PHILOCHESS avoided several of those cycles
+while retaining a positive evaluation and continued searching for a
+continuation superior to a draw. This behavior was consistent with the goal of
+alpha-012 and provided additional practical evidence that threefold repetition
+now influences move selection.
+
+The critical point came with 124.c3??, a move PHILOCHESS evaluated as +0.82 at
+depth 8. Shallow Blue replied 124...Qe5+, a check that simultaneously attacked
+the white queen. After 125.Kg4 Qxd4+, PHILOCHESS's evaluation fell to -6.69
+and the position became decisive. The episode did not show a failure of the
+repetition rule: it exposed the need to find the opponent's forcing replies
+earlier and to evaluate pawns close to promotion more accurately.
+
+Game 2 — Shallow Blue 2.0.0 vs. PHILOCHESS 0.2-alpha-012
+
+Result: 1-0 by adjudication
+
+Shallow Blue played White and gained space in the center and on the kingside.
+PHILOCHESS managed to neutralize much of that pressure and, after a phase of
+mutual errors and tactical complications, recovered material with 27...dxe3.
+The position became defensible again, and PHILOCHESS maintained evaluations
+close to equality for several moves.
+
+After 36.Rb7, the white rook attacked the a7 pawn. PHILOCHESS chose 36...a5??,
+a direct defense of the pawn that did not solve the coordination of the
+pieces. 36...Nf8 was identified as a multifunctional defensive candidate: it
+clears the seventh rank for the rook on h7, attacks the white rook on b7, and
+indirectly supports the a7 pawn through an x-ray defense. After 37.Be4, the
+black rook was driven away from h7, the h6 pawn fell, and the black pawn on a5
+eventually fell as well.
+
+After the rook exchanges, the endgame exposed another limitation. Shallow Blue
+recognized the strength of the white passed pawns very early, while PHILOCHESS
+maintained only a moderately inferior evaluation until promotion entered more
+directly into its search horizon. After 51.a5, its evaluation dropped sharply
+from -1.35 to -7.79. The sequence provides a clear case for future work on
+passed pawns, promotion distance, and blockade.
+
+Conclusions from the additional practical validation:
+
+- both games were completed through normal GUI operation;
+- all PHILOCHESS moves were legal;
+- both games ended by adjudication and not by loss on time;
+- no visible UCI communication failure appeared;
+- no false threefold-repetition detection was observed;
+- the first game showed in practical play that PHILOCHESS can avoid repetition
+  cycles while retaining a continuation evaluated above a draw;
+- 124.c3?? exposed a search limitation against a forcing reply and an
+  insufficient evaluation of promotion threats;
+- 36...a5?? exposed the need to prioritize multifunctional defenses against
+  attacked pieces and targets;
+- the endgame of the second game confirmed the need for stronger evaluation of
+  passed pawns, promotion, and blockade;
+- both games provide candidate positions for future search and evaluation
+  regression inventories.
+
+These games constitute additional practical validation of the same version,
+not a new code milestone or an independent Elo measurement. The observed
+errors correspond to search, ordering, and evaluation limitations that remain
+outside the specific scope of alpha-012.
 
 Limitations after alpha-012:
 
-- repetition is evaluated inside the search while external adjudication
+- repetition is evaluated within the search while external adjudication
   remains the GUI's responsibility;
 - automatic fivefold repetition is not implemented;
-- no dedicated external UCI draw notices were added;
-- the final unified precedence and cross-rule regression layer is pending;
-- conservative dead-position recognition is not a universal dead-position
-  solver;
+- no specific external UCI draw notifications were added;
+- the final unified precedence and cross-regression layer remains pending;
+- conservative dead-position recognition is not a universal solver;
 - the established general evaluation and search limitations remain unless
-  explicitly superseded by this entry.
+  expressly replaced by this entry.
 
 Conclusion:
 
 PHILOCHESS 0.2-alpha-012 — Threefold Repetition Detection in Search was
-implemented and validated successfully within its approved scope.
+implemented and validated successfully within the approved scope.
 
 PHILOCHESS passed:
 
@@ -7375,17 +7471,19 @@ PHILOCHESS passed:
 - Debug | x64 compilation under C++17 with 0 errors;
 - the 64-case threefold-repetition inventory in Release;
 - the same 64-case threefold-repetition inventory in Debug;
-- all six new inventory blocks with their required counts;
-- exact identity for placement, side to move, castling rights, and effective
-  en-passant state;
+- all six new blocks with their required counts;
+- exact identity by piece placement, side to move, castling rights, and
+  effective en passant state;
 - exclusion of FEN counters from repetition identity;
-- complete UCI-history reconstruction and replacement;
+- complete reconstruction and replacement of UCI history;
 - separation of successive games and preservation across go searches;
 - isolation and restoration of the active search path;
-- third-occurrence detection at the root, in alpha-beta, and in quiescence;
-- correct score-zero propagation and strategic comparison with alternatives;
-- the specific Zoidberg repetition regression;
-- fifty-move inventory: 64/64;
+- detection of the third occurrence at the root, in alpha-beta, and in
+  quiescence;
+- correct propagation of the score 0 and its strategic comparison with
+  alternatives;
+- the specific repetition regression against Zoidberg;
+- fifty-move-rule inventory: 64/64;
 - dead-position inventory: 64/64 roots and 10/10 transitions;
 - stalemate inventory: 64/64;
 - mobility inventory: 64/64;
@@ -7398,16 +7496,20 @@ PHILOCHESS passed:
 - known perft: 24/24;
 - the preserved tactical regression;
 - the historical inventory with 45 PASS, 0 FAIL, 9 OPEN, and 10 BASELINE;
-- clean Release and Debug termination with exit code 0;
-- two complete 900+10 practical games in Myracle without illegality, time
-  loss, crash, or UCI failure.
+- normal Release and Debug shutdown with code 0;
+- four complete practical games in Myracle: two against Zoidberg 0.1 and two
+  against Shallow Blue 2.0.0, with no illegal move, hang, or visible UCI
+  failure.
 
-No functional anomaly or inherited regression attributable to the new rule
-was detected. The 2-0 practical loss against the stronger Zoidberg 0.1 exposed
-evaluation and conversion weaknesses while confirming stable engine behavior.
+No functional anomaly or inherited regression attributable to the new rule was
+detected. The practical 0-2 losses against Zoidberg 0.1 and 0-2 losses against
+Shallow Blue 2.0.0 exposed weaknesses in evaluation, depth, ordering, and
+conversion while confirming engine stability. The first game against Shallow
+Blue additionally provided practical evidence that PHILOCHESS can reject
+repetition cycles when it retains an alternative evaluated above a draw.
 
-PHILOCHESS 0.2-alpha-012 is therefore considered developed, internally
-validated, practically observed, and closed within the defined boundary.
+Therefore, PHILOCHESS 0.2-alpha-012 is considered developed, internally
+validated, observed in practical play, and closed within the defined boundary.
 
 The next planned version is:
 
