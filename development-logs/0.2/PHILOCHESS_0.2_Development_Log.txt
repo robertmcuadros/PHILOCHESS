@@ -7514,3 +7514,629 @@ validated, observed in practical play, and closed within the defined boundary.
 The next planned version is:
 
 PHILOCHESS 0.2-alpha-013 — Draw-Rule Integration and Cross-Rule Regression
+
+Date: August 31, 2026
+
+PHILOCHESS 0.2-alpha-013 — Draw-Rule Integration and Cross-Rule Regression,
+Final 0.2 Validation and Closure
+
+The final draw-rule integration and cross-regression layer of PHILOCHESS 0.2
+was implemented and internally validated.
+
+Technical milestone:
+
+PHILOCHESS now has a unified framework for classifying, scoring, propagating,
+and diagnosing the draw conditions developed throughout the final stages of
+the PHILOCHESS 0.2 cycle.
+
+The engine now integrates:
+
+- Stalemate;
+- DeadPosition;
+- ThreefoldRepetition;
+- FivefoldRepetition;
+- FiftyMoveDraw;
+- SeventyFiveMoveDraw;
+
+while preserving Checkmate whenever checkmate is the effective terminal
+result.
+
+Alpha-013 adds the two automatic historical draw conditions that were still
+pending after alpha-012:
+
+- fivefold repetition;
+- the seventy-five-move rule.
+
+It also integrates the previously implemented draw rules under a common
+classification system, preserves their correct interaction inside the search,
+adds root-only UCI diagnostics, verifies strategic score propagation, and
+performs cross-regression against all four inherited draw-rule inventories.
+
+This is the thirteenth and final version of the PHILOCHESS 0.2 development
+cycle. It builds directly on the validated PHILOCHESS 0.2-alpha-012 code
+without modifying that closed version.
+
+Alpha-013 retains:
+
+- legal move generation and application;
+- FEN loading and all special moves;
+- check, checkmate, and stalemate detection;
+- conservative dead-position recognition;
+- fifty-move-rule recognition inside the search;
+- threefold-repetition recognition inside the search;
+- repetition identity based on piece placement, side to move, castling rights,
+  and effective legal en passant;
+- complete reconstruction and replacement of UCI position history;
+- perft and known reference perft validation;
+- material evaluation;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- phase calculation and king-table interpolation;
+- alpha-beta and quiescence search;
+- iterative deepening;
+- complete principal-variation construction;
+- iterative UCI reporting and mate-distance scores;
+- preservation of the last fully completed iteration;
+- PV priority at the root and below it;
+- promotion priority and MVV-LVA capture ordering;
+- soft and hard time limits;
+- safe rejection of interrupted iterations;
+- the inherited diagnostic and regression commands;
+- the inherited tactical, positional, search, and legality baselines.
+
+New alpha-013 functionality:
+
+- Added automatic fivefold-repetition recognition.
+- Added automatic seventy-five-move-rule recognition.
+- Added exact thresholds for the two historical draw families:
+
+    occurrenceCount >= 3  -> ThreefoldRepetition
+    occurrenceCount >= 5  -> FivefoldRepetition
+
+    halfmoveClock >= 100  -> FiftyMoveDraw
+    halfmoveClock >= 150  -> SeventyFiveMoveDraw
+
+- Preserved the lower predicate when an upper threshold is reached.
+- Added specialization within the repetition family.
+- Added specialization within the halfmove-clock family.
+- At occurrenceCount 5 or greater, FivefoldRepetition becomes the effective
+  repetition cause.
+- At halfmoveClock 150 or greater, SeventyFiveMoveDraw becomes the effective
+  counter cause.
+- Prevented ThreefoldRepetition from appearing as a second effective cause
+  when FivefoldRepetition already specializes the same family.
+- Prevented FiftyMoveDraw from appearing as a second effective cause when
+  SeventyFiveMoveDraw already specializes the same family.
+- Preserved coexistence between independent repetition and counter families.
+- Added unified historical-draw classification.
+- Added unified board-terminal and historical-draw classification.
+- Preserved the semantic terminal identity of Checkmate, Stalemate, and
+  DeadPosition before historical draw causes.
+- Preserved Checkmate when the mating move also reaches halfmoveClock 150.
+- Preserved simultaneous independent causes when applicable.
+- Preserved exact score 0 for every supported draw result.
+- Integrated the unified draw classification at the root.
+- Integrated the unified draw classification inside alpha-beta.
+- Integrated the unified draw classification inside quiescence.
+- Preserved DeadPosition detection inside alpha-beta and quiescence.
+- Ensured that a recognized draw is processed before ordinary static
+  evaluation can replace the result.
+- Ensured that a recognized draw in quiescence is processed before stand pat.
+- Preserved exact score-0 propagation through negamax.
+- Preserved the strategic relation:
+
+    positive score > draw = 0 > negative score
+
+- Added comparison between different draw causes that all produce score 0.
+- Added root-only UCI draw diagnostics.
+- Added separate diagnostics for claimable and automatic conditions.
+- Added diagnostic specialization within each historical family.
+- Added separate diagnostics for independent causes when they coexist.
+- Ensured that each applicable root diagnostic is emitted once per go
+  command.
+- Prevented a draw found only in a descendant node from producing a root
+  diagnostic.
+- Preserved a legal bestmove when a drawing root still has legal moves.
+- Preserved bestmove 0000 for roots without legal moves.
+- Added state-isolation checks between successive position commands.
+- Added repetition-path restoration checks after terminal search returns.
+- Added halfmove-clock restoration checks between sibling branches.
+- Added checks that effective causes do not persist into unrelated roots.
+- Added checks that root diagnostics do not persist into later go commands
+  after a new position is loaded.
+- Added two strategic regression cases taken from the practical
+  PHILOCHESS 0.2-alpha-012 game against Shallow Blue 2.0.0.
+- Added complete inherited cross-regression for the stalemate, dead-position,
+  fifty-move, and threefold-repetition inventories.
+- Added the new internal diagnostic command:
+  drawruletest
+- Added a complete executable inventory of 64 alpha-013 tests.
+- Updated the internal version identification to:
+  PHILOCHESS 0.2-alpha-013
+
+Historical draw specialization:
+
+The repetition family now distinguishes:
+
+    occurrenceCount = 3 or 4
+        ThreefoldRepetition — claimable
+
+    occurrenceCount >= 5
+        FivefoldRepetition — automatic
+
+At five or more occurrences:
+
+    threefoldPredicate = true
+    fivefoldPredicate  = true
+
+but the effective repetition cause is:
+
+    FivefoldRepetition
+
+The halfmove-clock family now distinguishes:
+
+    100 <= halfmoveClock < 150
+        FiftyMoveDraw — claimable
+
+    halfmoveClock >= 150
+        SeventyFiveMoveDraw — automatic
+
+At halfmoveClock 150 or greater:
+
+    fiftyMovePredicate       = true
+    seventyFiveMovePredicate = true
+
+but the effective counter cause is:
+
+    SeventyFiveMoveDraw
+
+Independent causes can coexist.
+
+The implemented classifier can therefore preserve combinations such as:
+
+    ThreefoldRepetition + FiftyMoveDraw
+    FivefoldRepetition + FiftyMoveDraw
+    ThreefoldRepetition + SeventyFiveMoveDraw
+    FivefoldRepetition + SeventyFiveMoveDraw
+
+No artificial precedence is imposed between independent effective causes that
+produce the same draw result.
+
+Root UCI draw diagnostics:
+
+Alpha-013 defines the following exact informational messages:
+
+info string PHILOCHESS: automatic draw detected - dead position
+info string PHILOCHESS: claimable draw detected - threefold repetition
+info string PHILOCHESS: automatic draw detected - fivefold repetition
+info string PHILOCHESS: claimable draw detected - fifty-move rule
+info string PHILOCHESS: automatic draw detected - seventy-five-move rule
+
+These messages are informational only.
+
+They do not replace the normal UCI move response:
+
+bestmove <move>
+
+If the root has legal moves, PHILOCHESS continues to return a legal bestmove
+even when the position receives score 0 because of a draw rule.
+
+bestmove 0000 remains reserved for positions without legal moves, such as
+checkmate and stalemate.
+
+A root diagnostic is emitted once for each applicable effective cause during a
+go command.
+
+If another go command is executed on the same root, the applicable diagnostic
+can be emitted once again for the new search invocation.
+
+A draw condition found only inside alpha-beta or quiescence affects the search
+score but does not generate a root diagnostic.
+
+Draw-rule integration inventory:
+
+A new executable inventory of 64 tests was implemented.
+
+The inventory is divided into eight blocks:
+
+Block 1 — Unified classification, precedence and coexistence
+8 tests
+
+Block 2 — Threefold and fivefold repetition
+8 tests
+
+Block 3 — Fifty and seventy-five moves
+8 tests
+
+Block 4 — Interaction between histories
+8 tests
+
+Block 5 — Root, UCI and draw diagnostics
+8 tests
+
+Block 6 — Alpha-beta and quiescence
+8 tests
+
+Block 7 — Strategic decision and propagation
+8 tests
+
+Block 8 — False positives, cross-regression and closure
+8 tests
+
+Total:
+64 tests
+
+The inventory verifies:
+
+- preservation of Checkmate at the seventy-five-move threshold;
+- preservation of Stalemate identity;
+- preservation of DeadPosition identity;
+- coexistence of independent historical causes;
+- exact recognition of the third occurrence;
+- exact recognition of the fifth occurrence;
+- persistence of FivefoldRepetition after the fifth occurrence;
+- repetition with either side to move;
+- preservation of castling rights in repetition identity;
+- preservation of effective legal en passant in repetition identity;
+- normalization of ineffective en passant when the apparent capture is
+  illegal;
+- exact halfmoveClock boundaries at 99, 100, 149, 150, and 151;
+- counter reset through pawn moves;
+- counter reset through captures;
+- checkmate precedence when a quiet move takes halfmoveClock from 149 to 150;
+- interaction between repetition history and the halfmove clock;
+- coexistence of claimable and automatic causes;
+- current-state recalculation after previous draw conditions;
+- repetition after irreversible counter resets;
+- exact root UCI diagnostics;
+- diagnostic specialization;
+- multiple independent root diagnostics;
+- legal bestmove preservation;
+- absence of draw diagnostics at stalemate;
+- absence of root diagnostics for descendant-only draw conditions;
+- repetition detection inside alpha-beta;
+- fifty-move detection inside alpha-beta;
+- DeadPosition transitions inside alpha-beta;
+- DeadPosition transitions inside quiescence;
+- repetition detection upon entering quiescence;
+- automatic historical conditions in direct search-entry probes;
+- score-0 propagation to the root;
+- strategic preference for a positive continuation over a draw;
+- strategic preference for a draw over a negative continuation;
+- equivalence between different draw causes with score 0;
+- complete replacement of permanent history after a new position command;
+- sibling-branch repetition isolation;
+- sibling-branch halfmove-clock isolation;
+- isolation of causes and diagnostics between successive roots;
+- complete inherited cross-regression.
+
+Strategic regression against Shallow Blue 2.0.0:
+
+Two Block 7 tests reconstruct decisions from the first practical
+PHILOCHESS 0.2-alpha-012 game against Shallow Blue 2.0.0.
+
+First regression:
+
+After 50...Re1+, the continuation:
+
+51.Kd5? Rd1+
+
+completes the third occurrence of a previously repeated position.
+
+That branch therefore receives:
+
+score 0
+
+The alternative:
+
+51.Kd4
+
+uses the positive controlled reference recorded in the original game and must
+outrank the repetition branch.
+
+The test passed.
+
+Second regression:
+
+After 74...Ka7, the continuation:
+
+75.Qc5+?
+
+immediately completes a threefold repetition.
+
+That branch therefore receives:
+
+score 0
+
+The continuation played in the game:
+
+75.Qe7+
+
+uses the positive controlled reference recorded in the original game and must
+outrank the drawing branch.
+
+The test passed.
+
+These controlled centipawn references are regression oracles and do not require
+future versions to reproduce exactly the same objective evaluation.
+
+Compilation:
+
+Release | x64 compilation:
+
+The program compiled successfully.
+
+The compilation output reported:
+
+1 successful build, 0 errors, 0 updated, 0 skipped.
+
+The executable was generated successfully.
+
+Debug | x64 compilation:
+
+The program compiled successfully.
+
+The compilation output reported:
+
+1 successful build, 0 errors, 0 updated, 0 skipped.
+
+The executable was generated successfully.
+
+Release validation
+
+Test 1 — Complete draw-rule integration inventory
+
+Command executed:
+
+drawruletest
+
+Result:
+
+Block 1: 8/8 passed
+Block 2: 8/8 passed
+Block 3: 8/8 passed
+Block 4: 8/8 passed
+Block 5: 8/8 passed
+Block 6: 8/8 passed
+Block 7: 8/8 passed
+Block 8: 8/8 passed
+
+TOTAL: 64/64 passed
+Inventory structure: PASS
+DRAW-RULE INTEGRATION INVENTORY: PASS
+
+All 64 alpha-013 tests produced the approved result.
+
+Block 1 confirmed unified classification, precedence, and coexistence.
+
+Block 2 confirmed the complete transition from threefold to fivefold
+repetition.
+
+Block 3 confirmed the complete transition from the fifty-move rule to the
+seventy-five-move rule.
+
+Block 4 confirmed coordinated reconstruction and updating of repetition
+history and the halfmove clock.
+
+Block 5 confirmed the root UCI diagnostic contract and preservation of legal
+bestmove output.
+
+Block 6 confirmed draw detection inside alpha-beta and quiescence before
+ordinary evaluation or stand pat.
+
+Block 7 confirmed exact score-0 propagation and strategic comparison with
+positive, negative, and equivalent alternatives.
+
+Block 8 confirmed false-positive protection, state restoration, cross-rule
+regression, and final closure.
+
+Cross-regression results:
+
+DRI-X05 confirmed:
+
+alpha-009 stalemate inventory:
+64/64 inherited stalemate tests preserved.
+
+DRI-X06 confirmed:
+
+alpha-010 dead-position inventory:
+64/64 root positions preserved;
+10/10 search transitions preserved.
+
+DRI-X07 confirmed:
+
+alpha-011 fifty-move-rule inventory:
+64/64 inherited fifty-move tests preserved.
+
+DRI-X08 confirmed:
+
+alpha-012 threefold-repetition inventory:
+64/64 inherited threefold tests preserved;
+
+and the general PHILOCHESS 0.2 regression battery remained preserved.
+
+The general closure battery includes the established baselines for:
+
+- mobility;
+- piece-square tables;
+- quiescence;
+- iterative deepening;
+- principal variation;
+- time management;
+- move ordering;
+- known perft;
+- tactical regression;
+- the historical regression inventory.
+
+No failure was produced by the alpha-013 integration.
+
+Debug validation
+
+The complete alpha-013 inventory was repeated with Debug | x64.
+
+Command executed:
+
+drawruletest
+
+Result:
+
+Block 1: 8/8 passed
+Block 2: 8/8 passed
+Block 3: 8/8 passed
+Block 4: 8/8 passed
+Block 5: 8/8 passed
+Block 6: 8/8 passed
+Block 7: 8/8 passed
+Block 8: 8/8 passed
+
+TOTAL: 64/64 passed
+Inventory structure: PASS
+DRAW-RULE INTEGRATION INVENTORY: PASS
+
+Debug reproduced the complete functional classification obtained in Release.
+
+The final inherited regression gates also passed:
+
+- alpha-009 stalemate inventory: 64/64;
+- alpha-010 dead-position inventory: 64/64 roots and 10/10 transitions;
+- alpha-011 fifty-move-rule inventory: 64/64;
+- alpha-012 threefold-repetition inventory: 64/64;
+- general PHILOCHESS 0.2 closure battery: preserved.
+
+The Debug execution required substantially more time than Release, especially
+during DRI-X08.
+
+This was expected because DRI-X08 executes the inherited alpha-012 repetition
+regression together with the general PHILOCHESS 0.2 closure battery, while the
+Debug executable does not receive the same optimization as Release.
+
+No functional difference between Release and Debug was detected.
+
+Limitations after alpha-013:
+
+- Conservative DeadPosition recognition remains limited to the validated
+  scope of the alpha-010 detector and is not a universal dead-position solver.
+- Draw recognition is integrated into PHILOCHESS search and decision-making,
+  while final external game adjudication remains the responsibility of the
+  GUI or tournament environment.
+- The new root draw messages are informational UCI diagnostics and do not
+  constitute an independent game-termination command.
+- PHILOCHESS still has no Zobrist hashing.
+- No transposition table is implemented.
+- No hash-move ordering is implemented.
+- No killer-move heuristic is implemented.
+- No history heuristic is implemented.
+- No aspiration windows are implemented.
+- Non-capturing checking moves remain outside ordinary quiescence when the
+  side to move is not in check.
+- No static exchange evaluation, SEE pruning, or delta pruning is
+  implemented.
+- The static evaluation remains based mainly on material,
+  PHILOCHESS PST v1, and PHILOCHESS Mobility v1.
+- King safety remains limited.
+- Pawn-structure evaluation remains limited.
+- Passed-pawn and promotion-distance evaluation remain limited.
+- Piece coordination and initiative remain only partially represented.
+- Endgame-specific knowledge remains limited.
+- Time management remains a conservative first implementation.
+- stop remains synchronous.
+- go infinite is parsed, but true asynchronous infinite analysis is not yet
+  implemented.
+- No new practical GUI match was required for the internal alpha-013 closure
+  validation.
+
+Conclusion:
+
+PHILOCHESS 0.2-alpha-013 — Draw-Rule Integration and Cross-Rule Regression,
+Final 0.2 Validation and Closure was implemented and internally validated
+successfully.
+
+PHILOCHESS passed:
+
+- Release | x64 compilation under ISO C++17 with 0 errors;
+- Debug | x64 compilation under ISO C++17 with 0 errors;
+- drawruletest with 64/64 successful tests in Release;
+- drawruletest with 64/64 successful tests in Debug;
+- all eight alpha-013 blocks with 8/8 successful tests;
+- exact threefold-repetition classification at the lower threshold;
+- exact fivefold-repetition classification at occurrenceCount 5;
+- persistence of FivefoldRepetition above the fifth occurrence;
+- exact FiftyMoveDraw classification at halfmoveClock 100;
+- exact SeventyFiveMoveDraw classification at halfmoveClock 150;
+- persistence of SeventyFiveMoveDraw above 150 in synthetic robustness tests;
+- correct specialization within the repetition family;
+- correct specialization within the halfmove-clock family;
+- coexistence of independent historical draw causes;
+- preservation of Checkmate;
+- preservation of Stalemate;
+- preservation of DeadPosition;
+- checkmate precedence when the mating move reaches halfmoveClock 150;
+- counter reset through pawn moves;
+- counter reset through captures;
+- repetition identity through castling rights;
+- repetition identity through effective legal en passant;
+- correct normalization of ineffective pinned en passant;
+- coordinated repetition-history and halfmove-clock reconstruction;
+- exact root UCI draw diagnostics;
+- one diagnostic emission per applicable cause and go command;
+- diagnostic specialization without duplicate lower-family messages;
+- multiple diagnostics for independent simultaneous causes;
+- preservation of legal bestmove at drawing roots with legal moves;
+- preservation of bestmove 0000 at roots without legal moves;
+- draw recognition inside alpha-beta;
+- draw recognition inside quiescence;
+- DeadPosition recognition preserved inside search variations;
+- draw recognition before static evaluation;
+- draw recognition before quiescence stand pat;
+- exact score-0 propagation;
+- strategic preference for a positive continuation over a draw;
+- strategic preference for a draw over a negative continuation;
+- equality of different draw causes with score 0;
+- preservation of both Shallow Blue strategic regression cases;
+- complete UCI-history replacement after new position commands;
+- repetition-path restoration after terminal returns;
+- halfmove-clock restoration between sibling branches;
+- isolation of effective causes between successive roots;
+- isolation of UCI diagnostics between successive roots;
+- alpha-009 stalemate inventory: 64/64 preserved;
+- alpha-010 dead-position inventory: 64/64 roots and 10/10 transitions
+  preserved;
+- alpha-011 fifty-move-rule inventory: 64/64 preserved;
+- alpha-012 threefold-repetition inventory: 64/64 preserved;
+- the general PHILOCHESS 0.2 regression battery preserved;
+- identical final alpha-013 inventory results in Release and Debug.
+
+No functional anomaly or inherited regression attributable to the new
+integration was detected.
+
+Alpha-013 completes the draw-rule work begun in:
+
+PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search
+
+and continued through:
+
+PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search
+PHILOCHESS 0.2-alpha-011 — Fifty-Move Rule in Search
+PHILOCHESS 0.2-alpha-012 — Threefold Repetition Detection in Search
+
+PHILOCHESS now distinguishes board-terminal results, claimable historical
+draws, and automatic historical draws.
+
+The engine assigns every supported drawing condition the exact neutral search
+value of 0, preserves independent causes when they coexist, detects them inside
+the normal and quiescence searches, and communicates the applicable root
+conditions without sacrificing UCI move availability.
+
+The final cross-regression block confirmed that this integration did not break
+any of the four inherited draw-rule inventories or the established
+PHILOCHESS 0.2 functional baseline.
+
+PHILOCHESS 0.2-alpha-013 is therefore considered successfully developed,
+internally validated, and closed.
+
+With this milestone, the PHILOCHESS 0.2 development cycle is also considered
+successfully completed and closed.
+
+The next planned version is:
+
+PHILOCHESS 0.3-alpha-001 — Zobrist Hashing and Transposition Table
