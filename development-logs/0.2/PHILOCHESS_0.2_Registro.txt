@@ -7835,3 +7835,662 @@ internamente, observado en la práctica y cerrado dentro del límite definido.
 La siguiente versión planificada es:
 
 PHILOCHESS 0.2-alpha-013 — Integración de reglas de tablas y regresión cruzada
+
+Fecha: 31 de agosto de 2026
+
+PHILOCHESS 0.2-alpha-013 — Integración de reglas de tablas y regresión cruzada,
+validación final y cierre de PHILOCHESS 0.2
+
+Se implementó y validó internamente la capa final de integración y regresión
+cruzada de las reglas de tablas de PHILOCHESS 0.2.
+
+Hito técnico:
+
+PHILOCHESS dispone ahora de un marco unificado para clasificar, evaluar,
+propagar y diagnosticar las condiciones de tablas desarrolladas durante las
+etapas finales del ciclo PHILOCHESS 0.2.
+
+El motor integra ahora:
+
+- Stalemate;
+- DeadPosition;
+- ThreefoldRepetition;
+- FivefoldRepetition;
+- FiftyMoveDraw;
+- SeventyFiveMoveDraw;
+
+y conserva Checkmate siempre que el jaque mate constituya el resultado
+terminal efectivo.
+
+Alpha-013 añade las dos condiciones históricas automáticas de tablas que
+todavía estaban pendientes después de alpha-012:
+
+- repetición quíntuple;
+- regla de las setenta y cinco jugadas.
+
+También integra las reglas de tablas implementadas previamente bajo un sistema
+común de clasificación, conserva su interacción correcta dentro de la
+búsqueda, añade diagnósticos UCI exclusivos de la raíz, verifica la propagación
+estratégica del puntaje y realiza regresión cruzada contra los cuatro
+inventarios heredados de reglas de tablas.
+
+Esta es la decimotercera y última versión del ciclo de desarrollo de
+PHILOCHESS 0.2. Se apoya directamente en el código validado de
+PHILOCHESS 0.2-alpha-012, sin modificar esa versión cerrada.
+
+Alpha-013 conserva:
+
+- la generación y aplicación de jugadas legales;
+- la carga de FEN y todas las jugadas especiales;
+- la detección de jaque, jaque mate y ahogado;
+- el reconocimiento conservador de posiciones muertas;
+- la regla de las cincuenta jugadas dentro de la búsqueda;
+- el reconocimiento de la triple repetición dentro de la búsqueda;
+- la identidad de repetición basada en colocación de piezas, bando al turno,
+  derechos de enroque y captura al paso legal y efectiva;
+- la reconstrucción y el reemplazo completos del historial UCI;
+- perft y la validación perft con referencias conocidas;
+- la evaluación material;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- el cálculo de fase y la interpolación de las tablas del rey;
+- alpha-beta y la búsqueda de quietud;
+- la profundización iterativa;
+- la construcción completa de la variante principal;
+- los informes iterativos UCI y los puntajes de distancia al mate;
+- la conservación de la última iteración completada por entero;
+- la prioridad de la PV en la raíz y debajo de ella;
+- la prioridad de promociones y el ordenamiento MVV-LVA de las capturas;
+- los límites temporales blando y duro;
+- el descarte seguro de iteraciones interrumpidas;
+- los comandos heredados de diagnóstico y regresión;
+- las líneas base heredadas de táctica, posición, búsqueda y legalidad.
+
+Nueva funcionalidad de alpha-013:
+
+- Se añadió el reconocimiento automático de la repetición quíntuple.
+- Se añadió el reconocimiento automático de la regla de las setenta y cinco
+  jugadas.
+- Se añadieron los umbrales exactos de las dos familias históricas de tablas:
+
+    occurrenceCount >= 3  -> ThreefoldRepetition
+    occurrenceCount >= 5  -> FivefoldRepetition
+
+    halfmoveClock >= 100  -> FiftyMoveDraw
+    halfmoveClock >= 150  -> SeventyFiveMoveDraw
+
+- Se conservó el predicado inferior cuando se alcanza un umbral superior.
+- Se añadió especialización dentro de la familia de repetición.
+- Se añadió especialización dentro de la familia del halfmove clock.
+- Con occurrenceCount 5 o superior, FivefoldRepetition se convierte en la
+  causa efectiva de repetición.
+- Con halfmoveClock 150 o superior, SeventyFiveMoveDraw se convierte en la
+  causa efectiva del contador.
+- Se evitó que ThreefoldRepetition aparezca como una segunda causa efectiva
+  cuando FivefoldRepetition ya especializa la misma familia.
+- Se evitó que FiftyMoveDraw aparezca como una segunda causa efectiva cuando
+  SeventyFiveMoveDraw ya especializa la misma familia.
+- Se conservó la coexistencia entre las familias independientes de repetición
+  y contador.
+- Se añadió una clasificación unificada de tablas históricas.
+- Se añadió una clasificación unificada de resultados terminales del tablero
+  y tablas históricas.
+- Se conservó la identidad terminal semántica de Checkmate, Stalemate y
+  DeadPosition antes de las causas históricas de tablas.
+- Se conservó Checkmate cuando la jugada de mate también alcanza
+  halfmoveClock 150.
+- Se conservaron simultáneamente las causas independientes cuando corresponde.
+- Se conservó el puntaje exacto 0 para todos los resultados de tablas
+  soportados.
+- Se integró la clasificación unificada de tablas en la raíz.
+- Se integró la clasificación unificada dentro de alpha-beta.
+- Se integró la clasificación unificada dentro de la búsqueda de quietud.
+- Se conservó la detección de DeadPosition dentro de alpha-beta y quietud.
+- Se aseguró que una tabla reconocida sea procesada antes de que una evaluación
+  estática ordinaria pueda reemplazar el resultado.
+- Se aseguró que una tabla reconocida en quietud sea procesada antes de
+  stand pat.
+- Se conservó la propagación exacta del puntaje 0 mediante negamax.
+- Se conservó la relación estratégica:
+
+    puntaje positivo > tablas = 0 > puntaje negativo
+
+- Se añadió la comparación entre diferentes causas de tablas que producen
+  puntaje 0.
+- Se añadieron diagnósticos UCI de tablas exclusivos de la raíz.
+- Se añadieron diagnósticos distintos para condiciones reclamables y
+  automáticas.
+- Se añadió especialización diagnóstica dentro de cada familia histórica.
+- Se añadieron diagnósticos separados para causas independientes cuando
+  coexisten.
+- Se aseguró que cada diagnóstico aplicable en la raíz sea emitido una vez por
+  comando go.
+- Se impidió que una tabla encontrada solamente en un nodo descendiente
+  produzca un diagnóstico de raíz.
+- Se conservó una bestmove legal cuando una raíz de tablas todavía dispone de
+  jugadas legales.
+- Se conservó bestmove 0000 para raíces sin jugadas legales.
+- Se añadieron comprobaciones de aislamiento de estado entre comandos position
+  sucesivos.
+- Se añadieron comprobaciones de restauración de la ruta de repetición después
+  de retornos terminales de búsqueda.
+- Se añadieron comprobaciones de restauración del halfmove clock entre ramas
+  hermanas.
+- Se añadieron comprobaciones para impedir que causas efectivas persistan en
+  raíces no relacionadas.
+- Se añadieron comprobaciones para impedir que diagnósticos UCI de una raíz
+  persistan después de cargar una nueva posición.
+- Se añadieron dos regresiones estratégicas procedentes de la partida práctica
+  de PHILOCHESS 0.2-alpha-012 contra Shallow Blue 2.0.0.
+- Se añadió regresión cruzada completa contra los inventarios heredados de
+  ahogado, posición muerta, cincuenta jugadas y triple repetición.
+- Se añadió el nuevo comando interno de diagnóstico:
+  drawruletest
+- Se añadió un inventario ejecutable completo de 64 pruebas de alpha-013.
+- Se actualizó la identificación interna de la versión a:
+  PHILOCHESS 0.2-alpha-013
+
+Especialización de las tablas históricas:
+
+La familia de repetición distingue ahora:
+
+    occurrenceCount = 3 o 4
+        ThreefoldRepetition — reclamable
+
+    occurrenceCount >= 5
+        FivefoldRepetition — automática
+
+Con cinco o más apariciones:
+
+    threefoldPredicate = true
+    fivefoldPredicate  = true
+
+pero la causa efectiva de repetición es:
+
+    FivefoldRepetition
+
+La familia del halfmove clock distingue ahora:
+
+    100 <= halfmoveClock < 150
+        FiftyMoveDraw — reclamable
+
+    halfmoveClock >= 150
+        SeventyFiveMoveDraw — automática
+
+Con halfmoveClock 150 o superior:
+
+    fiftyMovePredicate       = true
+    seventyFiveMovePredicate = true
+
+pero la causa efectiva del contador es:
+
+    SeventyFiveMoveDraw
+
+Las causas independientes pueden coexistir.
+
+Por tanto, el clasificador implementado puede conservar combinaciones como:
+
+    ThreefoldRepetition + FiftyMoveDraw
+    FivefoldRepetition + FiftyMoveDraw
+    ThreefoldRepetition + SeventyFiveMoveDraw
+    FivefoldRepetition + SeventyFiveMoveDraw
+
+No se impone ninguna precedencia artificial entre causas efectivas
+independientes que producen el mismo resultado de tablas.
+
+Diagnósticos UCI de tablas en la raíz:
+
+Alpha-013 define los siguientes mensajes informativos exactos:
+
+info string PHILOCHESS: automatic draw detected - dead position
+info string PHILOCHESS: claimable draw detected - threefold repetition
+info string PHILOCHESS: automatic draw detected - fivefold repetition
+info string PHILOCHESS: claimable draw detected - fifty-move rule
+info string PHILOCHESS: automatic draw detected - seventy-five-move rule
+
+Estos mensajes son solamente informativos.
+
+No reemplazan la respuesta UCI normal de jugada:
+
+bestmove <jugada>
+
+Si la raíz dispone de jugadas legales, PHILOCHESS continúa devolviendo una
+bestmove legal aunque la posición reciba puntaje 0 por una regla de tablas.
+
+bestmove 0000 permanece reservado para posiciones sin jugadas legales, como
+jaque mate y ahogado.
+
+Durante un comando go se emite una vez un diagnóstico de raíz por cada causa
+efectiva aplicable.
+
+Si se ejecuta otro comando go sobre la misma raíz, el diagnóstico aplicable
+puede emitirse nuevamente una vez durante esa nueva búsqueda.
+
+Una condición de tablas encontrada solamente dentro de alpha-beta o quietud
+afecta el puntaje de búsqueda, pero no genera un diagnóstico de raíz.
+
+Inventario de integración de reglas de tablas:
+
+Se implementó un nuevo inventario ejecutable de 64 pruebas.
+
+El inventario está dividido en ocho bloques:
+
+Bloque 1 — Clasificación unificada, precedencia y coexistencia
+8 pruebas
+
+Bloque 2 — Triple y quíntuple repetición
+8 pruebas
+
+Bloque 3 — Cincuenta y setenta y cinco jugadas
+8 pruebas
+
+Bloque 4 — Interacción entre historiales
+8 pruebas
+
+Bloque 5 — Raíz, UCI y diagnóstico de tablas
+8 pruebas
+
+Bloque 6 — Alpha-beta y búsqueda de quietud
+8 pruebas
+
+Bloque 7 — Decisión estratégica y propagación
+8 pruebas
+
+Bloque 8 — Falsos positivos, regresión cruzada y cierre
+8 pruebas
+
+Total:
+64 pruebas
+
+El inventario verifica:
+
+- la conservación de Checkmate en el umbral de setenta y cinco jugadas;
+- la conservación de la identidad Stalemate;
+- la conservación de la identidad DeadPosition;
+- la coexistencia de causas históricas independientes;
+- el reconocimiento exacto de la tercera aparición;
+- el reconocimiento exacto de la quinta aparición;
+- la conservación de FivefoldRepetition después de la quinta aparición;
+- la repetición con cualquiera de los bandos al turno;
+- la conservación de los derechos de enroque en la identidad de repetición;
+- la conservación de la captura al paso legal y efectiva en la identidad de
+  repetición;
+- la normalización de una captura al paso inefectiva cuando la captura
+  aparente es ilegal;
+- los límites exactos del halfmoveClock en 99, 100, 149, 150 y 151;
+- el reinicio del contador mediante jugadas de peón;
+- el reinicio del contador mediante capturas;
+- la precedencia del jaque mate cuando una jugada tranquila lleva el
+  halfmoveClock de 149 a 150;
+- la interacción entre historial de repetición y halfmove clock;
+- la coexistencia de causas reclamables y automáticas;
+- el recálculo del estado actual después de condiciones de tablas anteriores;
+- la repetición después de reinicios irreversibles del contador;
+- los diagnósticos UCI exactos en la raíz;
+- la especialización diagnóstica;
+- varios diagnósticos independientes en una misma raíz;
+- la conservación de una bestmove legal;
+- la ausencia de diagnósticos de tablas en un ahogado;
+- la ausencia de diagnósticos de raíz para tablas que aparecen solamente en
+  descendientes;
+- la detección de repetición dentro de alpha-beta;
+- la detección de cincuenta jugadas dentro de alpha-beta;
+- las transiciones a DeadPosition dentro de alpha-beta;
+- las transiciones a DeadPosition dentro de quietud;
+- la detección de repetición al entrar en quietud;
+- las condiciones históricas automáticas mediante entradas directas a la
+  búsqueda;
+- la propagación del puntaje 0 hasta la raíz;
+- la preferencia estratégica por una continuación positiva frente a tablas;
+- la preferencia estratégica por tablas frente a una continuación negativa;
+- la equivalencia entre diferentes causas de tablas con puntaje 0;
+- el reemplazo completo del historial permanente después de un nuevo comando
+  position;
+- el aislamiento de repetición entre ramas hermanas;
+- el aislamiento del halfmove clock entre ramas hermanas;
+- el aislamiento de causas y diagnósticos entre raíces sucesivas;
+- la regresión cruzada heredada completa.
+
+Regresión estratégica contra Shallow Blue 2.0.0:
+
+Dos pruebas del Bloque 7 reconstruyen decisiones de la primera partida
+práctica de PHILOCHESS 0.2-alpha-012 contra Shallow Blue 2.0.0.
+
+Primera regresión:
+
+Después de 50...Te1+, la continuación:
+
+51.Rd5? Td1+
+
+completa la tercera aparición de una posición repetida previamente.
+
+Por tanto, esa rama recibe:
+
+puntaje 0
+
+La alternativa:
+
+51.Rd4
+
+utiliza la referencia positiva controlada registrada en la partida original y
+debe superar a la rama de repetición.
+
+La prueba fue superada.
+
+Segunda regresión:
+
+Después de 74...Ra7, la continuación:
+
+75.Dc5+?
+
+completa inmediatamente una triple repetición.
+
+Por tanto, esa rama recibe:
+
+puntaje 0
+
+La continuación jugada en la partida:
+
+75.De7+
+
+utiliza la referencia positiva controlada registrada en la partida original y
+debe superar a la rama de tablas.
+
+La prueba fue superada.
+
+Estas referencias controladas en centipeones son oráculos de regresión y no
+obligan a versiones futuras a reproducir exactamente la misma evaluación
+objetiva.
+
+Compilación:
+
+Compilación Release | x64:
+
+El programa compiló correctamente.
+
+La salida de compilación informó:
+
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+El ejecutable fue generado correctamente.
+
+Compilación Debug | x64:
+
+El programa compiló correctamente.
+
+La salida de compilación informó:
+
+1 compilación correcta, 0 errores, 0 actualizado, 0 omitido.
+
+El ejecutable fue generado correctamente.
+
+Validación en Release
+
+Prueba 1 — Inventario completo de integración de reglas de tablas
+
+Comando ejecutado:
+
+drawruletest
+
+Resultado:
+
+Bloque 1: 8/8 superadas
+Bloque 2: 8/8 superadas
+Bloque 3: 8/8 superadas
+Bloque 4: 8/8 superadas
+Bloque 5: 8/8 superadas
+Bloque 6: 8/8 superadas
+Bloque 7: 8/8 superadas
+Bloque 8: 8/8 superadas
+
+TOTAL: 64/64 superadas
+Inventory structure: PASS
+DRAW-RULE INTEGRATION INVENTORY: PASS
+
+Las 64 pruebas de alpha-013 produjeron el resultado aprobado.
+
+El Bloque 1 confirmó la clasificación unificada, la precedencia y la
+coexistencia.
+
+El Bloque 2 confirmó la transición completa desde triple repetición hasta
+repetición quíntuple.
+
+El Bloque 3 confirmó la transición completa desde la regla de las cincuenta
+jugadas hasta la regla de las setenta y cinco jugadas.
+
+El Bloque 4 confirmó la reconstrucción y actualización coordinadas del
+historial de repetición y el halfmove clock.
+
+El Bloque 5 confirmó el contrato de diagnósticos UCI en la raíz y la
+conservación de una bestmove legal.
+
+El Bloque 6 confirmó la detección de tablas dentro de alpha-beta y quietud
+antes de la evaluación ordinaria o stand pat.
+
+El Bloque 7 confirmó la propagación exacta del puntaje 0 y su comparación
+estratégica con alternativas positivas, negativas y equivalentes.
+
+El Bloque 8 confirmó la protección frente a falsos positivos, la restauración
+de estado, la regresión cruzada y el cierre final.
+
+Resultados de regresión cruzada:
+
+DRI-X05 confirmó:
+
+inventario de ahogado de alpha-009:
+64/64 pruebas heredadas conservadas.
+
+DRI-X06 confirmó:
+
+inventario de posiciones muertas de alpha-010:
+64/64 posiciones raíz conservadas;
+10/10 transiciones de búsqueda conservadas.
+
+DRI-X07 confirmó:
+
+inventario de la regla de las cincuenta jugadas de alpha-011:
+64/64 pruebas heredadas conservadas.
+
+DRI-X08 confirmó:
+
+inventario de triple repetición de alpha-012:
+64/64 pruebas heredadas conservadas;
+
+y la batería general de regresión de PHILOCHESS 0.2 permaneció conservada.
+
+La batería general de cierre comprende las líneas base establecidas para:
+
+- movilidad;
+- tablas de casillas;
+- búsqueda de quietud;
+- profundización iterativa;
+- variante principal;
+- gestión del tiempo;
+- ordenamiento de jugadas;
+- perft conocido;
+- regresión táctica;
+- inventario histórico de regresión.
+
+La integración de alpha-013 no produjo ningún fallo.
+
+Validación en Debug
+
+El inventario completo de alpha-013 fue repetido mediante Debug | x64.
+
+Comando ejecutado:
+
+drawruletest
+
+Resultado:
+
+Bloque 1: 8/8 superadas
+Bloque 2: 8/8 superadas
+Bloque 3: 8/8 superadas
+Bloque 4: 8/8 superadas
+Bloque 5: 8/8 superadas
+Bloque 6: 8/8 superadas
+Bloque 7: 8/8 superadas
+Bloque 8: 8/8 superadas
+
+TOTAL: 64/64 superadas
+Inventory structure: PASS
+DRAW-RULE INTEGRATION INVENTORY: PASS
+
+Debug reprodujo íntegramente la clasificación funcional obtenida en Release.
+
+También fueron superadas las puertas finales de regresión heredada:
+
+- inventario de ahogado alpha-009: 64/64;
+- inventario de posiciones muertas alpha-010: 64/64 raíces y 10/10
+  transiciones;
+- inventario de cincuenta jugadas alpha-011: 64/64;
+- inventario de triple repetición alpha-012: 64/64;
+- batería general de cierre de PHILOCHESS 0.2: conservada.
+
+La ejecución Debug requirió considerablemente más tiempo que Release,
+especialmente durante DRI-X08.
+
+Esto era esperado porque DRI-X08 ejecuta la regresión heredada de repetición de
+alpha-012 junto con la batería general de cierre de PHILOCHESS 0.2, mientras
+que el ejecutable Debug no recibe la misma optimización que Release.
+
+No se detectó ninguna diferencia funcional entre Release y Debug.
+
+Limitaciones después de alpha-013:
+
+- El reconocimiento conservador de DeadPosition continúa limitado al alcance
+  validado del detector de alpha-010 y no constituye un solucionador universal
+  de posiciones muertas.
+- El reconocimiento de tablas está integrado en la búsqueda y toma de
+  decisiones de PHILOCHESS, mientras que la adjudicación externa definitiva
+  continúa siendo responsabilidad de la GUI o del entorno de torneo.
+- Los nuevos mensajes de tablas en la raíz son diagnósticos informativos UCI y
+  no constituyen una orden independiente de terminación de partida.
+- PHILOCHESS todavía no dispone de Zobrist hashing.
+- No se ha implementado una tabla de transposición.
+- No se ha implementado ordenamiento mediante hash move.
+- No se ha implementado la heurística killer move.
+- No se ha implementado la history heuristic.
+- No se han implementado ventanas de aspiración.
+- Los jaques sin captura continúan fuera de la búsqueda ordinaria de quietud
+  cuando el bando al turno no está en jaque.
+- No se han implementado evaluación estática de intercambios, SEE pruning ni
+  delta pruning.
+- La evaluación estática continúa basándose principalmente en material,
+  PHILOCHESS PST v1 y PHILOCHESS Mobility v1.
+- La evaluación de seguridad del rey continúa siendo limitada.
+- La evaluación de estructura de peones continúa siendo limitada.
+- La evaluación de peones pasados y distancia de promoción continúa siendo
+  limitada.
+- La coordinación de piezas y la iniciativa están representadas solo
+  parcialmente.
+- El conocimiento específico de finales continúa siendo limitado.
+- La gestión del tiempo continúa siendo una primera implementación
+  conservadora.
+- stop continúa siendo sincrónico.
+- go infinite es interpretado, pero todavía no existe un verdadero análisis
+  infinito asíncrono.
+- No fue necesaria una nueva serie de partidas prácticas en GUI para la
+  validación interna de cierre de alpha-013.
+
+Conclusión:
+
+PHILOCHESS 0.2-alpha-013 — Integración de reglas de tablas y regresión cruzada,
+validación final y cierre de PHILOCHESS 0.2 fue implementado y validado
+internamente satisfactoriamente.
+
+PHILOCHESS superó:
+
+- compilación Release | x64 bajo ISO C++17 con 0 errores;
+- compilación Debug | x64 bajo ISO C++17 con 0 errores;
+- drawruletest con 64/64 pruebas correctas en Release;
+- drawruletest con 64/64 pruebas correctas en Debug;
+- los ocho bloques de alpha-013 con 8/8 pruebas correctas;
+- la clasificación exacta de triple repetición en el umbral inferior;
+- la clasificación exacta de repetición quíntuple en occurrenceCount 5;
+- la conservación de FivefoldRepetition por encima de la quinta aparición;
+- la clasificación exacta de FiftyMoveDraw en halfmoveClock 100;
+- la clasificación exacta de SeventyFiveMoveDraw en halfmoveClock 150;
+- la conservación de SeventyFiveMoveDraw por encima de 150 en pruebas
+  sintéticas de robustez;
+- la especialización correcta dentro de la familia de repetición;
+- la especialización correcta dentro de la familia del halfmove clock;
+- la coexistencia de causas históricas independientes de tablas;
+- la conservación de Checkmate;
+- la conservación de Stalemate;
+- la conservación de DeadPosition;
+- la precedencia del jaque mate cuando la jugada de mate alcanza
+  halfmoveClock 150;
+- el reinicio del contador mediante jugadas de peón;
+- el reinicio del contador mediante capturas;
+- la identidad de repetición mediante derechos de enroque;
+- la identidad de repetición mediante captura al paso legal y efectiva;
+- la normalización correcta de una captura al paso clavada e inefectiva;
+- la reconstrucción coordinada del historial de repetición y del
+  halfmove clock;
+- los diagnósticos UCI exactos en la raíz;
+- una emisión diagnóstica por causa aplicable y por comando go;
+- la especialización diagnóstica sin mensajes duplicados del umbral inferior;
+- varios diagnósticos para causas independientes simultáneas;
+- la conservación de bestmove legal en raíces de tablas con jugadas legales;
+- la conservación de bestmove 0000 en raíces sin jugadas legales;
+- el reconocimiento de tablas dentro de alpha-beta;
+- el reconocimiento de tablas dentro de quietud;
+- la conservación del reconocimiento de DeadPosition dentro de las variantes
+  de búsqueda;
+- la detección de tablas antes de la evaluación estática;
+- la detección de tablas antes de stand pat en quietud;
+- la propagación exacta del puntaje 0;
+- la preferencia estratégica de una continuación positiva frente a tablas;
+- la preferencia estratégica de tablas frente a una continuación negativa;
+- la igualdad entre diferentes causas de tablas con puntaje 0;
+- la conservación de las dos regresiones estratégicas contra Shallow Blue;
+- el reemplazo completo del historial UCI después de nuevos comandos
+  position;
+- la restauración de la ruta de repetición después de retornos terminales;
+- la restauración del halfmove clock entre ramas hermanas;
+- el aislamiento de causas efectivas entre raíces sucesivas;
+- el aislamiento de diagnósticos UCI entre raíces sucesivas;
+- inventario de ahogado alpha-009: 64/64 conservado;
+- inventario de posiciones muertas alpha-010: 64/64 raíces y 10/10
+  transiciones conservadas;
+- inventario de cincuenta jugadas alpha-011: 64/64 conservado;
+- inventario de triple repetición alpha-012: 64/64 conservado;
+- la batería general de regresión de PHILOCHESS 0.2 conservada;
+- resultados finales idénticos del inventario de alpha-013 en Release y
+  Debug.
+
+No se detectó ninguna anomalía funcional ni regresión heredada atribuible a la
+nueva integración.
+
+Alpha-013 completa el trabajo sobre reglas de tablas iniciado en:
+
+PHILOCHESS 0.2-alpha-009 — Stalemate Recognition in Search
+
+y continuado mediante:
+
+PHILOCHESS 0.2-alpha-010 — Dead-Position Recognition in Search
+PHILOCHESS 0.2-alpha-011 — Fifty-Move Rule in Search
+PHILOCHESS 0.2-alpha-012 — Threefold Repetition Detection in Search
+
+PHILOCHESS distingue ahora resultados terminales del tablero, tablas históricas
+reclamables y tablas históricas automáticas.
+
+El motor asigna a cada condición de tablas soportada el valor neutral exacto
+de búsqueda 0, conserva las causas independientes cuando coexisten, las detecta
+dentro de las búsquedas normal y de quietud y comunica las condiciones
+aplicables en la raíz sin sacrificar la disponibilidad de jugada UCI.
+
+El bloque final de regresión cruzada confirmó que esta integración no rompió
+ninguno de los cuatro inventarios heredados de reglas de tablas ni la línea
+base funcional establecida de PHILOCHESS 0.2.
+
+Por tanto, PHILOCHESS 0.2-alpha-013 se considera desarrollado, validado
+internamente y cerrado satisfactoriamente.
+
+Con este hito, el ciclo de desarrollo de PHILOCHESS 0.2 también se considera
+completado y cerrado satisfactoriamente.
+
+La siguiente versión planificada es:
+
+PHILOCHESS 0.3-alpha-001 — Zobrist Hashing and Transposition Table
