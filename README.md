@@ -64,6 +64,7 @@ The latest version, PHILOCHESS 0.2-alpha-013, completes the integration of draw 
 | 0.2-alpha-010 | Conservative dead-position recognition throughout the search |
 | 0.2-alpha-011 | Fifty-move rule recognition throughout the search |
 | 0.2-alpha-012 | Threefold-repetition detection throughout the search |
+| 0.2-alpha-013 | Unified draw-rule integration, cross-rule regression, and final 0.2 validation and closure |
 
 ## Acknowledgments
 
