@@ -66,6 +66,13 @@ The latest version, PHILOCHESS 0.2-alpha-013, completes the integration of draw 
 | 0.2-alpha-012 | Threefold-repetition detection throughout the search |
 | 0.2-alpha-013 | Unified draw-rule integration, cross-rule regression, and final 0.2 validation and closure |
 
+## PHILOCHESS 0.3 development milestones
+
+| Version | Milestone |
+|---|---|
+| 0.3-alpha-001 | Concurrent UCI infinite analysis, stop control, and iterative search reporting |
+| 0.3-alpha-002 | Modular engine architecture with separated components and explicit interfaces |
+
 ## Acknowledgments
 
 My sincere gratitude goes to the developers of chess engines, graphical interfaces, and other tools for computer-chess research, as well as to those who test chess engines, produce and maintain rating lists, write technical documentation, and preserve, organize, and make valuable resources and historical versions available to the community. Much of this work is carried out quietly and receives far less recognition than it deserves. Their contributions have made it possible to test PHILOCHESS against other engines, measure its progress, identify and correct its weaknesses, and guide its continued development through the accumulated knowledge and experience of the computer-chess community.
