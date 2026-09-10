@@ -1,0 +1,1505 @@
+===============================================================================
+PHILOCHESS 0.3 REGISTRO DE DESARROLLO
+===============================================================================
+
+Autor y titular de los derechos de autor: Robert M. Cuadros
+Copyright © 2026 Robert M. Cuadros. Algunos derechos reservados.
+
+Este documento está licenciado bajo la licencia Creative Commons
+Atribución-NoComercial-SinDerivadas 4.0 Internacional
+(CC BY-NC-ND 4.0).
+
+Al compartir este documento bajo la licencia, debe otorgarse el crédito
+correspondiente a Robert M. Cuadros, utilizarse únicamente con fines no
+comerciales y no distribuir versiones adaptadas.
+
+Atribución preferida:
+“PHILOCHESS 0.3 Registro de Desarrollo — Robert M. Cuadros”
+
+Este aviso de copyright, la atribución y la referencia a la licencia deben
+conservarse en toda copia compartida.
+
+Repositorio del proyecto:
+https://github.com/robertmcuadros/PHILOCHESS
+
+Licencia:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+===============================================================================
+
+Fecha: 8 de septiembre de 2026
+
+PHILOCHESS 0.3-alpha-001 — Análisis infinito UCI y control de búsqueda
+
+Se implementó en PHILOCHESS el verdadero análisis Infinite de UCI y el control
+concurrente de la búsqueda.
+
+Hito técnico:
+
+PHILOCHESS ahora puede mantener activa una búsqueda Infinite hasta recibir un
+comando externo stop o quit, mientras el bucle de comandos UCI permanece
+receptivo.
+
+El motor puede procesar stop, isready y quit mientras la búsqueda está activa,
+conservar la última iteración completada íntegramente, descartar de forma
+segura el trabajo incompleto y cerrar el hilo de búsqueda sin dejar salida
+residual ni trabajo activo.
+
+Esta es la primera versión del ciclo de desarrollo de PHILOCHESS 0.3.
+
+Se basa directamente en la versión validada y cerrada
+PHILOCHESS 0.2-alpha-013 — Integración de reglas de tablas y regresión cruzada
+entre reglas, sin modificar esa versión cerrada.
+
+Problema de la línea base:
+
+PHILOCHESS 0.2-alpha-013 reconocía el token UCI:
+
+go infinite
+
+pero todavía no implementaba toda su semántica.
+
+El estado heredado SearchLimits conservaba:
+
+SEARCH_DEFAULT_DEPTH = 1
+
+como techo efectivo de profundidad cuando se solicitaba Infinite sin otro
+límite finito autoritativo.
+
+Por tanto, el comportamiento observable de la línea base era:
+
+info string go limits depth 1 infinite
+info depth 1 ...
+bestmove ...
+
+La búsqueda terminaba automáticamente después de depth 1. Como go se procesaba
+de forma síncrona, el bucle UCI no podía procesar stop, isready ni quit mientras
+la búsqueda seguía activa.
+
+El inventario de línea base de alpha-001 confirmó:
+
+- 63 pruebas aplicables a la línea base ejecutadas;
+- 26 resultados PASS esperados confirmados;
+- 36 resultados FAIL esperados confirmados;
+- un oráculo diferencial completo congelado en IASC-R03.
+
+Los FAIL constituían evidencia intencional de la línea base, no defectos
+inesperados del procedimiento de prueba. Definieron los contratos que
+alpha-001 debía satisfacer.
+
+Alpha-001 conserva la línea base validada de PHILOCHESS 0.2, incluyendo:
+
+- generación y aplicación de jugadas legales;
+- carga de FEN y todas las jugadas especiales del ajedrez;
+- gestión de jaque, jaque mate y ahogado;
+- reconocimiento de posiciones muertas dentro del alcance validado de
+  alpha-010;
+- gestión de triple y quíntuple repetición;
+- gestión de las reglas de cincuenta y setenta y cinco jugadas;
+- reconstrucción y sustitución del historial de posiciones UCI;
+- evaluación de material;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- cálculo de fase e interpolación de tablas del rey;
+- búsqueda alpha-beta;
+- búsqueda de quietud;
+- profundización iterativa;
+- construcción completa de la variante principal;
+- reporte iterativo de información UCI;
+- reporte UCI de puntuaciones de mate;
+- prioridad de la jugada de la PV;
+- prioridad de promociones y ordenamiento de capturas MVV-LVA;
+- límites de tiempo heredados soft y hard;
+- modos de búsqueda FixedDepth, MoveTime y ClockTime;
+- rechazo seguro de iteraciones interrumpidas;
+- las líneas base establecidas de regresión y legalidad de PHILOCHESS 0.2.
+
+Posteriormente, estas capacidades heredadas fueron verificadas nuevamente
+mediante la batería histórica completa de regresión Release descrita más
+adelante.
+
+Nueva funcionalidad de alpha-001:
+
+- Se añadió Infinite verdadero como modo de búsqueda efectivo.
+- Se eliminó de go infinite el comportamiento heredado de terminación en
+  depth 1.
+- Infinite ahora continúa la profundización iterativa hasta recibir un comando
+  externo de terminación.
+- Se añadió precedencia funcional de Infinite sobre depth, movetime y datos de
+  reloj finitos cuando el mismo comando go contiene el token infinite.
+- Se conservó FixedDepth como modo autoritativo de profundidad finita.
+- Se conservó MoveTime como modo autónomo de tiempo fijo.
+- Se conservó ClockTime con selección del reloj e incremento correspondientes
+  al bando al que le toca mover.
+- Los modos de búsqueda finitos conservaron la capacidad de terminar sin
+  requerir stop.
+- Se separó el trabajo de búsqueda activa del procesamiento de entrada UCI.
+- stdin permanece receptivo mientras la búsqueda está en ejecución.
+- Se añadió procesamiento concurrente de isready durante una búsqueda activa.
+- Se añadió procesamiento concurrente de stop durante una búsqueda activa.
+- Se añadió procesamiento concurrente de quit durante una búsqueda activa.
+- Se añadió cancelación cooperativa del trabajo de búsqueda activo.
+- El manejo de stop se propagó a través de la búsqueda alpha-beta normal.
+- El manejo de stop se propagó a través de la búsqueda de quietud.
+- Se conservaron únicamente los resultados de iteraciones de profundización
+  completadas íntegramente.
+- Se impidió que una iteración interrumpida sustituyera la profundidad,
+  puntuación, PV o bestmove ya comprometidos.
+- Se añadió una jugada legal de respaldo para interrupciones anteriores a la
+  finalización de la primera iteración.
+- Se garantizó exactamente una respuesta bestmove por cada go completado o
+  detenido.
+- Los comandos stop inactivos y repetidos se hicieron seguros y no
+  productivos.
+- Se impidió que una solicitud stop antigua se propagara a una búsqueda
+  posterior.
+- Se aislaron la salida, el estado, la posición raíz y el historial entre
+  comandos go sucesivos.
+- Se conservaron el estado y los diagnósticos de las reglas de tablas a través
+  del nuevo controlador concurrente de búsqueda.
+- Se añadió cierre limpio del hilo de búsqueda tras stop y tras la finalización
+  de los modos finitos.
+- Se añadió cancelación limpia del hilo y cierre del proceso ante quit.
+- Se conservó la paridad semántica entre las compilaciones Release y Debug.
+- Se conservaron los contratos de reporte UCI depth, seldepth, score, nodes,
+  time, nps, PV y bestmove para iteraciones completadas.
+- Se actualizó la identificación UCI a:
+  id name PHILOCHESS 0.3-alpha-001
+- Se conservó la identificación del autor:
+  id author Robert M. Cuadros
+- Se expuso la opción UCI MultiPV ya existente:
+  option name MultiPV type spin default 1 min 1 max 16
+
+Modos efectivos de búsqueda:
+
+Infinite
+    Sin terminación automática por profundidad o tiempo.
+    Finaliza mediante stop o quit, excepto en posiciones raíz que ya sean
+    terminales de acuerdo con los contratos de reglas de ajedrez establecidos
+    por el motor.
+
+FixedDepth
+    Finaliza después de completar la profundidad solicitada explícitamente.
+
+MoveTime
+    Finaliza de acuerdo con el presupuesto fijo de tiempo solicitado.
+
+ClockTime
+    Finaliza de acuerdo con el presupuesto heredado calculado a partir del
+    reloj y el incremento del bando al que le toca mover.
+
+Precedencia de Infinite:
+
+Comandos como:
+
+go wtime 1000 btime 1000 winc 0 binc 0 movestogo 10 infinite
+
+y:
+
+go depth 2 movetime 100 infinite
+
+se tratan como búsquedas Infinite.
+
+Los valores finitos pueden seguir disponibles para el reporte diagnóstico, pero
+no se convierten en causas automáticas de terminación para esa invocación.
+
+Contrato de control de búsqueda:
+
+Una iteración completada constituye el resultado público atómico de la
+búsqueda.
+
+Si depth k es la última iteración completada íntegramente y stop interrumpe
+depth k + 1:
+
+- depth k + 1 se descarta por estar incompleta;
+- se conserva la puntuación de depth k;
+- se conserva la variante principal de depth k;
+- bestmove se deriva del último resultado comprometido;
+- ninguna información parcial de depth k + 1 se publica como iteración
+  completada.
+
+La implementación final reporta la interrupción activa mediante diagnósticos
+como:
+
+info string external stop request observed
+info string discarded incomplete iteration at depth N
+
+Estos diagnósticos hacen observable la ruta de interrupción sin alterar el
+contrato UCI de bestmove.
+
+Concurrencia UCI:
+
+El bucle UCI permanece receptivo durante una búsqueda activa.
+
+Un comando isready enviado mientras Infinite está activo recibe:
+
+readyok
+
+sin terminar ni reiniciar la búsqueda activa.
+
+El mismo go continúa profundizando después de readyok.
+
+Stop termina la búsqueda activa y produce exactamente un bestmove.
+
+Quit puede terminar el proceso mientras una búsqueda Infinite sigue activa. No
+es necesario enviar stop previamente.
+
+Inventario de validación de alpha-001:
+
+Se diseñó y ejecutó un inventario específico de 64 pruebas en ocho bloques:
+
+Bloque 1 — Interpretación de go y selección de límites
+8 pruebas
+
+Bloque 2 — Profundización iterativa en modo Infinite
+8 pruebas
+
+Bloque 3 — Stop, interrupción segura y bestmove
+8 pruebas
+
+Bloque 4 — Información UCI, profundidad, puntuación y PV
+8 pruebas
+
+Bloque 5 — Concurrencia, búsquedas sucesivas y estado
+8 pruebas
+
+Bloque 6 — Modos finitos y equivalencias metamórficas
+8 pruebas
+
+Bloque 7 — Casos extremos, casos adversariales e interfaces
+8 pruebas
+
+Bloque 8 — Pruebas reservadas, regresión y aceptación
+8 pruebas
+
+Total:
+64 pruebas
+
+Resultado del candidato final:
+
+Bloque 1: 8/8 PASS
+Bloque 2: 8/8 PASS
+Bloque 3: 8/8 PASS
+Bloque 4: 8/8 PASS
+Bloque 5: 8/8 PASS
+Bloque 6: 8/8 PASS
+Bloque 7: 8/8 PASS
+Bloque 8: 8/8 PASS
+
+TOTAL: 64/64 PASS
+FAIL: 0
+Estado del candidato: ACEPTADO
+
+El resultado final 64/64 se obtuvo sobre una única revisión congelada del
+candidato.
+
+Aspectos destacados de la validación:
+
+1. Continuidad de Infinite
+
+PHILOCHESS completó profundidades sucesivas durante go infinite y permaneció
+activo hasta stop.
+
+La implementación fue verificada en posiciones ordinarias, tranquilas,
+tácticas, de alta ramificación, de jugada forzada, de mate y reservadas.
+
+Una PV estable o un mate conocido no sustituyeron el contrato de terminación
+externa mediante stop.
+
+2. Interrupción segura
+
+Stop fue ejercitado:
+
+- después de iteraciones completadas;
+- durante una iteración alpha-beta normal incompleta;
+- durante una búsqueda de quietud extensa;
+- inmediatamente después de go;
+- sin una búsqueda activa;
+- repetidamente después de que la búsqueda ya se había cerrado.
+
+Se conservó el resultado completado y se produjo exactamente un bestmove legal
+cuando correspondía.
+
+La respuesta a stop se mantuvo dentro del criterio acotado de aceptación
+definido por el inventario de pruebas.
+
+3. Disponibilidad concurrente
+
+isready fue transmitido mientras Infinite estaba activo.
+
+La secuencia final de aceptación recibió readyok rápidamente y dentro del
+criterio de aceptación, tras lo cual la búsqueda activa continuó antes de stop.
+
+Esto confirmó que readyok informa sobre la disponibilidad del motor sin actuar
+como barrera de búsqueda.
+
+4. Integridad de la información UCI
+
+El inventario verificó:
+
+- significados distintos de depth y seldepth;
+- nodes y time acumulados no decrecientes;
+- consistencia aritmética de nps;
+- perspectiva de score basada en el bando al que le toca mover;
+- legalidad completa de la PV;
+- reporte válido de distancia al mate;
+- consistencia entre la PV final completada y bestmove;
+- exclusión de información procedente de iteraciones descartadas.
+
+5. Aislamiento entre búsquedas sucesivas
+
+Se verificó que las búsquedas sucesivas mantuvieran separados:
+
+- las posiciones raíz;
+- los historiales UCI;
+- el estado de stop;
+- las estadísticas de búsqueda;
+- la salida de PV y bestmove;
+- las causas de tablas y los diagnósticos.
+
+No se permitió que ninguna salida de una búsqueda cerrada se filtrara al
+intervalo del siguiente go.
+
+6. Conservación de los modos finitos
+
+FixedDepth, MoveTime y ClockTime conservaron su significado establecido bajo el
+nuevo ciclo de vida concurrente de la búsqueda.
+
+Se conservaron los cálculos heredados de presupuesto de MoveTime y ClockTime.
+
+Ordenamientos equivalentes de parámetros produjeron los mismos presupuestos
+efectivos, y la selección del reloj continuó dependiendo del bando al que le
+toca mover.
+
+7. Validación reservada de búsqueda y regresión heredada
+
+El Bloque 8 reservado no se utilizó para definir la implementación.
+
+IASC-R01 verificó Infinite sobre una posición raíz canónica reservada.
+
+IASC-R02 conservó el comportamiento establecido de las reglas de tablas en
+cinco posiciones raíz independientes, incluyendo triple repetición, regla de
+cincuenta jugadas, condiciones simultáneas de quíntuple repetición y setenta y
+cinco jugadas, posición muerta y ahogado.
+
+IASC-R03 realizó una comparación diferencial contra el ejecutable congelado
+PHILOCHESS 0.2-alpha-013.
+
+Para las posiciones raíz probadas, alpha-001 conservó la semántica
+determinista de búsqueda heredada utilizada por el oráculo, incluyendo
+profundidades completadas, seldepth, nodes, score, PV, bestmove y contadores de
+diagnóstico.
+
+Los campos de tiempo se excluyeron de la igualdad semántica cuando la velocidad
+de ejecución no constituye una propiedad determinista.
+
+IASC-R04 verificó resultados perft exactos en tres posiciones raíz y cuatro
+profundidades:
+
+12/12 resultados perft exactos superados.
+
+Esto protegió la generación de jugadas legales, el comportamiento make/unmake,
+las jugadas especiales y la restauración de la posición raíz.
+
+IASC-R05 conservó los presupuestos heredados de gestión del tiempo y la
+terminación automática de los modos finitos.
+
+IASC-R06 confirmó paridad semántica entre Release y Debug para FixedDepth y
+búsquedas Infinite detenidas.
+
+Coincidieron depth, seldepth, nodes, score, PV y bestmove de las iteraciones
+completadas.
+
+Debug fue sustancialmente más lento, como era de esperar, pero no se detectó
+ninguna divergencia funcional.
+
+8. Ciclo de vida del hilo y cierre limpio
+
+Se pudo observar un hilo de búsqueda durante el análisis Infinite activo.
+
+Después de stop, de la finalización de MoveTime y de la finalización de
+FixedDepth, no quedó ningún hilo de búsqueda residual.
+
+Quit fue enviado directamente mientras Infinite estaba activo y el proceso
+terminó limpiamente sin requerir un stop previo.
+
+9. Compatibilidad con GUI
+
+PHILOCHESS 0.3-alpha-001 fue ejercitado mediante:
+
+- ChessBase Reader 2017;
+- Myracle.
+
+Las pruebas finales confirmaron funcionamiento estable del motor, análisis
+continuo, información legal de búsqueda, sustitución de posición y aislamiento
+de búsquedas a través de las interfaces externas.
+
+Durante la validación en ChessBase Reader 2017, la interfaz gráfica proporcionó
+la posición auténtica de Kiwipete con el contador de jugadas completas
+establecido en 0. Para preservar la compatibilidad sin flexibilizar
+el analizador FEN interno estricto, se ajustó la frontera UCI para normalizar
+únicamente el sexto campo del FEN, convirtiendo el valor 0 en el valor 1
+exigido por el estándar. Esta corrección de compatibilidad correspondiente
+a IASC-A06 no alteró la posición en el tablero ni el algoritmo de búsqueda.
+
+10. Estabilidad en ciclos rápidos
+
+Se ejecutaron doce ciclos alternados de go/stop.
+
+Los ciclos impares utilizaron stop inmediato.
+
+Los ciclos pares se detuvieron después de depth 1.
+
+Los doce ciclos superaron la prueba.
+
+No apareció salida residual durante el intervalo final de observación.
+
+11. Aceptación final de regresión cruzada
+
+IASC-R08 se abrió únicamente después de que las pruebas 1 a 63 hubieran
+superado todas sus verificaciones sobre el mismo candidato congelado.
+
+El proceso final ejercitó, en una sola secuencia:
+
+- FixedDepth;
+- Infinite con isready concurrente;
+- stop durante una iteración posterior;
+- ClockTime;
+- quit.
+
+FixedDepth respetó su condición de terminación solicitada.
+
+Infinite permaneció activo, respondió isready sin terminar la búsqueda,
+continuó profundizando, descartó el trabajo incompleto después de stop y
+conservó el último resultado completado íntegramente.
+
+ClockTime conservó la semántica heredada de presupuesto.
+
+El quit final cerró el proceso limpiamente y sin bloqueo.
+
+Huella digital del candidato final:
+
+SHA-256:
+C02779555EEDAC110642B2CCD14E8E829C9F1A470F916AF1AB8DD7B800300B90
+
+El valor SHA-256 fue idéntico antes y después de IASC-R08.
+
+Esto identifica el ejecutable Release exacto que completó la secuencia final de
+aceptación y confirma que el binario candidato no cambió durante la prueba.
+
+Validación histórica de regresión — Release
+
+Después de la aceptación IASC 64/64, el ejecutable Release aceptado fue
+sometido a la batería histórica completa de regresión de PHILOCHESS 0.2 sin
+recompilación.
+
+Resultados:
+
+- psttest: 8/8 superadas;
+- mobilitytest: 64/64 superadas;
+- qtest: 4/4 superadas;
+- ordertest: 4/4 superadas;
+- idtest 4: 4/4 superadas;
+- pvtest 4: 4/4 superadas;
+- timetest: 4/4 superadas;
+- perftknown 4: 24/24 superadas;
+- tactictest 4: confirmados los tres resultados esperados de regresión táctica;
+- inventorytest 4: 45 PASS, 0 FAIL, 9 OPEN, 10 BASELINE, estructura PASS;
+- stalematetest: 64/64 superadas;
+- deadpositiontest: 64/64 posiciones raíz y 10/10 transiciones superadas;
+- fiftymovetest: 64/64 superadas;
+- threefoldtest: 64/64 superadas;
+- drawruletest: 64/64 superadas.
+
+La prueba final de integración de reglas de tablas también volvió a confirmar la
+regresión cruzada heredada de:
+
+- alpha-009 ahogado;
+- alpha-010 posiciones muertas;
+- alpha-011 regla de cincuenta jugadas;
+- alpha-012 triple repetición;
+- la batería general de cierre de PHILOCHESS 0.2.
+
+Por tanto, la regresión histórica Release reprodujo los resultados cerrados
+esperados de la línea base de PHILOCHESS 0.2 sin ningún resultado FAIL.
+
+El inventario histórico mantuvo exactamente, según lo diseñado, sus
+clasificaciones documentadas OPEN y BASELINE. Estas clasificaciones no son
+fallos.
+
+Release fue suficiente para esta pasada de regresión histórica porque la nueva
+semántica de control de búsqueda de alpha-001 ya había sido comparada entre
+Release y Debug en IASC-R06.
+
+Validación práctica mediante partidas — Myracle Chess GUI
+
+Después de la aceptación formal de alpha-001 y de la regresión histórica
+Release, el ejecutable Release aceptado fue sometido a cuatro partidas de
+prueba práctica en Myracle Chess GUI v1.0 build 118.
+
+Estas partidas fueron pruebas prácticas de diagnóstico y no casos del
+inventario de aceptación. Su propósito fue observar a PHILOCHESS en condiciones
+competitivas normales e identificar debilidades ajedrecísticas fuera del
+alcance directo de Análisis infinito UCI y control de búsqueda.
+
+Rivales:
+
+- Zoidberg 0.1;
+- Shallow Blue 2.0.0.
+
+Condiciones:
+
+- control de tiempo: 900+10, equivalente a 15 minutos más 10 segundos por
+  jugada;
+- posición inicial normal;
+- ejecutable Release | x64;
+- sin libro de aperturas;
+- sin tablas Syzygy;
+- ponder desactivado;
+- adjudicación Full Balanced sin tablebases;
+- una partida con cada color contra cada rival.
+
+Resultados:
+
+- PHILOCHESS 0.3-alpha-001 vs. Zoidberg 0.1: 0-1;
+- Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-001: 1-0;
+- PHILOCHESS 0.3-alpha-001 vs. Shallow Blue 2.0.0: 0-1;
+- Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-001: 1-0.
+
+Resultado acumulado:
+
+- vs. Zoidberg 0.1: 0/2;
+- vs. Shallow Blue 2.0.0: 0/2;
+- total: 0/4.
+
+Observaciones de las partidas:
+
+1. PHILOCHESS 0.3-alpha-001 vs. Zoidberg 0.1
+
+PHILOCHESS salió de la apertura con una posición claramente favorable,
+gracias a su mayor control del centro, espacio en el flanco de rey y
+adelanto en el desarrollo. Sin embargo, no logró transformar esas
+ventajas en una acción coordinada. Sus piezas estaban bien situadas,
+pero no trabajaban como un conjunto. Mientras Zoidberg reorganizaba sus
+fuerzas y reducía la presión, PHILOCHESS recurrió a maniobras
+individuales de dama, alfil y torres sin completar antes la coordinación
+de su ejército. También subestimó tanto la magnitud de su ventaja inicial
+como la gravedad de su deterioro posterior, especialmente en la
+estructura de peones. La derrota respondió menos a un error aislado que
+a la dificultad para coordinar las piezas, reconocer los momentos
+críticos y convertir una superioridad estratégica en juego concreto.
+
+2. Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-001
+
+Desde la apertura, PHILOCHESS quedó en dificultades, pues su desarrollo
+no logró armonizarse con las exigencias del centro y permitió a Zoidberg
+imponer una superioridad temprana. La posición negra perdió cohesión
+antes de completar la movilización de sus piezas, y esa falta de
+coordinación condicionó el resto de la partida. Aunque PHILOCHESS
+consiguió penetrar con sus torres, la iniciativa careció de suficiente
+apoyo del conjunto, mientras Zoidberg consolidaba su ventaja material.
+El problema no fue la pasividad, sino una comprensión insuficiente de
+cómo debían cooperar las piezas. PHILOCHESS también subestimó durante
+muchas jugadas la gravedad de su posición, retrasando medidas defensivas
+más urgentes. Cuando la actividad de las torres dejó de compensar las
+debilidades estructurales y la descoordinación, el final se volvió
+claramente favorable para las blancas. La derrota confirmó una debilidad
+recurrente. PHILOCHESS desarrolla y activa piezas, pero no siempre
+consigue integrarlas en un plan común.
+
+3. PHILOCHESS 0.3-alpha-001 vs. Shallow Blue 2.0.0
+
+Gracias a su presencia central, PHILOCHESS obtuvo una posición
+prometedora, pero debilitó demasiado pronto el flanco de rey y permitió
+que Shallow Blue organizara allí su principal contrajuego. 14.gxh5 abrió
+la vía para la incorporación decisiva del caballo negro al ataque,
+mientras que 14.g5, ya empleado por una versión anterior de PHILOCHESS
+ante este mismo rival, mantenía cerrado el sector. El rey blanco quedó
+expuesto y sus piezas tuvieron que asumir tareas defensivas, reduciendo
+la coordinación general. Sin embargo, 20...c5 cedió casi toda la ventaja
+de Shallow Blue al permitir que el caballo ocupara la fuerte casilla d6.
+PHILOCHESS recuperó buenas posibilidades, pero no terminó de identificar
+que la seguridad del rey seguía siendo el problema central. Con 25.Nxe4
+igualó el material a costa de permitir la incorporación del alfil al
+ataque, y las amenazas sobre el monarca adquirieron un carácter mucho
+más concreto. Todavía tuvo una última oportunidad de salvarse tras un
+grave error del rival, pero pasó por alto una maniobra defensiva. La
+derrota volvió a mostrar que PHILOCHESS encuentra buenos recursos
+locales, aunque no siempre valora correctamente la coordinación del
+adversario ni la prioridad de la seguridad del rey.
+
+4. Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-001
+
+Ante una apertura exigente, PHILOCHESS logró mantenerse en la lucha pese
+a algunas imprecisiones, mediante actividad en el centro y el flanco de
+rey. En varias ocasiones pudo sacrificar la calidad en f3 para abrir
+líneas y obtener buenas opciones de ataque, pero prefirió conservar el
+material y buscar actividad con piezas aisladas. Tras superar momentos
+difíciles en el medio juego, alcanzó un final de torres objetivamente
+igualado y lo sostuvo durante varias jugadas. Allí, la cuestión central
+pasó a ser la coordinación entre torre, rey y peones. El grave error
+59...Rb1+ perdió un tiempo valioso que podía haberse empleado en acercar
+el rey al flanco de dama y coordinarlo con la torre para contener al
+peón rival. La posterior simplificación condujo a un final de peones
+perdido y mostró que el motor todavía necesita comprender mejor cuándo
+la actividad táctica debe ceder paso a la coordinación defensiva.
+
+Estos resultados prácticos no alteran la aceptación técnica 64/64 de alpha-001.
+Alpha-001 fue diseñado para implementar y validar Análisis infinito UCI y
+control de búsqueda, no para rediseñar la evaluación ajedrecística ni producir
+un aumento directo de fuerza de juego.
+
+Las cuatro partidas se conservan como evidencia práctica de diagnóstico para
+trabajos posteriores de búsqueda y evaluación dentro del ciclo de desarrollo
+de PHILOCHESS 0.3.
+
+Limitaciones actuales:
+
+- Alpha-001 modifica el control de búsqueda UCI y la concurrencia. No rediseña
+  directamente la evaluación ajedrecística.
+- La evaluación estática heredada continúa basándose principalmente en
+  material, PHILOCHESS PST v1 y PHILOCHESS Mobility v1.
+- La evaluación de seguridad del rey sigue siendo limitada.
+- La evaluación de estructura de peones sigue siendo limitada.
+- La evaluación de peones pasados, distancia de promoción y bloqueo sigue
+  siendo limitada.
+- La actividad de piezas, la coordinación y la iniciativa continúan
+  representadas solo parcialmente.
+- El conocimiento específico de finales sigue siendo limitado.
+- Las pruebas prácticas mediante partidas reforzaron la necesidad de una mayor
+  coordinación de piezas, mayor conciencia de la seguridad del rey, mejor
+  valoración del deterioro posicional y mejor coordinación rey-torre-peones en
+  los finales.
+- No se ha implementado hashing Zobrist.
+- No se ha implementado una tabla de transposición.
+- No se ha implementado ordenamiento por hash move.
+- No se ha implementado la heurística killer move.
+- No se ha implementado la heurística history.
+- No se han implementado aspiration windows.
+- No se ha implementado Principal Variation Search.
+- No se ha implementado Static Exchange Evaluation ni poda basada en SEE.
+- No se han implementado Late Move Reductions.
+- La búsqueda de quietud todavía requiere optimización posterior y trabajo de
+  poda selectiva.
+- La gestión del tiempo continúa siendo la primera implementación conservadora
+  heredada.
+- El código fuente del motor continúa siendo monolítico y está programado para
+  modularizarse en el siguiente alpha.
+
+Conclusión:
+
+PHILOCHESS 0.3-alpha-001 — Análisis infinito UCI y control de búsqueda fue
+implementado, validado y aceptado satisfactoriamente.
+
+PHILOCHESS superó:
+
+- operación real de go infinite sin límite residual de profundidad finita;
+- profundización iterativa continua hasta terminación externa;
+- procesamiento concurrente de isready durante una búsqueda activa;
+- procesamiento concurrente de stop;
+- procesamiento concurrente de quit;
+- interrupción segura dentro de la búsqueda normal y de quietud;
+- conservación de la última iteración completada íntegramente;
+- rechazo seguro de iteraciones incompletas;
+- comportamiento legal de respaldo ante stop inmediato;
+- exactamente un bestmove por cada go completado o detenido;
+- manejo seguro de stop inactivo y repetido;
+- aislamiento completo entre búsquedas sucesivas;
+- conservación del historial de posiciones UCI y del estado de las reglas de
+  tablas;
+- conservación del funcionamiento de FixedDepth;
+- conservación del funcionamiento de MoveTime;
+- conservación del funcionamiento de ClockTime;
+- conservación de los presupuestos heredados soft y hard de tiempo;
+- contratos completos de reporte UCI depth, seldepth, score, nodes, time, nps,
+  PV y bestmove;
+- conservación de la semántica de puntuaciones de mate;
+- regresión perft exacta en las posiciones reservadas;
+- conservación del oráculo heredado de búsqueda y evaluación contra alpha-013;
+- batería histórica completa de regresión de PHILOCHESS 0.2 ejecutada en
+  Release;
+- conservación de PST, movilidad, quietud, ordenamiento de jugadas,
+  profundización iterativa, variante principal, gestión del tiempo, perft
+  conocidos, regresión táctica, ahogado, posición muerta, cincuenta jugadas,
+  triple repetición y resultados integrados de reglas de tablas;
+- conservación de la clasificación del inventario histórico con 0 FAIL;
+- paridad semántica Release/Debug para el comportamiento de control de búsqueda
+  de alpha-001;
+- cierre del hilo de búsqueda después de cada ruta de terminación probada;
+- quit limpio durante una búsqueda Infinite activa;
+- validación de compatibilidad con ChessBase Reader 2017;
+- validación de compatibilidad con Myracle;
+- doce ciclos rápidos go/stop sin salida residual;
+- los ocho bloques del inventario con 8/8 PASS;
+- aceptación acumulativa final con 64/64 PASS y 0 FAIL.
+
+No se detectó ninguna anomalía funcional ni regresión heredada ni en el
+inventario IASC de 64 casos de alpha-001 ni en la batería histórica completa de
+regresión Release.
+
+El resultado práctico posterior de 0/4 contra Zoidberg 0.1 y Shallow Blue 2.0.0
+se registra como evidencia diagnóstica de fuerza de juego y no reabre la
+aceptación técnica de alpha-001. Las partidas identificaron debilidades
+concretas para trabajos posteriores de búsqueda y evaluación, particularmente
+en coordinación, seguridad del rey, sentido de urgencia posicional y
+coordinación en finales.
+
+Alpha-001 establece la base de concurrencia y control de búsqueda requerida por
+el ciclo de desarrollo de PHILOCHESS 0.3.
+
+PHILOCHESS ahora puede analizar de forma continua, permanecer receptivo al
+controlador UCI mientras piensa, detenerse de manera cooperativa, conservar solo
+resultados de búsqueda comprometidos y cerrar limpiamente su trabajo de
+búsqueda.
+
+Por tanto, PHILOCHESS 0.3-alpha-001 se considera desarrollado, validado,
+aceptado y cerrado satisfactoriamente.
+
+La siguiente versión planificada es:
+
+PHILOCHESS 0.3-alpha-002 — Modularización del motor y separación de interfaces
+
+===============================================================================
+
+Fecha: 8 de septiembre de 2026
+
+PHILOCHESS 0.3-alpha-002 — Modularización del motor y separación de interfaces
+
+Se reorganizó el motor heredado de PHILOCHESS 0.3-alpha-001, pasando de un
+archivo fuente monolítico a una estructura modular con responsabilidades,
+reglas de dependencia e interfaces explícitas.
+
+Hito técnico:
+
+El motor de ajedrez, el protocolo UCI, el controlador de búsqueda, los
+diagnósticos, las pruebas, la representación del tablero, la evaluación, las
+reglas y los algoritmos de búsqueda ya no pertenecen a una misma unidad
+monolítica de implementación.
+
+Cada área dispone ahora de un módulo definido y se comunica con las demás
+mediante cabeceras e interfaces explícitas.
+
+El principio arquitectónico que rige esta versión es:
+
+“Alpha-002 constituye una transformación arquitectónica, no una transformación 
+orientada a aumentar la fuerza de búsqueda.”
+
+Por tanto, PHILOCHESS 0.3-alpha-002 conserva intencionadamente el comportamiento
+ajedrecístico, las decisiones de búsqueda, los valores de evaluación, la
+semántica del control de tiempo, las reglas de tablas y los contratos de control
+de búsqueda UCI establecidos y validados en alpha-001.
+
+No se introdujo ninguna mejora intencional de fuerza de juego.
+
+Esta es la segunda versión del ciclo de desarrollo de PHILOCHESS 0.3.
+
+Se basa directamente en la versión validada y cerrada:
+
+PHILOCHESS 0.3-alpha-001 — Análisis infinito UCI y control de búsqueda
+
+sin modificar esa línea base cerrada.
+
+Línea base:
+
+El fuente exacto de alpha-001 utilizado para la transformación posee la
+siguiente huella SHA-256:
+
+d30c8f7834bcbb777e6c898397fb434235acb85effb52f85d356b4c165ac1091
+
+Esa línea base ya contenía:
+
+* análisis Infinite verdadero;
+* control asíncrono de búsqueda UCI;
+* modos FixedDepth, MoveTime, ClockTime e Infinite;
+* procesamiento concurrente de stop, isready y quit;
+* reporte completo de la variante principal;
+* MultiPV;
+* gestión integrada de reglas de tablas;
+* el FEN FIX de compatibilidad con ChessBase Reader 2017 de IASC-A06;
+* la barrera determinista de quietud utilizada por las pruebas IASC-A02.
+
+Alpha-002 conservó el FEN FIX funcional de compatibilidad y aisló los hooks de
+IASC-A02 como infraestructura de prueba exclusiva de Debug.
+
+Alcance de la transformación:
+
+* Se dividió el motor monolítico en módulos coherentes de implementación.
+* Se introdujeron cabeceras públicas explícitas para los dominios principales
+  del motor.
+* Se definieron las dependencias permitidas entre módulos.
+* Se eliminó la emisión directa de UCI desde las capas ajedrecísticas y de
+  búsqueda.
+* Se separó el reporte UCI normal del reporte diagnóstico interno.
+* Se conservaron los diagnósticos técnicos para pruebas y desarrollo.
+* Se añadió una opción UCI para activar o desactivar los diagnósticos técnicos.
+* Se conservó el worker asíncrono de búsqueda introducido en alpha-001.
+* Se conservaron todos los modos de búsqueda y la semántica del control de
+  tiempo establecidos.
+* Se conservó toda la infraestructura histórica de regresión y comandos de
+  desarrollo.
+* Se actualizaron el proyecto y los filtros de Visual Studio para la estructura
+  modular.
+* Se conservó el comportamiento relevante equivalente entre Release y Debug.
+* Los hooks deterministas de prueba quedaron fuera del ejecutable Release de
+  producción.
+
+Estructura modular del fuente:
+
+src/core
+
+```
+Constantes, enumeraciones, estructuras fundamentales y tipos compartidos
+del motor.
+```
+
+src/chess
+
+```
+Representación de posiciones, análisis FEN estricto, representación de
+jugadas, detección de ataques, generación de jugadas pseudolegales y
+legales, aplicación de jugadas, jugadas especiales, claves de repetición y
+gestión del historial reversible.
+```
+
+src/evaluation
+
+```
+Evaluación de material, PHILOCHESS PST v1, cálculo de fase, interpolación de
+tablas del rey y PHILOCHESS Mobility v1.
+```
+
+src/rules
+
+```
+Clasificación de terminales, jaque mate, ahogado, reconocimiento de
+posiciones muertas, reglas de cincuenta y setenta y cinco jugadas, triple y
+quíntuple repetición y precedencia entre causas terminales simultáneas.
+```
+
+src/search
+
+```
+Ordenamiento de jugadas, búsqueda de quietud, alpha-beta, profundización
+iterativa, construcción de la variante principal, MultiPV, gestión de
+iteraciones completadas e interrupción de búsqueda.
+```
+
+src/uci
+
+```
+Análisis de comandos UCI, despacho de comandos, gestión de opciones, salida
+serializada, propiedad del worker, control asíncrono de búsqueda, stop,
+isready, quit y publicación de exactamente un bestmove.
+```
+
+src/diagnostics
+
+```
+Formateo de diagnósticos técnicos, comandos de desarrollo, soporte perft,
+contadores internos e implementación opcional de los hooks IASC.
+```
+
+src/tests
+
+```
+Oráculos históricos de prueba, inventarios de integración y baterías de
+regresión.
+```
+
+Estructura del proyecto de Visual Studio:
+
+* PHILOCHESS.slnx abre la solución completa.
+* PHILOCHESS.vcxproj contiene las unidades de compilación y las cabeceras
+  modulares.
+* PHILOCHESS.vcxproj.filters presenta los módulos de forma coherente en el
+  Explorador de soluciones.
+* El proyecto contiene los 25/25 archivos .cpp esperados.
+* El proyecto contiene los 20/20 archivos .h esperados.
+* El archivo raíz PHILOCHESS.cpp es ahora un punto de entrada mínimo que inicia
+  el bucle del protocolo UCI.
+* Release|x64 conserva C++17 y la configuración original de optimización.
+* Debug|x64 conserva C++17 y habilita PHILOCHESS_IASC_TEST_HOOKS.
+
+Regla de dependencias:
+
+Las capas del dominio ajedrecístico no conocen UCI, diagnósticos ni tests.
+
+El módulo de diagnósticos no emite directamente salida UCI. Produce datos
+diagnósticos o líneas formateadas y la capa UCI decide si esas líneas pueden
+enviarse.
+
+La dirección de dependencias resultante es:
+
+* core depende únicamente de la biblioteca estándar;
+* chess depende de core;
+* evaluation depende de core y chess;
+* rules depende de core y chess;
+* search depende de core, chess, evaluation y rules;
+* diagnostics puede inspeccionar las interfaces del dominio ajedrecístico;
+* UCI posee la interpretación del protocolo y depende de los módulos necesarios
+  del motor;
+* tests utiliza las interfaces productivas e internas de prueba proporcionadas
+  expresamente.
+
+Interfaces principales de tablero y reglas:
+
+* Position.h expone operaciones de posición y FEN sin dependencias UCI.
+* MoveGeneration.h concentra ataques, jugadas pseudolegales, jugadas legales y
+  makeMove.
+* MoveApplication.h aplica texto UCI ya validado sin escribir en la consola.
+* Repetition.h contiene las claves de repetición y las operaciones del historial
+  reversible.
+* DrawRules.h expone la clasificación productiva de reglas de tablas utilizada
+  por la búsqueda.
+* DrawRulesInternals.h expone únicamente el acceso a la caché requerido por las
+  pruebas históricas; la búsqueda productiva no depende de él.
+
+Interfaces principales de búsqueda:
+
+* Search.h constituye la interfaz productiva de búsqueda.
+* searchBestMove ya no escribe directamente líneas UCI.
+* Las iteraciones completadas se comunican mediante la interfaz abstracta
+  SearchIterationReporter.
+* SearchInternals.h contiene los puntos de acceso a alpha-beta y quietud
+  requeridos por las pruebas históricas.
+* SearchQuiescenceHook proporciona un punto de inyección opcional para
+  IASC-A02.
+* En Release, el puntero del hook de quietud es nulo y la búsqueda no depende de
+  la implementación diagnóstica.
+
+Interfaces UCI y de concurrencia:
+
+* UciProtocol.cpp interpreta los comandos UCI y de desarrollo.
+* UciSearchController posee el worker de búsqueda y controla su ciclo de vida.
+* El controlador entrega a cada búsqueda sus propias copias de la posición raíz
+  y del historial de repetición.
+* Stop y quit se propagan de forma cooperativa a través de la búsqueda.
+* Solo la última iteración completada íntegramente puede convertirse en el
+  resultado confirmado.
+* Una iteración incompleta no puede sustituir una puntuación, PV o bestmove ya
+  confirmados.
+* Se conserva una jugada legal de respaldo si la interrupción sucede antes de
+  completar la primera iteración.
+* UciReporter serializa toda la salida UCI mediante un mutex.
+* Se emite exactamente un bestmove por cada go completado o detenido
+  externamente.
+* El worker finaliza y se sincroniza mediante join después de cada ruta de
+  terminación probada.
+
+Reporte UCI normal y diagnósticos:
+
+La identificación UCI se actualizó a:
+
+id name PHILOCHESS 0.3-alpha-002
+id author Robert M. Cuadros
+
+Se conservó la opción MultiPV existente:
+
+option name MultiPV type spin default 1 min 1 max 16
+
+La nueva opción de control de diagnósticos es:
+
+option name Diagnostics type check default false
+
+Con Diagnostics en false, que es el valor predeterminado, las partidas y los
+análisis normales producen únicamente la información de protocolo necesaria
+para el funcionamiento ordinario:
+
+* respuestas de negociación UCI;
+* líneas iterativas info depth;
+* seldepth;
+* score;
+* nodes;
+* time;
+* nps;
+* MultiPV cuando se solicita;
+* variantes principales;
+* bestmove.
+
+La telemetría técnica interna ya no se acumula de forma predeterminada en la
+presentación normal del análisis.
+
+Mediante:
+
+setoption name Diagnostics value true
+
+permanece disponible la siguiente información de desarrollo mediante líneas
+info string:
+
+* límites efectivos de go y modo de búsqueda seleccionado;
+* conteos de nodos de búsqueda principal y de quietud;
+* cutoffs alpha-beta y beta cutoffs de quietud;
+* nodos de jaque y stand-pat de quietud;
+* límites de ply alcanzados en quietud;
+* clasificación terminal de la raíz;
+* contadores de jaque mate y ahogado;
+* contadores de posiciones muertas;
+* contadores de cincuenta y setenta y cinco jugadas;
+* contadores de triple y quíntuple repetición;
+* número de evaluaciones estáticas;
+* aciertos de ordenamiento mediante jugada de la PV;
+* iteraciones de profundización completadas;
+* iteraciones incompletas descartadas;
+* observación de stop externo.
+
+Al devolver Diagnostics a false se restaura el canal normal limpio.
+
+Los comandos explícitos de desarrollo, como perft y los inventarios históricos,
+continúan disponibles independientemente del reporte de análisis normal.
+
+FEN FIX de compatibilidad IASC-A06 conservado:
+
+ChessBase Reader 2017 entrega la posición Kiwipete auténtica con un cero no
+válido en el sexto campo FEN:
+
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 0
+
+La frontera UCI normaliza únicamente ese sexto campo de 0 a 1 antes de llamar al
+analizador FEN interno estricto.
+
+La posición interna resultante equivale al FEN canónico:
+
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
+
+No se modifica el tablero, el bando al que le toca mover, los derechos de
+enroque, el campo en passant ni el contador de halfmoves.
+
+El analizador interno conserva así su carácter estricto mientras el motor 
+mantiene la compatibilidad con la entrada real de ChessBase Reader 2017 que 
+motivó IASC-A06.
+
+Hooks de prueba IASC-A02 conservados:
+
+La barrera determinista de la primera entrada en quietud permanece disponible
+únicamente en Debug|x64 detrás de:
+
+PHILOCHESS_IASC_TEST_HOOKS
+
+Se conecta mediante un hook opcional de búsqueda en lugar de estar incrustada
+en el algoritmo productivo.
+
+El ejecutable Release no contiene la interfaz activa de comandos IASC. Al
+probarlo con Diagnostics habilitado, Release respondió correctamente a un
+comando IASC como comando desconocido.
+
+Comportamiento ajedrecístico y de búsqueda conservado:
+
+* generación idéntica de jugadas legales;
+* gestión idéntica de jugadas especiales;
+* reconstrucción idéntica de posiciones e historial de repetición;
+* evaluación idéntica de material, PST, fase, interpolación del rey y movilidad;
+* algoritmo alpha-beta idéntico;
+* algoritmo de quietud idéntico;
+* reglas idénticas de ordenamiento de jugadas;
+* comportamiento idéntico de profundización iterativa;
+* construcción idéntica de la variante principal;
+* comportamiento MultiPV idéntico;
+* semántica idéntica de puntuaciones de mate;
+* precedencia idéntica de terminales y reglas de tablas;
+* semántica idéntica de confirmación de iteraciones completadas;
+* comportamiento idéntico de jugada legal de respaldo;
+* conservación de FixedDepth;
+* conservación de MoveTime;
+* conservación de ClockTime;
+* conservación de Infinite;
+* conservación de stop;
+* conservación de isready durante una búsqueda activa;
+* conservación de quit durante una búsqueda activa;
+* conservación de exactamente un bestmove;
+* conservación del aislamiento entre búsquedas sucesivas.
+
+Cambios de fuerza excluidos expresamente:
+
+* No se añadió hashing Zobrist.
+* No se añadió una tabla de transposición.
+* No se añadió ordenamiento por hash move.
+* No se añadió la heurística killer move.
+* No se añadió la heurística history.
+* No se añadieron aspiration windows.
+* No se añadió Principal Variation Search.
+* No se añadió Static Exchange Evaluation.
+* No se añadió poda basada en SEE.
+* No se añadieron Late Move Reductions.
+* No se añadió ningún nuevo mecanismo de poda selectiva.
+* No se modificó ningún término ni peso de evaluación.
+* No se añadió nuevo conocimiento posicional o de finales.
+
+Estrategia de aceptación y validación:
+
+No se creó un inventario específico para alpha-002. Su aceptación se basó en la
+validación estructural y de interfaces, el oráculo diferencial alpha-001/alpha-002,
+la verificación en Release y Debug, la batería completa de regresión histórica
+heredada, las pruebas perft y la validación en interfaces gráficas externas.
+
+Validación arquitectónica:
+
+El paquete modular superó:
+
+* compilación C++17 Release con warnings elevados;
+* compilación C++17 Debug con hooks IASC y warnings elevados;
+* validación del XML de .slnx, .vcxproj y .filters;
+* correspondencia exacta entre los archivos físicos y las listas del proyecto;
+* 25/25 unidades de compilación .cpp esperadas;
+* 20/20 cabeceras esperadas;
+* 9/9 pruebas de contratos de interfaz y control;
+* 3/3 pruebas de transición Diagnostics false/true/false;
+* comprobaciones mediante AddressSanitizer y UndefinedBehaviorSanitizer.
+
+LeakSanitizer no estaba soportado por el mecanismo de ejecución del contenedor.
+La pasada de sanitizers se repitió con la detección de leaks desactivada y
+finalizó con código 0, sin errores de AddressSanitizer ni
+UndefinedBehaviorSanitizer.
+
+Oráculo diferencial alpha-001/alpha-002:
+
+Se compararon líneas completas de resultados UCI, ignorando únicamente:
+
+* el cambio esperado de versión del motor;
+* la nueva declaración de la opción Diagnostics;
+* los campos variables time y nps.
+
+El resultado diferencial fue:
+
+10/10 PASS
+
+Los casos fueron:
+
+* startpos depth 1;
+* startpos depth 2;
+* startpos depth 3;
+* startpos depth 4;
+* Kiwipete auténtica con fullmove 0 a profundidad 3;
+* la posición táctica reservada a profundidad 3;
+* MultiPV 3 a profundidad 3;
+* ahogado en la raíz;
+* jaque mate en la raíz;
+* el caso heredado de posición muerta.
+
+La comparación de Kiwipete auténtica conservó:
+
+bestmove e2a6
+
+El oráculo de la posición inicial a profundidad 4 conservó:
+
+* score cp 0;
+* nodes 17122;
+* PV b1c3 b8c6 g1f3 g8f6;
+* bestmove b1c3.
+
+Validación manual en Visual Studio:
+
+La solución entregada se abrió y compiló satisfactoriamente en Visual Studio.
+
+Release|x64:
+
+* la compilación finalizó correctamente;
+* cero errores de compilación;
+* PHILOCHESS.exe fue generado dentro de x64\Release;
+* la negociación UCI normal identificó PHILOCHESS 0.3-alpha-002;
+* FixedDepth finalizó correctamente;
+* MoveTime terminó de forma autónoma;
+* ClockTime terminó de acuerdo con su presupuesto calculado;
+* Infinite continuó hasta recibir un comando externo;
+* isready devolvió readyok durante una búsqueda Infinite activa;
+* stop produjo un único bestmove legal;
+* quit durante Infinite esperó mediante join la finalización del worker y cerró
+  el proceso con código de salida 0;
+* MultiPV 3 produjo tres variantes ordenadas en cada profundidad completada.
+
+Debug|x64:
+
+* la compilación finalizó correctamente;
+* cero errores de compilación;
+* PHILOCHESS.exe fue generado dentro de x64\Debug;
+* score, seldepth, nodes, PV y bestmove a profundidad fija coincidieron con
+  Release;
+* únicamente difirieron los valores esperados de time y nps;
+* la barrera IASC-A02 estuvo disponible y se comportó de forma determinista.
+
+Verificación IASC-A02 en Debug:
+
+* la barrera comenzó desarmada, no alcanzada y no liberada;
+* la barrera se armó correctamente;
+* la búsqueda de profundidad 1 alcanzó la primera entrada en quietud;
+* searchstate informó un worker activo y joinable;
+* stop fue recibido mientras el worker permanecía retenido en la barrera;
+* no se emitió ninguna línea de profundidad incompleta ni un bestmove
+  prematuro;
+* la liberación de la barrera permitió propagar la cancelación;
+* la iteración incompleta de profundidad 1 fue descartada;
+* el bestmove legal de respaldo b1c3 fue emitido exactamente una vez;
+* el estado final informó un worker inactivo y unido.
+
+Regresión histórica:
+
+El inventario integrado de reglas de tablas se ejecutó tanto en Release como en
+Debug.
+
+Cada compilación completó los ocho bloques con:
+
+* Bloque 1: 8/8 superadas;
+* Bloque 2: 8/8 superadas;
+* Bloque 3: 8/8 superadas;
+* Bloque 4: 8/8 superadas;
+* Bloque 5: 8/8 superadas;
+* Bloque 6: 8/8 superadas;
+* Bloque 7: 8/8 superadas;
+* Bloque 8: 8/8 superadas.
+
+Resultado final:
+
+TOTAL: 64/64 passed
+Inventory structure: PASS
+DRAW-RULE INTEGRATION INVENTORY: PASS
+
+La prueba de cierre del Bloque 8 ejecuta silenciosamente las baterías históricas
+heredadas de:
+
+* movilidad;
+* tablas pieza-casilla;
+* búsqueda de quietud;
+* profundización iterativa;
+* variante principal;
+* gestión del tiempo;
+* ordenamiento de jugadas;
+* posiciones perft conocidas;
+* regresión táctica;
+* ahogado;
+* posiciones muertas y transiciones;
+* regla de cincuenta jugadas;
+* triple repetición;
+* clasificación del inventario general.
+
+La clasificación histórica permaneció con 0 FAIL.
+
+El comando explícito:
+
+perftknown 4
+
+también completó las seis posiciones reservadas hasta profundidad 4 con:
+
+24/24 passed
+
+Esto incluyó el resultado exacto de Kiwipete a profundidad 4:
+
+4085603
+
+No se detectó ninguna regresión de generación de jugadas, legalidad, jugadas
+especiales ni perft.
+
+Validación en interfaces gráficas externas:
+
+Myracle:
+
+* El ejecutable Release se registró como PHILOCHESS 0.3-alpha-002.
+* El análisis comenzó y se detuvo normalmente.
+* La vista Output normal mostró profundidad, evaluación, tiempo, nodos, nps y
+  variantes.
+* Con Diagnostics desactivado, no se acumuló telemetría técnica de búsqueda en
+  la vista Strings.
+* La vista de protocolo Debug mostró el tráfico normal position, go infinite,
+  info, stop y un único bestmove.
+* Al activar Diagnostics reapareció la información técnica esperada.
+* Al desactivar Diagnostics se restauró la presentación normal limpia.
+
+ChessBase Reader 2017:
+
+* El ejecutable Release se registró correctamente.
+* El FEN auténtico de Kiwipete terminado en “0 0” fue aceptado.
+* El tablero se reconstruyó correctamente.
+* El motor generó variantes de análisis con normalidad.
+* El FEN FIX de IASC-A06 quedó así validado en la interfaz gráfica que motivó su
+  implementación original.
+
+Paquete modular de fuentes entregado:
+
+PHILOCHESS_0.3-alpha-002_Engine_Modularization_and_Interface_Separation.zip
+
+SHA-256:
+
+c9da575ee47d59bcc5cd884434b734fb27ccc6d2ac5fc9f67c4b724d9f3606ff
+
+Esta huella identifica el archivo modular de fuentes entregado.
+
+Validación práctica mediante partidas — Myracle Chess GUI
+
+Como complemento cualitativo de la validación, se disputaron cuatro partidas
+frente a Zoidberg 0.1 y Shallow Blue 2.0.0. Estas partidas constituyen material
+de observación y diagnóstico, no una medición estadística de fuerza.
+
+Condiciones:
+
+- control de tiempo: 900+10, equivalente a 15 minutos más 10 segundos por
+  jugada;
+- posición inicial normal;
+- ejecutable Release | x64;
+- sin libro de aperturas;
+- sin tablas Syzygy;
+- ponder desactivado;
+- adjudicación Full Balanced sin tablebases;
+- una partida con cada color contra cada rival.
+
+Resultados:
+
+- PHILOCHESS 0.3-alpha-002 vs. Zoidberg 0.1: 0-1;
+- Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-002: 1-0;
+- PHILOCHESS 0.3-alpha-002 vs. Shallow Blue 2.0.0: 1/2-1/2;
+- Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-002: 1/2-1/2.
+
+Resultado acumulado:
+
+- vs. Zoidberg 0.1: 0/2;
+- vs. Shallow Blue 2.0.0: 1.0/2;
+- total: 1.0/4.
+
+Observaciones de las partidas:
+
+1. PHILOCHESS 0.3-alpha-002 vs. Zoidberg 0.1
+
+Desde la apertura, PHILOCHESS obtuvo una posición plenamente jugable, sin
+defectos estructurales ni problemas serios de coordinación. El punto de
+inflexión llegó con 17.exd5, cambio que permitió a Zoidberg transformar el
+centro en una fuente duradera de iniciativa, ganar espacio y restringir las
+piezas blancas. Con 18.g4, PHILOCHESS atendió el flanco de rey cuando la
+verdadera urgencia era impedir el ataque doble en d4. A partir de ese momento,
+Zoidberg coordinó mejor sus fuerzas y convirtió la superioridad central en
+presión directa sobre el rey. PHILOCHESS reconoció el peligro solo después de
+que este se materializara, lo que revela una dificultad para anticipar
+amenazas forzantes. En la fase posterior buscó soluciones locales y ganancias
+materiales, mientras su rival explotaba con mayor eficacia la actividad de las
+piezas, la coordinación y la vulnerabilidad de las filas posteriores.
+
+2. Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-002
+
+Con 9...Qd4, PHILOCHESS aceptó entregar la calidad a cambio de acelerar el
+desarrollo y reforzar su control del centro y del flanco de dama. La
+compensación permitía sostener una posición dinámica, aunque 17...Ng4 resultó
+imprecisa. El enroque habría permitido consolidar mejor la coordinación de las
+piezas. En la jugada 19 apareció además una secuencia táctica que ofrecía
+buenas posibilidades de recuperación, pero PHILOCHESS no llegó a detectarla,
+probablemente porque exigía una mayor profundidad de cálculo. Después de
+22.Bxb4 y 23.Qxa7, Zoidberg ganó el peón de a7, pero las negras aprovecharon
+esos tiempos para estabilizar su posición y alcanzar una clara superioridad
+gracias a su peligroso peón pasado. La ventaja se desvaneció con 26...Bh3, que
+permitió eliminar ese peón, hasta entonces el principal elemento dinámico de
+la posición negra. A partir de allí, la partida volvió al equilibrio, aunque
+poco a poco Zoidberg mostró una comprensión más fina del prefinal, mejoró la
+coordinación de sus piezas y fue creando nuevas dificultades en el flanco de
+dama.
+
+3. PHILOCHESS 0.3-alpha-002 vs. Shallow Blue 2.0.0
+
+En comparación con su versión antecesora, PHILOCHESS manejó mejor el flanco de
+rey y, con 14.g5, cerró correctamente el sector, evitando los cambios en h5
+que antes habían facilitado la incorporación de la torre y el caballo rivales
+al ataque. Los errores 15...c5 y 16...c4 permitieron a las blancas reorganizar
+sus piezas, ganar espacio y alcanzar una clara superioridad posicional. La
+conversión, sin embargo, volvió a ser irregular, y PHILOCHESS dejó escapar
+parte de su ventaja antes de recuperar el control gracias a nuevas
+imprecisiones de Shallow Blue. En el final, la posición blanca era
+objetivamente ganadora, pero 61.Kd2 alejó al rey del peligroso peón de h4.
+Shallow Blue entregó entonces la torre en g4 para despejar el camino de ese
+peón, transformando de inmediato una posición perdida en una posición
+ganadora. PHILOCHESS reaccionó con gran precisión práctica y recurrió a 
+una maniobra de repetición. Shallow Blue no advirtió que aún podía ganar 
+y permitió que se consumara la triple repetición, con lo que PHILOCHESS 
+salvó medio punto después de haber pasado, en pocas jugadas, de ganado 
+a perdido.
+
+4. Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-002
+
+Frente a Shallow Blue, PHILOCHESS alcanzó el mismo prefinal que su versión
+antecesora había disputado contra este rival, pero esta vez lo condujo con
+mayor actividad y mejor coordinación. En lugar de limitarse a una defensa
+pasiva, activó sus piezas y simplificó hacia un final de torres en el que
+consiguió mantener el equilibrio. La reducción progresiva del material
+desembocó en un final técnicamente delicado, con un peón pasado blanco como
+principal fuente de peligro. En los últimos tramos, PHILOCHESS tuvo que
+encontrar varias jugadas prácticamente únicas para conservar las tablas y
+evitar la promoción. Su rey se acercó en el momento oportuno, colaboró con la
+torre y controló las casillas críticas. Syzygy confirmó que esa fase
+era matemáticamente tablas, aunque PHILOCHESS disputó toda la partida sin
+tablebases. Tras el cambio de torres, el rey negro capturó el último peón. 
+La partida terminó con los dos reyes solitarios sobre el tablero y culminó así 
+una defensa técnicamente correcta y notablemente más activa que la de su 
+versión anterior.
+
+Estos resultados prácticos no alteran la aceptación técnica de alpha-002 
+y se conservan como evidencia diagnóstica para los desarrollos posteriores 
+de búsqueda y evaluación.
+
+Dado que alpha-002 no introdujo ningún cambio intencional en la búsqueda
+ni en la evaluación, las diferencias observadas con respecto a las partidas
+de alpha-001 se interpretan como variaciones propias de ejecuciones distintas,
+no como evidencia de un aumento de la fuerza de juego derivado de la 
+modularización.
+
+Limitaciones conocidas y objetivos excluidos deliberadamente:
+
+* La fuerza de búsqueda permanece intencionadamente equivalente a alpha-001.
+* Las limitaciones de evaluación heredadas de alpha-001 no han cambiado.
+* La política conservadora heredada de gestión del tiempo no ha cambiado.
+* El motor continúa siendo internamente monohilo, aparte de la concurrencia
+  entre UCI y el control de búsqueda.
+* Todavía no existe infraestructura de tabla de transposición ni de búsqueda
+  selectiva moderna.
+* Los comandos técnicos de desarrollo continúan disponibles mediante solicitud
+  explícita.
+* Los hooks de prueba IASC permanecen limitados a Debug y excluidos de Release.
+* Alpha-002 no pretende formular conclusiones estadísticas de fuerza de juego.
+* La medición reproducible de rendimiento, el perfilado y el análisis
+  estadístico de partidas quedan reservados para alpha-003.
+
+Conclusión:
+
+PHILOCHESS 0.3-alpha-002 — Modularización del motor y separación de interfaces
+fue implementado, validado y aceptado satisfactoriamente.
+
+PHILOCHESS dispone ahora de:
+
+* una estructura modular coherente de fuentes;
+* propiedad explícita de las responsabilidades del motor;
+* dirección controlada de dependencias;
+* interfaces productivas separadas de las interfaces de prueba;
+* lógica de búsqueda independiente del formateo UCI;
+* diagnósticos independientes de la emisión UCI;
+* reporte UCI normal serializado;
+* salida limpia de análisis normal de forma predeterminada;
+* diagnósticos técnicos opcionales;
+* conservación de las capacidades de desarrollo y regresión;
+* una solución de Visual Studio preparada para Release y Debug;
+* conservación de la compatibilidad IASC-A06;
+* hooks IASC-A02 aislados y exclusivos de Debug;
+* conservación de FixedDepth, MoveTime, ClockTime e Infinite;
+* conservación de MultiPV, PV, stop, isready, quit y bestmove;
+* conservación del comportamiento de terminales y reglas de tablas;
+* conservación de las decisiones ajedrecísticas y resultados de búsqueda;
+* paridad semántica Release/Debug en los contratos relevantes;
+* regresión histórica completa con 0 FAIL;
+* validación satisfactoria en Myracle;
+* validación satisfactoria en ChessBase Reader 2017.
+
+No se detectó ninguna anomalía funcional, desviación de resultados de búsqueda,
+regresión de legalidad, regresión de reglas de tablas ni regresión de control de
+búsqueda UCI.
+
+La separación entre el canal UCI normal y los diagnósticos internos también
+elimina la acumulación innecesaria de mensajes técnicos info string durante el
+análisis ordinario en Myracle, conservando al mismo tiempo esa telemetría para
+el desarrollo.
+
+PHILOCHESS juega esencialmente como jugaba alpha-001, pero su arquitectura 
+interna es considerablemente más limpia, mantenible, comprobable y mejor 
+preparada para los desarrollos posteriores.
+
+La transformación arquitectónica ha establecido una línea base estable desde la
+cual podrán medirse el rendimiento y los resultados de partidas sin confundir
+los cambios estructurales con cambios de fuerza de búsqueda.
+
+Por tanto, PHILOCHESS 0.3-alpha-002 se considera desarrollado, validado,
+aceptado y cerrado satisfactoriamente.
+
+La siguiente versión planificada es:
+
+PHILOCHESS 0.3-alpha-003 — Evaluación reproducible del rendimiento, perfilado 
+y análisis estadístico de enfrentamientos
