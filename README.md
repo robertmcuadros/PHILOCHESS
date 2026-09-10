@@ -70,7 +70,7 @@ The latest version, PHILOCHESS 0.3-alpha-002, completes the Engine Modularizatio
 
 | Version | Milestone |
 |---|---|
-| 0.3-alpha-001 | Concurrent UCI infinite analysis, stop control, and iterative search reporting |
+| 0.3-alpha-001 | Concurrent UCI infinite-analysis implementation, stop control, and iterative search reporting |
 | 0.3-alpha-002 | Engine modularization, component separation, and explicit interface definition |
 
 ## Acknowledgments
