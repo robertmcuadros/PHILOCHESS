@@ -1,0 +1,46 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.09.08"]
+[Round "1"]
+[White "PHILOCHESS 0.3-alpha-002"]
+[Black "Zoidberg 0.1"]
+[Result "0-1"]
+[TimeControl "900+10"]
+[WhiteElo "1200"]
+[BlackElo "1665"]
+[Time "16:05:22"]
+[ECO "B46"]
+[Opening "Sicilian Defense: Taimanov Variation"]
+[Termination "black wins by adjudication"]
+
+1. Nc3 a6 2. Nf3 c5 3. e4 e6 4. d4 cxd4 5. Nxd4 Nc6 6. Nxc6 bxc6 7. Be3 Rb8 
+8. Rb1 Qf6 9. Bd4 e5 10. Be3 Qg6 11. f4 Nf6 12. f5 Qg4 13. Qxg4 Nxg4 14. Ba7 Ra8 
+15. h3 Nf6 16. Be3 d5 17. exd5 cxd5 18. g4 d4 19. Bg2 Rb8 20. g5 Nd7 21. Nd5 dxe3 
+22. Nxe3 Bb4+ 23. Kf2 Bc5 24. c3 Nb6 25. Bc6+ Kd8 26. b4 Bxe3+ 27. Kxe3 Bxf5 28. Rbd1+ Ke7 
+29. Be4 Be6 30. Bd3 Nd5+ 31. Kd2 Rhd8 32. Rhe1 f6 33. gxf6+ gxf6 34. Rg1 Nf4 35. Ke3 Rbc8 
+36. Bxa6 Rxc3+ 37. Kf2 Nxh3+ 38. Ke2 Nxg1+ 39. Rxg1 Ra3 40. Bb5 Rd4 41. Rg7+ Kd6 42. Rxh7 Rxb4 
+43. Rh6 Rxa2+ 44. Ke3 Rxb5 45. Rxf6 Rb3+ 46. Ke4 0-1
+
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.09.08"]
+[Round "2"]
+[White "Zoidberg 0.1"]
+[Black "PHILOCHESS 0.3-alpha-002"]
+[Result "1-0"]
+[TimeControl "900+10"]
+[WhiteElo "1665"]
+[BlackElo "1200"]
+[Time "16:32:16"]
+[ECO "D20"]
+[Opening "Queen's Gambit Accepted"]
+[Termination "white wins by adjudication"]
+
+1. d4 d5 2. c4 dxc4 3. Nf3 Be6 4. Na3 c6 5. Qc2 b5 6. g3 Nf6 7. Bf4 Qd5 
+8. Bg2 b4 9. Nh4 Qxd4 10. Nb5 cxb5 11. Bxa8 Nbd7 12. Rd1 Qb6 13. Be3 Qa5 14. b3 g6 
+15. Bc6 Bg7 16. Nf3 Bf5 17. Qc1 Ng4 18. O-O c3 19. Bc5 Ne5 20. Nxe5 Bxe5 21. Qe3 Bf6 
+22. Bxb4 Qxb4 23. Qxa7 O-O 24. Bxd7 e6 25. Qc7 c2 26. Rde1 Bh3 27. Qxc2 Bxf1 28. Kxf1 Rd8 
+29. Rd1 Bc3 30. Rd3 Bf6 31. h3 g5 32. Qc7 Ra8 33. a4 bxa4 34. bxa4 Qb1+ 35. Kg2 Qb4 
+36. Rf3 Be7 37. Qe5 Rd8 38. Bc6 Qc5 39. Qxc5 Bxc5 40. a5 Rc8 41. Bb7 Rb8 42. a6 Rd8 
+43. Rb3 f5 44. Rc3 Bd4 45. Rd3 e5 46. e3 h5 47. exd4 e4 48. Rd1 g4 49. a7 Kf7 
+50. Rc1 e3 51. fxe3 gxh3+ 52. Kxh3 f4 53. Bc8 fxe3 1-0

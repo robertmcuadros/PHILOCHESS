@@ -1,0 +1,55 @@
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.09.08"]
+[Round "1"]
+[White "PHILOCHESS 0.3-alpha-002"]
+[Black "Shallow Blue 2.0.0"]
+[Result "1/2-1/2"]
+[TimeControl "900+10"]
+[WhiteElo "1200"]
+[BlackElo "1617"]
+[Time "23:19:08"]
+[ECO "A00"]
+[Opening "Van Geet Opening"]
+[Termination "draw by three-fold repetition"]
+
+1. Nc3 Nf6 2. Nf3 d5 3. d4 e6 4. Bf4 Bb4 5. Nd2 Nh5 6. Be5 Nc6 7. e3 Bxc3 
+8. bxc3 Nxe5 9. dxe5 g6 10. g4 Ng7 11. Bd3 Qg5 12. f4 Qh4+ 13. Kf1 h5 14. g5 Qh3+ 
+15. Kf2 c5 16. Nf3 c4 17. Bf1 Qf5 18. Bg2 d4 19. Nxd4 Qg4 20. Nb5 Qh4+ 21. Kg1 O-O 
+22. Na3 Nf5 23. Nxc4 Rb8 24. Qd3 Qg4 25. h3 Qg3 26. e4 Qxd3 27. cxd3 Ng3 28. Rh2 b5 
+29. Nd6 Ne2+ 30. Kf2 Nxc3 31. a3 a5 32. Bf3 Bd7 33. Ke3 Rfd8 34. Rc2 b4 35. axb4 axb4 
+36. Ra7 h4 37. Rb2 Na4 38. Rb3 Nc5 39. Rb1 Ra8 40. Rxa8 Rxa8 41. Rxb4 Ra3 42. Be2 Kf8 
+43. Rc4 Na4 44. Rc7 Nb6 45. Rb7 Rb3 46. Kf2 Rb2 47. Kf3 Kg8 48. Kf2 Kf8 49. Kf3 Kg8 
+50. Ra7 Rc2 51. Ke3 Rc3 52. Bd1 Rc1 53. Kd2 Rc6 54. Rb7 Bc8 55. Rxb6 Rxb6 56. Nxc8 Rb2+ 
+57. Ke3 Kf8 58. Nd6 Ke7 59. d4 Rg2 60. Bg4 Rg3+ 61. Kd2 Rxg4 62. Nc8+ Kd8 63. Nd6 Ke7 
+64. Nc8+ Kd8 65. Nd6 Ke7 1/2-1/2
+
+[Event "Test Game"]
+[Site "Myracle GUI"]
+[Date "2026.09.09"]
+[Round "2"]
+[White "Shallow Blue 2.0.0"]
+[Black "PHILOCHESS 0.3 alpha 002"]
+[Result "1/2-1/2"]
+[TimeControl "900+10"]
+[WhiteElo "1617"]
+[BlackElo "1200"]
+[Time "01:11:22"]
+[ECO "B00"]
+[Opening "Nimzowitsch Defense: Scandinavian Variation, Advance Variation"]
+[Termination "draw by dead position"]
+
+1. e4 Nc6 2. d4 d5 3. e5 e6 4. Nf3 Bb4+ 5. Nc3 Nge7 6. Qd3 O-O 7. a3 Bxc3+ 
+8. Qxc3 Bd7 9. Bd3 f6 10. O-O fxe5 11. dxe5 Qe8 12. Re1 Qh5 13. Bd2 Ng6 14. Ng5 h6 
+15. Be2 Qh4 16. Nf3 Qh5 17. Qb3 Ngxe5 18. Qxb7 Qf5 19. Qxc7 Rac8 20. Qd6 Qxc2 21. Be3 Qxb2 
+22. Rab1 Nxf3+ 23. gxf3 Qe5 24. Qxd7 Rc7 25. f4 Rxd7 26. fxe5 d4 27. Bg4 dxe3 28. Bxe6+ Kh8 
+29. Rxe3 Re7 30. Bd5 Nxe5 31. Rbe1 Rfe8 32. h4 g5 33. hxg5 hxg5 34. a4 Kg7 35. Kf1 Kf6 
+36. Rc1 Rb8 37. Rh3 g4 38. Rh6+ Kg5 39. Ra6 Nd3 40. Rd1 Nf4 41. Bc4 Rb4 42. Bb5 Rh7 
+43. Kg1 Rb2 44. Bf1 Rc7 45. Rd4 Rf7 46. Ra5+ Kg6 47. Rd6+ Kh7 48. Rg5 Nh3+ 49. Bxh3 gxh3 
+50. Rh5+ Kg7 51. Rxh3 Rbxf2 52. Rg3+ Kf8 53. Rd8+ Ke7 54. Ra8 Rf1+ 55. Kh2 R1f2+ 56. Kh1 Ke6 
+57. Rg6+ Ke5 58. Re8+ Kf5 59. Rc6 Ra2 60. Ra6 Rg7 61. Re1 Rh7+ 62. Kg1 Rg7+ 63. Kf1 Rh7 
+64. Re2 Ra1+ 65. Kg2 Rg7+ 66. Kf3 Rf1+ 67. Ke3 Re7+ 68. Kd2 Rd7+ 69. Kc2 Rc7+ 70. Kb2 Rb7+ 
+71. Ka2 Rc1 72. Rb2 Rxb2+ 73. Kxb2 Rc7 74. Kb3 Ke5 75. Kb4 Kd4 76. Rd6+ Ke4 77. Kb5 Rb7+ 
+78. Ka6 Rc7 79. Rd8 Ke5 80. Ra8 Rc4 81. a5 Rc6+ 82. Kxa7 Rc2 83. a6 Kd6 84. Kb6 Rb2+ 
+85. Ka5 Kc6 86. Rc8+ Kd7 87. Rc4 Ra2+ 88. Ra4 Rxa4+ 89. Kxa4 Kc8 90. Kb5 Kb8 91. Kb4 Ka8 
+92. Ka4 Kb8 93. Kb5 Ka8 94. Kc5 Ka7 95. Kd5 Kxa6 1/2-1/2
