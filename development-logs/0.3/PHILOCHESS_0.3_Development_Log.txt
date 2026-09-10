@@ -1,0 +1,1434 @@
+===============================================================================
+PHILOCHESS 0.3 DEVELOPMENT LOG
+===============================================================================
+
+Author and copyright holder: Robert M. Cuadros
+Copyright © 2026 Robert M. Cuadros. Some rights reserved.
+
+This document is licensed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License
+(CC BY-NC-ND 4.0).
+
+When sharing this document under the license, you must give appropriate credit
+to Robert M. Cuadros, use it only for non-commercial purposes, and not
+distribute adapted versions.
+
+Preferred attribution:
+“PHILOCHESS 0.3 Development Log — Robert M. Cuadros”
+
+This copyright notice, attribution and license reference must be retained in
+every shared copy.
+
+Project repository:
+https://github.com/robertmcuadros/PHILOCHESS
+
+License:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+===============================================================================
+
+Date: September 8, 2026
+
+PHILOCHESS 0.3-alpha-001 — UCI Infinite Analysis and Search Control
+
+Implemented true UCI Infinite analysis and concurrent search control in
+PHILOCHESS.
+
+Technical milestone:
+
+PHILOCHESS can now keep an Infinite search active until an external stop or
+quit command is received, while the UCI command loop remains responsive.
+
+The engine can process stop, isready, and quit while search work is active,
+preserve the last fully completed iteration, discard incomplete work safely,
+and close the search worker without leaving residual output or active work.
+
+This is the first version of the PHILOCHESS 0.3 development cycle.
+
+It builds directly on the validated and closed
+PHILOCHESS 0.2-alpha-013 — Draw-Rule Integration and Cross-Rule Regression
+without modifying that closed version.
+
+Baseline problem:
+
+PHILOCHESS 0.2-alpha-013 recognised the UCI token:
+
+go infinite
+
+but did not yet implement its full semantics.
+
+The inherited SearchLimits state retained:
+
+SEARCH_DEFAULT_DEPTH = 1
+
+as the effective depth ceiling when Infinite was requested without another
+authoritative finite limit.
+
+The observable baseline behaviour was therefore:
+
+info string go limits depth 1 infinite
+info depth 1 ...
+bestmove ...
+
+The search ended automatically after depth 1. Because go was processed
+synchronously, the UCI loop could not process stop, isready, or quit while the
+search was still active.
+
+The alpha-001 baseline inventory confirmed:
+
+- 63 baseline-applicable tests executed;
+- 26 expected PASS results confirmed;
+- 36 expected FAIL results confirmed;
+- one complete differential oracle frozen in IASC-R03.
+
+The failures were intentional baseline evidence, not unexpected defects in the
+test procedure. They defined the contracts that alpha-001 had to satisfy.
+
+Alpha-001 preserves the validated PHILOCHESS 0.2 baseline, including:
+
+- legal move generation and move application;
+- FEN loading and all special chess moves;
+- check, checkmate, and stalemate handling;
+- dead-position recognition within the validated alpha-010 scope;
+- threefold- and fivefold-repetition handling;
+- fifty- and seventy-five-move-rule handling;
+- UCI position-history reconstruction and replacement;
+- material evaluation;
+- PHILOCHESS PST v1;
+- PHILOCHESS Mobility v1;
+- phase calculation and king-table interpolation;
+- alpha-beta search;
+- quiescence search;
+- iterative deepening;
+- complete principal-variation construction;
+- iterative UCI information reporting;
+- UCI mate-score reporting;
+- PV-move priority;
+- promotion priority and MVV-LVA capture ordering;
+- inherited soft and hard time limits;
+- FixedDepth, MoveTime, and ClockTime search modes;
+- safe rejection of interrupted iterations;
+- the established PHILOCHESS 0.2 regression and legality baselines.
+
+These inherited capabilities were subsequently rechecked through the complete
+historical Release regression battery described below.
+
+New alpha-001 functionality:
+
+- Added true Infinite as an effective search mode.
+- Removed the inherited depth-1 termination behaviour from go infinite.
+- Infinite now continues iterative deepening until an external termination
+  command is received.
+- Added functional precedence of Infinite over finite depth, movetime, and
+  clock data when the same go command contains the infinite token.
+- Preserved FixedDepth as an authoritative finite-depth mode.
+- Preserved MoveTime as an autonomous fixed-time mode.
+- Preserved ClockTime with side-to-move clock and increment selection.
+- Kept finite search modes able to terminate without requiring stop.
+- Separated active search work from UCI input processing.
+- Kept stdin responsive while search work is running.
+- Added concurrent processing of isready during active search.
+- Added concurrent processing of stop during active search.
+- Added concurrent processing of quit during active search.
+- Added cooperative cancellation of active search work.
+- Propagated stop handling through normal alpha-beta search.
+- Propagated stop handling through quiescence search.
+- Preserved only fully completed iterative-deepening results.
+- Prevented an interrupted iteration from replacing the committed depth,
+  score, PV, or bestmove.
+- Added a legal fallback move for interruption before the first iteration is
+  completed.
+- Ensured exactly one bestmove response for each completed or stopped go.
+- Made inactive and repeated stop commands safe and non-productive.
+- Prevented an old stop request from propagating into a later search.
+- Isolated search output, state, root position, and history between successive
+  go commands.
+- Preserved draw-rule state and diagnostics across the new concurrent search
+  controller.
+- Added clean worker retirement after stop and after finite-mode completion.
+- Added clean worker cancellation and process closure on quit.
+- Preserved semantic parity between Release and Debug builds.
+- Preserved UCI depth, seldepth, score, nodes, time, nps, PV, and bestmove
+  reporting contracts for completed iterations.
+- Updated UCI identification to:
+  id name PHILOCHESS 0.3-alpha-001
+- Preserved the author identification:
+  id author Robert M. Cuadros
+- Exposed the existing MultiPV UCI option:
+  option name MultiPV type spin default 1 min 1 max 16
+
+Effective search modes:
+
+Infinite
+    No automatic depth or time termination.
+    Ends through stop or quit, except for roots that are already terminal under
+    the engine's established chess-rule contracts.
+
+FixedDepth
+    Ends after completing the explicitly requested depth.
+
+MoveTime
+    Ends according to the requested fixed time budget.
+
+ClockTime
+    Ends according to the inherited budget calculated from the clock and
+    increment of the side to move.
+
+Infinite precedence:
+
+Commands such as:
+
+go wtime 1000 btime 1000 winc 0 binc 0 movestogo 10 infinite
+
+and:
+
+go depth 2 movetime 100 infinite
+
+are treated as Infinite searches.
+
+The finite values may remain available for diagnostic reporting, but they do
+not become automatic termination causes for that invocation.
+
+Search-control contract:
+
+A completed iteration is the atomic public search result.
+
+If depth k is the last fully completed iteration and stop interrupts depth
+k + 1:
+
+- depth k + 1 is discarded as incomplete;
+- the score from depth k is preserved;
+- the principal variation from depth k is preserved;
+- bestmove is derived from the last committed result;
+- no partial depth-k+1 information is published as a completed iteration.
+
+The final implementation reports active interruption through diagnostics such
+as:
+
+info string external stop request observed
+info string discarded incomplete iteration at depth N
+
+These diagnostics make the interruption path observable without changing the
+UCI bestmove contract.
+
+UCI concurrency:
+
+The UCI loop remains responsive during active search.
+
+An isready command sent while Infinite is running receives:
+
+readyok
+
+without terminating or restarting the active search.
+
+The same go continues deepening after readyok.
+
+Stop terminates the active search and produces exactly one bestmove.
+
+Quit can terminate the process while Infinite work is still active; it is not
+necessary to send stop first.
+
+Alpha-001 validation inventory:
+
+A dedicated inventory of 64 tests was designed and executed in eight blocks:
+
+Block 1 — go Interpretation and Limit Selection
+8 tests
+
+Block 2 — Iterative Deepening in Infinite Mode
+8 tests
+
+Block 3 — Stop, Safe Interruption, and bestmove
+8 tests
+
+Block 4 — UCI Information, Depth, Score, and PV
+8 tests
+
+Block 5 — Concurrency, Successive Searches, and State
+8 tests
+
+Block 6 — Finite Modes and Metamorphic Equivalences
+8 tests
+
+Block 7 — Edge Cases, Adversarial Cases, and Interfaces
+8 tests
+
+Block 8 — Reserved Tests, Regression, and Acceptance
+8 tests
+
+Total:
+64 tests
+
+Final candidate result:
+
+Block 1: 8/8 PASS
+Block 2: 8/8 PASS
+Block 3: 8/8 PASS
+Block 4: 8/8 PASS
+Block 5: 8/8 PASS
+Block 6: 8/8 PASS
+Block 7: 8/8 PASS
+Block 8: 8/8 PASS
+
+TOTAL: 64/64 PASS
+FAIL: 0
+Candidate status: ACCEPTED
+
+The final 64/64 result was obtained on one frozen candidate revision.
+
+Validation highlights:
+
+1. Infinite continuity
+
+PHILOCHESS completed successive depths during go infinite and remained active
+until stop.
+
+The implementation was verified on ordinary, quiet, tactical, high-branching,
+forced-move, mating, and reserved positions.
+
+Stable PV or a known mate did not replace the external stop contract.
+
+2. Safe interruption
+
+Stop was exercised:
+
+- after completed iterations;
+- during an incomplete normal alpha-beta iteration;
+- during extensive quiescence;
+- immediately after go;
+- with no active search;
+- repeatedly after the search had already closed.
+
+The completed result was preserved and exactly one legal bestmove was produced
+when applicable.
+
+Stop response remained within the bounded acceptance criterion defined by the
+test inventory.
+
+3. Concurrent readiness
+
+isready was transmitted while Infinite was active.
+
+The final acceptance sequence received readyok promptly within the acceptance
+criterion, and the active search then continued before stop.
+
+This confirmed that readyok reports engine availability without acting as a
+search barrier.
+
+4. UCI information integrity
+
+The inventory verified:
+
+- distinct depth and seldepth meanings;
+- non-decreasing accumulated nodes and time;
+- arithmetic consistency of nps;
+- score perspective based on the side to move;
+- complete PV legality;
+- valid mate-distance reporting;
+- consistency between the final completed PV and bestmove;
+- exclusion of information from discarded iterations.
+
+5. Successive-search isolation
+
+Successive searches were verified to keep separate:
+
+- root positions;
+- UCI histories;
+- stop state;
+- search statistics;
+- PV and bestmove output;
+- draw causes and diagnostics.
+
+No output from a closed search was allowed to leak into the next go interval.
+
+6. Finite-mode preservation
+
+FixedDepth, MoveTime, and ClockTime retained their established meaning under the
+new concurrent search lifecycle.
+
+Inherited MoveTime and ClockTime budget calculations were preserved.
+
+Equivalent parameter orderings produced the same effective budgets, and clock
+selection continued to depend on the side to move.
+
+7. Reserved search and inherited-regression validation
+
+The reserved Block 8 was not used to define the implementation.
+
+IASC-R01 verified Infinite on a reserved canonical root.
+
+IASC-R02 preserved the established draw-rule behaviour across five independent
+roots, including threefold repetition, the fifty-move rule, simultaneous
+fivefold/seventy-five-move conditions, dead position, and stalemate.
+
+IASC-R03 performed a differential comparison against the frozen
+PHILOCHESS 0.2-alpha-013 executable.
+
+For the tested roots, alpha-001 preserved the deterministic inherited search
+semantics used by the oracle, including completed depths, seldepth, nodes,
+score, PV, bestmove, and diagnostic counters.
+
+Timing fields were excluded from semantic equality where execution speed is not
+a deterministic property.
+
+IASC-R04 verified exact perft results on three roots and four depths:
+
+12/12 exact perft results passed.
+
+This protected legal move generation, make/unmake behaviour, special moves, and
+root restoration.
+
+IASC-R05 preserved inherited time-management budgets and automatic finite-mode
+termination.
+
+IASC-R06 confirmed semantic parity between Release and Debug for FixedDepth and
+stopped Infinite searches.
+
+Completed-iteration depth, seldepth, nodes, score, PV, and bestmove matched.
+
+Debug was substantially slower, as expected, but no functional divergence was
+detected.
+
+8. Worker lifecycle and clean closure
+
+A search worker was observable during active Infinite analysis.
+
+After stop, MoveTime completion, and FixedDepth completion, no residual search
+worker remained.
+
+Quit was sent directly while Infinite was active, and the process terminated
+cleanly without requiring a preceding stop.
+
+9. GUI compatibility
+
+PHILOCHESS 0.3-alpha-001 was exercised through:
+
+- ChessBase Reader 2017;
+- Myracle.
+
+The final tests confirmed stable engine operation, continuous analysis, legal
+search information, position replacement, and search isolation through the
+external interfaces.
+
+During the ChessBase Reader 2017 validation, the GUI supplied the authentic
+Kiwipete position with fullmove number 0. To preserve compatibility without
+relaxing the strict internal FEN parser, the UCI boundary was adjusted to
+normalize only the sixth FEN field from 0 to the standards-compliant value 1.
+This IASC-A06 compatibility fix did not alter the board position or the search
+algorithm.
+
+10. Rapid-cycle stability
+
+Twelve alternating go/stop cycles were executed.
+
+The odd cycles used immediate stop.
+
+The even cycles stopped after depth 1.
+
+All twelve cycles passed.
+
+No residual output appeared during the final observation interval.
+
+11. Final cross-regression acceptance
+
+IASC-R08 was opened only after tests 1 through 63 had all passed on the same
+frozen candidate.
+
+The final process exercised, in one sequence:
+
+- FixedDepth;
+- Infinite with concurrent isready;
+- stop during a later iteration;
+- ClockTime;
+- quit.
+
+FixedDepth respected its requested termination condition.
+
+Infinite remained active, answered isready without ending the search, continued
+deepening, discarded incomplete work after stop, and preserved the last fully
+completed result.
+
+ClockTime preserved the inherited budget semantics.
+
+The final quit closed the process cleanly without blocking.
+
+Final candidate fingerprint:
+
+SHA-256:
+C02779555EEDAC110642B2CCD14E8E829C9F1A470F916AF1AB8DD7B800300B90
+
+The SHA-256 value was identical before and after IASC-R08.
+
+This identifies the exact Release executable that completed the final
+acceptance sequence and confirms that the candidate binary did not change
+during the test.
+
+Historical Regression Validation — Release
+
+After the 64/64 IASC acceptance, the accepted Release executable was subjected
+to the complete historical PHILOCHESS 0.2 regression battery without
+recompilation.
+
+Results:
+
+- psttest: 8/8 passed;
+- mobilitytest: 64/64 passed;
+- qtest: 4/4 passed;
+- ordertest: 4/4 passed;
+- idtest 4: 4/4 passed;
+- pvtest 4: 4/4 passed;
+- timetest: 4/4 passed;
+- perftknown 4: 24/24 passed;
+- tactictest 4: all three expected tactical regression outcomes confirmed;
+- inventorytest 4: 45 PASS, 0 FAIL, 9 OPEN, 10 BASELINE, structure PASS;
+- stalematetest: 64/64 passed;
+- deadpositiontest: 64/64 roots and 10/10 transitions passed;
+- fiftymovetest: 64/64 passed;
+- threefoldtest: 64/64 passed;
+- drawruletest: 64/64 passed.
+
+The final draw-rule integration test also reconfirmed the inherited
+cross-regression of:
+
+- alpha-009 stalemate;
+- alpha-010 dead positions;
+- alpha-011 fifty-move rule;
+- alpha-012 threefold repetition;
+- the general PHILOCHESS 0.2 closure battery.
+
+The historical Release regression therefore reproduced the expected closed
+results of the PHILOCHESS 0.2 baseline with no FAIL result.
+
+The historical inventory retained its documented OPEN and BASELINE
+classifications exactly as designed; these classifications are not failures.
+
+Release was sufficient for this historical regression pass because the new
+alpha-001 search-control semantics had already been compared between Release
+and Debug in IASC-R06.
+
+Practical Match Validation — Myracle Chess GUI
+
+After formal alpha-001 acceptance and the historical Release regression, the
+accepted Release executable was subjected to four practical match games in
+Myracle Chess GUI v1.0 build 118.
+
+These games were practical diagnostic tests rather than acceptance-inventory
+cases. Their purpose was to observe PHILOCHESS under normal competitive
+conditions and identify chess-playing weaknesses that are outside the direct
+scope of UCI Infinite Analysis and Search Control.
+
+Opponents:
+
+- Zoidberg 0.1;
+- Shallow Blue 2.0.0.
+
+Conditions:
+
+- time control: 900+10, equivalent to 15 minutes plus 10 seconds per move;
+- normal initial position;
+- Release | x64 executable;
+- no opening book;
+- no Syzygy tablebases;
+- ponder disabled;
+- full balanced adjudication without tablebases;
+- one game with each color against each opponent.
+
+Results:
+
+- PHILOCHESS 0.3-alpha-001 vs. Zoidberg 0.1: 0-1;
+- Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-001: 1-0;
+- PHILOCHESS 0.3-alpha-001 vs. Shallow Blue 2.0.0: 0-1;
+- Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-001: 1-0.
+
+Aggregate result:
+
+- vs. Zoidberg 0.1: 0/2;
+- vs. Shallow Blue 2.0.0: 0/2;
+- total: 0/4.
+
+Game observations:
+
+1. PHILOCHESS 0.3-alpha-001 vs. Zoidberg 0.1
+
+PHILOCHESS emerged from the opening with a clearly favorable position
+based on better central control, more kingside space, and a lead in
+development. It did not convert those advantages into coordinated
+action. Its pieces were reasonably placed but did not work as a unit,
+while Zoidberg reorganized and reduced the pressure. PHILOCHESS also
+underestimated both the size of its initial advantage and the
+seriousness of the later deterioration, especially in the pawn
+structure. The defeat was therefore less the result of one isolated
+error than of difficulty coordinating the pieces, recognizing critical
+moments, and converting strategic superiority into concrete play.
+
+2. Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-001
+
+From the opening, PHILOCHESS came under pressure because its development
+did not harmonize with the demands of the center, allowing Zoidberg to
+establish an early advantage. The black position lost cohesion before
+development was completed. Although PHILOCHESS later penetrated with its
+rooks, the activity was not sufficiently supported by the rest of the
+army, while Zoidberg consolidated its material advantage. PHILOCHESS
+also underestimated the seriousness of its position for many moves.
+Once rook activity could no longer compensate for structural weaknesses
+and poor coordination, the ending became clearly favorable for White.
+The game exposed a recurring practical problem: PHILOCHESS can develop
+and activate pieces without always integrating them into a common plan.
+
+3. PHILOCHESS 0.3-alpha-001 vs. Shallow Blue 2.0.0
+
+Thanks to its central presence, PHILOCHESS obtained a promising position
+but weakened the kingside too early. The move 14.gxh5 allowed the
+opposing knight to join the attack decisively, whereas 14.g5, already
+played by an earlier PHILOCHESS version against the same opponent, kept
+the sector closed. The white king then became exposed and several pieces
+were forced into defensive duties. Shallow Blue gave back almost all of
+its advantage with 20...c5, allowing the knight to reach the strong d6
+square and giving PHILOCHESS good chances to reorganize. However,
+PHILOCHESS did not fully recognize that king safety remained the central
+problem. With 25.Nxe4 it restored material equality at the cost of
+allowing the bishop to join the attack. A final defensive opportunity
+was later missed. The game again showed that PHILOCHESS can find useful
+local resources without always evaluating the opponent’s coordination or 
+king-safety urgency correctly.
+
+4. Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-001
+
+Faced with a demanding opening, PHILOCHESS remained competitive despite
+some imprecisions, relying on activity in the center and on the
+kingside. On several occasions it could have sacrificed the exchange on
+f3 to open lines and obtain attacking chances, but instead preferred to
+retain material and seek activity with isolated pieces. After difficult
+middlegame phases, PHILOCHESS reached an objectively equal rook ending
+and held it for several moves. At that point the central issue was the
+coordination of rook, king, and pawns. The serious error 59...Rb1+ lost a
+valuable tempo that could have been used to bring the king toward the
+queenside and coordinate it with the rook against the opposing passed
+pawn. The later simplification led to a lost pawn ending and exposed
+insufficient understanding of when tactical activity must give way to
+defensive coordination.
+
+These practical results do not alter the 64/64 technical acceptance of
+alpha-001. Alpha-001 was designed to implement and validate UCI Infinite
+Analysis and Search Control, not to redesign chess evaluation or produce a
+direct playing-strength increase.
+
+The four games are retained as practical diagnostic evidence for later search
+and evaluation work in the PHILOCHESS 0.3 development cycle.
+
+Current limitations:
+
+- Alpha-001 changes UCI search control and concurrency; it does not directly
+  redesign the chess evaluation.
+- The inherited static evaluation remains based mainly on material,
+  PHILOCHESS PST v1, and PHILOCHESS Mobility v1.
+- King-safety evaluation remains limited.
+- Pawn-structure evaluation remains limited.
+- Passed-pawn, promotion-distance, and blockade evaluation remain limited.
+- Piece activity, coordination, and initiative remain only partially
+  represented.
+- Endgame-specific knowledge remains limited.
+- Practical match testing reinforced the need for stronger piece coordination,
+  king-safety awareness, evaluation of positional deterioration, and
+  king-rook-pawn coordination in endings.
+- No Zobrist hashing is implemented.
+- No transposition table is implemented.
+- No hash-move ordering is implemented.
+- No killer-move heuristic is implemented.
+- No history heuristic is implemented.
+- No aspiration windows are implemented.
+- No principal-variation search is implemented.
+- No static exchange evaluation or SEE-based pruning is implemented.
+- No late-move reductions are implemented.
+- Quiescence still requires later optimisation and selective-pruning work.
+- Time management remains the inherited conservative first implementation.
+- The engine source remains monolithic and is scheduled for modularisation in
+  the next alpha.
+
+Conclusion:
+
+PHILOCHESS 0.3-alpha-001 — UCI Infinite Analysis and Search Control was
+implemented, validated, and accepted successfully.
+
+PHILOCHESS passed:
+
+- true go infinite operation without a residual finite depth limit;
+- continuous iterative deepening until external termination;
+- concurrent isready processing during active search;
+- concurrent stop processing;
+- concurrent quit processing;
+- safe interruption inside normal search and quiescence;
+- preservation of the last fully completed iteration;
+- safe rejection of incomplete iterations;
+- legal fallback behaviour under immediate stop;
+- exactly one bestmove per completed or stopped go;
+- safe inactive and repeated stop handling;
+- complete isolation between successive searches;
+- preserved UCI position history and draw-rule state;
+- preserved FixedDepth operation;
+- preserved MoveTime operation;
+- preserved ClockTime operation;
+- preserved inherited soft and hard time budgets;
+- complete UCI depth, seldepth, score, nodes, time, nps, PV, and bestmove
+  reporting contracts;
+- preserved mate-score semantics;
+- exact perft regression on the reserved roots;
+- preserved inherited search and evaluation oracle against alpha-013;
+- complete historical PHILOCHESS 0.2 regression battery executed in Release;
+- preserved PST, mobility, quiescence, move ordering, iterative deepening,
+  principal variation, time management, known perft, tactical regression,
+  stalemate, dead-position, fifty-move, threefold-repetition, and integrated
+  draw-rule results;
+- preservation of the historical inventory classification with 0 FAIL;
+- Release/Debug semantic parity for the alpha-001 search-control behaviour;
+- worker retirement after every tested termination path;
+- clean quit during active Infinite search;
+- ChessBase Reader 2017 compatibility validation;
+- Myracle compatibility validation;
+- twelve rapid go/stop cycles without residual output;
+- all eight inventory blocks with 8/8 PASS;
+- final cumulative acceptance with 64/64 PASS and 0 FAIL.
+
+No functional anomaly or inherited regression was detected in either the
+64-case alpha-001 IASC inventory or the complete historical Release regression
+battery.
+
+The subsequent practical match score of 0/4 against Zoidberg 0.1 and
+Shallow Blue 2.0.0 is recorded as playing-strength diagnostic evidence and
+does not reopen the technical acceptance of alpha-001. The games identified
+concrete weaknesses for later search and evaluation work, particularly in
+coordination, king safety, positional urgency, and endgame coordination.
+
+Alpha-001 establishes the concurrency and search-control foundation required by
+the PHILOCHESS 0.3 development cycle.
+
+PHILOCHESS can now analyse continuously, remain responsive to the UCI
+controller while thinking, stop cooperatively, preserve only committed search
+results, and retire its search work cleanly.
+
+PHILOCHESS 0.3-alpha-001 is therefore considered successfully developed,
+validated, accepted, and closed.
+
+The next planned version is:
+
+PHILOCHESS 0.3-alpha-002 — Engine Modularization and Interface Separation
+
+===============================================================================
+
+Date: September 8, 2026
+
+PHILOCHESS 0.3-alpha-002 — Engine Modularization and Interface Separation
+
+The engine inherited from PHILOCHESS 0.3-alpha-001 was reorganized, moving
+from a monolithic source file to a modular structure with explicit
+responsibilities, dependency rules, and interfaces.
+
+Technical milestone:
+
+The chess engine, UCI protocol, search controller, diagnostics, tests, board
+representation, evaluation, rules, and search algorithms no longer belong to
+the same monolithic implementation unit.
+
+Each area now has a defined module and communicates with the others through
+explicit headers and interfaces.
+
+The architectural principle governing this version is:
+
+“Alpha-002 is an architectural transformation, not a search-strength
+transformation.”
+
+PHILOCHESS 0.3-alpha-002 therefore intentionally preserves the chess
+behaviour, search decisions, evaluation values, time-control semantics, draw
+rules, and UCI search-control contracts established and validated in
+alpha-001.
+
+No intentional playing-strength improvement was introduced.
+
+This is the second version of the PHILOCHESS 0.3 development cycle.
+
+It builds directly on the validated and closed version:
+
+PHILOCHESS 0.3-alpha-001 — UCI Infinite Analysis and Search Control
+
+without modifying that closed baseline.
+
+Baseline:
+
+The exact alpha-001 source used for the transformation has the following
+SHA-256 fingerprint:
+
+d30c8f7834bcbb777e6c898397fb434235acb85effb52f85d356b4c165ac1091
+
+That baseline already contained:
+
+* true Infinite analysis;
+* asynchronous UCI search control;
+* FixedDepth, MoveTime, ClockTime, and Infinite modes;
+* concurrent stop, isready, and quit processing;
+* complete principal-variation reporting;
+* MultiPV;
+* integrated draw-rule handling;
+* the IASC-A06 FEN FIX for compatibility with ChessBase Reader 2017;
+* the deterministic quiescence barrier used by the IASC-A02 tests.
+
+Alpha-002 preserved the functional FEN compatibility fix and isolated the
+IASC-A02 hooks as Debug-only test infrastructure.
+
+Scope of the transformation:
+
+* The monolithic engine was split into coherent implementation modules.
+* Explicit public headers were introduced for the main engine domains.
+* Permitted dependencies between modules were defined.
+* Direct UCI output was removed from the chess and search layers.
+* Normal UCI reporting was separated from internal diagnostic reporting.
+* Technical diagnostics were preserved for testing and development.
+* A UCI option was added to enable or disable technical diagnostics.
+* The asynchronous search worker introduced in alpha-001 was preserved.
+* All established search modes and time-control semantics were preserved.
+* The complete historical regression infrastructure and development commands
+  were preserved.
+* The Visual Studio project and filters were updated for the modular
+  structure.
+* Equivalent relevant behaviour was preserved between Release and Debug.
+* Deterministic test hooks were excluded from the production Release
+  executable.
+
+Modular source structure:
+
+src/core
+
+```
+Shared constants, enumerations, fundamental structures, and engine types.
+```
+
+src/chess
+
+```
+Position representation, strict FEN parsing, move representation, attack
+detection, pseudo-legal and legal move generation, move application,
+special moves, repetition keys, and reversible-history management.
+```
+
+src/evaluation
+
+```
+Material evaluation, PHILOCHESS PST v1, game-phase calculation, king-table
+interpolation, and PHILOCHESS Mobility v1.
+```
+
+src/rules
+
+```
+Terminal classification, checkmate, stalemate, dead-position recognition,
+fifty- and seventy-five-move rules, threefold and fivefold repetition, and
+precedence between simultaneous terminal causes.
+```
+
+src/search
+
+```
+Move ordering, quiescence search, alpha-beta, iterative deepening,
+principal-variation construction, MultiPV, completed-iteration handling,
+and search interruption.
+```
+
+src/uci
+
+```
+UCI command parsing, command dispatch, option handling, serialised output,
+worker ownership, asynchronous search control, stop, isready, quit, and
+publication of exactly one bestmove.
+```
+
+src/diagnostics
+
+```
+Technical diagnostic formatting, development commands, perft support,
+internal counters, and the optional IASC hook implementation.
+```
+
+src/tests
+
+```
+Historical test oracles, integration inventories, and regression batteries.
+```
+
+Visual Studio project structure:
+
+* PHILOCHESS.slnx opens the complete solution.
+* PHILOCHESS.vcxproj contains the modular compilation units and headers.
+* PHILOCHESS.vcxproj.filters presents the modules coherently in Solution
+  Explorer.
+* The project contains all 25/25 expected .cpp files.
+* The project contains all 20/20 expected .h files.
+* The root PHILOCHESS.cpp file is now a minimal entry point that starts the UCI
+  protocol loop.
+* Release|x64 preserves C++17 and the original optimisation configuration.
+* Debug|x64 preserves C++17 and enables PHILOCHESS_IASC_TEST_HOOKS.
+
+Dependency rule:
+
+The chess-domain layers do not know about UCI, diagnostics, or tests.
+
+The diagnostics module does not emit UCI output directly. It produces
+diagnostic data or formatted lines, and the UCI layer decides whether those
+lines may be sent.
+
+The resulting dependency direction is:
+
+* the core module depends only on the standard library;
+* the chess module depends on core;
+* the evaluation module depends on core and chess;
+* the rules module depends on core and chess;
+* the search module depends on core, chess, evaluation, and rules;
+* the diagnostics module may inspect the chess-domain interfaces;
+* UCI owns protocol interpretation and depends on the required engine
+  modules;
+* the tests module uses the expressly provided production and internal test
+  interfaces.
+
+Main board and rule interfaces:
+
+* Position.h exposes position and FEN operations without UCI dependencies.
+* MoveGeneration.h owns attacks, pseudo-legal moves, legal moves, and
+  makeMove.
+* MoveApplication.h applies validated UCI move text without writing to the
+  console.
+* Repetition.h contains repetition keys and reversible-history operations.
+* DrawRules.h exposes the production draw-rule classification used by search.
+* DrawRulesInternals.h exposes only the cache access required by the
+  historical tests; production search does not depend on it.
+
+Main search interfaces:
+
+* Search.h is the production search interface.
+* searchBestMove no longer writes UCI lines directly.
+* Completed iterations are communicated through the abstract
+  SearchIterationReporter interface.
+* SearchInternals.h contains the alpha-beta and quiescence access points
+  required by the historical tests.
+* SearchQuiescenceHook provides an optional injection point for IASC-A02.
+* In Release, the quiescence-hook pointer is null and search does not depend on
+  the diagnostic implementation.
+
+UCI and concurrency interfaces:
+
+* UciProtocol.cpp interprets UCI and development commands.
+* UciSearchController owns the search worker and controls its lifecycle.
+* The controller gives each search its own copies of the root position and
+  repetition history.
+* Stop and quit are propagated cooperatively through the search.
+* Only the last fully completed iteration may become the committed result.
+* An incomplete iteration cannot replace an already committed score, PV, or
+  bestmove.
+* A legal fallback move remains available if interruption occurs before the
+  first iteration is completed.
+* UciReporter serializes all UCI output through a mutex.
+* Exactly one bestmove is emitted for every completed or externally stopped
+  go.
+* The worker is joined after every tested termination path.
+
+Normal UCI reporting and diagnostics:
+
+The UCI identification was updated to:
+
+id name PHILOCHESS 0.3-alpha-002
+id author Robert M. Cuadros
+
+The existing MultiPV option was preserved:
+
+option name MultiPV type spin default 1 min 1 max 16
+
+The new diagnostic-control option is:
+
+option name Diagnostics type check default false
+
+With Diagnostics set to false, which is the default, normal games and analysis
+produce only the protocol information required for ordinary operation:
+
+* UCI negotiation responses;
+* iterative info depth lines;
+* seldepth;
+* score;
+* nodes;
+* time;
+* nps;
+* MultiPV when requested;
+* principal variations;
+* bestmove.
+
+Internal technical telemetry no longer accumulates by default in the normal
+analysis presentation.
+
+With:
+
+setoption name Diagnostics value true
+
+the following development information remains available through info string
+lines:
+
+* effective go limits and the selected search mode;
+* main-search and quiescence node counts;
+* alpha-beta cutoffs and quiescence beta cutoffs;
+* quiescence check and stand-pat nodes;
+* quiescence ply-limit hits;
+* root terminal classification;
+* checkmate and stalemate counters;
+* dead-position counters;
+* fifty- and seventy-five-move counters;
+* threefold- and fivefold-repetition counters;
+* static-evaluation counts;
+* PV move-ordering hits;
+* completed iterative-deepening iterations;
+* discarded incomplete iterations;
+* external stop observation.
+
+Returning Diagnostics to false restores the clean normal channel.
+
+Explicit development commands, such as perft and the historical inventories,
+remain available independently of normal analysis reporting.
+
+Preserved IASC-A06 FEN compatibility fix:
+
+ChessBase Reader 2017 supplies the authentic Kiwipete position with an invalid
+zero in the sixth FEN field:
+
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 0
+
+The UCI boundary normalizes only that sixth field from 0 to 1 before calling
+the strict internal FEN parser.
+
+The resulting internal position is equivalent to the canonical FEN:
+
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1
+
+The board position, side to move, castling rights, en-passant field, and
+halfmove clock remain unaltered.
+
+The internal parser therefore remains strict while the engine preserves
+compatibility with the real ChessBase Reader 2017 input that motivated
+IASC-A06.
+
+Preserved IASC-A02 test hooks:
+
+The deterministic first-quiescence-entry barrier remains available only in
+Debug|x64 behind:
+
+PHILOCHESS_IASC_TEST_HOOKS
+
+It is connected through an optional search hook rather than being embedded in
+the production algorithm.
+
+The Release executable does not contain the active IASC command interface.
+When tested with Diagnostics enabled, Release correctly responded to an IASC
+command as an unknown command.
+
+Preserved chess and search behaviour:
+
+* identical legal move generation;
+* identical special-move handling;
+* identical position and repetition-history reconstruction;
+* identical material, PST, phase, king interpolation, and mobility evaluation;
+* identical alpha-beta algorithm;
+* identical quiescence algorithm;
+* identical move-ordering rules;
+* identical iterative-deepening behaviour;
+* identical principal-variation construction;
+* identical MultiPV behaviour;
+* identical mate-score semantics;
+* identical terminal and draw-rule precedence;
+* identical completed-iteration commitment semantics;
+* identical legal fallback behaviour;
+* preserved FixedDepth;
+* preserved MoveTime;
+* preserved ClockTime;
+* preserved Infinite;
+* preserved stop;
+* preserved isready during active search;
+* preserved quit during active search;
+* preserved exactly one bestmove;
+* preserved isolation between successive searches.
+
+Explicitly excluded strength changes:
+
+* No Zobrist hashing was added.
+* No transposition table was added.
+* No hash-move ordering was added.
+* No killer-move heuristic was added.
+* No history heuristic was added.
+* No aspiration windows were added.
+* No Principal Variation Search was added.
+* No Static Exchange Evaluation was added.
+* No SEE-based pruning was added.
+* No Late Move Reductions were added.
+* No new selective-pruning mechanism was added.
+* No evaluation term or evaluation weight was changed.
+* No new positional or endgame knowledge was added.
+
+Acceptance and validation strategy:
+
+No dedicated alpha-002 inventory was created. Its acceptance was based on
+structural and interface validation, the differential alpha-001/alpha-002
+oracle, Release/Debug verification, the complete inherited historical
+regression battery, perft, and validation in external graphical interfaces.
+
+Architectural validation:
+
+The modular package passed:
+
+* C++17 Release compilation with elevated warnings;
+* C++17 Debug compilation with IASC hooks and elevated warnings;
+* validation of the .slnx, .vcxproj, and .filters XML;
+* exact agreement between the physical files and the project lists;
+* 25/25 expected .cpp compilation units;
+* 20/20 expected headers;
+* 9/9 interface and control-contract tests;
+* 3/3 Diagnostics false/true/false transition tests;
+* AddressSanitizer and UndefinedBehaviorSanitizer checks.
+
+LeakSanitizer was not supported by the container execution mechanism. The
+sanitizer pass was repeated with leak detection disabled and completed with
+exit code 0, without AddressSanitizer or UndefinedBehaviorSanitizer errors.
+
+Differential alpha-001/alpha-002 oracle:
+
+Complete UCI result lines were compared while ignoring only:
+
+* the expected engine-version change;
+* the new Diagnostics option declaration;
+* the variable time and nps fields.
+
+The differential result was:
+
+10/10 PASS
+
+The cases were:
+
+* startpos depth 1;
+* startpos depth 2;
+* startpos depth 3;
+* startpos depth 4;
+* authentic Kiwipete with fullmove 0 at depth 3;
+* the reserved tactical position at depth 3;
+* MultiPV 3 at depth 3;
+* stalemate at the root;
+* checkmate at the root;
+* the inherited dead-position case.
+
+The authentic Kiwipete comparison preserved:
+
+bestmove e2a6
+
+The start-position depth-4 oracle preserved:
+
+* score cp 0;
+* nodes 17122;
+* PV b1c3 b8c6 g1f3 g8f6;
+* bestmove b1c3.
+
+Manual Visual Studio validation:
+
+The delivered solution was opened and compiled successfully in Visual Studio.
+
+Release|x64:
+
+* compilation completed successfully;
+* zero compilation errors;
+* PHILOCHESS.exe was generated under x64\Release;
+* normal UCI negotiation identified PHILOCHESS 0.3-alpha-002;
+* FixedDepth completed correctly;
+* MoveTime terminated autonomously;
+* ClockTime terminated according to its calculated budget;
+* Infinite continued until an external command was received;
+* isready returned readyok during active Infinite search;
+* stop produced one legal bestmove;
+* quit during Infinite joined the worker and closed the process with exit code
+  0;
+* MultiPV 3 produced three ordered variations at every completed depth.
+
+Debug|x64:
+
+* compilation completed successfully;
+* zero compilation errors;
+* PHILOCHESS.exe was generated under x64\Debug;
+* the fixed-depth score, seldepth, nodes, PV, and bestmove matched Release;
+* only the expected time and nps values differed;
+* the IASC-A02 barrier was available and behaved deterministically.
+
+IASC-A02 verification in Debug:
+
+* the barrier began unarmed, unentered, and unreleased;
+* the barrier was armed successfully;
+* the depth-1 search reached the first quiescence entry;
+* searchstate reported an active, joinable worker;
+* stop was received while the worker remained held at the barrier;
+* no incomplete depth line or premature bestmove was emitted;
+* releasing the barrier allowed cancellation to propagate;
+* the incomplete depth-1 iteration was discarded;
+* the legal fallback bestmove b1c3 was emitted exactly once;
+* the final state reported an idle, joined worker.
+
+Historical regression:
+
+The integrated draw-rule inventory was executed in both Release and Debug.
+
+Each build completed all eight blocks with:
+
+* Block 1: 8/8 passed;
+* Block 2: 8/8 passed;
+* Block 3: 8/8 passed;
+* Block 4: 8/8 passed;
+* Block 5: 8/8 passed;
+* Block 6: 8/8 passed;
+* Block 7: 8/8 passed;
+* Block 8: 8/8 passed.
+
+Final result:
+
+TOTAL: 64/64 passed
+Inventory structure: PASS
+DRAW-RULE INTEGRATION INVENTORY: PASS
+
+The Block 8 closure test silently executes the inherited historical batteries
+for:
+
+* mobility;
+* piece-square tables;
+* quiescence search;
+* iterative deepening;
+* principal variation;
+* time management;
+* move ordering;
+* known perft positions;
+* tactical regression;
+* stalemate;
+* dead positions and transitions;
+* fifty-move-rule handling;
+* threefold repetition;
+* general inventory classification.
+
+The historical classification remained at 0 FAIL.
+
+The explicit command:
+
+perftknown 4
+
+also completed all six reserved positions through depth 4 with:
+
+24/24 passed
+
+This included the exact Kiwipete depth-4 result:
+
+4085603
+
+No move-generation, legality, special-move, or perft regression was detected.
+
+Validation in external graphical interfaces:
+
+Myracle:
+
+* The Release executable was registered as PHILOCHESS 0.3-alpha-002.
+* Analysis started and stopped normally.
+* The normal Output view showed depth, evaluation, time, nodes, nps, and
+  variations.
+* With Diagnostics disabled, no technical search telemetry accumulated in the
+  Strings view.
+* The Debug protocol view showed normal protocol traffic: position,
+  go infinite, info, stop, and exactly one bestmove.
+* Enabling Diagnostics restored the expected technical information.
+* Disabling Diagnostics restored the clean normal presentation.
+
+ChessBase Reader 2017:
+
+* The Release executable was registered successfully.
+* The authentic Kiwipete FEN ending in “0 0” was accepted.
+* The board was reconstructed correctly.
+* The engine generated analysis variations normally.
+* The IASC-A06 FEN FIX was thus validated in the graphical interface that
+  originally motivated its implementation.
+
+Delivered modular source package:
+
+PHILOCHESS_0.3-alpha-002_Engine_Modularization_and_Interface_Separation.zip
+
+SHA-256:
+
+c9da575ee47d59bcc5cd884434b734fb27ccc6d2ac5fc9f67c4b724d9f3606ff
+
+This fingerprint identifies the delivered modular source archive.
+
+Practical validation through games — Myracle Chess GUI
+
+As a qualitative complement to validation, four games were played against
+Zoidberg 0.1 and Shallow Blue 2.0.0. These games constitute observation and
+diagnostic material, not a statistical measurement of playing strength.
+
+Conditions:
+
+- time control: 900+10, equivalent to 15 minutes plus 10 seconds per move;
+- normal starting position;
+- Release|x64 executable;
+- no opening book;
+- no Syzygy tablebases;
+- ponder disabled;
+- Full Balanced adjudication without tablebases;
+- one game with each color against each opponent.
+
+Results:
+
+- PHILOCHESS 0.3-alpha-002 vs. Zoidberg 0.1: 0-1;
+- Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-002: 1-0;
+- PHILOCHESS 0.3-alpha-002 vs. Shallow Blue 2.0.0: 1/2-1/2;
+- Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-002: 1/2-1/2.
+
+Cumulative result:
+
+- vs. Zoidberg 0.1: 0/2;
+- vs. Shallow Blue 2.0.0: 1.0/2;
+- total: 1.0/4.
+
+Game observations:
+
+1. PHILOCHESS 0.3-alpha-002 vs. Zoidberg 0.1
+
+From the opening, PHILOCHESS obtained a fully playable position, without
+structural defects or serious coordination problems. The turning point came
+with 17.exd5, an exchange that allowed Zoidberg to transform the center into a
+lasting source of initiative, gain space, and restrict White's pieces. With
+18.g4, PHILOCHESS addressed the kingside when the true urgency was to prevent
+the double attack on d4. From that moment onward, Zoidberg coordinated its
+forces more effectively and converted its central superiority into direct
+pressure against the king. PHILOCHESS recognised the danger only after it had
+materialized, revealing difficulty in anticipating forcing threats. In the
+subsequent phase, it sought local solutions and material gains, while its
+opponent exploited piece activity, coordination, and back-rank vulnerability
+more effectively.
+
+2. Zoidberg 0.1 vs. PHILOCHESS 0.3-alpha-002
+
+With 9...Qd4, PHILOCHESS accepted sacrificing the exchange in return for
+accelerating its development and strengthening its control of the center and
+queenside. The compensation was sufficient to sustain a dynamic position,
+although 17...Ng4 proved inaccurate. Castling would have allowed better
+consolidation of piece coordination. On move 19, a tactical sequence also
+appeared that offered good recovery chances, but PHILOCHESS did not detect it,
+probably because it required greater calculation depth. After 22.Bxb4 and
+23.Qxa7, Zoidberg won the a7-pawn, but Black used those tempi to stabilize its
+position and achieve a clear advantage through its dangerous passed pawn. The
+advantage disappeared with 26...Bh3, which allowed that pawn —until then the
+main dynamic element of Black's position— to be eliminated. From that point,
+the game returned to equilibrium, although Zoidberg gradually demonstrated a
+more refined understanding of the pre-endgame, improved the coordination of
+its pieces, and created new difficulties on the queenside.
+
+3. PHILOCHESS 0.3-alpha-002 vs. Shallow Blue 2.0.0
+
+Compared with its predecessor, PHILOCHESS handled the kingside better and,
+with 14.g5, correctly closed that sector, avoiding the exchanges on h5 that
+had previously made it easier for the opposing rook and knight to join the
+attack. The errors 15...c5 and 16...c4 allowed White to reorganize its
+pieces, gain space, and achieve a clear positional advantage. Conversion,
+however, was once again uneven, and PHILOCHESS allowed part of its advantage
+to slip away before regaining control as a result of further inaccuracies by
+Shallow Blue. In the endgame, White's position was objectively winning, but
+61.Kd2 moved the king away from the dangerous h4-pawn. Shallow Blue then
+sacrificed its rook on g4 to clear that pawn's path, immediately transforming
+a lost position into a winning one. PHILOCHESS reacted with great practical
+precision and resorted to a repetition manoeuvre. Shallow Blue failed to
+realize that it could still win and allowed threefold repetition to occur,
+enabling PHILOCHESS to save half a point after going, within only a few moves,
+from winning to losing.
+
+4. Shallow Blue 2.0.0 vs. PHILOCHESS 0.3-alpha-002
+
+Against Shallow Blue, PHILOCHESS reached the same pre-endgame that its
+predecessor had played against this opponent, but this time handled it with
+greater activity and better coordination. Instead of confining itself to
+passive defence, it activated its pieces and simplified into a rook ending in
+which it maintained the balance. The gradual reduction of material led to a
+technically delicate ending, with a White passed pawn as the main source of
+danger. In the final stages, PHILOCHESS had to find several practically unique
+moves to preserve the draw and prevent promotion. Its king approached at the
+right moment, cooperated with the rook, and controlled the critical squares.
+Syzygy confirmed that this phase was mathematically drawn, although PHILOCHESS
+played the entire game without tablebases. After the rooks were exchanged, the
+Black king captured the last pawn. The game ended with only the two kings
+remaining on the board, thus completing a technically correct defence that
+was notably more active than that of its previous version.
+
+These practical results do not alter the technical acceptance of alpha-002
+and are retained as diagnostic evidence for subsequent search and evaluation
+development.
+
+Because alpha-002 introduced no intentional search or evaluation change, the
+differences observed relative to the alpha-001 games are treated as practical
+run-to-run variation, not as evidence of a playing-strength increase caused by
+modularization.
+
+Known limitations and deliberately excluded objectives:
+
+* Search strength remains intentionally equivalent to alpha-001.
+* Evaluation limitations inherited from alpha-001 remain unchanged.
+* The inherited conservative time-management policy remains unchanged.
+* The engine remains internally single-threaded, apart from UCI/search-control
+  concurrency.
+* No transposition-table or modern selective-search infrastructure is present
+  yet.
+* Technical development commands remain available upon explicit request.
+* IASC test hooks remain limited to Debug and excluded from Release.
+* Alpha-002 does not attempt to make statistical playing-strength claims.
+* Reproducible performance measurement, profiling, and statistical match
+  analysis are reserved for alpha-003.
+
+Conclusion:
+
+PHILOCHESS 0.3-alpha-002 — Engine Modularization and Interface Separation was
+implemented, validated, and accepted successfully.
+
+PHILOCHESS now has:
+
+* a coherent modular source structure;
+* explicit ownership of engine responsibilities;
+* controlled dependency direction;
+* production interfaces separated from test interfaces;
+* search logic independent of UCI formatting;
+* diagnostics independent of UCI emission;
+* serialised normal UCI reporting;
+* clean normal analysis output by default;
+* optional technical diagnostics;
+* preserved development and regression capabilities;
+* a Visual Studio solution prepared for Release and Debug;
+* preserved IASC-A06 compatibility;
+* isolated Debug-only IASC-A02 hooks;
+* preserved FixedDepth, MoveTime, ClockTime, and Infinite;
+* preserved MultiPV, PV, stop, isready, quit, and bestmove;
+* preserved terminal and draw-rule behaviour;
+* preserved chess decisions and search results;
+* Release/Debug semantic parity in the relevant contracts;
+* complete historical regression with 0 FAIL;
+* successful validation in Myracle;
+* successful validation in ChessBase Reader 2017.
+
+No functional anomaly, search-result deviation, legality regression,
+draw-rule regression, or UCI search-control regression was detected.
+
+The separation between the normal UCI channel and internal diagnostics also
+eliminates the unnecessary accumulation of technical info string messages
+during ordinary analysis in Myracle, while retaining that telemetry for
+development.
+
+PHILOCHESS plays essentially as alpha-001 played, but its internal architecture
+is substantially cleaner, more maintainable, more testable, and better
+prepared for subsequent development.
+
+The architectural transformation has established a stable baseline from which
+performance and game results can be measured without confusing structural
+changes with changes in search strength.
+
+PHILOCHESS 0.3-alpha-002 is therefore considered successfully developed,
+validated, accepted, and closed.
+
+The next planned version is:
+
+PHILOCHESS 0.3-alpha-003 — Reproducible Benchmarking, Profiling, and
+Statistical Match Analysis
