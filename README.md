@@ -13,19 +13,19 @@ PHILOCHESS began as a simple engine, but I hope to develop it into a tool that r
 
 ## About this repository
 
-This public repository documents the evolution of PHILOCHESS through complete development logs, structured test inventories, validation games and analyses, and selected code samples.
+This public repository documents the evolution of PHILOCHESS through detailed development logs, structured test inventories, validation games, and selected code samples.
 
-The engine’s full source code is maintained in a private repository. The samples published here are adapted specifically for educational and documentation purposes.
+The complete source code is maintained in a private repository. The examples shared here have been adapted for educational and documentation purposes.
 
 ## Repository contents
 
-- [`development-logs/`](development-logs/) — Versioned project logs and documentation
-- [`games/`](games/) — External tests, validation tournaments, and game analyses
-- [`test-inventories/`](test-inventories/) — Structured test inventories for implemented engine features
-- [`code-samples/`](code-samples/) — Selected educational code samples from completed project phases
-- [`assets/`](assets/) — PHILOCHESS visual resources
+- [`development-logs/`](development-logs/) — Versioned records of the project's progress
+- [`games/`](games/) — External tests and validation tournaments
+- [`test-inventories/`](test-inventories/) — Structured tests covering implemented engine features
+- [`code-samples/`](code-samples/) — Educational code examples from completed development phases
+- [`assets/`](assets/) — Visual resources for PHILOCHESS
 
-The published C++ samples are self-contained and can be compiled independently with a C++17-compatible compiler.
+The published C++ examples are self-contained and can be compiled independently using a C++17-compatible compiler.
 
 ## Current status
 
