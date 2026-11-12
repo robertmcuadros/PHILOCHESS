@@ -29,7 +29,13 @@ The published C++ examples are self-contained and can be compiled independently 
 
 ## Current status
 
-The latest version, PHILOCHESS 0.3-alpha-002, completes the Engine Modularization and Interface Separation milestone. The former monolithic codebase has been reorganized into eight functional modules covering core infrastructure, chess logic, evaluation, rules, search, UCI communication, diagnostics, and testing. The new architecture preserves the full functional behavior inherited from alpha-001, including search decisions, evaluation, time controls, draw-rule handling, UCI contracts, asynchronous search control, and Release/Debug semantic parity. Alpha-002 is an architectural transformation rather than a playing-strength improvement, establishing a maintainable foundation for the remaining PHILOCHESS 0.3 milestones. Development will continue with PHILOCHESS 0.3-alpha-003: Reproducible Benchmarking, Profiling, and Statistical Match Analysis.
+PHILOCHESS 0.3-alpha-002 completed the Engine Modularization and Interface Separation milestone. The original monolithic codebase has been reorganized into eight functional modules covering core infrastructure, chess logic, evaluation, rules, search, UCI communication, diagnostics, and testing.
+
+The new architecture preserves the functionality established in alpha-001, including search decisions, evaluation, time controls, draw-rule handling, UCI contracts, asynchronous search control, and consistent behavior across Release and Debug builds.
+
+Alpha-002 focused on improving the engine's internal organization rather than its playing strength. This work provides a more maintainable foundation for the remaining PHILOCHESS 0.3 milestones.
+
+Development will continue with PHILOCHESS 0.3-alpha-003, Reproducible Benchmarking, Profiling, and Statistical Match Analysis.
 
 ## PHILOCHESS 0.1 development milestones
 
