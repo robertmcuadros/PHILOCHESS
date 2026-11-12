@@ -81,9 +81,9 @@ Development will continue with PHILOCHESS 0.3-alpha-003, Reproducible Benchmarki
 
 ## Acknowledgments
 
-My sincere gratitude goes to the developers of chess engines, graphical interfaces, and other tools for computer-chess research, as well as to those who test chess engines, produce and maintain rating lists, write technical documentation, and preserve, organize, and make valuable resources and historical versions available to the community. Much of this work is carried out quietly and receives far less recognition than it deserves. Their contributions have made it possible to test PHILOCHESS against other engines, measure its progress, identify and correct its weaknesses, and guide its continued development through the accumulated knowledge and experience of the computer-chess community.
+I am grateful to the developers of chess engines, graphical interfaces, and other tools used in computer-chess research. I also wish to thank those who test engines, maintain rating lists, write technical documentation, and preserve historical versions and resources for the community. Much of their work goes unnoticed, despite its importance. Thanks to their efforts, I have been able to test PHILOCHESS against other engines, measure its progress, identify weaknesses, and continue learning from the knowledge and experience shared by the computer-chess community.
 
-I am equally grateful to my students and their families. Their trust, commitment, and expectations continually inspire me to grow as a chess coach, refine my methods, prepare better lessons, and find clearer and more effective ways to share chess knowledge. What I have learned through this shared journey has shaped the care, rigor, and educational perspective with which PHILOCHESS is conceived and developed.
+I am equally grateful to my students and their families. Their trust and commitment encourage me to keep improving as a chess coach, prepare better lessons, and find clearer ways to teach chess. What I have learned through these years of teaching has also influenced the way I think about chess and approach the development of PHILOCHESS.
 
 ## Licensing
 
