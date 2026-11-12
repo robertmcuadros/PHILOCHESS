@@ -37,7 +37,9 @@ Alpha-002 focused on improving the engine's internal organization rather than it
 
 Development will continue with PHILOCHESS 0.3-alpha-003, Reproducible Benchmarking, Profiling, and Statistical Match Analysis.
 
-## PHILOCHESS 0.1 development milestones
+## Development milestones
+
+### PHILOCHESS 0.1
 
 | Version | Milestone |
 |---|---|
@@ -54,7 +56,7 @@ Development will continue with PHILOCHESS 0.3-alpha-003, Reproducible Benchmarki
 | 0.1-alpha-031 | Basic move ordering for alpha-beta search |
 | 0.1-alpha-032 | Final 0.1 validation and closure |
 
-## PHILOCHESS 0.2 development milestones
+### PHILOCHESS 0.2
 
 | Version | Milestone |
 |---|---|
@@ -72,7 +74,7 @@ Development will continue with PHILOCHESS 0.3-alpha-003, Reproducible Benchmarki
 | 0.2-alpha-012 | Threefold-repetition detection throughout the search |
 | 0.2-alpha-013 | Unified draw-rule integration, cross-rule regression, and final 0.2 validation and closure |
 
-## PHILOCHESS 0.3 development milestones
+### PHILOCHESS 0.3
 
 | Version | Milestone |
 |---|---|
