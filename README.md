@@ -3,13 +3,13 @@
   <img src="assets/philochess-logo.png" alt="PHILOCHESS logo" width="420">
 </p>
 
-*A personal C++ chess engine project growing from basic engine foundations toward a classical understanding of chess.*
+*A personal C++ chess engine project evolving from its foundations toward a classical understanding of chess.*
 
-PHILOCHESS was born from a technical curiosity about how a chess engine generates moves, but also from a personal desire to express a chess philosophy through code. The project is being built step by step, from board representation and move generation toward an engine guided by a classical understanding of chess.
+PHILOCHESS was born from a technical curiosity about how a chess engine generates moves, but also from a desire to express a chess philosophy through code. The project is being developed step by step, with the aim of building an engine guided by classical chess principles.
 
-I am not a professional programmer. I am a chemical engineer, a chess coach, and a chess analyst, as well as a lifelong student of this beautiful art of the sixty-four squares. For that reason, PHILOCHESS is also a learning journey: an attempt to translate chess logic, training ideas, and strategic concepts into a working engine. Its long-term ambition is to evaluate chess through factors such as development, mobility, activity, coordination, structure, material, king safety, and initiative.
+I am not a professional programmer. I am a chemical engineer, a chess coach, and a chess analyst, as well as a lifelong student of this beautiful art of the sixty-four squares. For me, PHILOCHESS is also a learning journey, an effort to translate chess logic, training ideas, and strategic concepts into a working engine. My goal is to evaluate chess positions through factors such as development, mobility, activity, coordination, structure, material, king safety, and initiative.
 
-PHILOCHESS starts as a simple engine, but it is intended to grow into a tool that reflects a human way of understanding chess and, eventually, may become useful for students, trainers, and chess lovers.
+PHILOCHESS began as a simple engine, but I hope to develop it into a tool that reflects a human approach to understanding chess and, in time, becomes useful to students, coaches, and chess enthusiasts.
 
 ## About this repository
 
