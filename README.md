@@ -87,8 +87,8 @@ I am equally grateful to my students and their families. Their trust and commitm
 
 ## Licensing
 
-Different parts of this repository are distributed under different terms.
-See [`LICENSE.md`](LICENSE.md) for the complete licensing structure.
+Different parts of this repository are distributed under different licensing terms.
+See [`LICENSE.md`](LICENSE.md) for full licensing details.
 
 ## Author
 
